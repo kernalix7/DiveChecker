@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ESP32-C3 USB CDC (Silicon Labs) -->
+    <usb-device vendor-id="4292" product-id="60000"/>
+    
+    <!-- ESP32-S2/S3 USB CDC -->
+    <usb-device vendor-id="12346" product-id="32771"/>
+    
+    <!-- Generic ESP32 USB-UART (CP210x) -->
+    <usb-device vendor-id="4292" product-id="60016"/>
+    
+    <!-- CH340/CH341 USB-Serial -->
+    <usb-device vendor-id="6790" product-id="29987"/>
+    
+    <!-- FTDI USB-Serial -->
+    <usb-device vendor-id="1027" product-id="24577"/>
+    
+    <!-- Allow any USB serial device for development -->
+    <!-- Remove specific filters to allow all devices -->
+</resources>

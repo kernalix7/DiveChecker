@@ -1,0 +1,4 @@
+# AI/Copilot이 읽지 않도록 하는 파일들
+
+# ECDSA 키 파일들
+lib/security/ecdsa_private*.dart

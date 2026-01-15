@@ -1,0 +1,12 @@
+# Copilot/AI가 읽지 않도록 하는 파일들
+# GitHub Copilot과 대부분의 AI 도구가 이 파일을 존중합니다
+
+# ECDSA 키 파일들 - 절대 읽지 않음
+keys/
+*.pem
+ecdsa_private_keys.h
+divechecker_private.pem
+divechecker_public.pem
+
+# OTP 관련 임시 파일
+*.bin

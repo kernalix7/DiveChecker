@@ -1,0 +1,77 @@
+# ===== Security Keys - NEVER COMMIT =====
+# ECDSA private keys - multiple layers of protection
+*.pem
+*.key
+*_private*
+*private_*
+keys/
+ecdsa_private_keys.h
+ecdsa_private_keys.*
+*ecdsa*private*
+*ECDSA*PRIVATE*
+
+# Private key patterns (hex array patterns in any file)
+# NOTE: Can't gitignore by content, but these filenames catch common cases
+*secret*key*
+*SECRET*KEY*
+
+# Backup files that might contain keys
+*.bak
+*.backup
+*.orig
+*.tmp
+*~.h
+*.h.bak
+*.h.backup
+
+# Firmware keys directory (explicit)
+0_Pico2-Firmware/Divechecker/keys/
+0_Pico2-Firmware/**/keys/
+0_ESP32_Firmware/**/keys/
+0_ESP32_Firmware/keys/
+
+# ===== Build outputs =====
+build/
+*.uf2
+*.elf
+*.bin
+*.hex
+*.map
+*.dis
+
+# ===== PlatformIO (ESP32) =====
+0_ESP32_Firmware/.pio/
+0_ESP32_Firmware/.vscode/
+0_ESP32_Firmware/**/.pio/
+
+# ===== Flutter/Dart =====
+_0_DiveChecker-APP/.dart_tool/
+_0_DiveChecker-APP/.packages
+_0_DiveChecker-APP/build/
+_0_DiveChecker-APP/.flutter-plugins
+_0_DiveChecker-APP/.flutter-plugins-dependencies
+_0_DiveChecker-APP/*.iml
+_0_DiveChecker-APP/.idea/
+_0_DiveChecker-APP/android/.gradle/
+_0_DiveChecker-APP/android/local.properties
+_0_DiveChecker-APP/android/app/release/
+
+# ===== Android (0_Android-APP) =====
+0_Android-APP/.gradle/
+0_Android-APP/build/
+0_Android-APP/app/build/
+0_Android-APP/local.properties
+0_Android-APP/.idea/
+0_Android-APP/*.iml
+0_Android-APP/app/*.iml
+
+# ===== IDE =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ===== OS =====
+.DS_Store
+Thumbs.db

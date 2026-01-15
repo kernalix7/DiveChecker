@@ -1,0 +1,701 @@
+{
+  "@@locale": "en",
+  
+  "appTitle": "DiveChecker",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+
+  "home": "Home",
+  "measurement": "Measurement",
+  "history": "History",
+  
+  "deviceConnected": "DIVECHECKER CONNECTED",
+  "deviceNotConnected": "NOT CONNECTED",
+  "deviceDiscovery": "DEVICE DISCOVERY",
+  "searchingDevice": "Searching for Divechecker device...",
+  "measurementReady": "Ready for measurement",
+  "tapToConnect": "Tap connect to start",
+  "connectDevice": "CONNECT",
+  "disconnect": "DISCONNECT",
+  "searching": "SEARCHING...",
+  "makeSureDevicePowered": "Make sure your Divechecker device is powered on",
+  
+  "sensorError": "Sensor Connection Error",
+  "sensorErrorDescription": "Measurement sensor not detected. Please check the connection.",
+  
+  "connectionRequired": "Connection Required",
+  "connectionRequiredMessage": "To start measurement, please connect to Divechecker device first.\n\nGo to Home tab and connect the device.",
+  "goToHome": "Go to Home",
+  "cancel": "Cancel",
+  "ok": "OK",
+  "close": "Close",
+  "add": "Add",
+  
+  "connectedSuccess": "Divechecker connected successfully!",
+  "disconnected": "Divechecker disconnected",
+  
+  "startMeasurement": "START MEASUREMENT",
+  "stopMeasurement": "STOP MEASUREMENT",
+  "pauseMeasurement": "PAUSE",
+  "resumeMeasurement": "RESUME",
+  "measurementStarted": "Measurement started",
+  "measurementPaused": "Measurement paused",
+  "measurementResumed": "Measurement resumed",
+  "measurementComplete": "Measurement Complete",
+  "measurementSaved": "Measurement saved successfully",
+  "measurementSettings": "MEASUREMENT",
+  "measurementNumber": "Measurement #{number}",
+  "@measurementNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "currentPressure": "Current",
+  "maxPressure": "Max",
+  "avgPressure": "Avg",
+  "elapsedTime": "Time",
+  "pressureUnit": "Pressure Unit",
+  "sampleRate": "Sample Rate",
+  "msInterval": "ms interval",
+  "maxPressureLabel": "Max Pressure",
+  "avgPressureLabel": "Avg Pressure",
+  "durationLabel": "Duration",
+  "pressureAnalysis": "PRESSURE ANALYSIS",
+  
+  "saveSession": "Save Session",
+  "saveSessionQuestion": "Do you want to save this measurement session?",
+  "save": "Save",
+  "discard": "Discard",
+  "sessionSaved": "Session saved successfully",
+  "sessionDiscarded": "Session discarded",
+  
+  "noData": "No Data",
+  "awaitingData": "Awaiting measurement data",
+  "noMeasurements": "No measurements yet",
+  "startMeasuringHint": "Start measuring in the Measurement tab",
+  
+  "sessionHistory": "Session History",
+  "noSessions": "No sessions yet",
+  "startMeasuringToSee": "Start measuring to see your history here",
+  "deleteSession": "Delete Session",
+  "deleteSessionConfirm": "Are you sure you want to delete this session?",
+  "delete": "Delete",
+  "sessionDeleted": "Session deleted",
+  "deleteRecord": "Delete Record",
+  "deleteRecordConfirm": "Do you want to delete this measurement record?",
+  "recordDeleted": "Record deleted",
+  
+  "graphDetails": "Graph Details",
+  "zoomIn": "Zoom In",
+  "zoomOut": "Zoom Out",
+  "resetZoom": "Reset",
+  "panLeft": "Pan Left",
+  "panRight": "Pan Right",
+  
+  "addNote": "Add Note",
+  "editNote": "Edit Note",
+  "noteOptional": "Note (optional)",
+  "noteHint": "Enter a note for this session",
+  "noteContent": "Note content",
+  "noteAdded": "Note added",
+  "noteUpdated": "Note updated",
+  "notes": "Notes",
+  "noteInfo": "Note Info",
+  "noNotes": "No notes",
+  "tapGraphToAddNote": "Tap the graph to add a note",
+  "timePoint": "{seconds}s mark",
+  "@timePoint": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "statistics": "Statistics",
+  "duration": "Duration",
+  "dataPoints": "Data Points",
+  
+  "settings": "Settings",
+  "language": "Language",
+  "english": "English",
+  "korean": "Korean",
+  
+  "appearance": "APPEARANCE",
+  "theme": "Theme",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "themeDescription": "Choose your preferred theme",
+  
+  "notifications": "NOTIFICATIONS",
+  "enableNotifications": "Enable Notifications",
+  "getAlertsForMeasurements": "Get alerts for measurements",
+  "hapticFeedback": "Haptic Feedback",
+  "vibrateOnKeyActions": "Vibrate on key actions",
+  
+  "editTitle": "Edit Title",
+  "sessionTitle": "Session Title",
+  
+  "about": "ABOUT",
+  "appVersion": "App Version",
+  "helpAndSupport": "Help & Support",
+  "licenses": "Licenses",
+  
+  "liveMonitoring": "Live monitoring",
+  "currentPressureLabel": "CURRENT PRESSURE",
+  
+  "today": "Today",
+  "yesterday": "Yesterday",
+  "minutesSeconds": "{minutes}m {seconds}s",
+  "@minutesSeconds": {
+    "placeholders": {
+      "minutes": {"type": "int"},
+      "seconds": {"type": "int"}
+    }
+  },
+  "secondsOnly": "{seconds}s",
+  "@secondsOnly": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+  
+  "measurementNumber": "Measurement #{number}",
+  "@measurementNumber": {
+    "placeholders": {
+      "number": {"type": "int"}
+    }
+  },
+  
+  "maxPressureLabel": "Max Pressure",
+  "avgPressureLabel": "Avg Pressure",
+  "durationLabel": "Duration",
+  "pressureAnalysis": "PRESSURE ANALYSIS",
+  
+  "noMeasurements": "No measurements yet",
+  "startMeasuringHint": "Start measuring in the Measurement tab",
+  
+  "deleteRecord": "Delete Record",
+  "deleteRecordConfirm": "Delete this measurement record?",
+  "recordDeleted": "Record deleted",
+  
+  "editNote": "Edit Note",
+  "noNotes": "No notes",
+  "tapGraphToAddNote": "Tap the graph to add notes",
+  "tapToExpand": "Tap to expand",
+  
+  "measurementHistory": "MEASUREMENT HISTORY",
+  "filterByDevice": "Filter by Device",
+  "selectDevice": "Select Device",
+  "allDevices": "All Devices",
+  "sessionsCount": "{count} records",
+  "@sessionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "deviceSettings": "Device Settings",
+  "deviceName": "Device Name",
+  "changeDeviceName": "Change Device Name",
+  "enterNewDeviceName": "Enter new device name",
+  "devicePin": "Device PIN",
+  "changeDevicePin": "Change PIN",
+  "enterCurrentPin": "Enter current PIN",
+  "enterNewPin": "Enter new PIN (4 digits)",
+  "confirmNewPin": "Confirm new PIN",
+  "wrongPin": "Wrong PIN",
+  "pinChanged": "PIN changed successfully",
+  "nameChanged": "Device name changed",
+  "pinMustBe4Digits": "PIN must be 4 digits",
+  "pinsMustMatch": "PINs do not match",
+  "nameTooLong": "Name too long (max 8 Korean chars or 24 English chars)",
+  
+  "pause": "Pause",
+  "resume": "Resume",
+  "stop": "Stop",
+  
+  "liveSensorData": "LIVE SENSOR DATA",
+  "recording": "REC",
+  "openSourceLicenses": "Open Source Licenses",
+  "appDescription": "Freediving Equalizing Tool",
+  
+  "samples": "SAMPLES",
+  "points": "pts",
+  "analyticsComingSoon": "Advanced analytics coming soon",
+  "analytics": "Analytics",
+  
+  "pressureWaveform": "PRESSURE WAVEFORM",
+  "peak": "PEAK",
+  "average": "AVERAGE",
+  "sec": "sec",
+  "deviceConnectedReady": "Device Connected - Ready to measure",
+  "deviceNotConnectedShort": "Device Not Connected",
+  "tapToBeginMonitoring": "Tap to begin pressure monitoring",
+  "sampleCount": "{count} samples",
+  "@sampleCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  
+  "noNotesYetTapEdit": "No notes yet. Tap edit to add one or add notes on the graph.",
+  "madeWithFlutter": "Made with Flutter",
+  "mitLicense": "Apache License 2.0",
+  "mitLicenseContent": "You may use, modify, and distribute with proper attribution and inclusion of the license and NOTICE file; provided \"AS IS\" without warranty.",
+  "bleConnectivity": "BLE connectivity",
+  "chartVisualization": "Chart visualization",
+  "sqliteDatabase": "SQLite database",
+  "stateManagement": "State management",
+  "localStorage": "Local storage",
+  "internationalization": "Internationalization",
+  "copyright": "Copyright",
+  "allRightsReserved": "All Rights Reserved",
+  "tapToViewFullLicense": "Tap to view full license",
+  
+  "analysis": "Analysis",
+  "advancedAnalysis": "Advanced Analysis",
+  "peakAnalysis": "Peak Analysis",
+  "peakAnalysisDesc": "Detect peaks and analyze equalization patterns",
+  "statisticsDashboard": "Statistics Dashboard",
+  "statisticsDashboardDesc": "View daily/weekly/monthly statistics",
+  "segmentAnalysis": "Segment Analysis",
+  "segmentAnalysisDesc": "Analyze and compare specific time segments",
+  "trendGraph": "Trend Graph",
+  "trendGraphDesc": "Track your progress over time",
+  "patternRecognition": "Pattern Recognition",
+  "patternRecognitionDesc": "Compare with ideal Frenzel patterns",
+  "comingSoon": "Coming Soon",
+  "featureInDevelopment": "This feature is currently under development.",
+  "noSessionsForAnalysis": "No sessions available for analysis",
+  "selectSession": "Select Session",
+  "backToMenu": "Back to Menu",
+  "keyMetrics": "Key Metrics",
+  "totalPeaks": "Total Peaks",
+  "peaksUnit": "peaks",
+  "peakFrequency": "Frequency",
+  "perMinute": "/min",
+  "avgPeakInterval": "Avg Interval",
+  "avgPeakPressure": "Avg Peak",
+  "performanceScores": "Performance Scores",
+  "consistencyScore": "Consistency Score",
+  "fatigueIndex": "Fatigue Index",
+  "consistencyExcellent": "Excellent! Very consistent equalization technique.",
+  "consistencyGood": "Good. Minor variations in pressure and timing.",
+  "consistencyFair": "Fair. Room for improvement in consistency.",
+  "consistencyNeedsWork": "Needs work. Practice for more consistent technique.",
+  "fatigueMinimal": "Minimal fatigue detected. Great endurance!",
+  "fatigueLow": "Low fatigue. Performance maintained well.",
+  "fatigueModerate": "Moderate fatigue. Consider shorter sessions.",
+  "fatigueHigh": "High fatigue. Pressure decreased significantly.",
+  "detailedStats": "Detailed Statistics",
+  "maxPeakPressure": "Max Peak Pressure",
+  "minPeakPressure": "Min Peak Pressure",
+  "pressureRange": "Pressure Range",
+  "peakVisualization": "Peak Visualization",
+  "detectedPeaks": "Detected Peaks",
+
+  "dataManagement": "DATA MANAGEMENT",
+  "backupData": "Backup Data",
+  "backupDataDescription": "Export all data as JSON file",
+  "restoreData": "Restore Data",
+  "restoreDataDescription": "Import data from backup file",
+  "backupSuccess": "Backup completed successfully",
+  "backupFailed": "Backup failed",
+  "restoreSuccess": "Restore completed successfully",
+  "restoreFailed": "Restore failed",
+  "restoreConfirm": "Confirm Restore",
+  "restoreConfirmMessage": "This will replace all existing data. Continue?",
+  "restore": "Restore",
+  "invalidBackupFile": "Invalid backup file",
+  "sessionsCount": "{count} sessions",
+  "@sessionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dataPointsCount": "{count} data points",
+  "@dataPointsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "appName": "DiveChecker",
+  "appSubtitle": "Equalizing Pressure Monitor",
+  "appTitleFull": "DiveChecker Pro",
+  "statusOnline": "ONLINE",
+  "statusOffline": "OFFLINE",
+  "statusScanning": "SCANNING...",
+  "statusRecording": "REC",
+  "measurementScreenTitle": "PRESSURE MEASUREMENT",
+  "historyScreenTitle": "MEASUREMENT HISTORY",
+  "settingsScreenTitle": "SETTINGS",
+  
+  "segmentAvgPressureComparison": "Segment Average Pressure Comparison",
+  "segmentDetailedAnalysis": "Segment Detailed Analysis",
+  "segmentChangeAnalysis": "Segment Change Analysis",
+  "segmentNumber": "Segment {number}",
+  "@segmentNumber": {
+    "placeholders": {
+      "number": {"type": "int"}
+    }
+  },
+  "segmentTooltip": "Segment {index}\\nAvg: {avgPressure} hPa\\nPeaks: {peakCount}",
+  "@segmentTooltip": {
+    "placeholders": {
+      "index": {"type": "int"},
+      "avgPressure": {"type": "String"},
+      "peakCount": {"type": "int"}
+    }
+  },
+  "avgLabel": "Avg",
+  "maxLabel": "Max",
+  "peakLabel": "Peak",
+  "countUnit": "times",
+  "variabilityLabel": "Variability",
+  "notEnoughSegments": "Not enough segments",
+  "stablePressureAnalysis": "Stable pressure! Consistent performance from start to finish.",
+  "pressureIncreaseAnalysis": "Pressure increased by {percent}% towards the end. Warmup effect or stronger equalization.",
+  "@pressureIncreaseAnalysis": {
+    "placeholders": {
+      "percent": {"type": "String"}
+    }
+  },
+  "pressureDecreaseAnalysis": "Pressure decreased by {percent}% towards the end. Fatigue may be accumulating. Consider rest.",
+  "@pressureDecreaseAnalysis": {
+    "placeholders": {
+      "percent": {"type": "String"}
+    }
+  },
+  "trendStable": "Stable",
+  "trendRising": "Rising trend",
+  "trendFalling": "Falling trend",
+  "firstToLast": "First → Last",
+  "peakCountChange": "Peak count change",
+  "trendRising2": "Rising",
+  "trendFalling2": "Falling",
+  "trendMaintained": "Maintained",
+  "overallTrend": "Overall trend: {trend}",
+  "@overallTrend": {
+    "placeholders": {
+      "trend": {"type": "String"}
+    }
+  },
+  "slopeLabel": "Slope: {slope} hPa/sec",
+  "@slopeLabel": {
+    "placeholders": {
+      "slope": {"type": "String"}
+    }
+  },
+  "pressureTrendGraph": "Pressure Trend Graph",
+  "originalData": "Original data",
+  "movingAverage": "Moving average",
+  "trendLine": "Trend line",
+  "trendAnalysis": "Trend Analysis",
+  "startPressureTrend": "Start pressure (trend)",
+  "endPressureTrend": "End pressure (trend)",
+  "changeAmount": "Change amount",
+  "changeRate": "Change rate",
+  "strongRisingTrend": "Strong rising trend",
+  "strongRisingDesc": "Pressure increases significantly over time. Muscles may be warmed up or you are applying more force.",
+  "moderateRisingTrend": "Moderate rising trend",
+  "moderateRisingDesc": "Pressure gradually increases. Good warmup pattern.",
+  "stableMaintained": "Stable maintenance",
+  "stableMaintainedDesc": "Pressure maintained consistently. Shows excellent endurance and consistency!",
+  "moderateFallingTrend": "Moderate falling trend",
+  "moderateFallingDesc": "Pressure gradually decreases. Some fatigue may be accumulating. Consider rest.",
+  "strongFallingTrend": "Strong falling trend",
+  "strongFallingDesc": "Pressure decreases significantly. Fatigue has accumulated. Sufficient rest is needed.",
+  "continuousPerformanceAnalysis": "Continuous Performance Analysis",
+  "patternComparison": "Pattern Comparison",
+  "peakQualityHeatmap": "Peak Quality Heatmap",
+  "patternCharacteristics": "Pattern Characteristics",
+  "customTrainingSuggestions": "Custom Training Suggestions",
+  "maxConsecutive": "Max consecutive",
+  "avgConsecutive": "Avg consecutive",
+  "qualityPeaks": "Quality peaks",
+  "excellentConsistency": "Excellent! Maintaining consistent quality over time. Keep up this level.",
+  "goodConsistency": "Good! Nice continuity. Aim for longer consecutive streaks.",
+  "moderateConsistency": "Moderate. Maintain focus to increase consecutive quality peaks.",
+  "needsImprovementConsistency": "Needs improvement. Focus more on each equalization.",
+  "masterPhase": "Master phase",
+  "masterPhaseDesc": "Advanced technique refinement and special situation preparation",
+  "masterFocuses": "Dynamic equalization,High pressure simulation,Duration extension",
+  "advancedPhase": "Advanced phase",
+  "advancedPhaseDesc": "Consistency improvement and advanced technique acquisition",
+  "advancedFocuses": "Pressure consistency enhancement,Rhythm optimization,Fatigue resistance training",
+  "intermediatePhase": "Intermediate phase",
+  "intermediatePhaseDesc": "Basic skill stabilization and quality improvement",
+  "intermediateFocuses": "Accurate timing,Finding optimal pressure,Repeated practice",
+  "basicPhase": "Basic phase",
+  "basicPhaseDesc": "Basic movement acquisition and sensory development",
+  "basicFocuses": "Basic posture,Breathing control,Low pressure practice",
+  "currentFocusAreas": "Current focus areas:",
+  "peakScore": "Peak {index}: {score} points",
+  "@peakScore": {
+    "placeholders": {
+      "index": {"type": "int"},
+      "score": {"type": "String"}
+    }
+  },
+  "rhythmImprovementTraining": "Rhythm improvement training",
+  "rhythmTip1": "Use a metronome app to practice at a steady beat",
+  "rhythmTip2": "Count: Equalize to a 1-2-3-4 rhythm",
+  "rhythmTip3": "Start slowly and gradually increase speed",
+  "pressureConsistencyTraining": "Pressure consistency training",
+  "pressureTip1": "Aim for 10 consecutive equalizations with the same force",
+  "pressureTip2": "Watch your cheek and tongue movements in a mirror to keep them consistent",
+  "pressureTip3": "Find a comfortable pressure without pushing too hard",
+  "frequencyOptimizationTraining": "Frequency optimization training",
+  "frequencyTip1": "Ideal frequency is 20-40 times per minute",
+  "frequencyTip2": "Make each equalization sufficient",
+  "frequencyTip3": "Avoid unnecessarily rapid equalizations",
+  "enduranceTraining": "Endurance improvement training",
+  "enduranceTip1": "Gradually increase practice time",
+  "enduranceTip2": "Balance rest and training",
+  "enduranceTip3": "Regular practice is key to endurance improvement",
+  "irregularIntervalSuggestion": "Equalization intervals are irregular. Practice with a consistent rhythm.",
+  "irregularPressureSuggestion": "Peak pressure is irregular. Practice equalizing with consistent force.",
+  "lowFrequencySuggestion": "Equalization frequency is low. Practice equalizing more frequently.",
+  "highFrequencySuggestion": "Equalization is too frequent. Focus more on each equalization.",
+  "fatigueDetectedSuggestion": "Pressure decreases towards the end. Endurance training may help.",
+  "excellentPattern": "Excellent",
+  "excellentPatternDesc": "Close to ideal Frenzel pattern!",
+  "minPressureLabel": "Min pressure",
+  "goodPattern": "Good",
+  "goodPatternDesc": "Good basics. There are some improvements.",
+  "averagePattern": "Average",
+  "averagePatternDesc": "Basic pattern formed but needs improvement.",
+  "needsPractice": "Needs practice",
+  "needsPracticeDesc": "More practice needed. See suggestions below.",
+  "excellentPatternKeepUp": "Your current pattern is excellent! Keep it up.",
+  "points": "points",
+  "patternGrade": "Pattern grade: {grade}",
+  "@patternGrade": {
+    "placeholders": {
+      "grade": {"type": "String"}
+    }
+  },
+  "rhythmLabel": "Rhythm",
+  "pressureLabel": "Pressure",
+  "frequencyLabel": "Frequency",
+  "enduranceLabel": "Endurance",
+  "currentPattern": "Current pattern",
+  "idealPattern": "Ideal pattern",
+  "peakNumber": "Peak number",
+  "rhythmConsistency": "Rhythm consistency",
+  "pressureConsistency": "Pressure consistency",
+  "frequencyAdequacy": "Frequency adequacy",
+  "veryGood": "Very good",
+  "good": "Good",
+  "average": "Average",
+  "needsImprovement": "Needs improvement",
+  "needsMorePractice": "Needs more practice",
+  "noPeaksDetected": "No peaks detected",
+  "selectAll": "All",
+  "deselectAll": "Deselect",
+  "avgRiseTime": "Avg rise time",
+  "avgFallTime": "Avg fall time",
+  "avgPeakWidth": "Avg peak width",
+  "outliers": "Outliers",
+  "peakIntensityDistribution": "Peak intensity distribution",
+  "rhythmScore": "Rhythm score",
+  "pressureScoreTitle": "Pressure score",
+  "techniqueScore": "Technique score",
+  "fatigueResistance": "Fatigue resistance",
+  "strongPeaks": "Strong peaks",
+  "moderatePeaks": "Moderate peaks",
+  "weakPeaks": "Weak peaks",
+  "countWithPercent": "{count} ({percent}%)",
+  "@countWithPercent": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "percent": {"type": "String"}
+    }
+  },
+  "overallGrade": "Overall grade",
+  "excellentFrenzel": "Excellent Frenzel technique!",
+  "veryGoodTechnique": "Very good technique",
+  "satisfactoryLevel": "Satisfactory level",
+  "roomForImprovement": "Room for improvement",
+  "moreTrainingNeeded": "More training needed",
+  "startFromBasics": "Start from basics",
+  "weak": "Weak",
+  "moderate": "Moderate",
+  "strong": "Strong",
+  "weakIntensity": "Weak (<50hPa)",
+  "moderateIntensity": "Moderate (50-100)",
+  "strongIntensity": "Strong (>100)",
+  "stabilityImproving": "Stability improving",
+  "stabilityDecreasing": "Stability decreasing",
+  "stabilityMaintained": "Stability maintained",
+  "stabilityTrend": "Stability trend",
+  "pressureDistribution": "Pressure distribution",
+  "basicStats": "Basic statistics",
+  "dataPointsLabel": "Data points",
+  "countUnitItems": "items",
+  "measurementTime": "Measurement time",
+  "standardDeviation": "Standard deviation",
+  "advancedStats": "Advanced statistics",
+  "coefficientOfVariation": "Coefficient of variation",
+  "skewness": "Skewness",
+  "kurtosis": "Kurtosis",
+  "interquartileRange": "Interquartile range",
+  "dataDispersionIndicator": "Data dispersion indicator",
+  "pressureRangeLabel": "Pressure range",
+  "rangeLabel": "Range",
+  "outlierCount": "{count} ({percent}%)",
+  "@outlierCount": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "percent": {"type": "String"}
+    }
+  },
+  "percentiles": "Percentiles",
+  "median50": "Median (50%)",
+  "peakSummary": "Peak summary",
+  "strongPeakRatio": "Strong peak ratio",
+  "dataQuality": "Data quality",
+  "outliersLabel": "Outliers",
+  "samplingLabel": "Sampling",
+  "dataLabel": "Data",
+  "veryConsistent": "Very consistent",
+  "consistent": "Consistent",
+  "averageVariation": "Average",
+  "highVariation": "High variation",
+  "leftSkewed": "Left-skewed distribution",
+  "rightSkewed": "Right-skewed distribution",
+  "normalDistribution": "Normal distribution",
+  "excellent": "Excellent",
+  "satisfactory": "Satisfactory",
+  "caution": "Caution",
+  "symmetricDistribution": "Symmetric distribution",
+  "flatDistribution": "Flat distribution",
+  "peakedDistribution": "Peaked distribution",
+  "normalPressureInterpretation": "Pressure distribution is normal. Performing consistent Frenzel movements.",
+  "highPressureInterpretation": "High pressure values appear frequently. Force control during peaks may be needed.",
+  "lowPressureInterpretation": "Low pressure values are common. Practice applying stronger pressure.",
+  "concentratedInterpretation": "Concentrated in specific pressure range. Shows good consistency.",
+  "dispersedInterpretation": "Pressure is widely dispersed. Consistency improvement needed.",
+  "medianLabel": "Median: {value} hPa",
+  "@medianLabel": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "selected": "Selected",
+  "excluded": "Excluded",
+  "keyMetricsWithPeaks": "{metrics} ({count} peaks)",
+  "@keyMetricsWithPeaks": {
+    "placeholders": {
+      "metrics": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+  "countWithPercent": "{count} ({percent}%)",
+  "@countWithPercent": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "percent": {"type": "String"}
+    }
+  },
+  "scorePoints": "{score} pts",
+  "@scorePoints": {
+    "placeholders": {
+      "score": {"type": "String"}
+    }
+  },
+  "secondsValue": "{value}s",
+  "@secondsValue": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "histogramTooltip": "{rangeStart}-{rangeEnd} hPa\n{count}",
+  "@histogramTooltip": {
+    "placeholders": {
+      "rangeStart": {"type": "String"},
+      "rangeEnd": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+  
+  "selectUsbDevice": "SELECT USB DEVICE",
+  "rescan": "Rescan",
+  "availableDevices": "Available Devices",
+  "noDevicesFound": "No USB serial devices found",
+  "connecting": "Connecting...",
+  "connectionError": "Connection error",
+  
+  "scanningForDevices": "Scanning for USB devices...",
+  "scanAgain": "Scan Again",
+  "deviceConnectedSuccessfully": "Device connected successfully!",
+  "clearData": "Clear Data",
+  "deleteAllMeasurementData": "Delete all measurement data",
+  "exportDbToFile": "Export DB to File",
+  "exportDatabaseForDebugging": "Export database for debugging",
+  
+  "deviceAuthenticated": "Verified",
+  "deviceNotAuthenticated": "Not Verified",
+  "counterfeitWarning": "Unverified Device",
+  "counterfeitWarningTitle": "Device Verification Failed",
+  "counterfeitWarningMessage": "The connected device could not be verified as a genuine DiveChecker.\n\nUsing counterfeit devices may result in inaccurate measurements and limited technical support.",
+  "continueAnyway": "Continue Anyway",
+  "verifyingDevice": "Verifying device...",
+  
+  "firmwareUpdate": "Firmware Update",
+  "firmwareUpdateDescription": "Check and update device firmware",
+  "firmwareVerificationSuccess": "Signature verified",
+  "firmwareVerificationFailed": "Signature verification failed",
+  "firmwareInstall": "Install",
+  "firmwareRebootToBootsel": "Reboot to BOOTSEL",
+  "firmwareRebootDescription": "The device will reboot into BOOTSEL mode.\n\nAfter rebooting:\n1. A new drive \"RPI-RP2\" will appear\n2. Copy the .uf2 firmware file to it\n3. Device will automatically restart",
+  
+  "currentFirmware": "Current Firmware",
+  "dangerZone": "Danger Zone",
+  "rebootDevice": "Reboot Device",
+  "rebootDeviceDescription": "Restart the device",
+  "rebootConfirmMessage": "Reboot the device? Connection will be lost.",
+  "reboot": "Reboot",
+  "bootselMode": "BOOTSEL Mode",
+  "bootselModeDescription": "Manual firmware update mode",
+  "bootselRebootSent": "BOOTSEL reboot command sent",
+  "deviceDisconnected": "Device disconnected",
+  "pinMismatch": "PINs do not match",
+  "pinMustBe4Digits": "PIN must be 4 digits",
+  "pinChangeRequested": "PIN change requested",
+  "nameChangeRequested": "Name change requested",
+  "currentPin": "Current PIN",
+  "newPin": "New PIN",
+  "confirmPin": "Confirm PIN",
+  "newDeviceName": "New Device Name",
+  "pinRequiredForChange": "PIN required for changes",
+  "change": "Change",
+  "myDevices": "My Devices",
+  "connectedDevices": "Connected Devices",
+  "noDeviceConnected": "No device connected",
+  
+  "displayResolution": "Display Rate",
+  "displayResolutionDescription": "Chart display update rate",
+  "outputRate": "Output Rate",
+  "outputRateDescription": "Sensor output frequency",
+  "tapToChange": "Tap to change",
+  "connectDeviceFirst": "Connect device first",
+  "outputRateChanged": "Output rate changed to {rate} Hz",
+  "noiseFilter": "Noise Filter",
+  "noiseFilterDescription": "Software filter to reduce noise",
+  "filterStrength": "Filter Strength",
+  "filterStrengthDescription": "Higher values = more smoothing"
+}
