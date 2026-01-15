@@ -44,12 +44,6 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
   double _baseMaxX = 100;
   Offset? _lastFocalPoint;
 
-  // Touch position tracking for note addition cursor
-  // Using ValueNotifier to avoid rebuilding the entire chart
-  final ValueNotifier<({double x, double y})?> _touchPosition = ValueNotifier(
-    null,
-  );
-
   // Cached note lines to prevent rebuilding on touch events
   List<VerticalLine>? _cachedNoteLines;
   double? _cachedMinX;
@@ -74,7 +68,6 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
 
   @override
   void dispose() {
-    _touchPosition.dispose();
     super.dispose();
   }
 
@@ -913,25 +906,13 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                             ),
                             child: LayoutBuilder(
                               builder: (context, constraints) {
-                                // Chart area dimensions
-                                // fl_chart uses leftTitles.reservedSize for Y-axis
-                                final chartLeftPadding = ChartDimensions
-                                    .reservedSizeMax; // Y-axis labels
-                                final chartBottomPadding = ChartDimensions
-                                    .reservedSizeLarge; // X-axis labels
-                                // constraints already excludes Container padding
-                                // chartWidth = total width - Y-axis reserved space
-                                final chartWidth =
-                                    constraints.maxWidth - chartLeftPadding;
-
                                 // Calculate grid interval based on chart width
+                                final chartWidth = constraints.maxWidth - 
+                                    ChartDimensions.reservedSizeMax; // Subtract Y-axis space
                                 final verticalGridInterval =
                                     _calculateVerticalGridInterval(chartWidth);
 
-                                return Stack(
-                                  children: [
-                                    // Main chart
-                                    LineChart(
+                                return LineChart(
                                       LineChartData(
                                         clipData: FlClipData.all(),
                                         minX: _minX,
@@ -1058,11 +1039,13 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                                           rightTitles: AxisTitles(
                                             sideTitles: SideTitles(
                                               showTitles: false,
+                                              reservedSize: 0,
                                             ),
                                           ),
                                           topTitles: AxisTitles(
                                             sideTitles: SideTitles(
                                               showTitles: false,
+                                              reservedSize: 0,
                                             ),
                                           ),
                                         ),
@@ -1179,142 +1162,27 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                                                 LineTouchResponse?
                                                 touchResponse,
                                               ) {
-                                                if (touchResponse
-                                                            ?.lineBarSpots !=
-                                                        null &&
-                                                    touchResponse!
-                                                        .lineBarSpots!
-                                                        .isNotEmpty) {
-                                                  final spot = touchResponse
-                                                      .lineBarSpots!
-                                                      .first;
-
-                                                  if (event is FlTapUpEvent) {
-                                                    _touchPosition.value = null;
-                                                    _showAddNoteDialog(
-                                                      spot.x,
-                                                      spot.y,
-                                                    );
-                                                  } else if (event
-                                                          is FlPanUpdateEvent ||
-                                                      event
-                                                          is FlLongPressMoveUpdate ||
-                                                      event
-                                                          is FlPointerHoverEvent) {
-                                                    _touchPosition.value = (
-                                                      x: spot.x,
-                                                      y: spot.y,
-                                                    );
-                                                  }
-                                                }
-
-                                                if (event
-                                                        is FlPointerExitEvent ||
-                                                    event is FlPanEndEvent ||
-                                                    event is FlLongPressEnd) {
-                                                  _touchPosition.value = null;
+                                                // Only handle tap - let pinch zoom work
+                                                if (event is FlTapUpEvent &&
+                                                    touchResponse?.lineBarSpots != null &&
+                                                    touchResponse!.lineBarSpots!.isNotEmpty) {
+                                                  final spot = touchResponse.lineBarSpots!.first;
+                                                  _showAddNoteDialog(spot.x, spot.y);
                                                 }
                                               },
                                         ),
                                       ),
-                                    ),
-
-                                    // Touch cursor overlay (separate layer to avoid chart rebuild)
-                                    ValueListenableBuilder<
-                                      ({double x, double y})?
-                                    >(
-                                      valueListenable: _touchPosition,
-                                      builder: (context, touchPos, child) {
-                                        if (touchPos == null)
-                                          return const SizedBox.shrink();
-
-                                        // Convert data X coordinate to pixel position
-                                        final xRange = _maxX - _minX;
-                                        final xRatio =
-                                            (touchPos.x - _minX) / xRange;
-                                        // pixelX = Y-axis reserved space + ratio * chart drawing area
-                                        final pixelX =
-                                            chartLeftPadding +
-                                            (xRatio * chartWidth);
-
-                                        final timeInSec = _xToSeconds(
-                                          touchPos.x,
-                                        ).toStringAsFixed(2);
-                                        final pressure = touchPos.y
-                                            .toStringAsFixed(1);
-
-                                        final isDark =
-                                            Theme.of(context).brightness ==
-                                            Brightness.dark;
-
-                                        // Use Stack to separate line and label positioning
-                                        return Stack(
-                                          clipBehavior: Clip.none,
-                                          children: [
-                                            // Vertical line - exact position
-                                            Positioned(
-                                              left:
-                                                  pixelX -
-                                                  1, // Center the 2px line
-                                              top: 0,
-                                              bottom: chartBottomPadding,
-                                              child: Container(
-                                                width: 2,
-                                                color: ScoreColors.warning,
-                                              ),
-                                            ),
-                                            // Label - centered on line
-                                            Positioned(
-                                              left: pixelX,
-                                              top: 0,
-                                              child: FractionalTranslation(
-                                                translation: const Offset(
-                                                  -0.5,
-                                                  0,
-                                                ),
-                                                child: Container(
-                                                  padding: const EdgeInsets.all(
-                                                    Spacing.xs,
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                    color: isDark
-                                                        ? ScoreColors.warning
-                                                        : ScoreColors.warning
-                                                              .withOpacity(0.9),
-                                                    borderRadius:
-                                                        BorderRadii.xsAll,
-                                                  ),
-                                                  child: Text(
-                                                    '$timeInSec s\n$pressure hPa',
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      color: isDark
-                                                          ? Colors.white
-                                                          : Colors.black87,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: FontSizes.sm,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
+                              );
+                            },
                           ),
                         ),
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
+              ),
 
-                Container(
+              Container(
                   padding: const EdgeInsets.symmetric(horizontal: Spacing.lg),
                   child: Builder(
                     builder: (context) {

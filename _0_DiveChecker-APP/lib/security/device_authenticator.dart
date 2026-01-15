@@ -5,15 +5,13 @@
 /// 
 /// Flow:
 /// 1. App generates random 32-byte nonce
-/// 2. App sends: A<nonce_hex>\n
+/// 2. App sends: `A[nonce_hex]\n`
 /// 3. MCU signs SHA256(nonce) with private key
-/// 4. MCU responds: AUTH_OK:<signature_hex>\n
+/// 4. MCU responds: `AUTH_OK:[signature_hex]\n`
 /// 5. App verifies signature with public key
 library;
 
-import 'dart:convert';
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:pointycastle/export.dart';
