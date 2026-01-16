@@ -109,6 +109,14 @@ class MeasurementController extends ChangeNotifier {
   /// Current firmware output rate (Hz)
   int get outputRate => _serialProvider.outputRate;
   
+  /// Actual duration in seconds: sample count / Hz
+  int get actualDurationSeconds {
+    if (_dataList.isEmpty) return 0;
+    final seconds = _dataList.length / outputRate;
+    debugPrint('Duration calc: ${_dataList.length} samples / $outputRate Hz = ${seconds.round()}s');
+    return seconds.round();
+  }
+  
   bool get isConnected => _serialProvider.isConnected;
   
   double get currentPressure => _serialProvider.currentPressure;
@@ -136,6 +144,9 @@ class MeasurementController extends ChangeNotifier {
   }
   
   void _startMeasurementTimer() {
+    // Cancel any existing timer first
+    _measurementTimer?.cancel();
+    
     const updateIntervalMs = 100;
     
     _measurementTimer = Timer.periodic(
@@ -195,9 +206,14 @@ class MeasurementController extends ChangeNotifier {
   
   Future<int> saveSession(String notes, {String? deviceSerial, String? deviceName}) async {
     try {
+      final startTime = _state.sessionStartTime ?? DateTime.now();
+      // Calculate endTime based on actual data: startTime + (samples / Hz) seconds
+      final actualDurationMs = _dataList.isEmpty ? 0 : (_dataList.length * 1000 / outputRate).round();
+      final endTime = startTime.add(Duration(milliseconds: actualDurationMs));
+      
       final session = MeasurementSession(
-        startTime: _state.sessionStartTime ?? DateTime.now(),
-        endTime: DateTime.now(),
+        startTime: startTime,
+        endTime: endTime,
         maxPressure: _state.maxPressure,
         avgPressure: _state.avgPressure,
         sampleRate: outputRate,  // Save current firmware output rate

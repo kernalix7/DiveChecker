@@ -177,6 +177,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final screenPadding = Responsive.padding(context);
     final maxWidth = Responsive.maxContentWidth(context);
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isCompact = screenHeight < 700; // Compact mode for small screens
 
     return Consumer<SerialProvider>(
       builder: (context, serial, child) {
@@ -201,65 +203,85 @@ class _HomeScreenState extends State<HomeScreen> {
                                 serial.isAuthenticationComplete,
                           ),
 
-                          const SizedBox(height: Spacing.section + Spacing.sm),
+                          SizedBox(height: isCompact ? Spacing.md : Spacing.section + Spacing.sm),
 
-                          // Main Content
+                          // Main Content - Scrollable
                           Expanded(
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  // Connection Status Panel
-                                  ConnectionStatusPanel(
-                                    isConnected: serial.isConnected,
-                                    isScanning: serial.isScanning,
-                                  ),
-
-                                  // Authentication Warning Banner (only after auth complete and failed)
-                                  if (serial.isConnected &&
-                                      serial.isAuthenticationComplete &&
-                                      !serial.isDeviceAuthenticated) ...[
-                                    Spacing.verticalMd,
-                                    const AuthenticationWarningBanner(),
-                                  ],
-
-                                  // Pressure Display (when connected)
-                                  if (serial.isConnected) ...[
-                                    Spacing.verticalXxl,
-                                    CurrentPressurePanel(
-                                      pressure: serial.currentPressure,
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                return SingleChildScrollView(
+                                  physics: const BouncingScrollPhysics(),
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      minHeight: constraints.maxHeight,
                                     ),
-                                    Spacing.verticalLg,
-                                    // Atmospheric Pressure Recalibration Button (only when sensor OK)
-                                    if (serial.isSensorConnected)
-                                      RecalibrateAtmosphericButton(
-                                        isCalibrating: serial.isCalibrating,
-                                        onPressed: () =>
-                                            _recalibrateAtmospheric(serial),
+                                    child: IntrinsicHeight(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          // Connection Status Panel
+                                          ConnectionStatusPanel(
+                                            isConnected: serial.isConnected,
+                                            isScanning: serial.isScanning,
+                                            isCompact: isCompact,
+                                          ),
+
+                                          // Authentication Warning Banner (only after auth complete and failed)
+                                          if (serial.isConnected &&
+                                              serial.isAuthenticationComplete &&
+                                              !serial.isDeviceAuthenticated) ...[
+                                            SizedBox(height: isCompact ? Spacing.sm : Spacing.md),
+                                            const AuthenticationWarningBanner(),
+                                          ],
+
+                                          // Pressure Display (when connected)
+                                          if (serial.isConnected) ...[
+                                            SizedBox(height: isCompact ? Spacing.lg : Spacing.xxl),
+                                            CurrentPressurePanel(
+                                              pressure: serial.currentPressure,
+                                              isCompact: isCompact,
+                                            ),
+                                            SizedBox(height: isCompact ? Spacing.md : Spacing.lg),
+                                            // Atmospheric Pressure Recalibration Button (only when sensor OK)
+                                            if (serial.isSensorConnected)
+                                              RecalibrateAtmosphericButton(
+                                                isCalibrating: serial.isCalibrating,
+                                                onPressed: () =>
+                                                    _recalibrateAtmospheric(serial),
+                                              ),
+                                            SizedBox(height: isCompact ? Spacing.md : Spacing.xl),
+                                            const LiveMonitoringIndicator(),
+                                          ],
+
+                                          // Flexible spacer
+                                          const Spacer(),
+
+                                          SizedBox(
+                                            height: isCompact ? Spacing.lg : Spacing.section + Spacing.sm,
+                                          ),
+
+                                          // Connection Button
+                                          ConnectionButton(
+                                            isConnected: serial.isConnected,
+                                            isScanning: serial.isScanning,
+                                            onPressed: () => _toggleConnection(serial),
+                                          ),
+
+                                          // Help Text
+                                          if (!serial.isConnected &&
+                                              !serial.isScanning) ...[
+                                            SizedBox(height: isCompact ? Spacing.md : Spacing.lg),
+                                            const ConnectionHelpText(),
+                                          ],
+                                          
+                                          // Bottom padding for safe area
+                                          SizedBox(height: isCompact ? Spacing.md : Spacing.lg),
+                                        ],
                                       ),
-                                    Spacing.verticalXl,
-                                    const LiveMonitoringIndicator(),
-                                  ],
-
-                                  const SizedBox(
-                                    height: Spacing.section + Spacing.sm,
+                                    ),
                                   ),
-
-                                  // Connection Button
-                                  ConnectionButton(
-                                    isConnected: serial.isConnected,
-                                    isScanning: serial.isScanning,
-                                    onPressed: () => _toggleConnection(serial),
-                                  ),
-
-                                  // Help Text
-                                  if (!serial.isConnected &&
-                                      !serial.isScanning) ...[
-                                    Spacing.verticalLg,
-                                    const ConnectionHelpText(),
-                                  ],
-                                ],
-                              ),
+                                );
+                              },
                             ),
                           ),
                         ],

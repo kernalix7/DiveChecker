@@ -1,13 +1,14 @@
 /**
  * @file Divechecker.c
- * @brief DiveChecker RP2350 (Pico 2) Firmware v4.3.0
+ * @brief DiveChecker RP2350 (Pico 2) Firmware v5.0.0
  * 
  * @details
  * Dual-core architecture for high-precision pressure monitoring:
- *   - Core 0: USB CDC communication, command processing
+ *   - Core 0: USB MIDI communication, command processing
  *   - Core 1: 160Hz BMP280 sensor sampling
  * 
  * Features:
+ *   - USB MIDI SysEx protocol for cross-platform support
  *   - Persistent device settings in Flash (name, PIN)
  *   - PIN-protected device configuration
  *   - Unique serial number from chip ID
@@ -23,7 +24,6 @@
 #include <stdbool.h>
 
 #include "pico/stdlib.h"
-#include "pico/stdio_usb.h"
 #include "pico/multicore.h"
 #include "pico/util/queue.h"
 #include "pico/unique_id.h"
@@ -34,6 +34,10 @@
 #include "hardware/pio.h"
 #include "hardware/flash.h"
 #include "hardware/sync.h"
+
+// TinyUSB for USB MIDI
+#include "tusb.h"
+#include "midi_sysex.h"
 
 // mbedtls for ECDSA authentication
 #include "mbedtls/ecdsa.h"
@@ -78,10 +82,10 @@
  * ========================================================================== */
 
 // Firmware version
-#define FW_VERSION_MAJOR    4
-#define FW_VERSION_MINOR    5
+#define FW_VERSION_MAJOR    5
+#define FW_VERSION_MINOR    0
 #define FW_VERSION_PATCH    0
-#define FW_VERSION_STRING   "4.5.0"
+#define FW_VERSION_STRING   "5.0.0"
 
 // I2C Configuration
 #define I2C_PORT            i2c0
@@ -573,233 +577,172 @@ static float bmp280_read_pressure(void) {
 }
 
 /* ============================================================================
- * Command Processing
+ * USB MIDI SysEx Command Processing
  * ========================================================================== */
 
+// Forward declaration for serial number setup
+extern void usb_set_serial_number(const char* serial);
+
 /**
- * @brief Process a single character from USB input
- * 
- * Supported commands:
- *   P           - Ping (keep connection alive)
- *   R           - Reset baseline pressure
- *   C           - Get configuration (sample rate)
- *   I           - Get device info (serial, name)
- *   N<pin><name>- Set device name (requires PIN)
- *   W<old><new> - Change PIN (requires current PIN)
+ * @brief Process received MIDI SysEx message
  */
-static void cmd_process_char(char c) {
+static void midi_process_sysex(sysex_message_t* msg) {
     uint64_t now_ms = time_us_64() / 1000;
     
-    // Multi-character command in progress?
-    if (g_cmd_type != 0) {
-        if (c == '\n' || c == '\r') {
-            g_cmd_buffer[g_cmd_pos] = '\0';
-            
-            switch (g_cmd_type) {
-                case 'N': case 'n': {
-                    // Format: N<4-digit PIN><name>
-                    if (g_cmd_pos >= DEVICE_PIN_LEN) {
-                        char pin[DEVICE_PIN_LEN + 1];
-                        strncpy(pin, g_cmd_buffer, DEVICE_PIN_LEN);
-                        pin[DEVICE_PIN_LEN] = '\0';
-                        
-                        if (pin_verify(pin)) {
-                            const char *name = g_cmd_buffer + DEVICE_PIN_LEN;
-                            if (strlen(name) > 0) {
-                                device_set_name(name);
-                                printf("INFO:Name saved\n");
-                            } else {
-                                printf("ERR:Empty name\n");
-                            }
-                        } else {
-                            printf("ERR:Wrong PIN\n");
-                        }
-                    } else {
-                        printf("ERR:Format N<PIN><NAME>\n");
-                    }
-                    break;
-                }
-                
-                case 'W': case 'w': {
-                    // Format: W<old 4-digit><new 4-digit>
-                    if (g_cmd_pos == DEVICE_PIN_LEN * 2) {
-                        char old_pin[DEVICE_PIN_LEN + 1];
-                        char new_pin[DEVICE_PIN_LEN + 1];
-                        strncpy(old_pin, g_cmd_buffer, DEVICE_PIN_LEN);
-                        old_pin[DEVICE_PIN_LEN] = '\0';
-                        strncpy(new_pin, g_cmd_buffer + DEVICE_PIN_LEN, DEVICE_PIN_LEN);
-                        new_pin[DEVICE_PIN_LEN] = '\0';
-                        
-                        if (!pin_verify(old_pin)) {
-                            printf("ERR:Wrong PIN\n");
-                        } else if (!pin_is_valid_format(new_pin)) {
-                            printf("ERR:PIN must be 4 digits\n");
-                        } else {
-                            device_set_pin(new_pin);
-                            printf("INFO:PIN changed\n");
-                        }
-                    } else {
-                        printf("ERR:Format W<OLD><NEW>\n");
-                    }
-                    break;
-                }
-                
-                case 'A': case 'a': {
-                    // Format: A<64 hex chars = 32 byte nonce>
-                    // ECDSA challenge-response authentication
-                    ecdsa_sign_challenge(g_cmd_buffer, g_cmd_pos);
-                    break;
-                }
-                
-                case 'F': case 'f': {
-                    // Set output frequency: F8, F16, F32, F50
-                    int rate = atoi(g_cmd_buffer);
-                    if (rate >= MIN_OUTPUT_RATE_HZ && rate <= MAX_OUTPUT_RATE_HZ) {
-                        g_output_rate = rate;
-                        g_output_interval_ms = 1000 / rate;
-                        g_samples_per_output = INTERNAL_SAMPLE_RATE_HZ / rate;
-                        printf("INFO:Output rate %dHz (%d samples avg)\n", 
-                               g_output_rate, g_samples_per_output);
-                    } else {
-                        printf("ERR:Rate must be %d-%dHz\n", 
-                               MIN_OUTPUT_RATE_HZ, MAX_OUTPUT_RATE_HZ);
-                    }
-                    break;
-                }
-            }
-            
-            g_cmd_type = 0;
-            g_cmd_pos = 0;
-        } else if (g_cmd_pos < CMD_BUFFER_SIZE - 1) {
-            g_cmd_buffer[g_cmd_pos++] = c;
-        }
-        return;
-    }
-    
-    // Single-character commands
-    switch (c) {
-        case 'P': case 'p':
+    switch (msg->command) {
+        case CMD_PING:
             g_last_ping_ms = now_ms;
             if (!g_app_connected) {
                 g_app_connected = true;
-                g_baseline_set = false;  // Reset baseline on new connection
-                g_baseline_printed = false;
+                g_baseline_set = false;
                 led_set_state(LED_STATE_APP_CONNECTED);
-                printf("INFO:Connected\n");
             }
-            printf("PONG\n");
+            midi_sysex_send_pong();
             break;
             
-        case 'R': case 'r':
+        case CMD_REQUEST_INFO:
+            midi_sysex_send_device_info(g_serial_number, g_device_name, 
+                                         FW_VERSION_STRING, g_sensor_ready);
+            break;
+            
+        case CMD_RESET_BASELINE:
             g_baseline_set = false;
-            printf("INFO:Baseline reset\n");
             break;
             
-        case 'C': case 'c':
-            printf("CFG:%d\n", g_output_rate);
-            break;
-        
-        case 'F': case 'f':
-            // Set output frequency: F8, F16, F32, F50
-            g_cmd_type = c;
-            g_cmd_pos = 0;
-            break;
-            
-        case 'I': case 'i':
-            printf("INFO:Serial %s\n", g_serial_number);
-            printf("INFO:Name %s\n", g_device_name);
-            printf("INFO:Sensor %s\n", g_sensor_ready ? "OK" : "Error");
-            break;
-        
-        case 'T': case 't': {
-            // Debug test: read raw sensor data and fix if needed
-            printf("INFO:Sensor debug test...\n");
-            
-            // Read chip ID
-            uint8_t chip_id, ctrl_meas, config_reg;
-            uint8_t reg = 0xD0;
-            i2c_write_blocking(I2C_PORT, BMP280_I2C_ADDR, &reg, 1, true);
-            i2c_read_blocking(I2C_PORT, BMP280_I2C_ADDR, &chip_id, 1, false);
-            
-            reg = 0xF4;  // CTRL_MEAS
-            i2c_write_blocking(I2C_PORT, BMP280_I2C_ADDR, &reg, 1, true);
-            i2c_read_blocking(I2C_PORT, BMP280_I2C_ADDR, &ctrl_meas, 1, false);
-            
-            reg = 0xF5;  // CONFIG
-            i2c_write_blocking(I2C_PORT, BMP280_I2C_ADDR, &reg, 1, true);
-            i2c_read_blocking(I2C_PORT, BMP280_I2C_ADDR, &config_reg, 1, false);
-            
-            printf("ChipID: 0x%02X | CTRL_MEAS: 0x%02X | CONFIG: 0x%02X\n", 
-                   chip_id, ctrl_meas, config_reg);
-            
-            // Check if pressure measurement is disabled (osrs_p = 000)
-            if ((ctrl_meas & 0x1C) == 0x00) {
-                printf("WARN: Pressure disabled! Reinitializing...\n");
-                
-                // Force sleep mode
-                i2c_write_register(BMP280_REG_CTRL_MEAS, 0x00);
-                sleep_ms(10);
-                
-                // Write config in sleep mode
-                i2c_write_register(BMP280_REG_CONFIG, BMP280_CONFIG_FILTERED);
-                sleep_ms(10);
-                
-                // Enable normal mode with T+P measurement
-                // osrs_t=001, osrs_p=101 (x16), mode=11 = 0x57
-                i2c_write_register(BMP280_REG_CTRL_MEAS, 0x57);
-                sleep_ms(100);
-                
-                // Read back to verify
-                reg = 0xF4;
-                i2c_write_blocking(I2C_PORT, BMP280_I2C_ADDR, &reg, 1, true);
-                i2c_read_blocking(I2C_PORT, BMP280_I2C_ADDR, &ctrl_meas, 1, false);
-                printf("After reinit: CTRL_MEAS=0x%02X (expect 0x57)\n", ctrl_meas);
+        case CMD_SET_OUTPUT_RATE:
+            if (msg->data_len >= 1) {
+                int rate = msg->data[0];
+                if (rate >= MIN_OUTPUT_RATE_HZ && rate <= MAX_OUTPUT_RATE_HZ) {
+                    g_output_rate = rate;
+                    g_output_interval_ms = 1000 / rate;
+                    g_samples_per_output = INTERNAL_SAMPLE_RATE_HZ / rate;
+                }
+                midi_sysex_send_config(g_output_rate);
             }
-            
-            // Read raw data using FORCED MODE (single shot, guaranteed complete)
-            printf("Testing FORCED MODE (single measurement, X16)...\n");
-            for (int i = 0; i < 5; i++) {
-                // Trigger single forced measurement
-                // osrs_t=001, osrs_p=101 (x16), mode=01 (forced) = 0x55
-                i2c_write_register(BMP280_REG_CTRL_MEAS, 0x55);
-                sleep_ms(50);  // Wait for measurement (max 6.4ms, use 50ms to be safe)
-                
-                uint8_t data[6];
-                reg = 0xF7;
-                i2c_write_blocking(I2C_PORT, BMP280_I2C_ADDR, &reg, 1, true);
-                i2c_read_blocking(I2C_PORT, BMP280_I2C_ADDR, data, 6, false);
-                
-                int32_t adc_P = ((int32_t)data[0] << 12) | ((int32_t)data[1] << 4) | (data[2] >> 4);
-                int32_t adc_T = ((int32_t)data[3] << 12) | ((int32_t)data[4] << 4) | (data[5] >> 4);
-                printf("[%d] FORCED: P=%02X%02X%02X T=%02X%02X%02X | P_adc=%d T_adc=%d\n", 
-                       i, data[0], data[1], data[2], data[3], data[4], data[5], adc_P, adc_T);
-                sleep_ms(100);
-            }
-            
-            // Restore normal mode (X16)
-            i2c_write_register(BMP280_REG_CTRL_MEAS, 0x57);
-            
-            printf("INFO:Test complete\n");
             break;
+            
+        case CMD_SET_NAME:
+            // Format: [4 bytes PIN][name...]
+            if (msg->data_len > DEVICE_PIN_LEN) {
+                char pin[DEVICE_PIN_LEN + 1];
+                memcpy(pin, msg->data, DEVICE_PIN_LEN);
+                pin[DEVICE_PIN_LEN] = '\0';
+                
+                if (pin_verify(pin)) {
+                    char name[DEVICE_NAME_MAX_LEN + 1];
+                    uint8_t name_len = msg->data_len - DEVICE_PIN_LEN;
+                    if (name_len > DEVICE_NAME_MAX_LEN) name_len = DEVICE_NAME_MAX_LEN;
+                    memcpy(name, &msg->data[DEVICE_PIN_LEN], name_len);
+                    name[name_len] = '\0';
+                    device_set_name(name);
+                }
+            }
+            // Send updated device info
+            midi_sysex_send_device_info(g_serial_number, g_device_name,
+                                         FW_VERSION_STRING, g_sensor_ready);
+            break;
+            
+        case CMD_SET_PIN:
+            // Format: [4 bytes old PIN][4 bytes new PIN]
+            if (msg->data_len == DEVICE_PIN_LEN * 2) {
+                char old_pin[DEVICE_PIN_LEN + 1];
+                char new_pin[DEVICE_PIN_LEN + 1];
+                memcpy(old_pin, msg->data, DEVICE_PIN_LEN);
+                old_pin[DEVICE_PIN_LEN] = '\0';
+                memcpy(new_pin, &msg->data[DEVICE_PIN_LEN], DEVICE_PIN_LEN);
+                new_pin[DEVICE_PIN_LEN] = '\0';
+                
+                if (pin_verify(old_pin) && pin_is_valid_format(new_pin)) {
+                    device_set_pin(new_pin);
+                }
+            }
+            break;
+            
+        case CMD_AUTH_CHALLENGE:
+            // Format: [64 bytes = hex string of 32-byte nonce as ASCII]
+            if (msg->data_len == 64) {
+                // Copy hex string directly (ASCII characters 0-9, a-f)
+                char nonce_hex[65];
+                memcpy(nonce_hex, msg->data, 64);
+                nonce_hex[64] = '\0';
+                
+                // Sign and send response
+                if (!g_ecdsa_initialized) {
+                    ecdsa_init();
+                }
+                
+                if (g_ecdsa_initialized) {
+                    // Convert hex to bytes
+                    uint8_t nonce[32];
+                    for (int i = 0; i < 32; i++) {
+                        char hex_byte[3] = {nonce_hex[i*2], nonce_hex[i*2+1], '\0'};
+                        nonce[i] = (uint8_t)strtol(hex_byte, NULL, 16);
+                    }
+                    
+                    // Hash the nonce
+                    uint8_t hash[32];
+                    mbedtls_sha256(nonce, 32, hash, 0);
+                    
+                    // Sign
+                    uint8_t sig[MBEDTLS_ECDSA_MAX_LEN];
+                    size_t sig_len = 0;
+                    int ret = mbedtls_ecdsa_write_signature(&g_ecdsa_ctx, MBEDTLS_MD_SHA256,
+                                                            hash, 32, sig, sizeof(sig), &sig_len,
+                                                            mbedtls_ctr_drbg_random, &g_ctr_drbg);
+                    if (ret == 0) {
+                        midi_sysex_send_auth_response(sig, sig_len);
+                    }
+                }
+            }
+            break;
+    }
+}
+
+/**
+ * @brief Process incoming MIDI data from USB
+ */
+static void midi_task(void) {
+    uint8_t packet[4];
+    
+    while (tud_midi_available()) {
+        if (tud_midi_packet_read(packet)) {
+            // MIDI packet format: [cable_num | code_index][midi0][midi1][midi2]
+            uint8_t code_index = packet[0] & 0x0F;
+            
+            // Process bytes based on code index
+            // SysEx uses code indexes 4, 5, 6, 7
+            switch (code_index) {
+                case 4: // SysEx starts or continues
+                    midi_sysex_receive_byte(packet[1]);
+                    midi_sysex_receive_byte(packet[2]);
+                    midi_sysex_receive_byte(packet[3]);
+                    break;
+                case 5: // Single byte system common or SysEx ends with 1 byte
+                    if (midi_sysex_receive_byte(packet[1])) {
+                        sysex_message_t* msg = midi_sysex_get_message();
+                        if (msg) midi_process_sysex(msg);
+                    }
+                    break;
+                case 6: // SysEx ends with 2 bytes
+                    midi_sysex_receive_byte(packet[1]);
+                    if (midi_sysex_receive_byte(packet[2])) {
+                        sysex_message_t* msg = midi_sysex_get_message();
+                        if (msg) midi_process_sysex(msg);
+                    }
+                    break;
+                case 7: // SysEx ends with 3 bytes
+                    midi_sysex_receive_byte(packet[1]);
+                    midi_sysex_receive_byte(packet[2]);
+                    if (midi_sysex_receive_byte(packet[3])) {
+                        sysex_message_t* msg = midi_sysex_get_message();
+                        if (msg) midi_process_sysex(msg);
+                    }
+                    break;
+                default:
+                    // Other MIDI messages - ignore for now
+                    break;
+            }
         }
-            
-        case 'N': case 'n':
-        case 'W': case 'w':
-        case 'A': case 'a':
-            g_cmd_type = c;
-            g_cmd_pos = 0;
-            break;
-            
-        case 'B': case 'b':
-            // Reboot to BOOTSEL mode for firmware update
-            printf("INFO:Rebooting to BOOTSEL...\n");
-            stdio_flush();  // Ensure message is sent
-            sleep_ms(200);  // Give time for USB to complete
-            // Disable interrupts and reset to BOOTSEL
-            multicore_reset_core1();  // Stop Core 1 first
-            reset_usb_boot(0, 0);     // 0,0 = no PICOBOOT, no mass storage disable
-            // Should not reach here
-            break;
     }
 }
 
@@ -903,20 +846,23 @@ static void init_serial_number(void) {
 }
 
 static void print_startup_banner(void) {
+    // Debug output via CDC (if enabled in tusb_config.h)
+    #if CFG_TUD_CDC
     printf("\n");
     printf("========================================\n");
-    printf("  DiveChecker RP2350 v%s\n", FW_VERSION_STRING);
+    printf("  DiveChecker RP2350 v%s (USB MIDI)\n", FW_VERSION_STRING);
     printf("  Dual-Core %dHz -> %dHz Output\n", INTERNAL_SAMPLE_RATE_HZ, g_output_rate);
     printf("========================================\n\n");
     printf("Device : %s\n", g_device_name);
     printf("Serial : %s\n", g_serial_number);
     printf("I2C    : GP%d/GP%d @ %dkHz\n", I2C_SDA_PIN, I2C_SCL_PIN, I2C_BAUDRATE / 1000);
     printf("Sensor : %s (X16 + IIR X2)\n", g_sensor_ready ? "OK" : "NOT FOUND");
-    printf("Mode   : Core0=USB, Core1=Sensor\n");
-    printf("Output : %dHz (%d-%dHz, F<rate> to change)\n", g_output_rate, MIN_OUTPUT_RATE_HZ, MAX_OUTPUT_RATE_HZ);
+    printf("Mode   : Core0=USB MIDI, Core1=Sensor\n");
+    printf("Output : %dHz (%d-%dHz)\n", g_output_rate, MIN_OUTPUT_RATE_HZ, MAX_OUTPUT_RATE_HZ);
     printf("Filter : Average (%d samples)\n", g_samples_per_output);
-    printf("\nINFO:Ready\n");
+    printf("\nReady for MIDI connection...\n");
     printf("========================================\n");
+    #endif
 }
 
 int main(void) {
@@ -924,8 +870,11 @@ int main(void) {
     init_serial_number();
     flash_load_settings();
     
-    // Initialize USB CDC
-    stdio_init_all();
+    // Initialize TinyUSB
+    tusb_init();
+    
+    // Initialize MIDI SysEx handler
+    midi_sysex_init();
     
     // Initialize inter-core queue
     queue_init(&g_pressure_queue, sizeof(pressure_packet_t), PRESSURE_QUEUE_SIZE);
@@ -943,7 +892,8 @@ int main(void) {
     
     // Wait for USB connection with blinking LED
     bool blink = false;
-    while (!stdio_usb_connected()) {
+    while (!tud_connected()) {
+        tud_task();  // TinyUSB device task
         blink = !blink;
         led_set_state(blink ? LED_STATE_USB_WAIT : LED_STATE_OFF);
         sleep_ms(500);
@@ -951,47 +901,42 @@ int main(void) {
     led_set_state(LED_STATE_USB_READY);
     sleep_ms(500);
     
-    // Print startup info
+    // Print startup info (to CDC debug port if available)
     print_startup_banner();
     
-    // Main loop: USB communication on Core 0
-    uint64_t last_beacon_ms = 0;
-    
+    // Main loop: USB MIDI communication on Core 0
     while (true) {
         uint64_t now_ms = time_us_64() / 1000;
         
-        // Process incoming USB data
-        int c = getchar_timeout_us(0);
-        if (c != PICO_ERROR_TIMEOUT) {
-            cmd_process_char((char)c);
-        }
+        // TinyUSB device task - MUST be called frequently
+        tud_task();
+        
+        // Process incoming MIDI messages
+        midi_task();
         
         // Check for connection timeout
         if (g_app_connected && (now_ms - g_last_ping_ms > CONNECTION_TIMEOUT_MS)) {
             g_app_connected = false;
             g_baseline_printed = false;  // Reset for next connection
             led_set_state(LED_STATE_USB_READY);
-            printf("INFO:Disconnected\n");
+            #if CFG_TUD_CDC
+            printf("MIDI: App disconnected (timeout)\n");
+            #endif
         }
         
-        // Send beacon for auto-sync when not connected to app
-        // Format: BEACON:<serial>:<name>
-        if (!g_app_connected && (now_ms - last_beacon_ms >= 200)) {
-            last_beacon_ms = now_ms;
-            printf("BEACON:%s:%s\n", g_serial_number, g_device_name);
-        }
-        
-        // Forward pressure data from Core 1
+        // Forward pressure data from Core 1 via MIDI SysEx
         pressure_packet_t packet;
         while (queue_try_remove(&g_pressure_queue, &packet)) {
             if (g_app_connected) {
                 // Send baseline info once
                 if (!g_baseline_printed && g_baseline_set) {
-                    printf("INFO:Baseline %.3f hPa\n", g_baseline_pressure);
+                    #if CFG_TUD_CDC
+                    printf("INFO: Baseline %.3f hPa\n", g_baseline_pressure);
+                    #endif
                     g_baseline_printed = true;
                 }
-                // D: format (delta hPa * 1000)
-                printf("D:%d\n", packet.delta_x1000);
+                // Send pressure via MIDI SysEx
+                midi_sysex_send_pressure(packet.delta_x1000);
             }
         }
         

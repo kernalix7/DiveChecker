@@ -137,9 +137,21 @@ class SessionRepository extends ChangeNotifier {
         
         // Load pressure data
         final pressureData = await _dbService.getPressureDataBySession(session.id!);
+        
+        // Convert to FlSpot using index * interval (based on sample rate)
+        // duration is in seconds, so calculate interval
+        final sampleRate = session.sampleRate > 0 ? session.sampleRate : 8;
+        final intervalMs = 1000.0 / sampleRate; // ms per sample
+        
         final chartData = pressureData.asMap().entries.map((entry) {
-          return FlSpot(entry.key.toDouble(), entry.value.pressure);
+          final elapsedMs = entry.key * intervalMs;
+          return FlSpot(elapsedMs, entry.value.pressure);
         }).toList();
+        
+        debugPrint('Session ${session.id}: ${pressureData.length} points, sampleRate=$sampleRate, duration=${session.duration}s');
+        if (chartData.isNotEmpty) {
+          debugPrint('  First X: ${chartData.first.x}ms, Last X: ${chartData.last.x}ms');
+        }
 
         // Load graph notes
         final graphNotes = await _dbService.getGraphNotesBySession(session.id!);

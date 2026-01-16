@@ -77,20 +77,23 @@ class HomeHeader extends StatelessWidget {
 class ConnectionStatusPanel extends StatelessWidget {
   final bool isConnected;
   final bool isScanning;
+  final bool isCompact;
   
   const ConnectionStatusPanel({
     super.key,
     required this.isConnected,
     this.isScanning = false,
+    this.isCompact = false,
   });
   
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final padding = isCompact ? Spacing.lg : Spacing.xxl;
     
     return Container(
-      padding: const EdgeInsets.all(Spacing.xxl),
+      padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadii.xxlAll,
@@ -117,13 +120,14 @@ class ConnectionStatusPanel extends StatelessWidget {
             isConnected: isConnected,
             isScanning: isScanning,
           ),
-          Spacing.verticalXl,
+          SizedBox(height: isCompact ? Spacing.md : Spacing.xl),
           
           _ConnectionIcon(
             isConnected: isConnected,
             isScanning: isScanning,
+            isCompact: isCompact,
           ),
-          Spacing.verticalXl,
+          SizedBox(height: isCompact ? Spacing.md : Spacing.xl),
           
           _ConnectionStatusText(
             isConnected: isConnected,
@@ -139,18 +143,22 @@ class ConnectionStatusPanel extends StatelessWidget {
 class _ConnectionIcon extends StatelessWidget {
   final bool isConnected;
   final bool isScanning;
+  final bool isCompact;
   
   const _ConnectionIcon({
     required this.isConnected,
     required this.isScanning,
+    this.isCompact = false,
   });
   
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final iconPadding = isCompact ? Spacing.lg : Spacing.xxl;
+    final iconSize = isCompact ? IconSizes.display : IconSizes.display + IconSizes.sm;
     
     return Container(
-      padding: const EdgeInsets.all(Spacing.xxl),
+      padding: EdgeInsets.all(iconPadding),
       decoration: BoxDecoration(
         color: isConnected
             ? theme.colorScheme.primary.withOpacity(Opacities.veryLow)
@@ -169,7 +177,7 @@ class _ConnectionIcon extends StatelessWidget {
             : isConnected
                 ? Icons.usb
                 : Icons.usb_off,
-        size: IconSizes.display + IconSizes.sm,
+        size: iconSize,
         color: isConnected 
             ? theme.colorScheme.primary 
             : theme.colorScheme.onSurfaceVariant,
@@ -229,10 +237,12 @@ class _ConnectionStatusText extends StatelessWidget {
 
 class CurrentPressurePanel extends StatelessWidget {
   final double pressure;
+  final bool isCompact;
   
   const CurrentPressurePanel({
     super.key,
     required this.pressure,
+    this.isCompact = false,
   });
   
   @override
@@ -242,9 +252,14 @@ class CurrentPressurePanel extends StatelessWidget {
     final settings = context.watch<SettingsProvider>();
     final displayPressure = settings.convertPressure(pressure);
     
+    final padding = isCompact ? Spacing.lg : Spacing.xxl;
+    final pressureFontSize = isCompact 
+        ? FontSizes.display 
+        : FontSizes.display + FontSizes.titleLg;
+    
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(Spacing.xxl),
+      padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadii.xlAll,
@@ -274,7 +289,7 @@ class CurrentPressurePanel extends StatelessWidget {
               ),
             ],
           ),
-          Spacing.verticalLg,
+          SizedBox(height: isCompact ? Spacing.md : Spacing.lg),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -282,7 +297,7 @@ class CurrentPressurePanel extends StatelessWidget {
               Text(
                 formatPressure(displayPressure),
                 style: TextStyle(
-                  fontSize: FontSizes.display + FontSizes.titleLg,
+                  fontSize: pressureFontSize,
                   fontWeight: FontWeight.bold,
                   color: theme.colorScheme.primary,
                   height: 1,

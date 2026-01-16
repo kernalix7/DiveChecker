@@ -49,16 +49,11 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
   double? _cachedMinX;
   double? _cachedMaxX;
 
-  // Sample rate from session (Hz)
-  late final int _sampleRate;
-
   @override
   void initState() {
     super.initState();
     final serial = context.read<SerialProvider>();
     _isConnected = serial.isConnected;
-    // Get sample rate from session (default 8Hz)
-    _sampleRate = widget.session['sample_rate'] ?? 8;
     if (widget.chartData.isNotEmpty) {
       _minX = widget.chartData.first.x;
       _maxX = widget.chartData.last.x;
@@ -232,43 +227,47 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
     return 10;
   }
 
+  /// Get sample rate from session (defaults to 8Hz)
+  int get _sampleRate => widget.session['sample_rate'] ?? 8;
+
   /// Calculate vertical grid interval aligned to sample rate
-  /// Grid lines are placed at exact second boundaries (1s, 2s, 5s, etc.)
-  /// This ensures touch cursor, notes, and values align perfectly with grid
+  /// Grid lines are placed at multiples of sample interval
   double _calculateVerticalGridInterval(double chartPixelWidth) {
     final dataRange = _maxX - _minX;
-    final rangeInSeconds = dataRange / _sampleRate;
+    final rangeInSeconds = dataRange / 1000.0; // X is in milliseconds
+    final sampleIntervalMs = 1000.0 / _sampleRate; // e.g., 125ms for 8Hz
 
-    // Choose interval in seconds that gives reasonable grid density
-    // Then convert to data index units (multiply by sample rate)
-    double secondsInterval;
+    // Choose target interval in seconds based on zoom level
+    double targetSeconds;
     if (rangeInSeconds <= 2) {
-      secondsInterval = 0.125; // 8 grids per second
+      targetSeconds = 0.125; // 8 grids per second
     } else if (rangeInSeconds <= 5) {
-      secondsInterval = 0.25; // 4 grids per second
+      targetSeconds = 0.25; // 4 grids per second
     } else if (rangeInSeconds <= 10) {
-      secondsInterval = 0.5; // 2 grids per second
+      targetSeconds = 0.5; // 2 grids per second
     } else if (rangeInSeconds <= 20) {
-      secondsInterval = 1.0; // 1 grid per second
+      targetSeconds = 1.0; // 1 grid per second
     } else if (rangeInSeconds <= 60) {
-      secondsInterval = 2.0; // 1 grid per 2 seconds
+      targetSeconds = 2.0; // 1 grid per 2 seconds
     } else if (rangeInSeconds <= 120) {
-      secondsInterval = 5.0; // 1 grid per 5 seconds
+      targetSeconds = 5.0; // 1 grid per 5 seconds
     } else if (rangeInSeconds <= 300) {
-      secondsInterval = 10.0; // 1 grid per 10 seconds
+      targetSeconds = 10.0; // 1 grid per 10 seconds
     } else {
-      secondsInterval = 30.0; // 1 grid per 30 seconds
+      targetSeconds = 30.0; // 1 grid per 30 seconds
     }
 
-    // Convert seconds to data index units
-    return secondsInterval * _sampleRate;
+    // Snap to nearest sample interval multiple
+    final targetMs = targetSeconds * 1000.0;
+    final samples = (targetMs / sampleIntervalMs).round().clamp(1, 1000000);
+    return samples * sampleIntervalMs;
   }
 
   double _calculateXInterval() {
     final range = _maxX - _minX;
     // Calculate interval to show ~5-10 labels
-    // Aim for nice round seconds (1s, 2s, 5s, 10s intervals)
-    final rangeInSeconds = range / _sampleRate;
+    // Aim for nice round seconds - more frequent labels
+    final rangeInSeconds = range / 1000.0; // X is in milliseconds
 
     double secondsInterval;
     if (rangeInSeconds <= 5)
@@ -277,24 +276,38 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
       secondsInterval = 1;
     else if (rangeInSeconds <= 20)
       secondsInterval = 2;
-    else if (rangeInSeconds <= 60)
+    else if (rangeInSeconds <= 40)
       secondsInterval = 5;
-    else if (rangeInSeconds <= 120)
+    else if (rangeInSeconds <= 90)
       secondsInterval = 10;
+    else if (rangeInSeconds <= 180)
+      secondsInterval = 15;
     else if (rangeInSeconds <= 300)
-      secondsInterval = 30;
+      secondsInterval = 20;
     else
-      secondsInterval = 60;
+      secondsInterval = 30;
 
-    // Convert seconds interval back to index interval
-    return secondsInterval * _sampleRate;
+    // Convert seconds interval to milliseconds
+    return secondsInterval * 1000.0;
   }
 
-  /// Convert X value (index) to seconds using session's sample rate
+  /// Convert X value (milliseconds) to seconds
   double _xToSeconds(double x) {
-    // X is index-based, sample_rate is in Hz
-    // seconds = index / sample_rate
-    return x / _sampleRate;
+    // X is in milliseconds (stored as elapsed time since session start)
+    // seconds = milliseconds / 1000
+    return x / 1000.0;
+  }
+
+  /// Format time label: seconds for < 60s, m:ss for >= 60s
+  String _formatTimeLabel(double seconds) {
+    final totalSeconds = seconds.round();
+    if (totalSeconds < 60) {
+      return '${totalSeconds}s';
+    } else {
+      final minutes = totalSeconds ~/ 60;
+      final secs = totalSeconds % 60;
+      return '$minutes:${secs.toString().padLeft(2, '0')}';
+    }
   }
 
   /// Label info - zoom-aware label display
@@ -1011,17 +1024,16 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                                                 if (value < _minX ||
                                                     value > _maxX)
                                                   return const SizedBox.shrink();
-                                                final timeInSeconds =
-                                                    _xToSeconds(
-                                                      value,
-                                                    ).toStringAsFixed(0);
+                                                final seconds =
+                                                    _xToSeconds(value);
+                                                final timeLabel = _formatTimeLabel(seconds);
                                                 return Padding(
                                                   padding:
                                                       const EdgeInsets.only(
                                                         top: Spacing.sm,
                                                       ),
                                                   child: Text(
-                                                    '${timeInSeconds}s',
+                                                    timeLabel,
                                                     style: TextStyle(
                                                       fontSize: FontSizes.xs,
                                                       color: theme

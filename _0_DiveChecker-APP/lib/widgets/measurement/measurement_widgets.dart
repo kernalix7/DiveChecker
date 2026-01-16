@@ -304,13 +304,57 @@ class PressureChart extends StatelessWidget {
   final List<FlSpot> data;
   final double minX;
   final double maxX;
+  final int sampleRate;
 
   const PressureChart({
     super.key,
     required this.data,
     required this.minX,
     required this.maxX,
+    this.sampleRate = 8,
   });
+
+  /// Calculate X axis interval based on data range (in milliseconds)
+  /// Aligned to sample rate - interval is always a multiple of sample interval
+  double _calculateXInterval(double rangeMs) {
+    final rangeInSeconds = rangeMs / 1000.0;
+    final sampleIntervalMs = 1000.0 / sampleRate; // e.g., 125ms for 8Hz
+    
+    // Target interval in seconds, will be snapped to Hz multiple
+    double targetSeconds;
+    if (rangeInSeconds <= 5) {
+      targetSeconds = 1;
+    } else if (rangeInSeconds <= 15) {
+      targetSeconds = 2;
+    } else if (rangeInSeconds <= 30) {
+      targetSeconds = 5;
+    } else if (rangeInSeconds <= 60) {
+      targetSeconds = 5;
+    } else if (rangeInSeconds <= 120) {
+      targetSeconds = 10;
+    } else if (rangeInSeconds <= 300) {
+      targetSeconds = 20;
+    } else {
+      targetSeconds = 30;
+    }
+    
+    // Snap to nearest sample interval multiple
+    final targetMs = targetSeconds * 1000.0;
+    final samples = (targetMs / sampleIntervalMs).round();
+    return samples * sampleIntervalMs;
+  }
+
+  /// Format time label: seconds for < 60s, m:ss for >= 60s
+  String _formatTimeLabel(double seconds) {
+    final totalSeconds = seconds.round();
+    if (totalSeconds < 60) {
+      return '${totalSeconds}s';
+    } else {
+      final minutes = totalSeconds ~/ 60;
+      final secs = totalSeconds % 60;
+      return '$minutes:${secs.toString().padLeft(2, '0')}';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -364,6 +408,7 @@ class PressureChart extends StatelessWidget {
 
   Widget _buildChart(BuildContext context) {
     final theme = Theme.of(context);
+    final xInterval = _calculateXInterval(maxX - minX);
 
     return LineChart(
       LineChartData(
@@ -376,7 +421,7 @@ class PressureChart extends StatelessWidget {
           show: true,
           drawVerticalLine: true,
           horizontalInterval: ChartDimensions.intervalSmall,
-          verticalInterval: ChartDimensions.intervalLarge,
+          verticalInterval: xInterval,
           getDrawingHorizontalLine: (value) =>
               FlLine(color: Colors.grey.shade500, strokeWidth: ChartDimensions.strokeThin),
           getDrawingVerticalLine: (value) =>
@@ -413,13 +458,19 @@ class PressureChart extends StatelessWidget {
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: ChartDimensions.reservedSizeMd,
-              interval: ChartDimensions.intervalLarge,
+              interval: _calculateXInterval(maxX - minX),
               getTitlesWidget: (value, meta) {
-                final timeInSeconds = (value * 0.001).toStringAsFixed(0);
+                // Skip first and last labels to prevent edge overlap
+                final interval = _calculateXInterval(maxX - minX);
+                if (value < minX + interval * 0.5 || value > maxX - interval * 0.5) {
+                  return const SizedBox.shrink();
+                }
+                final seconds = (value / 1000.0);
+                final timeLabel = _formatTimeLabel(seconds);
                 return Padding(
                   padding: const EdgeInsets.only(top: Spacing.xs),
                   child: Text(
-                    '${timeInSeconds}s',
+                    timeLabel,
                     style: TextStyle(
                       color: Colors.grey.shade600,
                       fontSize: FontSizes.xxs,

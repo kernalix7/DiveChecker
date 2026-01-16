@@ -35,22 +35,28 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(Divechecker Divechecker.c mbedtls_platform_impl.c)
+add_executable(Divechecker 
+        Divechecker.c 
+        mbedtls_platform_impl.c
+        usb_descriptors.c
+        midi_sysex.c
+)
 
 pico_set_program_name(Divechecker "Divechecker")
-pico_set_program_version(Divechecker "0.1")
+pico_set_program_version(Divechecker "5.0.0")
 
 # Generate PIO header from .pio file
 pico_generate_pio_header(Divechecker ${CMAKE_CURRENT_LIST_DIR}/ws2812.pio)
 
-# Modify the below lines to enable/disable output over UART/USB
+# Disable stdio over USB (we use TinyUSB directly for MIDI)
 pico_enable_stdio_uart(Divechecker 0)
-pico_enable_stdio_usb(Divechecker 1)
+pico_enable_stdio_usb(Divechecker 0)
 
-# USB Device Name (shows in device manager / dmesg)
+# USB Device configuration
 target_compile_definitions(Divechecker PRIVATE
     USBD_MANUFACTURER="kodenet.io"
     USBD_PRODUCT="DiveChecker V1"
+    PICO_STDIO_USB_ENABLE_RESET_VIA_BAUD_RATE=0
 )
 
 # Add the standard library to the build
@@ -105,6 +111,8 @@ target_link_libraries(Divechecker
         pico_multicore
         pico_unique_id
         pico_rand
+        tinyusb_device
+        tinyusb_board
         )
 
 # Optional: Enable USE_OTP_KEYS for production builds

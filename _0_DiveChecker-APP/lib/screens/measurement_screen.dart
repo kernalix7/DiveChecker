@@ -181,7 +181,7 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
         date: state.sessionStartTime ?? DateTime.now(),
         maxPressure: state.maxPressure,
         avgPressure: state.avgPressure,
-        duration: state.elapsedTime.inSeconds,
+        duration: controller.actualDurationSeconds,  // Use actual data duration
         notes: notes,
         deviceSerial: deviceSerial,
         deviceName: deviceName,
@@ -249,7 +249,7 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
                             StatsRow(
                               maxPressure: state.maxPressure,
                               avgPressure: state.avgPressure,
-                              durationSeconds: state.elapsedTime.inSeconds,
+                              durationSeconds: controller.actualDurationSeconds,
                             ),
                             Spacing.verticalXl,
                           ],
@@ -258,6 +258,7 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
                             data: state.pressureData,
                             minX: state.minX,
                             maxX: state.maxX,
+                            sampleRate: controller.outputRate,
                           ),
 
                           Spacing.verticalXxl,
