@@ -1,6 +1,7 @@
 // Copyright (C) 2025 Kim DaeHyun (kernalix7@kodenet.io)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
+import 'package:intl/intl.dart';
 import '../l10n/app_localizations.dart';
 
 String formatDuration(int seconds, [AppLocalizations? l10n]) {
@@ -19,6 +20,20 @@ String formatDuration(int seconds, [AppLocalizations? l10n]) {
     return '$minutes분 ${remainingSeconds}초';
   }
   return '${seconds}초';
+}
+
+/// Format date with relative labels (today/yesterday)
+String formatRelativeDate(DateTime date, AppLocalizations l10n) {
+  final now = DateTime.now();
+  final difference = now.difference(date);
+
+  if (difference.inDays == 0) {
+    return '${l10n.today} ${DateFormat('HH:mm').format(date)}';
+  } else if (difference.inDays == 1) {
+    return '${l10n.yesterday} ${DateFormat('HH:mm').format(date)}';
+  } else {
+    return DateFormat('MM/dd HH:mm').format(date);
+  }
 }
 
 String formatShortDate(DateTime date) {

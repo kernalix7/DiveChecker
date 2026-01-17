@@ -265,30 +265,34 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
 
   double _calculateXInterval() {
     final range = _maxX - _minX;
-    // Calculate interval to show ~5-10 labels
-    // Aim for nice round seconds - more frequent labels
-    final rangeInSeconds = range / 1000.0; // X is in milliseconds
+    final rangeInSeconds = range / 1000.0;
+    final sampleIntervalMs = 1000.0 / _sampleRate;
 
-    double secondsInterval;
-    if (rangeInSeconds <= 5)
-      secondsInterval = 0.5;
+    // More frequent labels, especially when zoomed
+    double targetSeconds;
+    if (rangeInSeconds <= 1)
+      targetSeconds = 0.125;  // 8 labels per second when very zoomed
+    else if (rangeInSeconds <= 2)
+      targetSeconds = 0.25;
+    else if (rangeInSeconds <= 5)
+      targetSeconds = 0.5;
     else if (rangeInSeconds <= 10)
-      secondsInterval = 1;
+      targetSeconds = 1;
     else if (rangeInSeconds <= 20)
-      secondsInterval = 2;
+      targetSeconds = 2;
     else if (rangeInSeconds <= 40)
-      secondsInterval = 5;
+      targetSeconds = 5;
     else if (rangeInSeconds <= 90)
-      secondsInterval = 10;
+      targetSeconds = 10;
     else if (rangeInSeconds <= 180)
-      secondsInterval = 15;
-    else if (rangeInSeconds <= 300)
-      secondsInterval = 20;
+      targetSeconds = 15;
     else
-      secondsInterval = 30;
+      targetSeconds = 20;
 
-    // Convert seconds interval to milliseconds
-    return secondsInterval * 1000.0;
+    // Snap to sample rate multiple
+    final targetMs = targetSeconds * 1000.0;
+    final samples = (targetMs / sampleIntervalMs).round().clamp(1, 1000000);
+    return samples * sampleIntervalMs;
   }
 
   /// Convert X value (milliseconds) to seconds
@@ -300,7 +304,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
 
   /// Format time label: seconds for < 60s, m:ss for >= 60s
   String _formatTimeLabel(double seconds) {
-    final totalSeconds = seconds.round();
+    final totalSeconds = seconds.floor();
     if (totalSeconds < 60) {
       return '${totalSeconds}s';
     } else {
@@ -1021,8 +1025,9 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                                                   .reservedSizeLarge,
                                               interval: _calculateXInterval(),
                                               getTitlesWidget: (value, meta) {
+                                                // Skip last label only (at maxX position)
                                                 if (value < _minX ||
-                                                    value > _maxX)
+                                                    value >= _maxX)
                                                   return const SizedBox.shrink();
                                                 final seconds =
                                                     _xToSeconds(value);

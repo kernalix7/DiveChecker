@@ -93,10 +93,13 @@ class MeasurementController extends ChangeNotifier {
     _state = _state.copyWith(currentPressure: pressure);
     
     if (_state.isMeasuring && !_state.isPaused && _state.sessionStartTime != null) {
-      final elapsedMs = DateTime.now().difference(_state.sessionStartTime!).inMilliseconds;
+      // X value based on sample index and Hz (not real clock time)
+      // This ensures data aligns perfectly with grid
+      final sampleIntervalMs = 1000.0 / outputRate;  // e.g., 125ms for 8Hz
+      final xMs = _dataList.length * sampleIntervalMs;
       
       // Store all data - firmware output rate = display rate = storage rate
-      _dataList.add(FlSpot(elapsedMs.toDouble(), pressure));
+      _dataList.add(FlSpot(xMs, pressure));
       
       if (_dataList.length > MeasurementConfig.maxDataPoints) {
         _dataList.removeAt(0);

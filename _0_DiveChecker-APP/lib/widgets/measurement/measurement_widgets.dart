@@ -320,33 +320,33 @@ class PressureChart extends StatelessWidget {
     final rangeInSeconds = rangeMs / 1000.0;
     final sampleIntervalMs = 1000.0 / sampleRate; // e.g., 125ms for 8Hz
     
-    // Target interval in seconds, will be snapped to Hz multiple
+    // Target interval in seconds - more frequent labels
     double targetSeconds;
     if (rangeInSeconds <= 5) {
+      targetSeconds = 0.5;
+    } else if (rangeInSeconds <= 10) {
       targetSeconds = 1;
-    } else if (rangeInSeconds <= 15) {
+    } else if (rangeInSeconds <= 20) {
       targetSeconds = 2;
-    } else if (rangeInSeconds <= 30) {
+    } else if (rangeInSeconds <= 40) {
       targetSeconds = 5;
-    } else if (rangeInSeconds <= 60) {
-      targetSeconds = 5;
-    } else if (rangeInSeconds <= 120) {
+    } else if (rangeInSeconds <= 90) {
       targetSeconds = 10;
-    } else if (rangeInSeconds <= 300) {
-      targetSeconds = 20;
+    } else if (rangeInSeconds <= 180) {
+      targetSeconds = 15;
     } else {
-      targetSeconds = 30;
+      targetSeconds = 20;
     }
     
     // Snap to nearest sample interval multiple
     final targetMs = targetSeconds * 1000.0;
-    final samples = (targetMs / sampleIntervalMs).round();
+    final samples = (targetMs / sampleIntervalMs).round().clamp(1, 1000000);
     return samples * sampleIntervalMs;
   }
 
   /// Format time label: seconds for < 60s, m:ss for >= 60s
   String _formatTimeLabel(double seconds) {
-    final totalSeconds = seconds.round();
+    final totalSeconds = seconds.floor();
     if (totalSeconds < 60) {
       return '${totalSeconds}s';
     } else {
@@ -460,11 +460,6 @@ class PressureChart extends StatelessWidget {
               reservedSize: ChartDimensions.reservedSizeMd,
               interval: _calculateXInterval(maxX - minX),
               getTitlesWidget: (value, meta) {
-                // Skip first and last labels to prevent edge overlap
-                final interval = _calculateXInterval(maxX - minX);
-                if (value < minX + interval * 0.5 || value > maxX - interval * 0.5) {
-                  return const SizedBox.shrink();
-                }
                 final seconds = (value / 1000.0);
                 final timeLabel = _formatTimeLabel(seconds);
                 return Padding(

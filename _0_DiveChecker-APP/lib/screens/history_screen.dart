@@ -25,9 +25,9 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
-  String? _selectedDeviceSerial; // null = all devices
+  String? _selectedDeviceSerial;  // null = all devices
   List<Map<String, dynamic>> _devices = [];
-
+  
   @override
   void initState() {
     super.initState();
@@ -35,12 +35,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
       _loadData();
     });
   }
-
+  
   Future<void> _loadData() async {
     // Sessions already loaded in main.dart, just load devices
     await _loadDevices();
   }
-
+  
   Future<void> _loadDevices() async {
     final sessionRepo = context.read<SessionRepository>();
     final devices = await sessionRepo.getUniqueDevices();
@@ -50,7 +50,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       });
     }
   }
-
+  
   void _showDeviceFilter(BuildContext context, AppLocalizations l10n) {
     showModalBottomSheet(
       context: context,
@@ -171,28 +171,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.history,
-                        size: IconSizes.display * 1.67,
-                        color: StatusColors.disabled.withOpacity(
-                          Opacities.mediumHigh,
-                        ),
-                      ),
+                      Icon(Icons.history, size: IconSizes.display * 1.67, color: StatusColors.disabled.withOpacity(Opacities.mediumHigh)),
                       Spacing.verticalLg,
                       Text(
                         l10n.noMeasurements,
-                        style: TextStyle(
-                          fontSize: FontSizes.bodyLg,
-                          color: StatusColors.neutral,
-                        ),
+                        style: TextStyle(fontSize: FontSizes.bodyLg, color: StatusColors.neutral),
                       ),
                       Spacing.verticalSm,
                       Text(
                         l10n.startMeasuringHint,
-                        style: TextStyle(
-                          fontSize: FontSizes.body,
-                          color: StatusColors.disabled,
-                        ),
+                        style: TextStyle(fontSize: FontSizes.body, color: StatusColors.disabled),
                       ),
                     ],
                   ),
@@ -261,7 +249,7 @@ class _DeviceFilterSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    
     return SafeArea(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -293,8 +281,8 @@ class _DeviceFilterSheet extends StatelessWidget {
               color: selectedSerial == null ? theme.colorScheme.primary : null,
             ),
             title: Text(l10n.allDevices),
-            trailing: selectedSerial == null
-                ? Icon(Icons.check, color: theme.colorScheme.primary)
+            trailing: selectedSerial == null 
+                ? Icon(Icons.check, color: theme.colorScheme.primary) 
                 : null,
             onTap: () => onSelect(null),
           ),
@@ -308,7 +296,7 @@ class _DeviceFilterSheet extends StatelessWidget {
             final shortSerial = serial != null && serial.length >= 4
                 ? serial.substring(serial.length - 4)
                 : serial ?? '';
-
+            
             return ListTile(
               leading: Icon(
                 Icons.sensors,
@@ -316,8 +304,8 @@ class _DeviceFilterSheet extends StatelessWidget {
               ),
               title: Text('$name-$shortSerial'),
               subtitle: Text('${l10n.sessionsCount(count)}'),
-              trailing: isSelected
-                  ? Icon(Icons.check, color: theme.colorScheme.primary)
+              trailing: isSelected 
+                  ? Icon(Icons.check, color: theme.colorScheme.primary) 
                   : null,
               onTap: () => onSelect(serial),
             );
@@ -328,3 +316,4 @@ class _DeviceFilterSheet extends StatelessWidget {
     );
   }
 }
+

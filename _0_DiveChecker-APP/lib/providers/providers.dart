@@ -4,7 +4,8 @@
 library;
 
 export 'locale_provider.dart';
-export 'settings_provider.dart';
-export 'serial_provider.dart';
 export 'measurement_controller.dart';
+export 'midi_provider.dart';
+export 'serial_provider.dart'; // Deprecated: Use midi_provider.dart
 export 'session_repository.dart';
+export 'settings_provider.dart';

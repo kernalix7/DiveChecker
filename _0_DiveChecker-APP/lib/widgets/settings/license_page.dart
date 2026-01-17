@@ -128,7 +128,7 @@ class _LicenseHeader extends StatelessWidget {
                 ),
                 Spacing.verticalXs,
                 Text(
-                  'Version 1.0.0',
+                  'Version ${AppConfig.version}',
                   style: TextStyle(
                     fontSize: FontSizes.body,
                     color: Colors.white.withOpacity(Opacities.almostFull),
@@ -441,7 +441,7 @@ class _ViewAllLicensesButton extends StatelessWidget {
           showLicensePage(
             context: context,
             applicationName: l10n.appTitle,
-            applicationVersion: '1.0.0',
+            applicationVersion: AppConfig.version,
           );
         },
         icon: const Icon(Icons.description_outlined),
