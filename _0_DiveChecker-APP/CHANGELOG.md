@@ -62,29 +62,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.1.0] - 2026-01-08
+## [1.1.0] - 2025-01-08
 
 ### Added
+- 🔊 **USB MIDI Communication** - Switched from USB Serial to USB MIDI SysEx protocol
+- 🔐 **ECDSA Device Authentication** - Hardware device verification using ECDSA signatures
 - 🌐 Extended i18n keys (scanningForDevices, deviceConnectedSuccessfully, etc.)
 - 🎨 `StatInfo`, `InfoRow` common widgets (stat_info.dart)
 - 📊 `ScoreColors.gradeLabel()` utility method
 - 📈 `recalculateWithSelectedPeaks()` peak analysis function
+- 📊 `chart_utils.dart` - Shared chart utility functions for consistent grid/label calculation
 
 ### Changed
+- ⚡ **Performance Optimization** - Incremental statistics (O(1) instead of O(n) per update)
 - ♻️ Code refactoring: Consolidated duplicate widgets/functions into common modules
 - 📝 Applied l10n to serial_device_screen.dart
 - 🔧 Fixed styled_container.dart `_Paddings` class
+- ⏱️ **Chart Time Calculation** - Fixed duration and X-axis to use sample-based calculation
+  - Duration = samples / Hz (not DateTime.now().difference())
+  - X = index × (1000/Hz) milliseconds
+- 📐 **Grid Alignment** - Vertical grid now aligns with sample rate intervals
 
 ### Improved
 - 📉 graph_detail_page.dart reduced by ~110 lines (using common widgets)
 - 📉 peak_analysis_page.dart reduced by ~150 lines (function extraction)
+- 📉 settings_screen.dart reduced by ~230 lines (removed unused dialog functions)
 - 🧹 Removed duplicate `_getScoreColor`, `_getGradeLabel` methods
+- 🧹 Removed debug print statements from production code
+- 🧹 Cleaned up Linux MIDI package debug prints
 
 ### Documentation
 - 📚 README.md complete rewrite (Flutter template → project documentation)
 - 📖 Created 0_CAD/README.md
 - 📝 Enhanced 0_MCU_Firmware/README.md license section
 - 📄 Separated all docs into EN/KO versions
+- 📝 Updated README for USB MIDI communication details
 
 ---
 

@@ -8,6 +8,7 @@ import 'package:fl_chart/fl_chart.dart';
 import '../../constants/app_constants.dart';
 import '../../l10n/app_localizations.dart';
 import '../../utils/formatters.dart';
+import '../../utils/chart_utils.dart' as chart_utils;
 
 class PressureDisplay extends StatelessWidget {
   final double pressure;
@@ -314,47 +315,16 @@ class PressureChart extends StatelessWidget {
     this.sampleRate = 8,
   });
 
-  /// Calculate X axis interval based on data range (in milliseconds)
-  /// Aligned to sample rate - interval is always a multiple of sample interval
+  /// Calculate X axis interval - delegates to shared utility
   double _calculateXInterval(double rangeMs) {
-    final rangeInSeconds = rangeMs / 1000.0;
-    final sampleIntervalMs = 1000.0 / sampleRate; // e.g., 125ms for 8Hz
-    
-    // Target interval in seconds - more frequent labels
-    double targetSeconds;
-    if (rangeInSeconds <= 5) {
-      targetSeconds = 0.5;
-    } else if (rangeInSeconds <= 10) {
-      targetSeconds = 1;
-    } else if (rangeInSeconds <= 20) {
-      targetSeconds = 2;
-    } else if (rangeInSeconds <= 40) {
-      targetSeconds = 5;
-    } else if (rangeInSeconds <= 90) {
-      targetSeconds = 10;
-    } else if (rangeInSeconds <= 180) {
-      targetSeconds = 15;
-    } else {
-      targetSeconds = 20;
-    }
-    
-    // Snap to nearest sample interval multiple
-    final targetMs = targetSeconds * 1000.0;
-    final samples = (targetMs / sampleIntervalMs).round().clamp(1, 1000000);
-    return samples * sampleIntervalMs;
+    return chart_utils.calculateXAxisInterval(
+      rangeMs: rangeMs,
+      sampleRate: sampleRate,
+    );
   }
 
-  /// Format time label: seconds for < 60s, m:ss for >= 60s
-  String _formatTimeLabel(double seconds) {
-    final totalSeconds = seconds.floor();
-    if (totalSeconds < 60) {
-      return '${totalSeconds}s';
-    } else {
-      final minutes = totalSeconds ~/ 60;
-      final secs = totalSeconds % 60;
-      return '$minutes:${secs.toString().padLeft(2, '0')}';
-    }
-  }
+  /// Format time label - delegates to shared utility
+  String _formatTimeLabel(double seconds) => chart_utils.formatTimeLabel(seconds);
 
   @override
   Widget build(BuildContext context) {

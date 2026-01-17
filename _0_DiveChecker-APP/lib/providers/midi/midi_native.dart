@@ -61,7 +61,7 @@ class NativeMidiHandler implements MidiHandler {
       _connectedDevice = device;
       return true;
     } catch (e) {
-      debugPrint('Native MIDI connect error: $e');
+      if (kDebugMode) debugPrint('Native MIDI connect error: $e');
       return false;
     }
   }
@@ -82,7 +82,7 @@ class NativeMidiHandler implements MidiHandler {
       _midiCommand.sendData(Uint8List.fromList(data), deviceId: _connectedDevice!.id);
       return true;
     } catch (e) {
-      debugPrint('Native MIDI send error: $e');
+      if (kDebugMode) debugPrint('Native MIDI send error: $e');
       return false;
     }
   }

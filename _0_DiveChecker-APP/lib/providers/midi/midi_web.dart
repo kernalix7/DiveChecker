@@ -75,7 +75,7 @@ class WebMidiHandler implements MidiHandler {
       _initialized = true;
       return true;
     } catch (e) {
-      debugPrint('Web MIDI API not available: $e');
+      if (kDebugMode) debugPrint('Web MIDI API not available: $e');
       _initialized = true;
       return false;
     }
@@ -150,7 +150,7 @@ class WebMidiHandler implements MidiHandler {
       
       return _connectedInput != null || _connectedOutput != null;
     } catch (e) {
-      debugPrint('Web MIDI connect error: $e');
+      if (kDebugMode) debugPrint('Web MIDI connect error: $e');
       return false;
     }
   }
@@ -179,7 +179,7 @@ class WebMidiHandler implements MidiHandler {
       _connectedOutput!.send(jsData);
       return true;
     } catch (e) {
-      debugPrint('Web MIDI send error: $e');
+      if (kDebugMode) debugPrint('Web MIDI send error: $e');
       return false;
     }
   }

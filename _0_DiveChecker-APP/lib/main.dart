@@ -53,7 +53,6 @@ class _DiveCheckerAppState extends State<DiveCheckerApp> with WidgetsBindingObse
     final serial = context.read<SerialProvider>();
     
     if (state == AppLifecycleState.detached || state == AppLifecycleState.paused) {
-      debugPrint('[Lifecycle] App state: $state - disconnecting Serial');
       serial.disconnect();
     }
   }

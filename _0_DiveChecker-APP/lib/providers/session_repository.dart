@@ -129,42 +129,34 @@ class SessionRepository extends ChangeNotifier {
       final dbSessions = _deviceFilter == null 
           ? await _dbService.getAllSessions()
           : await _dbService.getSessionsByDevice(_deviceFilter);
-      _sessions = [];
-
-      for (var session in dbSessions) {
-        // Skip if already exists (by ID)
-        if (_sessions.any((s) => s.id == session.id)) continue;
-        
+      
+      // Process sessions in parallel for better performance
+      final sessionFutures = dbSessions.map((session) async {
         // Load pressure data
         final pressureData = await _dbService.getPressureDataBySession(session.id!);
         
         // Convert to FlSpot using index * interval (based on sample rate)
-        // duration is in seconds, so calculate interval
         final sampleRate = session.sampleRate > 0 ? session.sampleRate : 8;
-        final intervalMs = 1000.0 / sampleRate; // ms per sample
+        final intervalMs = 1000.0 / sampleRate;
         
         final chartData = pressureData.asMap().entries.map((entry) {
           final elapsedMs = entry.key * intervalMs;
           return FlSpot(elapsedMs, entry.value.pressure);
         }).toList();
-        
-        debugPrint('Session ${session.id}: ${pressureData.length} points, sampleRate=$sampleRate, duration=${session.duration}s');
-        if (chartData.isNotEmpty) {
-          debugPrint('  First X: ${chartData.first.x}ms, Last X: ${chartData.last.x}ms');
-        }
 
         // Load graph notes
         final graphNotes = await _dbService.getGraphNotesBySession(session.id!);
 
-        _sessions.add(SessionData.fromSession(
+        return SessionData.fromSession(
           session,
           chartData: chartData,
           graphNotes: graphNotes,
-        ));
-      }
+        );
+      });
+      
+      _sessions = await Future.wait(sessionFutures);
     } catch (e) {
       _error = e.toString();
-      debugPrint('SessionRepository: Error loading sessions: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -181,8 +173,7 @@ class SessionRepository extends ChangeNotifier {
   Future<List<Map<String, dynamic>>> getUniqueDevices() async {
     try {
       return await _dbService.getUniqueDevices();
-    } catch (e) {
-      debugPrint('Error getting unique devices: $e');
+    } catch (_) {
       return [];
     }
   }

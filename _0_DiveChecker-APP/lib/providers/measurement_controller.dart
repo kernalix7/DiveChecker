@@ -80,6 +80,10 @@ class MeasurementController extends ChangeNotifier {
   // Single data list - firmware output rate = display rate = storage rate
   final List<FlSpot> _dataList = [];
   
+  // Incremental statistics - avoid recalculating from entire list
+  double _sumPressure = 0.0;
+  double _maxPressureValue = 0.0;
+  
   MeasurementController({
     required SerialProvider serialProvider,
     SettingsProvider? settingsProvider,  // Keep for backward compatibility but unused
@@ -98,11 +102,21 @@ class MeasurementController extends ChangeNotifier {
       final sampleIntervalMs = 1000.0 / outputRate;  // e.g., 125ms for 8Hz
       final xMs = _dataList.length * sampleIntervalMs;
       
-      // Store all data - firmware output rate = display rate = storage rate
+      // Store data and update incremental statistics
       _dataList.add(FlSpot(xMs, pressure));
+      _sumPressure += pressure;
+      if (pressure > _maxPressureValue) {
+        _maxPressureValue = pressure;
+      }
       
       if (_dataList.length > MeasurementConfig.maxDataPoints) {
-        _dataList.removeAt(0);
+        // Subtract removed value from sum
+        final removed = _dataList.removeAt(0);
+        _sumPressure -= removed.y;
+        // Recalculate max only if we removed the max value
+        if (removed.y >= _maxPressureValue) {
+          _maxPressureValue = _dataList.isEmpty ? 0.0 : _dataList.map((e) => e.y).reduce(max);
+        }
       }
     }
     
@@ -115,9 +129,7 @@ class MeasurementController extends ChangeNotifier {
   /// Actual duration in seconds: sample count / Hz
   int get actualDurationSeconds {
     if (_dataList.isEmpty) return 0;
-    final seconds = _dataList.length / outputRate;
-    debugPrint('Duration calc: ${_dataList.length} samples / $outputRate Hz = ${seconds.round()}s');
-    return seconds.round();
+    return (_dataList.length / outputRate).round();
   }
   
   bool get isConnected => _serialProvider.isConnected;
@@ -128,6 +140,8 @@ class MeasurementController extends ChangeNotifier {
     if (!isConnected) return;
     
     _dataList.clear();
+    _sumPressure = 0.0;
+    _maxPressureValue = 0.0;
     
     _state = MeasurementState(
       isMeasuring: true,
@@ -166,16 +180,12 @@ class MeasurementController extends ChangeNotifier {
           maxX = elapsedMs.toDouble();
         }
         
-        double maxPressure = 0.0;
-        double avgPressure = 0.0;
-        if (_dataList.isNotEmpty) {
-          maxPressure = _dataList.map((e) => e.y).reduce(max);
-          avgPressure = _dataList.map((e) => e.y).reduce((a, b) => a + b) / _dataList.length;
-        }
+        // Use pre-calculated incremental statistics
+        final avgPressure = _dataList.isEmpty ? 0.0 : _sumPressure / _dataList.length;
         
         _state = _state.copyWith(
           pressureData: List.unmodifiable(_dataList),
-          maxPressure: maxPressure,
+          maxPressure: _maxPressureValue,
           avgPressure: avgPressure,
           minX: minX,
           maxX: maxX,
@@ -247,6 +257,8 @@ class MeasurementController extends ChangeNotifier {
   void reset() {
     _measurementTimer?.cancel();
     _dataList.clear();
+    _sumPressure = 0.0;
+    _maxPressureValue = 0.0;
     _state = const MeasurementState();
     notifyListeners();
   }

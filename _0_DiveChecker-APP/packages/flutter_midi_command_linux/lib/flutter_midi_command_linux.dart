@@ -69,7 +69,6 @@ class FlutterMidiCommandLinux extends MidiCommandPlatform {
   ///
   /// This class implements the `package:flutter_midi_command_platform_interface` functionality for linux
   static void registerWith() {
-    print("register FlutterMidiCommandLinux");
     MidiCommandPlatform.instance = FlutterMidiCommandLinux();
   }
 
@@ -113,15 +112,11 @@ class FlutterMidiCommandLinux extends MidiCommandPlatform {
   /// Connects to the device.
   @override
   Future<void> connectToDevice(MidiDevice device, {List<MidiPort>? ports}) async {
-    print('connect to $device');
-
     var linuxDevice = device as LinuxMidiDevice;
     final success = await linuxDevice.connect();
     if (success) {
       _connectedDevices[device.id] = device;
       _setupStreamController.add("deviceConnected");
-    } else {
-      print("failed to connect $linuxDevice");
     }
   }
 

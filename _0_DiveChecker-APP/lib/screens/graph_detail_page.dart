@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
 import '../constants/app_constants.dart';
 import '../widgets/common/stat_info.dart';
+import '../utils/chart_utils.dart' as chart_utils;
 import 'dart:math';
 import 'dart:async';
 import '../services/unified_database_service.dart';
@@ -230,89 +231,28 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
   /// Get sample rate from session (defaults to 8Hz)
   int get _sampleRate => widget.session['sample_rate'] ?? 8;
 
-  /// Calculate vertical grid interval aligned to sample rate
-  /// Grid lines are placed at multiples of sample interval
+  /// Calculate vertical grid interval - delegates to shared utility
   double _calculateVerticalGridInterval(double chartPixelWidth) {
-    final dataRange = _maxX - _minX;
-    final rangeInSeconds = dataRange / 1000.0; // X is in milliseconds
-    final sampleIntervalMs = 1000.0 / _sampleRate; // e.g., 125ms for 8Hz
-
-    // Choose target interval in seconds based on zoom level
-    double targetSeconds;
-    if (rangeInSeconds <= 2) {
-      targetSeconds = 0.125; // 8 grids per second
-    } else if (rangeInSeconds <= 5) {
-      targetSeconds = 0.25; // 4 grids per second
-    } else if (rangeInSeconds <= 10) {
-      targetSeconds = 0.5; // 2 grids per second
-    } else if (rangeInSeconds <= 20) {
-      targetSeconds = 1.0; // 1 grid per second
-    } else if (rangeInSeconds <= 60) {
-      targetSeconds = 2.0; // 1 grid per 2 seconds
-    } else if (rangeInSeconds <= 120) {
-      targetSeconds = 5.0; // 1 grid per 5 seconds
-    } else if (rangeInSeconds <= 300) {
-      targetSeconds = 10.0; // 1 grid per 10 seconds
-    } else {
-      targetSeconds = 30.0; // 1 grid per 30 seconds
-    }
-
-    // Snap to nearest sample interval multiple
-    final targetMs = targetSeconds * 1000.0;
-    final samples = (targetMs / sampleIntervalMs).round().clamp(1, 1000000);
-    return samples * sampleIntervalMs;
+    return chart_utils.calculateVerticalGridInterval(
+      rangeMs: _maxX - _minX,
+      sampleRate: _sampleRate,
+    );
   }
 
+  /// Calculate X-axis interval - delegates to shared utility with dense mode
   double _calculateXInterval() {
-    final range = _maxX - _minX;
-    final rangeInSeconds = range / 1000.0;
-    final sampleIntervalMs = 1000.0 / _sampleRate;
-
-    // More frequent labels, especially when zoomed
-    double targetSeconds;
-    if (rangeInSeconds <= 1)
-      targetSeconds = 0.125;  // 8 labels per second when very zoomed
-    else if (rangeInSeconds <= 2)
-      targetSeconds = 0.25;
-    else if (rangeInSeconds <= 5)
-      targetSeconds = 0.5;
-    else if (rangeInSeconds <= 10)
-      targetSeconds = 1;
-    else if (rangeInSeconds <= 20)
-      targetSeconds = 2;
-    else if (rangeInSeconds <= 40)
-      targetSeconds = 5;
-    else if (rangeInSeconds <= 90)
-      targetSeconds = 10;
-    else if (rangeInSeconds <= 180)
-      targetSeconds = 15;
-    else
-      targetSeconds = 20;
-
-    // Snap to sample rate multiple
-    final targetMs = targetSeconds * 1000.0;
-    final samples = (targetMs / sampleIntervalMs).round().clamp(1, 1000000);
-    return samples * sampleIntervalMs;
+    return chart_utils.calculateXAxisInterval(
+      rangeMs: _maxX - _minX,
+      sampleRate: _sampleRate,
+      dense: true,
+    );
   }
 
   /// Convert X value (milliseconds) to seconds
-  double _xToSeconds(double x) {
-    // X is in milliseconds (stored as elapsed time since session start)
-    // seconds = milliseconds / 1000
-    return x / 1000.0;
-  }
+  double _xToSeconds(double x) => chart_utils.msToSeconds(x);
 
-  /// Format time label: seconds for < 60s, m:ss for >= 60s
-  String _formatTimeLabel(double seconds) {
-    final totalSeconds = seconds.floor();
-    if (totalSeconds < 60) {
-      return '${totalSeconds}s';
-    } else {
-      final minutes = totalSeconds ~/ 60;
-      final secs = totalSeconds % 60;
-      return '$minutes:${secs.toString().padLeft(2, '0')}';
-    }
-  }
+  /// Format time label - delegates to shared utility
+  String _formatTimeLabel(double seconds) => chart_utils.formatTimeLabel(seconds);
 
   /// Label info - zoom-aware label display
   /// Peaks are prioritized, then other points

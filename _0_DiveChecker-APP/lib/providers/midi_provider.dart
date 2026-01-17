@@ -228,7 +228,7 @@ class MidiProvider extends ChangeNotifier {
 
     try {
       final devices = await _midiHandler.getDevices();
-      debugPrint('Found ${devices.length} MIDI devices');
+      if (kDebugMode) debugPrint('Found ${devices.length} MIDI devices');
 
       final midiDevices = <MidiDeviceInfo>[];
       for (final device in devices) {
@@ -237,13 +237,13 @@ class MidiProvider extends ChangeNotifier {
           device: device,
           deviceName: cachedName,
         ));
-        debugPrint('MIDI Device: ${device.name} (${device.id})');
+        if (kDebugMode) debugPrint('MIDI Device: ${device.name} (${device.id})');
       }
 
       _setState(MidiConnectionState.disconnected);
       return midiDevices;
     } catch (e) {
-      debugPrint('Scan error: $e');
+      if (kDebugMode) debugPrint('Scan error: $e');
       _errorMessage = e.toString();
       _setState(MidiConnectionState.error);
       return [];
@@ -264,7 +264,7 @@ class MidiProvider extends ChangeNotifier {
       _midiSubscription = _midiHandler.onDataReceived.listen(
         _handleMidiData,
         onError: (error) {
-          debugPrint('MIDI error: $error');
+          if (kDebugMode) debugPrint('MIDI error: $error');
           disconnect();
         },
       );
@@ -275,7 +275,7 @@ class MidiProvider extends ChangeNotifier {
 
       return true;
     } catch (e) {
-      debugPrint('Connection error: $e');
+      if (kDebugMode) debugPrint('Connection error: $e');
       _errorMessage = 'Connection failed: $e';
       _setState(MidiConnectionState.error);
       return false;
@@ -286,7 +286,9 @@ class MidiProvider extends ChangeNotifier {
   void _handleMidiData(Uint8List data) {
     if (data.isEmpty) return;
 
-    debugPrint('MIDI raw data (${data.length} bytes): ${data.map((b) => b.toRadixString(16).padLeft(2, '0')).join(' ')}');
+    if (kDebugMode) {
+      debugPrint('MIDI raw data (${data.length} bytes): ${data.map((b) => b.toRadixString(16).padLeft(2, '0')).join(' ')}');
+    }
 
     // Process each byte for SysEx reassembly
     for (final byte in data) {
@@ -303,7 +305,9 @@ class MidiProvider extends ChangeNotifier {
         // Process complete SysEx message
         final completeMessage = Uint8List.fromList(_sysexBuffer);
         _sysexBuffer.clear();
-        debugPrint('Complete SysEx (${completeMessage.length} bytes): ${completeMessage.map((b) => b.toRadixString(16).padLeft(2, '0')).join(' ')}');
+        if (kDebugMode) {
+          debugPrint('Complete SysEx (${completeMessage.length} bytes): ${completeMessage.map((b) => b.toRadixString(16).padLeft(2, '0')).join(' ')}');
+        }
         _handleSysEx(completeMessage);
       } else if (_inSysex) {
         // Middle of SysEx - only accept valid data bytes (< 0x80)
@@ -314,7 +318,9 @@ class MidiProvider extends ChangeNotifier {
           // Real-time messages - ignore, don't break SysEx
         } else {
           // Invalid byte in SysEx, abort
-          debugPrint('SysEx aborted due to invalid byte: 0x${byte.toRadixString(16)}');
+          if (kDebugMode) {
+            debugPrint('SysEx aborted due to invalid byte: 0x${byte.toRadixString(16)}');
+          }
           _inSysex = false;
           _sysexBuffer.clear();
         }
@@ -392,7 +398,7 @@ class MidiProvider extends ChangeNotifier {
     if (idx + serialLen > payload.length) return;
     final serial = String.fromCharCodes(payload.sublist(idx, idx + serialLen));
     idx += serialLen;
-    debugPrint('Device serial: $serial');
+    if (kDebugMode) debugPrint('Device serial: $serial');
     
     // Parse name
     if (idx >= payload.length) return;
@@ -407,13 +413,13 @@ class MidiProvider extends ChangeNotifier {
     if (idx + fwLen > payload.length) return;
     final fwVersion = String.fromCharCodes(payload.sublist(idx, idx + fwLen));
     idx += fwLen;
-    debugPrint('Firmware version: $fwVersion');
+    if (kDebugMode) debugPrint('Firmware version: $fwVersion');
     
     // Parse sensor status
     if (idx >= payload.length) return;
     final sensorOk = payload[idx] == 0x01;
     _sensorConnected = sensorOk;
-    debugPrint('Sensor status: ${sensorOk ? "OK" : "NOT CONNECTED"}');
+    if (kDebugMode) debugPrint('Sensor status: ${sensorOk ? "OK" : "NOT CONNECTED"}');
     
     // Update device name
     if (_connectedDevice != null && name.isNotEmpty) {
@@ -435,12 +441,14 @@ class MidiProvider extends ChangeNotifier {
 
   void _handleAuthResponse(Uint8List payload) {
     if (_authNonce == null) {
-      debugPrint('Auth response received but no nonce pending');
+      if (kDebugMode) debugPrint('Auth response received but no nonce pending');
       return;
     }
 
-    debugPrint('Auth response payload length: ${payload.length}');
-    debugPrint('Auth response raw: ${payload.map((b) => b.toRadixString(16).padLeft(2, '0')).join(' ')}');
+    if (kDebugMode) {
+      debugPrint('Auth response payload length: ${payload.length}');
+      debugPrint('Auth response raw: ${payload.map((b) => b.toRadixString(16).padLeft(2, '0')).join(' ')}');
+    }
 
     // Firmware sends signature as nibble-encoded (2 bytes per original byte)
     // Decode nibbles back to bytes
@@ -455,8 +463,10 @@ class MidiProvider extends ChangeNotifier {
         .map((b) => b.toRadixString(16).padLeft(2, '0'))
         .join();
 
-    debugPrint('Auth nonce: $_authNonce');
-    debugPrint('Auth signature (${signatureBytes.length} bytes): $signatureHex');
+    if (kDebugMode) {
+      debugPrint('Auth nonce: $_authNonce');
+      debugPrint('Auth signature (${signatureBytes.length} bytes): $signatureHex');
+    }
 
     final isValid = DeviceAuthenticator.verifySignature(
       nonce: _authNonce!,
@@ -466,7 +476,7 @@ class MidiProvider extends ChangeNotifier {
 
     _isAuthenticated = isValid;
     _authenticationComplete = true;
-    debugPrint('Device authentication: ${isValid ? "SUCCESS ✓" : "FAILED ✗"}');
+    if (kDebugMode) debugPrint('Device authentication: ${isValid ? "SUCCESS ✓" : "FAILED ✗"}');
     _authCompleter?.complete(isValid);
     _authCompleter = null;
     _authNonce = null;
@@ -512,7 +522,7 @@ class MidiProvider extends ChangeNotifier {
     try {
       return await _midiHandler.sendSysEx(data);
     } catch (e) {
-      debugPrint('Failed to send MIDI: $e');
+      if (kDebugMode) debugPrint('Failed to send MIDI: $e');
       return false;
     }
   }
@@ -713,7 +723,7 @@ class MidiProvider extends ChangeNotifier {
         // Auth challenge - handled internally
         return true;
       default:
-        debugPrint('Unknown command: $cmd');
+        if (kDebugMode) debugPrint('Unknown command: $cmd');
         return false;
     }
   }
@@ -746,8 +756,10 @@ class MidiProvider extends ChangeNotifier {
     final sum = _calibrationSamples.reduce((a, b) => a + b);
     _atmosphericPressureOffset = sum / _calibrationSamples.length;
 
-    debugPrint(
-        'Atmospheric calibration complete: offset = $_atmosphericPressureOffset (${_calibrationSamples.length} samples)');
+    if (kDebugMode) {
+      debugPrint(
+          'Atmospheric calibration complete: offset = $_atmosphericPressureOffset (${_calibrationSamples.length} samples)');
+    }
 
     _isCalibrating = false;
     _calibrationStartTime = null;
@@ -809,7 +821,7 @@ class MidiProvider extends ChangeNotifier {
         _deviceNameCache = decoded.map((k, v) => MapEntry(k, v.toString()));
       }
     } catch (e) {
-      debugPrint('Failed to load device name cache: $e');
+      if (kDebugMode) debugPrint('Failed to load device name cache: $e');
     }
   }
 

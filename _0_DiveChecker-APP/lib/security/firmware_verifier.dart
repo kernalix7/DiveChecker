@@ -87,7 +87,7 @@ class FirmwarePackage {
       
       return outputPath;
     } catch (e) {
-      debugPrint('Failed to extract firmware: $e');
+      if (kDebugMode) debugPrint('Failed to extract firmware: $e');
       return null;
     }
   }
@@ -226,7 +226,7 @@ class FirmwareVerifier {
         result['device'] = deviceMatch?.group(0) ?? 'DiveChecker';
       }
     } catch (e) {
-      debugPrint('Version extraction error: $e');
+      if (kDebugMode) debugPrint('Version extraction error: $e');
     }
     
     return result;
@@ -242,14 +242,14 @@ class FirmwareVerifier {
       // Parse DER signature
       final ecSig = _parseDerSignature(signature);
       if (ecSig == null) {
-        debugPrint('Failed to parse DER signature');
+        if (kDebugMode) debugPrint('Failed to parse DER signature');
         return false;
       }
       
       // Load public key
       final ecPublicKey = _loadPublicKey(ecdsaPublicKey);
       if (ecPublicKey == null) {
-        debugPrint('Failed to load public key');
+        if (kDebugMode) debugPrint('Failed to load public key');
         return false;
       }
       
@@ -259,7 +259,7 @@ class FirmwareVerifier {
       
       return verifier.verifySignature(hash, ecSig);
     } catch (e) {
-      debugPrint('Signature verification error: $e');
+      if (kDebugMode) debugPrint('Signature verification error: $e');
       return false;
     }
   }

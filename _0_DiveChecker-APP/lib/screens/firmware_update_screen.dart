@@ -6,6 +6,7 @@ library;
 
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
@@ -52,7 +53,7 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
       }
       await _loadFirmwareFiles();
     } catch (e) {
-      debugPrint('Error getting default path: $e');
+      if (kDebugMode) debugPrint('Error getting default path: $e');
     }
   }
 

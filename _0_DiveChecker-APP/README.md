@@ -6,19 +6,20 @@ Cross-platform pressure monitoring app for freediving equalization training.
 
 ## Supported Platforms
 
-| Platform | Status |
-|----------|--------|
-| Android | ✅ Supported |
-| iOS | ✅ Supported |
-| Linux | ✅ Supported |
-| Windows | ✅ Supported |
-| macOS | ✅ Supported |
-| Web | ⚠️ Limited (No Serial support) |
+| Platform | Status | Connection |
+|----------|--------|------------|
+| Android | ✅ Supported | USB MIDI |
+| iOS | ✅ Supported | USB MIDI |
+| Linux | ✅ Supported | USB MIDI |
+| Windows | ✅ Supported | USB MIDI |
+| macOS | ✅ Supported | USB MIDI |
+| Web | ⚠️ Limited | Web MIDI API |
 
 ## Requirements
 
 - Flutter SDK 3.10.4+
 - Dart SDK 3.0+
+- DiveChecker V1 device (RP2350 Pico2)
 
 ## Getting Started
 
@@ -58,7 +59,8 @@ lib/
 ├── l10n/                        # Localization (EN/KO)
 ├── models/                      # Data models
 ├── providers/                   # State management (Provider)
-│   ├── serial_provider.dart     # USB Serial connection
+│   ├── midi_provider.dart       # USB MIDI connection
+│   ├── serial_provider.dart     # Alias for midi_provider
 │   ├── measurement_controller.dart # Measurement logic
 │   ├── session_repository.dart  # Session cache
 │   ├── settings_provider.dart   # App settings
@@ -74,7 +76,10 @@ lib/
 ├── services/                    # Services
 │   ├── unified_database_service.dart # DB integration
 │   └── backup_service.dart      # Backup/restore
+├── security/                    # Security
+│   └── device_authenticator.dart # ECDSA device auth
 ├── utils/                       # Utilities
+│   ├── chart_utils.dart         # Chart helper functions
 │   └── peak_analyzer.dart       # Peak analysis algorithms
 └── widgets/                     # UI components
     ├── analysis/                # Analysis widgets
@@ -86,10 +91,17 @@ lib/
 
 ## Key Features
 
+### 🔌 USB MIDI Communication
+- Cross-platform USB MIDI support
+- ECDSA device authentication
+- SysEx-based data protocol
+- Configurable output rate (4-50 Hz)
+
 ### 📊 Real-time Pressure Monitoring
-- 100Hz internal sampling, 8Hz output
+- 100Hz internal sampling, configurable output (default 8Hz)
 - Real-time line chart (fl_chart)
 - Pinch zoom / drag pan gestures
+- Hz-aligned grid lines
 
 ### 🔬 Peak Analysis
 - Rhythm score (peak interval consistency)
