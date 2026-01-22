@@ -109,20 +109,77 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return spots;
   }
 
-  void _showSessionDetail(SessionData session) {
-    final chartData = session.chartData.isNotEmpty
-        ? session.chartData
-        : _generateDemoChartData(session.id ?? 0, session.duration);
-
-    final sessionMap = session.toMap();
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-            GraphDetailPage(chartData: chartData, session: sessionMap),
+  Future<void> _showSessionDetail(SessionData session) async {
+    // Show subtle loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black26,
+      builder: (context) => Center(
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 20,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: const Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 36,
+                height: 36,
+                child: CircularProgressIndicator(strokeWidth: 3),
+              ),
+              SizedBox(height: 16),
+              Text('Loading...', style: TextStyle(fontSize: 14)),
+            ],
+          ),
+        ),
       ),
     );
+
+    try {
+      // Lazy load chart data if not already loaded
+      final sessionRepo = Provider.of<SessionRepository>(context, listen: false);
+      SessionData loadedSession;
+      
+      if (session.chartData.isEmpty && session.id != null) {
+        loadedSession = await sessionRepo.loadSessionWithChartData(session);
+      } else {
+        loadedSession = session;
+      }
+
+      if (!mounted) return;
+      Navigator.pop(context); // Close loading dialog
+
+      final chartData = loadedSession.chartData.isNotEmpty
+          ? loadedSession.chartData
+          : _generateDemoChartData(session.id ?? 0, session.duration);
+
+      final sessionMap = loadedSession.toMap();
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              GraphDetailPage(chartData: chartData, session: sessionMap),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      Navigator.pop(context); // Close loading dialog
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load session data: $e')),
+      );
+    }
   }
 
   @override
@@ -265,7 +322,7 @@ class _DeviceFilterSheet extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: Spacing.screenPadding,
             child: Text(
               l10n.selectDevice,
               style: theme.textTheme.titleMedium?.copyWith(
@@ -310,7 +367,7 @@ class _DeviceFilterSheet extends StatelessWidget {
               onTap: () => onSelect(serial),
             );
           }),
-          const SizedBox(height: 16),
+          const SizedBox(height: Spacing.lg),
         ],
       ),
     );

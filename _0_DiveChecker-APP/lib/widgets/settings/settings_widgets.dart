@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import '../../constants/app_constants.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/locale_provider.dart';
+import '../common/styled_container.dart';
 import '../icon_container.dart';
 import '../section_header.dart';
 
@@ -39,7 +40,7 @@ class LanguageSection extends StatelessWidget {
             ),
             title: Text(
               l10n.language,
-              style: const TextStyle(fontWeight: FontWeight.w600),
+              style: AppTextStyles.semiBold,
             ),
             subtitle: Text(LocaleProvider.getDisplayName(localeProvider.locale)),
             trailing: const Icon(Icons.chevron_right),
@@ -85,13 +86,13 @@ class NotificationsSection extends StatelessWidget {
                 ),
                 title: Text(
                   l10n.enableNotifications,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                  style: AppTextStyles.semiBold,
                 ),
                 subtitle: Text(l10n.getAlertsForMeasurements),
                 value: notificationsEnabled,
                 onChanged: onNotificationsChanged,
               ),
-              Divider(height: Dimensions.dividerHeight, indent: WidgetSizes.dividerIndent, color: theme.colorScheme.outlineVariant),
+              const AppDivider(),
               SwitchListTile(
                 secondary: IconContainer(
                   icon: Icons.vibration,
@@ -99,7 +100,7 @@ class NotificationsSection extends StatelessWidget {
                 ),
                 title: Text(
                   l10n.hapticFeedback,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                  style: AppTextStyles.semiBold,
                 ),
                 subtitle: Text(l10n.vibrateOnKeyActions),
                 value: hapticEnabled,
@@ -153,7 +154,7 @@ class DataManagementSection extends StatelessWidget {
                 ),
                 title: Text(
                   l10n.backupData,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                  style: AppTextStyles.semiBold,
                 ),
                 subtitle: Text(l10n.backupDataDescription),
                 trailing: isBackingUp 
@@ -187,7 +188,7 @@ class DataManagementSection extends StatelessWidget {
                 ),
               ],
               
-              Divider(height: Dimensions.dividerHeight, indent: WidgetSizes.dividerIndent, color: theme.colorScheme.outlineVariant),
+              const AppDivider(),
               
               ListTile(
                 leading: IconContainer(
@@ -196,7 +197,7 @@ class DataManagementSection extends StatelessWidget {
                 ),
                 title: Text(
                   l10n.restoreData,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                  style: AppTextStyles.semiBold,
                 ),
                 subtitle: Text(l10n.restoreDataDescription),
                 trailing: isRestoring
@@ -209,7 +210,7 @@ class DataManagementSection extends StatelessWidget {
                 onTap: isRestoring ? null : onRestore,
               ),
               
-              Divider(height: Dimensions.dividerHeight, indent: WidgetSizes.dividerIndent, color: theme.colorScheme.outlineVariant),
+              const AppDivider(),
               
               ListTile(
                 leading: IconContainer(
@@ -265,13 +266,13 @@ class AppInfoSection extends StatelessWidget {
                 ),
                 title: Text(
                   l10n.appVersion,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                  style: AppTextStyles.semiBold,
                 ),
                 subtitle: const Text(AppConfig.versionDisplay),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: onVersionTap,
               ),
-              Divider(height: Dimensions.dividerHeight, indent: WidgetSizes.dividerIndent, color: theme.colorScheme.outlineVariant),
+              const AppDivider(),
               ListTile(
                 leading: IconContainer(
                   icon: Icons.article,
@@ -279,7 +280,7 @@ class AppInfoSection extends StatelessWidget {
                 ),
                 title: Text(
                   l10n.licenses,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                  style: AppTextStyles.semiBold,
                 ),
                 subtitle: Text(l10n.openSourceLicenses),
                 trailing: const Icon(Icons.chevron_right),
@@ -321,7 +322,7 @@ class DeveloperSection extends StatelessWidget {
                 ),
                 title: Text(
                   l10n.exportDbToFile,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                  style: AppTextStyles.semiBold,
                 ),
                 subtitle: Text(l10n.exportDatabaseForDebugging),
                 trailing: const Icon(Icons.chevron_right),

@@ -206,14 +206,14 @@ class _SerialDeviceScreenState extends State<SerialDeviceScreen> {
                           IconContainer(
                             icon: Icons.usb_off,
                             size: IconSizes.display * 1.67,
-                            color: Colors.grey[400]!,
+                            color: StatusColors.tertiaryText,
                           ),
                           Spacing.verticalLg,
                           Text(
                             'No USB devices found',
                             style: TextStyle(
                               fontSize: FontSizes.bodyLg,
-                              color: Colors.grey[600],
+                              color: StatusColors.secondaryText,
                             ),
                           ),
                           Spacing.verticalSm,
@@ -221,7 +221,7 @@ class _SerialDeviceScreenState extends State<SerialDeviceScreen> {
                             'Connect your device via USB cable',
                             style: TextStyle(
                               fontSize: FontSizes.body,
-                              color: Colors.grey[500],
+                              color: StatusColors.tertiaryText,
                             ),
                           ),
                           Spacing.verticalXl,

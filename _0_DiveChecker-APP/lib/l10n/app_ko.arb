@@ -554,5 +554,14 @@
   "noiseFilter": "노이즈 필터",
   "noiseFilterDescription": "노이즈 감소를 위한 소프트웨어 필터",
   "filterStrength": "필터 강도",
-  "filterStrengthDescription": "값이 높을수록 더 부드럽게 표시"
+  "filterStrengthDescription": "값이 높을수록 더 부드럽게 표시",
+  
+  "atmosphericCalibrating": "대기압 측정중...",
+  "atmosphericRecalibrate": "대기압 재측정",
+  "atmosphericKeepSensorStill": "센서를 대기중에 가만히 두세요",
+  "secondsRemaining": "{seconds}초 남음",
+  "selectFile": "파일 선택",
+  "backToFileList": "파일 목록으로",
+  "readyToInstall": "설치 준비 완료",
+  "verificationFailed": "검증 실패"
 }

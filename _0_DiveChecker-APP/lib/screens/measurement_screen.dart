@@ -11,6 +11,7 @@ import '../l10n/app_localizations.dart';
 import '../constants/app_constants.dart';
 import '../providers/providers.dart';
 import '../utils/formatters.dart';
+import '../utils/ui_helpers.dart';
 import '../widgets/status_badge.dart';
 import '../widgets/measurement/measurement_widgets.dart';
 
@@ -64,11 +65,7 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
         return;
       }
       controller.startMeasurement();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.measurementStarted),
-        ),
-      );
+      context.showSnackBar(AppLocalizations.of(context)!.measurementStarted);
     }
   }
 

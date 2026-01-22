@@ -108,13 +108,13 @@ class _LicenseHeader extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(Spacing.lg),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(Opacities.mediumLow),
+                    color: OverlayColors.whiteContent.withOpacity(Opacities.mediumLow),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
                     Icons.water_drop,
                     size: IconSizes.display,
-                    color: Colors.white,
+                    color: OverlayColors.whiteContent,
                   ),
                 ),
                 Spacing.verticalLg,
@@ -123,7 +123,7 @@ class _LicenseHeader extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: FontSizes.headline,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: OverlayColors.whiteContent,
                   ),
                 ),
                 Spacing.verticalXs,
@@ -131,7 +131,7 @@ class _LicenseHeader extends StatelessWidget {
                   'Version ${AppConfig.version}',
                   style: TextStyle(
                     fontSize: FontSizes.body,
-                    color: Colors.white.withOpacity(Opacities.almostFull),
+                    color: OverlayColors.whiteContent.withOpacity(Opacities.almostFull),
                   ),
                 ),
               ],
@@ -140,7 +140,7 @@ class _LicenseHeader extends StatelessWidget {
         ),
       ),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.white),
+        icon: const Icon(Icons.arrow_back, color: OverlayColors.whiteContent),
         onPressed: () => Navigator.of(context).pop(),
       ),
     );

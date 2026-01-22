@@ -490,7 +490,7 @@ class _SegmentChangeAnalysis extends StatelessWidget {
                       Spacing.verticalXs,
                       Text(
                         '${firstAvg.toStringAsFixed(0)} → ${lastAvg.toStringAsFixed(0)} hPa',
-                        style: const TextStyle(fontWeight: FontWeight.w600),
+                        style: AppTextStyles.semiBold,
                       ),
                     ],
                   ),
@@ -508,7 +508,7 @@ class _SegmentChangeAnalysis extends StatelessWidget {
                       Spacing.verticalXs,
                       Text(
                         '$firstPeaks → $lastPeaks ${l10n.countUnit}',
-                        style: const TextStyle(fontWeight: FontWeight.w600),
+                        style: AppTextStyles.semiBold,
                       ),
                     ],
                   ),

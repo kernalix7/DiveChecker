@@ -226,8 +226,8 @@ class _ConnectionStatusText extends StatelessWidget {
           style: TextStyle(
             fontSize: FontSizes.bodyLg,
             color: isConnected
-                ? Colors.white.withOpacity(Opacities.nearFull)
-                : Colors.grey.shade500,
+                ? OverlayColors.whiteContent.withOpacity(Opacities.nearFull)
+                : StatusColors.tertiaryText,
           ),
         ),
       ],
@@ -284,7 +284,7 @@ class CurrentPressurePanel extends StatelessWidget {
                   fontSize: FontSizes.body,
                   fontWeight: FontWeight.bold,
                   letterSpacing: LetterSpacings.widest,
-                  color: Colors.grey.shade600,
+                  color: StatusColors.secondaryText,
                 ),
               ),
             ],
@@ -310,7 +310,7 @@ class CurrentPressurePanel extends StatelessWidget {
                   settings.pressureUnitSymbol,
                   style: TextStyle(
                     fontSize: FontSizes.titleSm,
-                    color: Colors.grey.shade600,
+                    color: StatusColors.secondaryText,
                   ),
                 ),
               ),
@@ -354,7 +354,7 @@ class LiveMonitoringIndicator extends StatelessWidget {
           l10n.liveMonitoring,
           style: TextStyle(
             fontSize: FontSizes.bodyLg,
-            color: Colors.grey.shade600,
+            color: StatusColors.secondaryText,
           ),
         ),
       ],
@@ -375,6 +375,7 @@ class RecalibrateAtmosphericButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     
     return OutlinedButton.icon(
       onPressed: isCalibrating ? null : onPressed,
@@ -392,15 +393,15 @@ class RecalibrateAtmosphericButton extends StatelessWidget {
               size: IconSizes.md,
               color: onPressed != null 
                   ? theme.colorScheme.primary 
-                  : Colors.grey,
+                  : StatusColors.disabled,
             ),
-      label: Text(isCalibrating ? '대기압 측정중...' : '대기압 재측정'),
+      label: Text(isCalibrating ? l10n.atmosphericCalibrating : l10n.atmosphericRecalibrate),
       style: OutlinedButton.styleFrom(
         foregroundColor: theme.colorScheme.primary,
         side: BorderSide(
           color: onPressed != null 
               ? theme.colorScheme.primary.withOpacity(Opacities.high)
-              : Colors.grey.withOpacity(Opacities.mediumHigh),
+              : StatusColors.disabled.withOpacity(Opacities.mediumHigh),
         ),
         padding: const EdgeInsets.symmetric(horizontal: Spacing.xl, vertical: Spacing.md),
         shape: RoundedRectangleBorder(
@@ -424,10 +425,11 @@ class AtmosphericCalibrationOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final remainingSeconds = ((1.0 - progress) * 3).ceil();
     
     return Container(
-      color: Colors.black.withOpacity(Opacities.veryHigh),
+      color: OverlayColors.darkOverlay.withOpacity(Opacities.veryHigh),
       child: Center(
         child: Container(
           margin: const EdgeInsets.all(Spacing.section),
@@ -461,7 +463,7 @@ class AtmosphericCalibrationOverlay extends StatelessWidget {
               Spacing.verticalXl,
               
               Text(
-                '대기압 측정중...',
+                l10n.atmosphericCalibrating,
                 style: TextStyle(
                   fontSize: FontSizes.headline,
                   fontWeight: FontWeight.bold,
@@ -471,7 +473,7 @@ class AtmosphericCalibrationOverlay extends StatelessWidget {
               Spacing.verticalMd,
               
               Text(
-                '센서를 대기중에 가만히 두세요',
+                l10n.atmosphericKeepSensorStill,
                 style: TextStyle(
                   fontSize: FontSizes.bodyLg,
                   color: theme.colorScheme.onSurface.withOpacity(Opacities.veryHigh),
@@ -497,7 +499,7 @@ class AtmosphericCalibrationOverlay extends StatelessWidget {
                     ),
                     Spacing.verticalMd,
                     Text(
-                      '$remainingSeconds초 남음',
+                      l10n.secondsRemaining(remainingSeconds),
                       style: TextStyle(
                         fontSize: FontSizes.titleSm,
                         fontWeight: FontWeight.w600,
@@ -510,19 +512,14 @@ class AtmosphericCalibrationOverlay extends StatelessWidget {
               
               if (onCancel != null) ...[
                 Spacing.verticalXl,
-                Builder(
-                  builder: (context) {
-                    final l10n = AppLocalizations.of(context)!;
-                    return TextButton(
-                      onPressed: onCancel,
-                      child: Text(
-                        l10n.cancel,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(Opacities.high),
-                        ),
-                      ),
-                    );
-                  },
+                TextButton(
+                  onPressed: onCancel,
+                  child: Text(
+                    l10n.cancel,
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurface.withOpacity(Opacities.high),
+                    ),
+                  ),
                 ),
               ],
             ],
@@ -635,7 +632,7 @@ class ConnectionButton extends StatelessWidget {
           backgroundColor: isConnected
               ? ScoreColors.poor
               : theme.colorScheme.primary,
-          foregroundColor: Colors.white,
+          foregroundColor: OverlayColors.whiteContent,
           elevation: isConnected ? Elevations.none : Elevations.low,
           shadowColor: theme.colorScheme.primary.withOpacity(Opacities.high),
         ),
@@ -655,7 +652,7 @@ class ConnectionHelpText extends StatelessWidget {
       l10n.makeSureDevicePowered,
       style: TextStyle(
         fontSize: FontSizes.body,
-        color: Colors.grey.shade500,
+        color: StatusColors.tertiaryText,
       ),
       textAlign: TextAlign.center,
     );
@@ -705,7 +702,7 @@ class SensorErrorBanner extends StatelessWidget {
                     color: theme.colorScheme.onErrorContainer,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: Spacing.xxs),
                 Text(
                   l10n.sensorErrorDescription,
                   style: TextStyle(
@@ -736,10 +733,10 @@ class AuthenticationWarningBanner extends StatelessWidget {
         vertical: Spacing.md,
       ),
       decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.15),
+        color: ScoreColors.warning.withOpacity(Opacities.mediumLow),
         borderRadius: BorderRadii.lgAll,
         border: Border.all(
-          color: Colors.orange.withOpacity(0.5),
+          color: ScoreColors.warning.withOpacity(Opacities.high),
           width: ChartDimensions.lineWidthSmall,
         ),
       ),
@@ -748,12 +745,12 @@ class AuthenticationWarningBanner extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(Spacing.sm),
             decoration: BoxDecoration(
-              color: Colors.orange.withOpacity(0.2),
+              color: ScoreColors.warning.withOpacity(Opacities.medium),
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.gpp_bad_outlined,
-              color: Colors.orange,
+              color: ScoreColors.warning,
               size: IconSizes.md,
             ),
           ),
@@ -767,10 +764,10 @@ class AuthenticationWarningBanner extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: FontSizes.md,
                     fontWeight: FontWeight.w600,
-                    color: Colors.orange,
+                    color: ScoreColors.warning,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: Spacing.xxs),
                 Text(
                   l10n.deviceNotAuthenticated,
                   style: TextStyle(

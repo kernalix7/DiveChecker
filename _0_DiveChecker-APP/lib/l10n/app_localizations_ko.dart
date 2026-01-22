@@ -1538,4 +1538,30 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get filterStrengthDescription => '값이 높을수록 더 부드럽게 표시';
+
+  @override
+  String get atmosphericCalibrating => '대기압 측정중...';
+
+  @override
+  String get atmosphericRecalibrate => '대기압 재측정';
+
+  @override
+  String get atmosphericKeepSensorStill => '센서를 대기중에 가만히 두세요';
+
+  @override
+  String secondsRemaining(int seconds) {
+    return '$seconds초 남음';
+  }
+
+  @override
+  String get selectFile => '파일 선택';
+
+  @override
+  String get backToFileList => '파일 목록으로';
+
+  @override
+  String get readyToInstall => '설치 준비 완료';
+
+  @override
+  String get verificationFailed => '검증 실패';
 }

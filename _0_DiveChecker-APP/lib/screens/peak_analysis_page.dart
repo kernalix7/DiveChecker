@@ -403,7 +403,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
     return Card(
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(BorderRadii.md),
+        borderRadius: BorderRadii.mdAll,
         side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.low)),
       ),
       child: Padding(
@@ -449,7 +449,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
     return Card(
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(BorderRadii.lg),
+        borderRadius: BorderRadii.lgAll,
         side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.low)),
       ),
       child: Padding(
@@ -616,7 +616,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
     return Card(
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(BorderRadii.md),
+        borderRadius: BorderRadii.mdAll,
         side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.low)),
       ),
       child: ConstrainedBox(
@@ -671,7 +671,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
         color: isOutlier
             ? ScoreColors.warning.withOpacity(Opacities.low)
             : (isSelected ? null : theme.colorScheme.outline.withOpacity(Opacities.veryLow)),
-        borderRadius: BorderRadius.circular(BorderRadii.sm),
+        borderRadius: BorderRadii.smAll,
         border: isOutlier
             ? Border.all(color: ScoreColors.warning.withOpacity(Opacities.mediumHigh))
             : null,
@@ -818,7 +818,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
     return Card(
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(BorderRadii.md),
+        borderRadius: BorderRadii.mdAll,
         side: BorderSide(color: trendColor.withOpacity(Opacities.mediumHigh)),
       ),
       color: trendColor.withOpacity(Opacities.veryLow),
@@ -884,7 +884,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
     return Card(
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(BorderRadii.md),
+        borderRadius: BorderRadii.mdAll,
         side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.low)),
       ),
       child: Padding(
@@ -958,7 +958,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: Spacing.sm, vertical: Spacing.smPlus),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(BorderRadii.sm),
+        borderRadius: BorderRadii.smAll,
         border: Border.all(
           color: isWarning
               ? ScoreColors.warning.withOpacity(Opacities.high)

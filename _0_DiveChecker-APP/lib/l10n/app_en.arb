@@ -697,5 +697,21 @@
   "noiseFilter": "Noise Filter",
   "noiseFilterDescription": "Software filter to reduce noise",
   "filterStrength": "Filter Strength",
-  "filterStrengthDescription": "Higher values = more smoothing"
+  "filterStrengthDescription": "Higher values = more smoothing",
+  
+  "atmosphericCalibrating": "Calibrating atmospheric pressure...",
+  "atmosphericRecalibrate": "Recalibrate Atmosphere",
+  "atmosphericKeepSensorStill": "Keep sensor still in open air",
+  "secondsRemaining": "{seconds} seconds remaining",
+  "@secondsRemaining": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "selectFile": "Select File",
+  "backToFileList": "Back to file list",
+  "readyToInstall": "Ready to install",
+  "verificationFailed": "Verification failed"
 }

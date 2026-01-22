@@ -43,7 +43,7 @@ class IconContainer extends StatelessWidget {
       ),
       child: Icon(
         icon,
-        color: useGradient ? Colors.white : iconColor,
+        color: useGradient ? OverlayColors.whiteContent : iconColor,
         size: size,
       ),
     );

@@ -62,7 +62,7 @@ class TrendGraphView extends StatelessWidget {
         ? l10n.trendRising2
         : (slope < -0.01 ? l10n.trendFalling2 : l10n.trendMaintained);
     final trendColor =
-        slope > 0.01 ? Colors.green : (slope < -0.01 ? Colors.red : Colors.blue);
+        slope > 0.01 ? ScoreColors.excellent : (slope < -0.01 ? ScoreColors.poor : Colors.blue);
 
     final minY = chartData.map((e) => e.y).reduce(min) - 10;
     final maxY = chartData.map((e) => e.y).reduce(max) + 10;
@@ -391,12 +391,12 @@ class _TrendInterpretation extends StatelessWidget {
       title = l10n.strongRisingTrend;
       description = l10n.strongRisingDesc;
       icon = Icons.rocket_launch;
-      color = Colors.green;
+      color = ScoreColors.excellent;
     } else if (slope > 0.01) {
       title = l10n.moderateRisingTrend;
       description = l10n.moderateRisingDesc;
       icon = Icons.trending_up;
-      color = Colors.lightGreen;
+      color = ScoreColors.excellentLight;
     } else if (slope > -0.01) {
       title = l10n.stableMaintained;
       description = l10n.stableMaintainedDesc;
@@ -406,12 +406,12 @@ class _TrendInterpretation extends StatelessWidget {
       title = l10n.moderateFallingTrend;
       description = l10n.moderateFallingDesc;
       icon = Icons.trending_down;
-      color = Colors.orange;
+      color = ScoreColors.warning;
     } else {
       title = l10n.strongFallingTrend;
       description = l10n.strongFallingDesc;
       icon = Icons.warning;
-      color = Colors.red;
+      color = ScoreColors.poor;
     }
 
     return Card(

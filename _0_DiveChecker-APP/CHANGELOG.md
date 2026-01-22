@@ -5,6 +5,60 @@ All notable changes to DiveChecker will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - Build 5 - 2025-01-XX
+
+### Performance Improvements
+- 🚀 **Graph Detail Page Performance Optimization**
+  - Viewport-based rendering: Only visible data points are rendered
+  - LTTB-like downsampling: Max 1000 points rendered for smooth scrolling
+  - Peak preservation: Important peaks are kept during downsampling
+  - Reduced memory usage and faster rendering on mobile devices
+
+### Gesture Improvements
+- 📱 **Pinch-to-Zoom & Pan Gestures**
+  - Added `onScaleEnd` handler for proper gesture completion
+  - Improved pan gesture with minimum movement threshold
+  - Separated pinch zoom and pan gesture handling
+  - Smoother gesture response on Android devices
+
+### Refactoring Improvements
+
+#### l10n (Localization) Enhancements
+- Added new l10n keys for atmospheric calibration:
+  - `atmosphericCalibrating`, `atmosphericRecalibrate`, `atmosphericKeepSensorStill`
+  - `secondsRemaining` (with placeholder parameter)
+- Added firmware update l10n keys:
+  - `selectFile`, `backToFileList`, `readyToInstall`, `verificationFailed`
+- Replaced all hardcoded Korean strings with l10n keys in:
+  - `home_widgets.dart` - Calibration overlay and button texts
+  - `firmware_update_screen.dart` - File selection and status texts
+  - `graph_detail_page.dart` - Title edit dialog
+  - `analysis_widgets.dart` - Score suffix
+
+#### Color Constants Migration
+- Added new color constants in `app_constants.dart`:
+  - `StatusColors.secondaryText` (grey 600 equivalent)
+  - `StatusColors.tertiaryText` (grey 500 equivalent)
+  - `OverlayColors.darkOverlay` (black for overlays)
+  - `OverlayColors.whiteContent` (white for overlay content)
+- Replaced `Colors.grey.shade500/600` → `StatusColors.secondaryText/tertiaryText`
+- Replaced `Colors.black` → `OverlayColors.darkOverlay` for overlays
+- Replaced `Colors.white` → `OverlayColors.whiteContent` for overlay texts/icons
+
+#### Files Updated
+- `lib/l10n/app_en.arb` - Added 8 new l10n keys
+- `lib/l10n/app_ko.arb` - Added 8 new Korean translations
+- `lib/l10n/app_localizations.dart` - Abstract getters for new keys
+- `lib/l10n/app_localizations_en.dart` - English implementations
+- `lib/l10n/app_localizations_ko.dart` - Korean implementations
+- `lib/widgets/home/home_widgets.dart` - l10n & color constant migration
+- `lib/screens/firmware_update_screen.dart` - l10n TODO items resolved
+- `lib/utils/ui_helpers.dart` - Color constants for LoadingOverlay
+- `lib/widgets/icon_container.dart` - Color constants
+- `lib/widgets/settings/license_page.dart` - Color constants
+- `lib/screens/serial_device_screen.dart` - Color constants
+- `lib/widgets/common/styled_container.dart` - Shadow color constants
+
 ## [1.0.0] - 2025-12-17
 
 ### Added
@@ -90,6 +144,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 🧹 Removed duplicate `_getScoreColor`, `_getGradeLabel` methods
 - 🧹 Removed debug print statements from production code
 - 🧹 Cleaned up Linux MIDI package debug prints
+- 🎨 **AppTextStyles** - Added centralized TextStyle constants (semiBold, bold, monospace, appBarTitle)
+- 🎨 **Opacity Constants** - Replaced all hardcoded opacity values with Opacities constants
+- 🎨 **Spacing Constants** - Replaced hardcoded SizedBox values with Spacing constants
+- 🎨 **AppDivider & SectionSpacing** - Extracted common divider and section spacing widgets
+- 🎨 **Color Constants** - Replaced Colors.orange/green/red with ScoreColors.warning/excellent/poor
+- 🛠️ **ui_helpers.dart** - Added common SnackBar utilities and BuildContext extensions
+- 🛠️ **CompactLoadingIndicator** - Extracted common loading indicator widget
+- 🛠️ **SnackBar Refactoring** - Unified ScaffoldMessenger.of(context).showSnackBar() to context.showSnackBar() extension
+- 🌐 **l10n Migration** - Replaced hardcoded Korean strings with AppLocalizations (editTitle, points)
+- 🔧 **BorderRadius Constants** - Replaced BorderRadius.circular(BorderRadii.xx) with BorderRadii.xxAll pattern
+- 🔧 **firmware_update_screen.dart** - Added l10n parameters to internal methods for localization support
 
 ### Documentation
 - 📚 README.md complete rewrite (Flutter template → project documentation)

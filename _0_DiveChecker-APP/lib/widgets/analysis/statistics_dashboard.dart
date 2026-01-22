@@ -754,11 +754,11 @@ class _DistributionInterpretation extends StatelessWidget {
     if (skewness.abs() < 0.5 && kurtosis.abs() < 0.5) {
       interpretation = l10n.normalPressureInterpretation;
       icon = Icons.check_circle;
-      color = Colors.green;
+      color = ScoreColors.excellent;
     } else if (skewness > 0.5) {
       interpretation = l10n.highPressureInterpretation;
       icon = Icons.info;
-      color = Colors.orange;
+      color = ScoreColors.warning;
     } else if (skewness < -0.5) {
       interpretation = l10n.lowPressureInterpretation;
       icon = Icons.info;
@@ -766,11 +766,11 @@ class _DistributionInterpretation extends StatelessWidget {
     } else if (kurtosis > 0.5) {
       interpretation = l10n.concentratedInterpretation;
       icon = Icons.check_circle;
-      color = Colors.green;
+      color = ScoreColors.excellent;
     } else {
       interpretation = l10n.dispersedInterpretation;
       icon = Icons.warning;
-      color = Colors.orange;
+      color = ScoreColors.warning;
     }
 
     return Container(

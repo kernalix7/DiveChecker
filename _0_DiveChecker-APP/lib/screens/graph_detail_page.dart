@@ -50,6 +50,15 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
   double? _cachedMinX;
   double? _cachedMaxX;
 
+  // Pre-computed LOD (Level of Detail) data for different zoom levels
+  late final List<FlSpot> _lodFull;     // Full resolution (max 2000 points)
+  late final List<FlSpot> _lodMedium;   // Medium resolution (max 800 points)
+  late final List<FlSpot> _lodLow;      // Low resolution (max 300 points)
+  
+  // Gesture state for smooth interaction
+  bool _isGesturing = false;
+  Timer? _gestureEndTimer;
+
   @override
   void initState() {
     super.initState();
@@ -59,12 +68,68 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
       _minX = widget.chartData.first.x;
       _maxX = widget.chartData.last.x;
     }
+    _initializeLodData();
     _loadGraphNotes();
   }
 
   @override
   void dispose() {
+    _gestureEndTimer?.cancel();
     super.dispose();
+  }
+
+  /// Pre-compute LOD data for different zoom levels
+  void _initializeLodData() {
+    final data = widget.chartData;
+    if (data.isEmpty) {
+      _lodFull = [];
+      _lodMedium = [];
+      _lodLow = [];
+      return;
+    }
+    
+    // Full resolution: max 2000 points
+    _lodFull = _downsample(data, 2000);
+    // Medium resolution: max 800 points  
+    _lodMedium = _downsample(data, 800);
+    // Low resolution: max 300 points (for gestures)
+    _lodLow = _downsample(data, 300);
+  }
+  
+  /// Downsample using min-max bucketing (preserves peaks)
+  List<FlSpot> _downsample(List<FlSpot> data, int maxPoints) {
+    if (data.length <= maxPoints) return data;
+    
+    final bucketSize = data.length / (maxPoints / 2);
+    final result = <FlSpot>[];
+    
+    for (var i = 0; i < maxPoints / 2; i++) {
+      final start = (i * bucketSize).floor();
+      final end = ((i + 1) * bucketSize).floor().clamp(0, data.length);
+      if (start >= end) continue;
+      
+      final bucket = data.sublist(start, end);
+      if (bucket.isEmpty) continue;
+      
+      // Find min and max in bucket
+      var minPoint = bucket[0];
+      var maxPoint = bucket[0];
+      for (final p in bucket) {
+        if (p.y < minPoint.y) minPoint = p;
+        if (p.y > maxPoint.y) maxPoint = p;
+      }
+      
+      // Add in order of x
+      if (minPoint.x <= maxPoint.x) {
+        result.add(minPoint);
+        if (minPoint != maxPoint) result.add(maxPoint);
+      } else {
+        result.add(maxPoint);
+        if (minPoint != maxPoint) result.add(minPoint);
+      }
+    }
+    
+    return result;
   }
 
   Future<void> _loadGraphNotes() async {
@@ -134,39 +199,110 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
     _baseMinX = _minX;
     _baseMaxX = _maxX;
     _lastFocalPoint = details.localFocalPoint;
+    _isGesturing = true;
+    _gestureEndTimer?.cancel();
   }
 
   void _handleScaleUpdate(ScaleUpdateDetails details) {
-    setState(() {
-      if (details.scale != 1.0) {
-        double newZoom = _baseZoomLevel * details.scale;
-        newZoom = newZoom.clamp(_minZoom, _maxZoom);
+    if (details.scale == 1.0 && _lastFocalPoint != null) {
+      // Pan gesture - smooth panning
+      final dx = details.localFocalPoint.dx - _lastFocalPoint!.dx;
+      if (dx.abs() < 1) return;
+      
+      final range = _maxX - _minX;
+      final shift = -dx * range / 350; // Slightly slower for precision
+      final newMinX = _minX + shift;
+      final newMaxX = _maxX + shift;
 
-        double baseRange = _baseMaxX - _baseMinX;
-        double newRange = baseRange / (newZoom / _baseZoomLevel);
-        double center = (_baseMinX + _baseMaxX) / 2;
+      final dataMinX = widget.chartData.first.x;
+      final dataMaxX = widget.chartData.last.x;
+      
+      if (newMinX >= dataMinX && newMaxX <= dataMaxX) {
+        _minX = newMinX;
+        _maxX = newMaxX;
+      } else if (newMinX < dataMinX) {
+        // Clamp to left edge
+        _minX = dataMinX;
+        _maxX = dataMinX + range;
+      } else if (newMaxX > dataMaxX) {
+        // Clamp to right edge
+        _maxX = dataMaxX;
+        _minX = dataMaxX - range;
+      }
+      setState(() {});
+      _lastFocalPoint = details.localFocalPoint;
+    } else if (details.scale != 1.0) {
+      // Pinch zoom gesture - zoom towards focal point
+      double newZoom = _baseZoomLevel * details.scale;
+      newZoom = newZoom.clamp(_minZoom, _maxZoom);
 
-        _minX = max(widget.chartData.first.x, center - newRange / 2);
-        _maxX = min(widget.chartData.last.x, center + newRange / 2);
+      final baseRange = _baseMaxX - _baseMinX;
+      final newRange = baseRange / (newZoom / _baseZoomLevel);
+      
+      // Use center of current view for zoom focus
+      final center = (_baseMinX + _baseMaxX) / 2;
+      
+      final dataMinX = widget.chartData.first.x;
+      final dataMaxX = widget.chartData.last.x;
+      final dataRange = dataMaxX - dataMinX;
+
+      var newMinX = center - newRange / 2;
+      var newMaxX = center + newRange / 2;
+      
+      // Clamp to data bounds
+      if (newMinX < dataMinX) {
+        newMinX = dataMinX;
+        newMaxX = min(dataMaxX, newMinX + newRange);
+      }
+      if (newMaxX > dataMaxX) {
+        newMaxX = dataMaxX;
+        newMinX = max(dataMinX, newMaxX - newRange);
+      }
+      
+      // Don't zoom out beyond full data
+      if (newRange >= dataRange) {
+        _minX = dataMinX;
+        _maxX = dataMaxX;
+        _zoomLevel = 1.0;
+      } else {
+        _minX = newMinX;
+        _maxX = newMaxX;
         _zoomLevel = newZoom;
       }
+      setState(() {});
+    }
+  }
 
-      if (_lastFocalPoint != null && details.scale == 1.0) {
-        double dx = details.localFocalPoint.dx - _lastFocalPoint!.dx;
-        double range = _maxX - _minX;
-        double shift = -dx * range / 300;
-
-        double newMinX = _minX + shift;
-        double newMaxX = _maxX + shift;
-
-        if (newMinX >= widget.chartData.first.x &&
-            newMaxX <= widget.chartData.last.x) {
-          _minX = newMinX;
-          _maxX = newMaxX;
-        }
-        _lastFocalPoint = details.localFocalPoint;
+  void _handleScaleEnd(ScaleEndDetails details) {
+    _lastFocalPoint = null;
+    // Delay switching to high quality to avoid flicker
+    _gestureEndTimer?.cancel();
+    _gestureEndTimer = Timer(const Duration(milliseconds: 100), () {
+      if (mounted) {
+        setState(() {
+          _isGesturing = false;
+        });
       }
     });
+  }
+
+  /// Get chart data for current state (LOD-based, no viewport filtering)
+  List<FlSpot> _getChartData() {
+    if (_lodFull.isEmpty) return [];
+    
+    // During gestures, use low resolution for smooth interaction
+    if (_isGesturing) {
+      return _lodLow;
+    }
+    
+    // Based on zoom level, choose appropriate LOD
+    if (_zoomLevel > 10) {
+      return _lodFull;
+    } else if (_zoomLevel > 3) {
+      return _lodMedium;
+    } else {
+      return _lodLow;
+    }
   }
 
   void _resetZoom() {
@@ -255,9 +391,12 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
   String _formatTimeLabel(double seconds) => chart_utils.formatTimeLabel(seconds);
 
   /// Label info - zoom-aware label display
-  /// Peaks are prioritized, then other points
+  /// Shows pressure labels on chart line at key points
   List<({int index, double fontSize})> _getLabelsInfo() {
-    final visibleEntries = widget.chartData
+    final data = widget.chartData;
+    if (data.isEmpty) return [];
+    
+    final visibleEntries = data
         .asMap()
         .entries
         .where((entry) => entry.value.x >= _minX && entry.value.x <= _maxX)
@@ -265,81 +404,43 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
 
     if (visibleEntries.isEmpty) return [];
 
-    // Calculate ranges
+    // Fixed label dimensions for overlap calculation
+    const labelWidth = 35.0;  // Approximate width of "12.3" text
+    const labelHeight = 14.0; // Approximate height of label
+    
+    // Calculate pixel per unit for proper spacing
     final visibleXRange = _maxX - _minX;
     final visibleYRange = _calculateMaxY() - _calculateMinY();
-    final totalXRange = widget.chartData.isEmpty
-        ? visibleXRange
-        : widget.chartData.last.x - widget.chartData.first.x;
-    final zoomRatio = totalXRange / visibleXRange;
-
-    final isHighZoom = zoomRatio >= 4.0;
-
-    final minXDistance = isHighZoom ? visibleXRange / 150 : visibleXRange / 35;
-
-    final minYDistance = visibleYRange / 8;
-    const sameValueThreshold = 0.3;
-    const fontSize = 9.0;
-
-    // Find local peaks (higher than neighbors)
-    final peaks = <int>{};
-    for (int i = 0; i < visibleEntries.length; i++) {
-      final curr = visibleEntries[i].value.y;
-      final prev = i > 0 ? visibleEntries[i - 1].value.y : curr;
-      final next = i < visibleEntries.length - 1
-          ? visibleEntries[i + 1].value.y
-          : curr;
-
-      // Is this a local peak? (higher than both neighbors by some margin)
-      if (curr > prev + 0.5 && curr > next + 0.5) {
-        peaks.add(visibleEntries[i].key);
-      }
-    }
-
-    // Sort entries: peaks first (sorted by Y descending), then others
-    final sortedEntries = List.of(visibleEntries);
-    sortedEntries.sort((a, b) {
-      final aIsPeak = peaks.contains(a.key);
-      final bIsPeak = peaks.contains(b.key);
-
-      if (aIsPeak && !bIsPeak) return -1; // a first
-      if (!aIsPeak && bIsPeak) return 1; // b first
-      if (aIsPeak && bIsPeak) {
-        // Both peaks: higher Y first
-        return b.value.y.compareTo(a.value.y);
-      }
-      // Both non-peaks: keep original order (by X)
-      return a.value.x.compareTo(b.value.x);
-    });
+    
+    // Minimum spacing in data units (converted from pixels)
+    // Assume chart is ~300px wide, ~200px tall
+    final minXDistance = visibleXRange * (labelWidth / 300);
+    final minYDistance = visibleYRange * (labelHeight / 200);
 
     final result = <({int index, double fontSize})>[];
     final shownLabels = <({double x, double y})>[];
 
+    // Check if label would overlap with existing labels
     bool wouldOverlap(double x, double y) {
       for (final shown in shownLabels) {
         final xDiff = (x - shown.x).abs();
         final yDiff = (y - shown.y).abs();
-        final isSameValue = yDiff < sameValueThreshold;
-
-        // Y far enough = won't overlap
-        if (yDiff >= minYDistance) continue;
-
-        // Y close - check X
-        if (isSameValue) {
-          if (xDiff < minXDistance * 3) return true;
-        } else {
-          if (xDiff < minXDistance) return true;
+        
+        // If both X and Y are too close, they overlap
+        if (xDiff < minXDistance && yDiff < minYDistance) {
+          return true;
         }
       }
       return false;
     }
 
-    for (final entry in sortedEntries) {
+    // Add all visible points that don't overlap
+    for (final entry in visibleEntries) {
       final x = entry.value.x;
       final y = entry.value.y;
-
+      
       if (!wouldOverlap(x, y)) {
-        result.add((index: entry.key, fontSize: fontSize));
+        result.add((index: entry.key, fontSize: FontSizes.xxs));
         shownLabels.add((x: x, y: y));
       }
     }
@@ -374,7 +475,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
         return info.fontSize;
       }
     }
-    return 10.0;
+    return FontSizes.xs;
   }
 
   /// Generate note markers with stair-step label positions
@@ -471,10 +572,73 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
     return _getNotesWithStairLabels();
   }
 
+  /// Find nearest point in original data to given x coordinate
+  FlSpot _findNearestPoint(double targetX) {
+    if (widget.chartData.isEmpty) return FlSpot(targetX, 0);
+    
+    // Binary search for efficiency
+    int left = 0;
+    int right = widget.chartData.length - 1;
+    
+    while (left < right - 1) {
+      final mid = (left + right) ~/ 2;
+      if (widget.chartData[mid].x < targetX) {
+        left = mid;
+      } else {
+        right = mid;
+      }
+    }
+    
+    // Compare left and right to find closest
+    final leftDist = (widget.chartData[left].x - targetX).abs();
+    final rightDist = (widget.chartData[right].x - targetX).abs();
+    
+    return leftDist <= rightDist ? widget.chartData[left] : widget.chartData[right];
+  }
+
+  // Chart layout constants for coordinate conversion
+  static const double _chartPaddingLeft = Spacing.lg;
+  static const double _chartPaddingTop = Spacing.xl;
+  static const double _chartPaddingRight = Spacing.xxl;
+  static const double _yAxisReservedSize = ChartDimensions.reservedSizeMax;
+  static const double _xAxisReservedSize = ChartDimensions.reservedSizeLarge;
+  
+  BoxConstraints? _lastConstraints;
+
+  void _handleLongPress(LongPressStartDetails details) {
+    if (_lastConstraints == null) return;
+    
+    // Calculate chart area dimensions
+    final chartAreaWidth = _lastConstraints!.maxWidth - _yAxisReservedSize - _chartPaddingRight + _chartPaddingLeft;
+    final chartAreaHeight = _lastConstraints!.maxHeight - _chartPaddingTop - _xAxisReservedSize;
+    
+    // Get tap position relative to chart area (accounting for container padding)
+    final tapX = details.localPosition.dx - _yAxisReservedSize;
+    final tapY = details.localPosition.dy - _chartPaddingTop;
+    
+    // Check if tap is within chart area
+    if (tapX < 0 || tapX > chartAreaWidth || tapY < 0 || tapY > chartAreaHeight) {
+      return;
+    }
+    
+    // Convert to data coordinates
+    final xRatio = tapX / chartAreaWidth;
+    final dataX = _minX + xRatio * (_maxX - _minX);
+    
+    // Find nearest actual data point
+    final nearestPoint = _findNearestPoint(dataX);
+    _showAddNoteDialog(nearestPoint.x, nearestPoint.y);
+  }
+
   void _showAddNoteDialog(double x, double y) {
+    // Find nearest actual data point
+    final nearestPoint = _findNearestPoint(x);
+    final actualX = nearestPoint.x;
+    final actualY = nearestPoint.y;
+    
     final controller = TextEditingController();
     final l10n = AppLocalizations.of(context)!;
-    final timeInSeconds = _xToSeconds(x).toStringAsFixed(2);
+    final timeInSeconds = _xToSeconds(actualX).toStringAsFixed(2);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -484,7 +648,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '${l10n.currentPressure}: ${y.toStringAsFixed(1)}',
+              '${l10n.currentPressure}: ${actualY.toStringAsFixed(1)}',
               style: TextStyle(
                 color: Theme.of(
                   context,
@@ -515,13 +679,13 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                 final dbService = UnifiedDatabaseService();
                 final noteId = await dbService.saveGraphNote(
                   widget.session['id'],
-                  x,
+                  actualX,
                   controller.text,
                 );
 
                 setState(() {
                   _graphNotes.add(
-                    GraphNote(id: noteId, x: x, note: controller.text),
+                    GraphNote(id: noteId, x: actualX, note: controller.text),
                   );
                   _graphNotes.sort((a, b) => a.x.compareTo(b.x));
                   _invalidateNoteLinesCache(); // Refresh note lines immediately
@@ -558,7 +722,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('제목 수정'),
+        title: Text(l10n.editTitle),
         content: TextField(
           controller: controller,
           decoration: InputDecoration(
@@ -842,6 +1006,8 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                         child: GestureDetector(
                           onScaleStart: _handleScaleStart,
                           onScaleUpdate: _handleScaleUpdate,
+                          onScaleEnd: _handleScaleEnd,
+                          onLongPressStart: _handleLongPress,
                           child: Container(
                             padding: const EdgeInsets.fromLTRB(
                               Spacing.lg,
@@ -854,22 +1020,29 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                               borderRadius: BorderRadii.lgAll,
                               border: Border.all(
                                 color: theme.brightness == Brightness.dark
-                                    ? theme.colorScheme.outline.withOpacity(0.3)
+                                    ? theme.colorScheme.outline.withOpacity(Opacities.mediumHigh)
                                     : theme.colorScheme.outline.withOpacity(
-                                        0.5,
+                                        Opacities.high,
                                       ),
                                 width: ChartDimensions.strokeSmMedium,
                               ),
                             ),
                             child: LayoutBuilder(
                               builder: (context, constraints) {
+                                // Store constraints for long press coordinate conversion
+                                _lastConstraints = constraints;
+                                
                                 // Calculate grid interval based on chart width
                                 final chartWidth = constraints.maxWidth - 
                                     ChartDimensions.reservedSizeMax; // Subtract Y-axis space
                                 final verticalGridInterval =
                                     _calculateVerticalGridInterval(chartWidth);
 
-                                return LineChart(
+                                // Get LOD-based chart data for performance
+                                final chartData = _getChartData();
+
+                                return RepaintBoundary(
+                                  child: LineChart(
                                       LineChartData(
                                         clipData: FlClipData.all(),
                                         minX: _minX,
@@ -890,9 +1063,9 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                                             return FlLine(
                                               color: isDark
                                                   ? theme.colorScheme.outline
-                                                        .withOpacity(0.5)
+                                                        .withOpacity(Opacities.high)
                                                   : theme.colorScheme.outline
-                                                        .withOpacity(0.7),
+                                                        .withOpacity(Opacities.veryHigh),
                                               strokeWidth:
                                                   ChartDimensions.strokeThin,
                                             );
@@ -904,9 +1077,9 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                                             return FlLine(
                                               color: isDark
                                                   ? theme.colorScheme.outline
-                                                        .withOpacity(0.4)
+                                                        .withOpacity(Opacities.moderate)
                                                   : theme.colorScheme.outline
-                                                        .withOpacity(0.6),
+                                                        .withOpacity(Opacities.strong),
                                               strokeWidth:
                                                   ChartDimensions.strokeThin,
                                             );
@@ -1013,16 +1186,16 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                                                 theme.brightness ==
                                                     Brightness.dark
                                                 ? theme.colorScheme.outline
-                                                      .withOpacity(0.3)
+                                                      .withOpacity(Opacities.mediumHigh)
                                                 : theme.colorScheme.outline
-                                                      .withOpacity(0.5),
+                                                      .withOpacity(Opacities.high),
                                             width:
                                                 ChartDimensions.strokeSmMedium,
                                           ),
                                         ),
                                         lineBarsData: [
                                           LineChartBarData(
-                                            spots: widget.chartData,
+                                            spots: chartData,
                                             isCurved: false,
                                             color: theme.colorScheme.primary,
                                             barWidth:
@@ -1052,46 +1225,31 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                                           verticalLines: _buildVerticalLines(),
                                         ),
                                         lineTouchData: LineTouchData(
-                                          enabled: true,
-                                          handleBuiltInTouches: false,
+                                          enabled: false, // Disable to allow pinch zoom from GestureDetector
                                           touchTooltipData: LineTouchTooltipData(
                                             fitInsideHorizontally: true,
                                             fitInsideVertically: true,
-                                            tooltipPadding:
-                                                const EdgeInsets.symmetric(
-                                                  horizontal: Spacing.xs,
-                                                  vertical: Spacing.xxs,
-                                                ),
-                                            tooltipRoundedRadius:
-                                                BorderRadii.xs,
+                                            tooltipPadding: const EdgeInsets.symmetric(
+                                              horizontal: Spacing.xs,
+                                              vertical: Spacing.xxs,
+                                            ),
+                                            tooltipRoundedRadius: BorderRadii.xs,
                                             tooltipMargin: Spacing.xs,
-                                            getTooltipColor: (spot) =>
-                                                Colors.transparent,
+                                            getTooltipColor: (spot) => Colors.transparent,
                                             getTooltipItems: (touchedSpots) {
-                                              final isDark =
-                                                  Theme.of(
-                                                    context,
-                                                  ).brightness ==
-                                                  Brightness.dark;
+                                              final isDark = theme.brightness == Brightness.dark;
                                               return touchedSpots.map((spot) {
-                                                final fontSize =
-                                                    _getFontSizeForSpot(spot);
-
+                                                final fontSize = _getFontSizeForSpot(spot);
                                                 return LineTooltipItem(
                                                   spot.y.toStringAsFixed(1),
                                                   TextStyle(
-                                                    color: isDark
-                                                        ? Colors.white
-                                                        : Colors.black,
+                                                    color: isDark ? Colors.white : Colors.black,
                                                     fontWeight: FontWeight.w600,
                                                     fontSize: fontSize,
                                                     shadows: [
                                                       Shadow(
-                                                        color: isDark
-                                                            ? Colors.black
-                                                            : Colors.white,
-                                                        blurRadius:
-                                                            Shadows.blurSmall,
+                                                        color: isDark ? Colors.black : Colors.white,
+                                                        blurRadius: Shadows.blurSmall,
                                                       ),
                                                     ],
                                                   ),
@@ -1099,37 +1257,10 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                                               }).toList();
                                             },
                                           ),
-                                          getTouchedSpotIndicator:
-                                              (barData, spotIndexes) {
-                                                return spotIndexes.map((index) {
-                                                  return TouchedSpotIndicatorData(
-                                                    const FlLine(
-                                                      color: Colors.transparent,
-                                                      strokeWidth:
-                                                          ChartDimensions
-                                                              .strokeNone,
-                                                    ),
-                                                    FlDotData(show: false),
-                                                  );
-                                                }).toList();
-                                              },
-                                          touchCallback:
-                                              (
-                                                FlTouchEvent event,
-                                                LineTouchResponse?
-                                                touchResponse,
-                                              ) {
-                                                // Only handle tap - let pinch zoom work
-                                                if (event is FlTapUpEvent &&
-                                                    touchResponse?.lineBarSpots != null &&
-                                                    touchResponse!.lineBarSpots!.isNotEmpty) {
-                                                  final spot = touchResponse.lineBarSpots!.first;
-                                                  _showAddNoteDialog(spot.x, spot.y);
-                                                }
-                                              },
                                         ),
                                       ),
-                              );
+                                    ),
+                                );
                             },
                           ),
                         ),

@@ -13,6 +13,8 @@ import 'package:provider/provider.dart';
 import '../constants/app_constants.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/serial_provider.dart';
+import '../utils/ui_helpers.dart';
+import '../widgets/common/styled_container.dart';
 import '../widgets/section_header.dart';
 import '../widgets/icon_container.dart';
 import 'firmware_update_screen.dart';
@@ -133,23 +135,17 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
           FilledButton(
             onPressed: () {
               if (newPinController.text != confirmPinController.text) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.pinMismatch)),
-                );
+                context.showSnackBar(l10n.pinMismatch);
                 return;
               }
               if (newPinController.text.length != 4) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.pinMustBe4Digits)),
-                );
+                context.showSnackBar(l10n.pinMustBe4Digits);
                 return;
               }
               // Send PIN change command: W:currentPin:newPin
               provider.sendCommand('W:${currentPinController.text}:${newPinController.text}');
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.pinChangeRequested)),
-              );
+              context.showSnackBar(l10n.pinChangeRequested);
             },
             child: Text(l10n.change),
           ),
@@ -199,17 +195,13 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
           FilledButton(
             onPressed: () {
               if (_pinController.text.length != 4) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.pinMustBe4Digits)),
-                );
+                context.showSnackBar(l10n.pinMustBe4Digits);
                 return;
               }
               // Send name change command: N:pin:newName
               provider.sendCommand('N:${_pinController.text}:${_nameController.text}');
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.nameChangeRequested)),
-              );
+              context.showSnackBar(l10n.nameChangeRequested);
             },
             child: Text(l10n.change),
           ),
@@ -329,13 +321,13 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
                       ),
                       title: Text(
                         l10n.deviceName,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
+                        style: AppTextStyles.semiBold,
                       ),
                       subtitle: Text('${serialProvider.deviceName ?? AppConfig.appName}${shortSerial.isNotEmpty ? '-$shortSerial' : ''}'),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () => _showChangeNameDialog(context, l10n, serialProvider),
                     ),
-                    Divider(height: Dimensions.dividerHeight, indent: WidgetSizes.dividerIndent, color: theme.colorScheme.outlineVariant),
+                    const AppDivider(),
                     ListTile(
                       leading: IconContainer(
                         icon: Icons.lock,
@@ -343,7 +335,7 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
                       ),
                       title: Text(
                         l10n.devicePin,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
+                        style: AppTextStyles.semiBold,
                       ),
                       subtitle: Text(l10n.changeDevicePin),
                       trailing: const Icon(Icons.chevron_right),
@@ -368,11 +360,11 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
                       ),
                       title: Text(
                         l10n.currentFirmware,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
+                        style: AppTextStyles.semiBold,
                       ),
                       subtitle: Text('v${deviceInfo.firmwareVersion ?? 'Unknown'}'),
                     ),
-                    Divider(height: Dimensions.dividerHeight, indent: WidgetSizes.dividerIndent, color: theme.colorScheme.outlineVariant),
+                    const AppDivider(),
                     ListTile(
                       leading: IconContainer(
                         icon: Icons.system_update,
@@ -380,7 +372,7 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
                       ),
                       title: Text(
                         l10n.firmwareUpdate,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
+                        style: AppTextStyles.semiBold,
                       ),
                       subtitle: Text(l10n.firmwareUpdateDescription),
                       trailing: const Icon(Icons.chevron_right),
@@ -409,13 +401,13 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
                       ),
                       title: Text(
                         l10n.rebootDevice,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
+                        style: AppTextStyles.semiBold,
                       ),
                       subtitle: Text(l10n.rebootDeviceDescription),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () => _confirmReboot(context, l10n, serialProvider),
                     ),
-                    Divider(height: Dimensions.dividerHeight, indent: WidgetSizes.dividerIndent, color: theme.colorScheme.outlineVariant),
+                    const AppDivider(),
                     ListTile(
                       leading: IconContainer(
                         icon: Icons.developer_mode,
@@ -423,7 +415,7 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
                       ),
                       title: Text(
                         l10n.bootselMode,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
+                        style: AppTextStyles.semiBold,
                       ),
                       subtitle: Text(l10n.bootselModeDescription),
                       trailing: const Icon(Icons.chevron_right),
@@ -466,9 +458,7 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
       // Send soft reboot command (not BOOTSEL)
       // For now, we don't have a soft reboot command, just disconnect
       provider.disconnect();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.deviceDisconnected)),
-      );
+      context.showSnackBar(l10n.deviceDisconnected);
     }
   }
 
@@ -495,9 +485,7 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
 
     if (confirmed == true && mounted) {
       provider.sendCommand('B');  // BOOTSEL reboot command
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.bootselRebootSent)),
-      );
+      context.showSnackBar(l10n.bootselRebootSent);
     }
   }
 }

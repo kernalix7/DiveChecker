@@ -5,6 +5,7 @@ library;
 
 import 'package:flutter/material.dart';
 import '../../constants/app_constants.dart';
+import '../../l10n/app_localizations.dart';
 
 class MiniStatWidget extends StatelessWidget {
   final String label;
@@ -204,6 +205,7 @@ class MiniScoreCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final scoreColor = ScoreColors.fromScore(score);
     
     return Card(
@@ -245,7 +247,7 @@ class MiniScoreCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '점',
+                  l10n.points,
                   style: TextStyle(
                     fontSize: FontSizes.body,
                     color: scoreColor.withOpacity(Opacities.almostFull),

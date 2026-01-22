@@ -16,6 +16,7 @@ import '../constants/app_constants.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/serial_provider.dart';
 import '../security/firmware_verifier.dart';
+import '../utils/ui_helpers.dart';
 
 class FirmwareUpdateScreen extends StatefulWidget {
   const FirmwareUpdateScreen({super.key});
@@ -116,7 +117,7 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
       if (package.isValid) {
         final extractedPath = await package.extractVerifiedFirmware(_searchPath);
         if (extractedPath != null) {
-          _showSnackBar('Verified firmware saved: ${extractedPath.split('/').last}');
+          if (mounted) context.showSnackBar('Verified firmware saved: ${extractedPath.split('/').last}');
         }
       }
     } catch (e) {
@@ -130,7 +131,7 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
   Future<void> _rebootToBootsel() async {
     final serial = context.read<SerialProvider>();
     if (!serial.isConnected) {
-      _showSnackBar('Device not connected');
+      context.showSnackBar('Device not connected');
       return;
     }
     
@@ -141,12 +142,13 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
       uf2FileName = '${baseName}_verified.uf2';
     }
 
+    final l10n = AppLocalizations.of(context)!;
     // Show confirmation dialog
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         icon: Icon(Icons.restart_alt, size: IconSizes.huge, color: ScoreColors.warning),
-        title: const Text('Reboot to BOOTSEL'),
+        title: Text(l10n.bootselMode),
         content: Text(
           'The device will reboot into BOOTSEL mode for firmware update.\n\n'
           'After rebooting:\n'
@@ -158,11 +160,11 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Reboot'),
+            child: Text(l10n.reboot),
           ),
         ],
       ),
@@ -170,14 +172,8 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
 
     if (confirmed == true) {
       serial.sendCommand('B');  // Reboot to BOOTSEL command
-      _showSnackBar('Reboot command sent');
+      context.showSnackBar('Reboot command sent');
     }
-  }
-
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
   }
 
   @override
@@ -236,13 +232,13 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
             child: _isVerifying
                 ? const Center(child: CircularProgressIndicator())
                 : _selectedPackage != null
-                    ? _buildSelectedPackageInfo(theme)
+                    ? _buildSelectedPackageInfo(theme, l10n)
                     : _buildFileList(theme, l10n),
           ),
 
           // Bottom action bar
           if (_selectedPackage != null)
-            _buildActionBar(theme),
+            _buildActionBar(theme, l10n),
         ],
       ),
     );
@@ -286,7 +282,7 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
             OutlinedButton.icon(
               onPressed: _pickFile,
               icon: const Icon(Icons.file_open),
-              label: const Text('Select File'),
+              label: Text(l10n.selectFile),
             ),
           ],
         ),
@@ -320,7 +316,7 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
     );
   }
 
-  Widget _buildSelectedPackageInfo(ThemeData theme) {
+  Widget _buildSelectedPackageInfo(ThemeData theme, AppLocalizations l10n) {
     final package = _selectedPackage!;
 
     return SingleChildScrollView(
@@ -332,7 +328,7 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
           TextButton.icon(
             onPressed: () => setState(() => _selectedPackage = null),
             icon: const Icon(Icons.arrow_back),
-            label: const Text('Back to file list'),
+            label: Text(l10n.backToFileList),
           ),
           const SizedBox(height: Spacing.lg),
 
@@ -456,7 +452,7 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
     );
   }
 
-  Widget _buildActionBar(ThemeData theme) {
+  Widget _buildActionBar(ThemeData theme, AppLocalizations l10n) {
     final package = _selectedPackage!;
     final serial = context.watch<SerialProvider>();
 
@@ -465,7 +461,7 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         border: Border(
-          top: BorderSide(color: theme.colorScheme.outline.withOpacity(0.2)),
+          top: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.medium)),
         ),
       ),
       child: SafeArea(
@@ -478,11 +474,11 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
                 children: [
                   Text(
                     package.fileName,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: AppTextStyles.bold,
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    package.isValid ? 'Ready to install' : 'Verification failed',
+                    package.isValid ? l10n.readyToInstall : l10n.verificationFailed,
                     style: TextStyle(
                       fontSize: FontSizes.bodySm,
                       color: package.isValid ? ScoreColors.excellent : ScoreColors.poor,
@@ -497,7 +493,7 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
                   ? _rebootToBootsel
                   : null,
               icon: const Icon(Icons.system_update),
-              label: const Text('Install'),
+              label: Text(l10n.firmwareInstall),
             ),
           ],
         ),

@@ -15,6 +15,7 @@ class SessionData {
   final double maxPressure;
   final double avgPressure;
   final int duration;
+  final int sampleRate;
   final String notes;
   final String? displayTitle;
   final String? deviceSerial;
@@ -28,6 +29,7 @@ class SessionData {
     required this.maxPressure,
     required this.avgPressure,
     required this.duration,
+    this.sampleRate = 8,
     this.notes = '',
     this.displayTitle,
     this.deviceSerial,
@@ -47,6 +49,7 @@ class SessionData {
       maxPressure: session.maxPressure,
       avgPressure: session.avgPressure,
       duration: session.duration,
+      sampleRate: session.sampleRate,
       notes: session.notes ?? '',
       displayTitle: session.displayTitle,
       deviceSerial: session.deviceSerial,
@@ -130,31 +133,15 @@ class SessionRepository extends ChangeNotifier {
           ? await _dbService.getAllSessions()
           : await _dbService.getSessionsByDevice(_deviceFilter);
       
-      // Process sessions in parallel for better performance
-      final sessionFutures = dbSessions.map((session) async {
-        // Load pressure data
-        final pressureData = await _dbService.getPressureDataBySession(session.id!);
-        
-        // Convert to FlSpot using index * interval (based on sample rate)
-        final sampleRate = session.sampleRate > 0 ? session.sampleRate : 8;
-        final intervalMs = 1000.0 / sampleRate;
-        
-        final chartData = pressureData.asMap().entries.map((entry) {
-          final elapsedMs = entry.key * intervalMs;
-          return FlSpot(elapsedMs, entry.value.pressure);
-        }).toList();
-
-        // Load graph notes
-        final graphNotes = await _dbService.getGraphNotesBySession(session.id!);
-
+      // Don't load chart data here - load lazily when viewing details
+      // This significantly improves list loading performance
+      _sessions = dbSessions.map((session) {
         return SessionData.fromSession(
           session,
-          chartData: chartData,
-          graphNotes: graphNotes,
+          chartData: const [], // Empty - will be loaded on demand
+          graphNotes: const [],
         );
-      });
-      
-      _sessions = await Future.wait(sessionFutures);
+      }).toList();
     } catch (e) {
       _error = e.toString();
     } finally {
@@ -200,6 +187,38 @@ class SessionRepository extends ChangeNotifier {
       return _sessions.firstWhere((s) => s.id == id);
     } catch (_) {
       return null;
+    }
+  }
+
+  /// Load chart data for a specific session (lazy loading)
+  Future<SessionData> loadSessionWithChartData(SessionData session) async {
+    if (session.chartData.isNotEmpty) {
+      return session; // Already loaded
+    }
+    
+    try {
+      // Load pressure data
+      final pressureData = await _dbService.getPressureDataBySession(session.id!);
+      
+      // Convert to FlSpot using index * interval (based on sample rate)
+      final sampleRate = session.sampleRate > 0 ? session.sampleRate : 8;
+      final intervalMs = 1000.0 / sampleRate;
+      
+      final chartData = pressureData.asMap().entries.map((entry) {
+        final elapsedMs = entry.key * intervalMs;
+        return FlSpot(elapsedMs, entry.value.pressure);
+      }).toList();
+
+      // Load graph notes
+      final graphNotes = await _dbService.getGraphNotesBySession(session.id!);
+
+      return session.copyWith(
+        chartData: chartData,
+        graphNotes: graphNotes,
+      );
+    } catch (e) {
+      _error = e.toString();
+      return session;
     }
   }
 

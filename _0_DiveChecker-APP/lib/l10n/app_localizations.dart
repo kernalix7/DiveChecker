@@ -3031,6 +3031,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Higher values = more smoothing'**
   String get filterStrengthDescription;
+
+  /// No description provided for @atmosphericCalibrating.
+  ///
+  /// In en, this message translates to:
+  /// **'Calibrating atmospheric pressure...'**
+  String get atmosphericCalibrating;
+
+  /// No description provided for @atmosphericRecalibrate.
+  ///
+  /// In en, this message translates to:
+  /// **'Recalibrate Atmosphere'**
+  String get atmosphericRecalibrate;
+
+  /// No description provided for @atmosphericKeepSensorStill.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep sensor still in open air'**
+  String get atmosphericKeepSensorStill;
+
+  /// No description provided for @secondsRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds} seconds remaining'**
+  String secondsRemaining(int seconds);
+
+  /// No description provided for @selectFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Select File'**
+  String get selectFile;
+
+  /// No description provided for @backToFileList.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to file list'**
+  String get backToFileList;
+
+  /// No description provided for @readyToInstall.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to install'**
+  String get readyToInstall;
+
+  /// No description provided for @verificationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification failed'**
+  String get verificationFailed;
 }
 
 class _AppLocalizationsDelegate

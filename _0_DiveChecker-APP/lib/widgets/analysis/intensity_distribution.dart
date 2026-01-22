@@ -49,7 +49,7 @@ class IntensityDistribution extends StatelessWidget {
               children: [
                 _IntensityLegendItem(
                   label: l10n.weakIntensity,
-                  color: Colors.orange,
+                  color: ScoreColors.warning,
                   count: result.weakPeakCount,
                   total: total,
                 ),
@@ -61,7 +61,7 @@ class IntensityDistribution extends StatelessWidget {
                 ),
                 _IntensityLegendItem(
                   label: l10n.strongIntensity,
-                  color: Colors.green,
+                  color: ScoreColors.excellent,
                   count: result.strongPeakCount,
                   total: total,
                 ),
@@ -99,7 +99,7 @@ class _IntensityBar extends StatelessWidget {
               Expanded(
                 flex: (weakPct * 100).round(),
                 child: Container(
-                  color: Colors.orange,
+                  color: ScoreColors.warning,
                   child: Center(
                     child: Text(
                       weakPct > 0.15 ? l10n.weak : '',
@@ -133,7 +133,7 @@ class _IntensityBar extends StatelessWidget {
               Expanded(
                 flex: (strongPct * 100).round(),
                 child: Container(
-                  color: Colors.green,
+                  color: ScoreColors.excellent,
                   child: Center(
                     child: Text(
                       strongPct > 0.15 ? l10n.strong : '',

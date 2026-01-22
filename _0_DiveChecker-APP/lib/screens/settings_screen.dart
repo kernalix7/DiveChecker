@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
 import '../constants/app_constants.dart';
+import '../utils/ui_helpers.dart';
+import '../widgets/common/styled_container.dart';
 import '../widgets/section_header.dart';
 import '../widgets/icon_container.dart';
 import '../widgets/settings/license_page.dart';
@@ -65,7 +67,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   title: Text(
                     l10n.language,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                    style: AppTextStyles.semiBold,
                   ),
                   subtitle: Text(LocaleProvider.getDisplayName(localeProvider.locale)),
                   trailing: const Icon(Icons.chevron_right),
@@ -89,7 +91,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   title: Text(
                     l10n.theme,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                    style: AppTextStyles.semiBold,
                   ),
                   subtitle: Text(_getThemeDisplayName(context, context.watch<SettingsProvider>().themeMode)),
                   trailing: const Icon(Icons.chevron_right),
@@ -113,7 +115,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   title: Text(
                     l10n.pressureUnit,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                    style: AppTextStyles.semiBold,
                   ),
                   subtitle: Text(context.watch<SettingsProvider>().pressureUnit.displayName),
                   trailing: const Icon(Icons.chevron_right),
@@ -125,7 +127,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     final isConnected = serialProvider.isConnected;
                     return Column(
                       children: [
-                        Divider(height: Dimensions.dividerHeight, indent: WidgetSizes.dividerIndent, color: theme.colorScheme.outlineVariant),
+                        const AppDivider(),
                         ListTile(
                           leading: IconContainer(
                             icon: Icons.waves,
@@ -160,7 +162,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           
           // My Devices Section - Always show, navigate to device settings when connected
-          const SizedBox(height: UIConstants.sectionSpacing),
+          const SectionSpacing(),
           SectionHeader(l10n.myDevices),
           Spacing.verticalSm,
           Consumer<SerialProvider>(
@@ -175,7 +177,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     title: Text(
                       l10n.noDeviceConnected,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+                      style: AppTextStyles.semiBold,
                     ),
                     subtitle: Text(l10n.tapToConnect),
                   ),
@@ -206,7 +208,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     children: [
                       Text(
                         '$deviceName${shortSerial.isNotEmpty ? '-$shortSerial' : ''}',
-                        style: const TextStyle(fontWeight: FontWeight.w600),
+                        style: AppTextStyles.semiBold,
                       ),
                       Spacing.horizontalSm,
                       Icon(
@@ -241,14 +243,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   title: Text(
                     l10n.enableNotifications,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                    style: AppTextStyles.semiBold,
                   ),
                   subtitle: Text(l10n.getAlertsForMeasurements),
                   value: true,
                   onChanged: (value) {
                   },
                 ),
-                Divider(height: Dimensions.dividerHeight, indent: WidgetSizes.dividerIndent, color: theme.colorScheme.outlineVariant),
+                const AppDivider(),
                 SwitchListTile(
                   secondary: IconContainer(
                     icon: Icons.vibration,
@@ -256,7 +258,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   title: Text(
                     l10n.hapticFeedback,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                    style: AppTextStyles.semiBold,
                   ),
                   subtitle: Text(l10n.vibrateOnKeyActions),
                   value: true,
@@ -267,7 +269,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           
-          const SizedBox(height: UIConstants.sectionSpacing),
+          const SectionSpacing(),
           
           SectionHeader(l10n.dataManagement),
           Spacing.verticalSm,
@@ -281,7 +283,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   title: Text(
                     l10n.backupData,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                    style: AppTextStyles.semiBold,
                   ),
                   subtitle: Text(l10n.backupDataDescription),
                   trailing: _isBackingUp 
@@ -313,7 +315,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                 ],
-                Divider(height: Dimensions.dividerHeight, indent: WidgetSizes.dividerIndent, color: theme.colorScheme.outlineVariant),
+                const AppDivider(),
                 ListTile(
                   leading: IconContainer(
                     icon: Icons.cloud_upload,
@@ -321,7 +323,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   title: Text(
                     l10n.restoreData,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                    style: AppTextStyles.semiBold,
                   ),
                   subtitle: Text(l10n.restoreDataDescription),
                   trailing: _isRestoring 
@@ -351,11 +353,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   title: Text(
                     l10n.appVersion,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                    style: AppTextStyles.semiBold,
                   ),
                   subtitle: const Text(AppConfig.versionDisplay),
                 ),
-                Divider(height: Dimensions.dividerHeight, indent: WidgetSizes.dividerIndent, color: theme.colorScheme.outlineVariant),
+                const AppDivider(),
                 ListTile(
                   leading: IconContainer(
                     icon: Icons.help_outline,
@@ -363,13 +365,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   title: Text(
                     l10n.helpAndSupport,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                    style: AppTextStyles.semiBold,
                   ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () {
                   },
                 ),
-                Divider(height: Dimensions.dividerHeight, indent: WidgetSizes.dividerIndent, color: theme.colorScheme.outlineVariant),
+                const AppDivider(),
                 ListTile(
                   leading: IconContainer(
                     icon: Icons.description,
@@ -377,7 +379,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   title: Text(
                     l10n.licenses,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                    style: AppTextStyles.semiBold,
                   ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _showCustomLicensePage(context, l10n, theme),
@@ -386,7 +388,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           
-          const SizedBox(height: UIConstants.sectionSpacing),
+          const SectionSpacing(),
           
           Center(
             child: Column(
@@ -470,29 +472,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
       if (mounted) {
         if (savedPath != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('${l10n.backupSuccess}\n${l10n.sessionsCount(backup.stats.sessionCount)}, ${l10n.dataPointsCount(backup.stats.dataPointCount)}'),
-              backgroundColor: ScoreColors.excellent,
-            ),
-          );
+          context.showSuccess('${l10n.backupSuccess}\n${l10n.sessionsCount(backup.stats.sessionCount)}, ${l10n.dataPointsCount(backup.stats.dataPointCount)}');
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.backupFailed),
-              backgroundColor: ScoreColors.poor,
-            ),
-          );
+          context.showError(l10n.backupFailed);
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${l10n.backupFailed}: $e'),
-            backgroundColor: ScoreColors.poor,
-          ),
-        );
+        context.showError('${l10n.backupFailed}: $e');
       }
     } finally {
       if (mounted) {
@@ -515,12 +502,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       
       if (backup == null) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.invalidBackupFile),
-              backgroundColor: ScoreColors.poor,
-            ),
-          );
+          context.showError(l10n.invalidBackupFile);
         }
         return;
       }
@@ -586,29 +568,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
       if (mounted) {
         if (result.success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('${l10n.restoreSuccess}\n${l10n.sessionsCount(result.sessionsRestored)}'),
-              backgroundColor: ScoreColors.excellent,
-            ),
-          );
+          context.showSuccess('${l10n.restoreSuccess}\n${l10n.sessionsCount(result.sessionsRestored)}');
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('${l10n.restoreFailed}: ${result.errors.join(', ')}'),
-              backgroundColor: ScoreColors.poor,
-            ),
-          );
+          context.showError('${l10n.restoreFailed}: ${result.errors.join(', ')}');
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${l10n.restoreFailed}: $e'),
-            backgroundColor: ScoreColors.poor,
-          ),
-        );
+        context.showError('${l10n.restoreFailed}: $e');
       }
     } finally {
       if (mounted) {
@@ -775,9 +742,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onTap: () async {
                 final success = await serialProvider.setOutputRate(rate.value);
                 if (success && context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Output rate: ${rate.value} Hz')),
-                  );
+                  context.showSnackBar('Output rate: ${rate.value} Hz');
                 }
                 Navigator.of(dialogContext).pop();
               },

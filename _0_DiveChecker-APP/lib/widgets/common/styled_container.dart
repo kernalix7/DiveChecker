@@ -77,7 +77,7 @@ class StyledContainer extends StatelessWidget {
       boxShadow: elevated
           ? [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.08),
+                color: OverlayColors.darkOverlay.withValues(alpha: 0.08),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -138,7 +138,7 @@ class StyledContainer extends StatelessWidget {
       borderRadius: borderRadius,
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withValues(alpha: 0.06),
+          color: OverlayColors.darkOverlay.withValues(alpha: 0.06),
           blurRadius: 12,
           offset: const Offset(0, 4),
         ),
@@ -227,5 +227,46 @@ class StyledContainer extends StatelessWidget {
       ),
       child: child,
     );
+  }
+}
+
+/// A themed divider with consistent styling for list items.
+/// 
+/// Use this instead of manual Divider configuration for cards and lists.
+class AppDivider extends StatelessWidget {
+  /// Standard indent for list tile dividers
+  final double indent;
+  
+  /// Height/thickness of the divider
+  final double height;
+  
+  const AppDivider({
+    super.key,
+    this.indent = WidgetSizes.dividerIndent,
+    this.height = Dimensions.dividerHeight,
+  });
+  
+  /// Divider with no indent - full width
+  const AppDivider.fullWidth({
+    super.key,
+  }) : indent = 0, height = Dimensions.dividerHeight;
+
+  @override
+  Widget build(BuildContext context) {
+    return Divider(
+      height: height,
+      indent: indent,
+      color: Theme.of(context).colorScheme.outlineVariant,
+    );
+  }
+}
+
+/// Section spacing widget - use between major sections
+class SectionSpacing extends StatelessWidget {
+  const SectionSpacing({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(height: UIConstants.sectionSpacing);
   }
 }

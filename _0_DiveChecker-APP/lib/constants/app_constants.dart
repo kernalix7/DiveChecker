@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 class AppConfig {
   static const String appName = 'DiveChecker';
   static const String version = '1.1.0';
-  static const String build = '2';
+  static const String build = '5';
   static const String versionDisplay = '$version (Build $build)';
   
   /// Device product info
@@ -34,6 +34,18 @@ class StatusColors {
   static const Color disabled = Color(0xFF9E9E9E);  // Grey
   /// Neutral/unknown state
   static const Color neutral = Color(0xFF6B7280);  // Grey
+  /// Secondary text/icon color
+  static const Color secondaryText = Color(0xFF757575);  // Grey 600
+  /// Tertiary text/icon color
+  static const Color tertiaryText = Color(0xFF9E9E9E);  // Grey 500
+}
+
+/// Overlay colors
+class OverlayColors {
+  /// Dark overlay background
+  static const Color darkOverlay = Color(0xFF000000);
+  /// White content background
+  static const Color whiteContent = Color(0xFFFFFFFF);
 }
 
 /// App Theme Colors - Black & Blue Accent Theme
@@ -303,6 +315,25 @@ class IconSizes {
   static const double xHuge = 56.0;
   /// Display (64px)
   static const double display = 64.0;
+}
+
+/// Common TextStyles for consistency
+class AppTextStyles {
+  /// Semi-bold weight - used for list tile titles, section headers
+  static const TextStyle semiBold = TextStyle(fontWeight: FontWeight.w600);
+  
+  /// Bold weight
+  static const TextStyle bold = TextStyle(fontWeight: FontWeight.bold);
+  
+  /// Monospace font - used for values, numbers
+  static const TextStyle monospace = TextStyle(fontFamily: 'monospace');
+  
+  /// App bar title style
+  static const TextStyle appBarTitle = TextStyle(
+    fontSize: FontSizes.titleSm,
+    fontWeight: FontWeight.bold,
+    letterSpacing: LetterSpacings.widest,
+  );
 }
 
 /// Elevation constants

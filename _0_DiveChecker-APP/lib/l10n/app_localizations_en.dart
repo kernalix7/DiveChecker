@@ -1574,4 +1574,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get filterStrengthDescription => 'Higher values = more smoothing';
+
+  @override
+  String get atmosphericCalibrating => 'Calibrating atmospheric pressure...';
+
+  @override
+  String get atmosphericRecalibrate => 'Recalibrate Atmosphere';
+
+  @override
+  String get atmosphericKeepSensorStill => 'Keep sensor still in open air';
+
+  @override
+  String secondsRemaining(int seconds) {
+    return '$seconds seconds remaining';
+  }
+
+  @override
+  String get selectFile => 'Select File';
+
+  @override
+  String get backToFileList => 'Back to file list';
+
+  @override
+  String get readyToInstall => 'Ready to install';
+
+  @override
+  String get verificationFailed => 'Verification failed';
 }
