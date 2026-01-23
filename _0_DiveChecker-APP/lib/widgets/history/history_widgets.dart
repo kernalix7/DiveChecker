@@ -41,15 +41,15 @@ class SessionCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeader(context, theme, l10n),
-              Spacing.verticalSm,
+              const SizedBox(height: Spacing.sm),
               Text(
                 formatDate(session.date),
                 style: TextStyle(fontSize: FontSizes.bodyLg, color: theme.colorScheme.onSurfaceVariant),
               ),
-              Spacing.verticalMd,
+              const SizedBox(height: Spacing.md),
               _buildStatsRow(),
               if (session.notes.isNotEmpty) ...[
-                Spacing.verticalMd,
+                const SizedBox(height: Spacing.md),
                 _buildNotesPreview(theme),
               ],
             ],
@@ -104,13 +104,13 @@ class SessionCard extends StatelessWidget {
           value: session.maxPressure.toStringAsFixed(1),
           color: ScoreColors.poor,
         ),
-        Spacing.horizontalLg,
+        const SizedBox(width: Spacing.lg),
         MiniStat(
           icon: Icons.show_chart,
           value: session.avgPressure.toStringAsFixed(1),
           color: ScoreColors.excellent,
         ),
-        Spacing.horizontalLg,
+        const SizedBox(width: Spacing.lg),
         MiniStat(
           icon: Icons.timer,
           value: formatDuration(session.duration),

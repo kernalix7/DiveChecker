@@ -3,17 +3,18 @@
 
 library;
 
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:provider/provider.dart';
 import 'dart:math';
 
-import '../l10n/app_localizations.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
 import '../constants/app_constants.dart';
+import '../l10n/app_localizations.dart';
+import '../models/chart_point.dart';
 import '../providers/providers.dart';
-import '../widgets/status_badge.dart';
 import '../widgets/history/history_widgets.dart';
+import '../widgets/status_badge.dart';
 import 'graph_detail_page.dart';
 import 'peak_analysis_page.dart';
 
@@ -94,8 +95,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return l10n.secondsOnly(seconds);
   }
 
-  List<FlSpot> _generateDemoChartData(int sessionId, int duration) {
-    List<FlSpot> spots = [];
+  List<ChartPoint> _generateDemoChartData(int sessionId, int duration) {
+    List<ChartPoint> spots = [];
     final random = Random(sessionId);
 
     for (int i = 0; i <= duration; i += 2) {
@@ -103,7 +104,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       double variation = 30 * sin(i * 0.3);
       double noise = random.nextDouble() * 10 - 5;
       double pressure = basePressure + variation + noise;
-      spots.add(FlSpot(i.toDouble(), pressure));
+      spots.add(ChartPoint(i.toDouble(), pressure));
     }
 
     return spots;
@@ -228,16 +229,20 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.history, size: IconSizes.display * 1.67, color: StatusColors.disabled.withOpacity(Opacities.mediumHigh)),
-                      Spacing.verticalLg,
+                      Icon(
+                        Icons.history,
+                        size: IconSizes.display * 1.67,
+                        color: StatusColors.disabled.withOpacity(Opacities.mediumHigh),
+                      ),
+                      const SizedBox(height: Spacing.lg),
                       Text(
                         l10n.noMeasurements,
-                        style: TextStyle(fontSize: FontSizes.bodyLg, color: StatusColors.neutral),
+                        style: const TextStyle(fontSize: FontSizes.bodyLg, color: StatusColors.neutral),
                       ),
-                      Spacing.verticalSm,
+                      const SizedBox(height: Spacing.sm),
                       Text(
                         l10n.startMeasuringHint,
-                        style: TextStyle(fontSize: FontSizes.body, color: StatusColors.disabled),
+                        style: const TextStyle(fontSize: FontSizes.body, color: StatusColors.disabled),
                       ),
                     ],
                   ),

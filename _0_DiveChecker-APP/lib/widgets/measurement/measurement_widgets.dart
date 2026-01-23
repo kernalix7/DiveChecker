@@ -3,12 +3,14 @@
 
 library;
 
-import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+
 import '../../constants/app_constants.dart';
 import '../../l10n/app_localizations.dart';
-import '../../utils/formatters.dart';
+import '../../models/chart_point.dart';
 import '../../utils/chart_utils.dart' as chart_utils;
+import '../../utils/formatters.dart';
 
 class PressureDisplay extends StatelessWidget {
   final double pressure;
@@ -302,7 +304,7 @@ class StatsRow extends StatelessWidget {
 }
 
 class PressureChart extends StatelessWidget {
-  final List<FlSpot> data;
+  final List<ChartPoint> data;
   final double minX;
   final double maxX;
   final int sampleRate;
@@ -314,6 +316,10 @@ class PressureChart extends StatelessWidget {
     required this.maxX,
     this.sampleRate = 8,
   });
+
+  List<FlSpot> _toFlSpots(List<ChartPoint> points) {
+    return points.map((p) => FlSpot(p.x, p.y)).toList();
+  }
 
   /// Calculate X axis interval - delegates to shared utility
   double _calculateXInterval(double rangeMs) {
@@ -446,8 +452,8 @@ class PressureChart extends StatelessWidget {
               },
             ),
           ),
-          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         ),
         borderData: FlBorderData(
           show: true,
@@ -455,7 +461,7 @@ class PressureChart extends StatelessWidget {
         ),
         lineBarsData: [
           LineChartBarData(
-            spots: data,
+            spots: _toFlSpots(data),
             isCurved: false,
             color: theme.colorScheme.primary,
             barWidth: ChartDimensions.barWidthSmall,

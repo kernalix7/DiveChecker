@@ -3,9 +3,9 @@
 
 library;
 
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 
+import '../models/chart_point.dart';
 import '../models/pressure_data.dart';
 import '../services/unified_database_service.dart';
 
@@ -20,7 +20,7 @@ class SessionData {
   final String? displayTitle;
   final String? deviceSerial;
   final String? deviceName;
-  final List<FlSpot> chartData;
+  final List<ChartPoint> chartData;
   final List<Map<String, dynamic>> graphNotes;
 
   const SessionData({
@@ -40,7 +40,7 @@ class SessionData {
 
   factory SessionData.fromSession(
     MeasurementSession session, {
-    List<FlSpot> chartData = const [],
+    List<ChartPoint> chartData = const [],
     List<Map<String, dynamic>> graphNotes = const [],
   }) {
     return SessionData(
@@ -83,7 +83,7 @@ class SessionData {
     String? displayTitle,
     String? deviceSerial,
     String? deviceName,
-    List<FlSpot>? chartData,
+    List<ChartPoint>? chartData,
     List<Map<String, dynamic>>? graphNotes,
   }) {
     return SessionData(
@@ -200,13 +200,13 @@ class SessionRepository extends ChangeNotifier {
       // Load pressure data
       final pressureData = await _dbService.getPressureDataBySession(session.id!);
       
-      // Convert to FlSpot using index * interval (based on sample rate)
+      // Convert to ChartPoint using index * interval (based on sample rate)
       final sampleRate = session.sampleRate > 0 ? session.sampleRate : 8;
       final intervalMs = 1000.0 / sampleRate;
       
       final chartData = pressureData.asMap().entries.map((entry) {
         final elapsedMs = entry.key * intervalMs;
-        return FlSpot(elapsedMs, entry.value.pressure);
+        return ChartPoint(elapsedMs, entry.value.pressure);
       }).toList();
 
       // Load graph notes

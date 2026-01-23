@@ -29,7 +29,7 @@ class MiniStatWidget extends StatelessWidget {
           label,
           style: TextStyle(fontSize: FontSizes.sm, color: theme.colorScheme.outline),
         ),
-        Spacing.verticalXs,
+        const SizedBox(height: Spacing.xs),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -39,7 +39,7 @@ class MiniStatWidget extends StatelessWidget {
               value,
               style: const TextStyle(fontSize: FontSizes.titleSm, fontWeight: FontWeight.bold),
             ),
-            Spacing.horizontalXs,
+            const SizedBox(width: Spacing.xs),
             Text(
               unit,
               style: TextStyle(fontSize: FontSizes.xs, color: theme.colorScheme.outline),
@@ -88,7 +88,7 @@ class ScoreBarWidget extends StatelessWidget {
             ),
           ],
         ),
-        Spacing.verticalXs,
+        const SizedBox(height: Spacing.xs),
         ClipRRect(
           borderRadius: BorderRadii.xsAll,
           child: LinearProgressIndicator(

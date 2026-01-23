@@ -1,11 +1,14 @@
 // Copyright (C) 2025 Kim DaeHyun (kernalix7@kodenet.io)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
-import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'dart:math';
+
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+
 import '../../constants/app_constants.dart';
 import '../../l10n/app_localizations.dart';
+import '../../models/chart_point.dart';
 import '../../utils/peak_analyzer.dart';
 import 'analysis_widgets.dart';
 
@@ -183,7 +186,7 @@ class PatternRecognitionView extends StatelessWidget {
 
   /// 패턴 분석
   Map<String, dynamic> _analyzePattern(
-    List<FlSpot> peaks,
+    List<ChartPoint> peaks,
     List<double> intervals,
   ) {
     final suggestions = <String>[];
@@ -720,7 +723,7 @@ class _ConsecutiveAnalysisCard extends StatelessWidget {
 
 /// 패턴 비교 차트
 class _PatternComparisonChart extends StatelessWidget {
-  final List<FlSpot> peaks;
+  final List<ChartPoint> peaks;
   final AppLocalizations l10n;
 
   const _PatternComparisonChart({

@@ -1,11 +1,12 @@
 // Copyright (C) 2025 Kim DaeHyun (kernalix7@kodenet.io)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
-import 'package:fl_chart/fl_chart.dart';
 import 'dart:math';
 
+import '../models/chart_point.dart';
+
 class PeakDetail {
-  final FlSpot peak;
+  final ChartPoint peak;
   final int index;
   final double riseTime;
   final double fallTime;
@@ -33,7 +34,7 @@ class PeakDetail {
 }
 
 class PeakAnalysisResult {
-  final List<FlSpot> peaks;
+  final List<ChartPoint> peaks;
   final List<PeakDetail> peakDetails;
   final double averagePeakPressure;
   final double maxPeakPressure;
@@ -93,7 +94,7 @@ class PeakAnalyzer {
     this.minPeakDistance = 10,
   });
 
-  PeakAnalysisResult analyze(List<FlSpot> data) {
+  PeakAnalysisResult analyze(List<ChartPoint> data) {
     if (data.isEmpty) {
       return _emptyResult();
     }
@@ -180,7 +181,7 @@ class PeakAnalyzer {
     );
   }
 
-  List<int> _detectPeakIndices(List<FlSpot> data) {
+  List<int> _detectPeakIndices(List<ChartPoint> data) {
     final peakIndices = <int>[];
     
     if (data.length < 3) return peakIndices;
@@ -248,7 +249,7 @@ class PeakAnalyzer {
     return peakIndices;
   }
 
-  List<PeakDetail> _calculatePeakDetails(List<FlSpot> data, List<int> peakIndices, double baseline) {
+  List<PeakDetail> _calculatePeakDetails(List<ChartPoint> data, List<int> peakIndices, double baseline) {
     final details = <PeakDetail>[];
     
     for (int i = 0; i < peakIndices.length; i++) {
@@ -388,7 +389,7 @@ class PeakAnalyzer {
     return outliers;
   }
 
-  double _calculateFatigueIndex(List<FlSpot> peaks) {
+  double _calculateFatigueIndex(List<ChartPoint> peaks) {
     if (peaks.length < 4) return 0.0;
 
     final halfIndex = peaks.length ~/ 2;
@@ -449,7 +450,7 @@ class SegmentAnalysis {
 }
 
 List<SegmentAnalysis> analyzeSegments(
-  List<FlSpot> data, 
+  List<ChartPoint> data, 
   PeakAnalysisResult peakResult, 
   {int segmentCount = 4}
 ) {
@@ -490,9 +491,9 @@ List<SegmentAnalysis> analyzeSegments(
 /// [originalFatigueIndex]: 원본 피로도 인덱스
 /// [originalStabilityTrend]: 원본 안정성 트렌드
 PeakAnalysisResult recalculateWithSelectedPeaks({
-  required List<FlSpot> selectedPeaks,
+  required List<ChartPoint> selectedPeaks,
   required List<PeakDetail> selectedDetails,
-  required List<FlSpot> chartData,
+  required List<ChartPoint> chartData,
   required double originalFatigueIndex,
   required double originalStabilityTrend,
 }) {

@@ -43,7 +43,7 @@ class IntensityDistribution extends StatelessWidget {
               strongPct: strongPct,
               l10n: l10n,
             ),
-            Spacing.verticalMd,
+            const SizedBox(height: Spacing.md),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [

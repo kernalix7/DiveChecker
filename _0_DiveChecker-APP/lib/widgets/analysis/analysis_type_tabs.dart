@@ -45,7 +45,7 @@ class AnalysisTypeTabs extends StatelessWidget {
               enabled: true,
               onTap: onTypeChanged,
             ),
-            Spacing.horizontalSm,
+            const SizedBox(width: Spacing.sm),
             _AnalysisTab(
               icon: Icons.dashboard,
               label: l10n.statisticsDashboard,
@@ -54,7 +54,7 @@ class AnalysisTypeTabs extends StatelessWidget {
               enabled: true,
               onTap: onTypeChanged,
             ),
-            Spacing.horizontalSm,
+            const SizedBox(width: Spacing.sm),
             _AnalysisTab(
               icon: Icons.view_timeline,
               label: l10n.segmentAnalysis,
@@ -63,7 +63,7 @@ class AnalysisTypeTabs extends StatelessWidget {
               enabled: true,
               onTap: onTypeChanged,
             ),
-            Spacing.horizontalSm,
+            const SizedBox(width: Spacing.sm),
             _AnalysisTab(
               icon: Icons.trending_up,
               label: l10n.trendGraph,
@@ -72,7 +72,7 @@ class AnalysisTypeTabs extends StatelessWidget {
               enabled: true,
               onTap: onTypeChanged,
             ),
-            Spacing.horizontalSm,
+            const SizedBox(width: Spacing.sm),
             _AnalysisTab(
               icon: Icons.pattern,
               label: l10n.patternRecognition,

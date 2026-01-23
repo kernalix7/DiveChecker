@@ -4,5 +4,6 @@
 /// Models module exports
 library;
 
-export 'pressure_data.dart';
+export 'chart_point.dart';
 export 'graph_note.dart';
+export 'pressure_data.dart';

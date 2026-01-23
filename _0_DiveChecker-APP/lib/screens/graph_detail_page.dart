@@ -1,24 +1,26 @@
 // Copyright (C) 2025 Kim DaeHyun (kernalix7@kodenet.io)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
-import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:provider/provider.dart';
-import '../l10n/app_localizations.dart';
-import '../constants/app_constants.dart';
-import '../widgets/common/stat_info.dart';
-import '../utils/chart_utils.dart' as chart_utils;
 import 'dart:math';
-import 'dart:async';
-import '../services/unified_database_service.dart';
+
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../constants/app_constants.dart';
+import '../l10n/app_localizations.dart';
+import '../models/chart_point.dart';
+import '../models/graph_note.dart';
 import '../providers/serial_provider.dart';
 import '../providers/session_repository.dart';
 import '../providers/settings_provider.dart';
-import '../models/graph_note.dart';
+import '../services/unified_database_service.dart';
+import '../utils/chart_utils.dart' as chart_utils;
+import '../widgets/common/stat_info.dart';
 import 'peak_analysis_page.dart';
 
 class GraphDetailPage extends StatefulWidget {
-  final List<FlSpot> chartData;
+  final List<ChartPoint> chartData;
   final Map<String, dynamic> session;
 
   const GraphDetailPage({
@@ -50,14 +52,13 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
   double? _cachedMinX;
   double? _cachedMaxX;
 
-  // Pre-computed LOD (Level of Detail) data for different zoom levels
-  late final List<FlSpot> _lodFull;     // Full resolution (max 2000 points)
-  late final List<FlSpot> _lodMedium;   // Medium resolution (max 800 points)
-  late final List<FlSpot> _lodLow;      // Low resolution (max 300 points)
-  
-  // Gesture state for smooth interaction
-  bool _isGesturing = false;
-  Timer? _gestureEndTimer;
+  // Pre-computed LOD (Level of Detail) data - medium resolution for smooth rendering
+  late final List<ChartPoint> _lodData;     // Medium resolution (max 800 points)
+
+  /// Convert ChartPoint list to FlSpot list for fl_chart
+  List<FlSpot> _toFlSpots(List<ChartPoint> points) {
+    return points.map((p) => FlSpot(p.x, p.y)).toList();
+  }
 
   @override
   void initState() {
@@ -74,7 +75,6 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
 
   @override
   void dispose() {
-    _gestureEndTimer?.cancel();
     super.dispose();
   }
 
@@ -82,26 +82,20 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
   void _initializeLodData() {
     final data = widget.chartData;
     if (data.isEmpty) {
-      _lodFull = [];
-      _lodMedium = [];
-      _lodLow = [];
+      _lodData = [];
       return;
     }
     
-    // Full resolution: max 2000 points
-    _lodFull = _downsample(data, 2000);
-    // Medium resolution: max 800 points  
-    _lodMedium = _downsample(data, 800);
-    // Low resolution: max 300 points (for gestures)
-    _lodLow = _downsample(data, 300);
+    // Medium resolution: max 800 points for smooth rendering
+    _lodData = _downsample(data, 800);
   }
   
   /// Downsample using min-max bucketing (preserves peaks)
-  List<FlSpot> _downsample(List<FlSpot> data, int maxPoints) {
+  List<ChartPoint> _downsample(List<ChartPoint> data, int maxPoints) {
     if (data.length <= maxPoints) return data;
     
     final bucketSize = data.length / (maxPoints / 2);
-    final result = <FlSpot>[];
+    final result = <ChartPoint>[];
     
     for (var i = 0; i < maxPoints / 2; i++) {
       final start = (i * bucketSize).floor();
@@ -199,8 +193,6 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
     _baseMinX = _minX;
     _baseMaxX = _maxX;
     _lastFocalPoint = details.localFocalPoint;
-    _isGesturing = true;
-    _gestureEndTimer?.cancel();
   }
 
   void _handleScaleUpdate(ScaleUpdateDetails details) {
@@ -275,34 +267,16 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
 
   void _handleScaleEnd(ScaleEndDetails details) {
     _lastFocalPoint = null;
-    // Delay switching to high quality to avoid flicker
-    _gestureEndTimer?.cancel();
-    _gestureEndTimer = Timer(const Duration(milliseconds: 100), () {
-      if (mounted) {
-        setState(() {
-          _isGesturing = false;
-        });
-      }
-    });
   }
 
-  /// Get chart data for current state (LOD-based, no viewport filtering)
-  List<FlSpot> _getChartData() {
-    if (_lodFull.isEmpty) return [];
+  /// Get chart data for current state (LOD-based)
+  /// Use medium resolution for stability - it's enough for most cases
+  List<ChartPoint> _getChartData() {
+    if (_lodData.isEmpty) return [];
     
-    // During gestures, use low resolution for smooth interaction
-    if (_isGesturing) {
-      return _lodLow;
-    }
-    
-    // Based on zoom level, choose appropriate LOD
-    if (_zoomLevel > 10) {
-      return _lodFull;
-    } else if (_zoomLevel > 3) {
-      return _lodMedium;
-    } else {
-      return _lodLow;
-    }
+    // Use medium LOD for all zoom levels to prevent jitter during zoom transitions
+    // Medium (800 points) provides good balance of detail and performance
+    return _lodData;
   }
 
   void _resetZoom() {
@@ -390,12 +364,13 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
   /// Format time label - delegates to shared utility
   String _formatTimeLabel(double seconds) => chart_utils.formatTimeLabel(seconds);
 
-  /// Label info - zoom-aware label display
-  /// Shows pressure labels on chart line at key points
-  List<({int index, double fontSize})> _getLabelsInfo() {
+  /// Label info - shows all points with overlap detection
+  /// Skips labels that would overlap with already shown labels
+  List<({int index, double fontSize, ChartPoint point})> _getLabelsInfo() {
     final data = widget.chartData;
     if (data.isEmpty) return [];
     
+    // Get visible data points
     final visibleEntries = data
         .asMap()
         .entries
@@ -404,24 +379,41 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
 
     if (visibleEntries.isEmpty) return [];
 
-    // Fixed label dimensions for overlap calculation
-    const labelWidth = 35.0;  // Approximate width of "12.3" text
-    const labelHeight = 14.0; // Approximate height of label
-    
-    // Calculate pixel per unit for proper spacing
+    // Calculate spacing based on visible range
     final visibleXRange = _maxX - _minX;
     final visibleYRange = _calculateMaxY() - _calculateMinY();
     
-    // Minimum spacing in data units (converted from pixels)
-    // Assume chart is ~300px wide, ~200px tall
-    final minXDistance = visibleXRange * (labelWidth / 300);
-    final minYDistance = visibleYRange * (labelHeight / 200);
+    // Adjust label spacing based on zoom level
+    // More zoomed in = tighter spacing = more labels shown
+    // At zoom level 5+, show all labels (spacing = 0)
+    double labelWidth;
+    double labelHeight;
+    
+    if (_zoomLevel >= 5) {
+      // Highly zoomed: show all labels
+      labelWidth = 0;
+      labelHeight = 0;
+    } else if (_zoomLevel >= 3) {
+      // Medium zoom: tight spacing
+      labelWidth = 20.0;
+      labelHeight = 8.0;
+    } else {
+      // Normal view: standard spacing
+      labelWidth = 32.0;
+      labelHeight = 12.0;
+    }
+    
+    // Minimum spacing in data units
+    final minXDistance = visibleXRange * (labelWidth / 350);
+    final minYDistance = visibleYRange * (labelHeight / 250);
 
-    final result = <({int index, double fontSize})>[];
+    final result = <({int index, double fontSize, ChartPoint point})>[];
     final shownLabels = <({double x, double y})>[];
 
     // Check if label would overlap with existing labels
     bool wouldOverlap(double x, double y) {
+      if (labelWidth == 0) return false; // Show all at high zoom
+      
       for (final shown in shownLabels) {
         final xDiff = (x - shown.x).abs();
         final yDiff = (y - shown.y).abs();
@@ -440,7 +432,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
       final y = entry.value.y;
       
       if (!wouldOverlap(x, y)) {
-        result.add((index: entry.key, fontSize: FontSizes.xxs));
+        result.add((index: entry.key, fontSize: FontSizes.xxs, point: entry.value));
         shownLabels.add((x: x, y: y));
       }
     }
@@ -449,18 +441,22 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
   }
 
   // Store label info for use in getTooltipItems
-  List<({int index, double fontSize})> _cachedLabelsInfo = [];
+  List<({int index, double fontSize, ChartPoint point})> _cachedLabelsInfo = [];
 
   List<ShowingTooltipIndicators> _getVisibleTooltipIndicators() {
     _cachedLabelsInfo = _getLabelsInfo();
+    
+    // Get the chart data for rendering
+    final chartData = _getChartData();
+    final chartDataAsFlSpots = _toFlSpots(chartData);
 
     return _cachedLabelsInfo
         .map(
           (info) => ShowingTooltipIndicators([
             LineBarSpot(
-              LineChartBarData(spots: widget.chartData),
+              LineChartBarData(spots: chartDataAsFlSpots),
               0,
-              widget.chartData[info.index],
+              FlSpot(info.point.x, info.point.y),
             ),
           ]),
         )
@@ -470,8 +466,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
   // Get font size for a specific spot
   double _getFontSizeForSpot(FlSpot spot) {
     for (final info in _cachedLabelsInfo) {
-      final labelSpot = widget.chartData[info.index];
-      if (labelSpot.x == spot.x && labelSpot.y == spot.y) {
+      if (info.point.x == spot.x && info.point.y == spot.y) {
         return info.fontSize;
       }
     }
@@ -573,8 +568,8 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
   }
 
   /// Find nearest point in original data to given x coordinate
-  FlSpot _findNearestPoint(double targetX) {
-    if (widget.chartData.isEmpty) return FlSpot(targetX, 0);
+  ChartPoint _findNearestPoint(double targetX) {
+    if (widget.chartData.isEmpty) return ChartPoint(targetX, 0);
     
     // Binary search for efficiency
     int left = 0;
@@ -831,8 +826,8 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                 children: [
                   Icon(
                     _isConnected
-                        ? Icons.bluetooth_connected
-                        : Icons.bluetooth_disabled,
+                        ? Icons.usb
+                        : Icons.usb_off,
                     color: _isConnected
                         ? ScoreColors.excellent
                         : StatusColors.disabled,
@@ -1040,6 +1035,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
 
                                 // Get LOD-based chart data for performance
                                 final chartData = _getChartData();
+                                final chartDataAsFlSpots = _toFlSpots(chartData);
 
                                 return RepaintBoundary(
                                   child: LineChart(
@@ -1140,8 +1136,9 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                                               getTitlesWidget: (value, meta) {
                                                 // Skip last label only (at maxX position)
                                                 if (value < _minX ||
-                                                    value >= _maxX)
+                                                    value >= _maxX) {
                                                   return const SizedBox.shrink();
+                                                }
                                                 final seconds =
                                                     _xToSeconds(value);
                                                 final timeLabel = _formatTimeLabel(seconds);
@@ -1195,7 +1192,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                                         ),
                                         lineBarsData: [
                                           LineChartBarData(
-                                            spots: chartData,
+                                            spots: chartDataAsFlSpots,
                                             isCurved: false,
                                             color: theme.colorScheme.primary,
                                             barWidth:

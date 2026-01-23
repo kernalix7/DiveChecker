@@ -6,9 +6,9 @@ library;
 import 'dart:async';
 import 'dart:math';
 
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 
+import '../models/chart_point.dart';
 import '../models/pressure_data.dart';
 import '../services/unified_database_service.dart';
 import '../constants/app_constants.dart';
@@ -19,7 +19,7 @@ class MeasurementState {
   final bool isMeasuring;
   final bool isPaused;
   final double currentPressure;
-  final List<FlSpot> pressureData;
+  final List<ChartPoint> pressureData;
   final double maxPressure;
   final double avgPressure;
   final double minX;
@@ -44,7 +44,7 @@ class MeasurementState {
     bool? isMeasuring,
     bool? isPaused,
     double? currentPressure,
-    List<FlSpot>? pressureData,
+    List<ChartPoint>? pressureData,
     double? maxPressure,
     double? avgPressure,
     double? minX,
@@ -78,7 +78,7 @@ class MeasurementController extends ChangeNotifier {
   StreamSubscription<double>? _pressureSubscription;
   
   // Single data list - firmware output rate = display rate = storage rate
-  final List<FlSpot> _dataList = [];
+  final List<ChartPoint> _dataList = [];
   
   // Incremental statistics - avoid recalculating from entire list
   double _sumPressure = 0.0;
@@ -103,7 +103,7 @@ class MeasurementController extends ChangeNotifier {
       final xMs = _dataList.length * sampleIntervalMs;
       
       // Store data and update incremental statistics
-      _dataList.add(FlSpot(xMs, pressure));
+      _dataList.add(ChartPoint(xMs, pressure));
       _sumPressure += pressure;
       if (pressure > _maxPressureValue) {
         _maxPressureValue = pressure;

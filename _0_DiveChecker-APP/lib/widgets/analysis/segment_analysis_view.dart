@@ -1,16 +1,19 @@
 // Copyright (C) 2025 Kim DaeHyun (kernalix7@kodenet.io)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
-import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'dart:math';
+
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+
 import '../../constants/app_constants.dart';
 import '../../l10n/app_localizations.dart';
+import '../../models/chart_point.dart';
 import '../../utils/peak_analyzer.dart';
 import 'analysis_widgets.dart';
 
 class SegmentAnalysisView extends StatelessWidget {
-  final List<FlSpot> chartData;
+  final List<ChartPoint> chartData;
   final PeakAnalysisResult? analysisResult;
   final AppLocalizations l10n;
 

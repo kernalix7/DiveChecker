@@ -1,15 +1,18 @@
 // Copyright (C) 2025 Kim DaeHyun (kernalix7@kodenet.io)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
-import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'dart:math';
+
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+
 import '../../constants/app_constants.dart';
 import '../../l10n/app_localizations.dart';
+import '../../models/chart_point.dart';
 import 'analysis_widgets.dart';
 
 class TrendGraphView extends StatelessWidget {
-  final List<FlSpot> chartData;
+  final List<ChartPoint> chartData;
   final AppLocalizations l10n;
 
   const TrendGraphView({
@@ -29,12 +32,12 @@ class TrendGraphView extends StatelessWidget {
       );
     }
 
-    final movingAverage = <FlSpot>[];
+    final movingAverage = <ChartPoint>[];
     const windowSize = 5;
     for (int i = windowSize; i < chartData.length; i++) {
       final window = chartData.sublist(i - windowSize, i);
       final avg = window.map((e) => e.y).reduce((a, b) => a + b) / windowSize;
-      movingAverage.add(FlSpot(chartData[i].x, avg));
+      movingAverage.add(ChartPoint(chartData[i].x, avg));
     }
 
     final n = chartData.length;
@@ -47,11 +50,11 @@ class TrendGraphView extends StatelessWidget {
     final intercept = (sumY - slope * sumX) / n;
 
     final trendLine = [
-      FlSpot(
+      ChartPoint(
         chartData.first.x,
         slope * chartData.first.x + intercept,
       ),
-      FlSpot(
+      ChartPoint(
         chartData.last.x,
         slope * chartData.last.x + intercept,
       ),
@@ -198,9 +201,9 @@ class _TrendSummaryCard extends StatelessWidget {
 }
 
 class _TrendChart extends StatelessWidget {
-  final List<FlSpot> chartData;
-  final List<FlSpot> movingAverage;
-  final List<FlSpot> trendLine;
+  final List<ChartPoint> chartData;
+  final List<ChartPoint> movingAverage;
+  final List<ChartPoint> trendLine;
   final Color trendColor;
   final double minY;
   final double maxY;
@@ -213,6 +216,10 @@ class _TrendChart extends StatelessWidget {
     required this.minY,
     required this.maxY,
   });
+
+  List<FlSpot> _toFlSpots(List<ChartPoint> points) {
+    return points.map((p) => FlSpot(p.x, p.y)).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -285,7 +292,7 @@ class _TrendChart extends StatelessWidget {
                   borderData: FlBorderData(show: false),
                   lineBarsData: [
                     LineChartBarData(
-                      spots: chartData,
+                      spots: _toFlSpots(chartData),
                       isCurved: false,
                       color: theme.colorScheme.primary.withOpacity(Opacities.mediumHigh),
                       barWidth: ChartDimensions.barWidthThin,
@@ -293,14 +300,14 @@ class _TrendChart extends StatelessWidget {
                     ),
                     if (movingAverage.isNotEmpty)
                       LineChartBarData(
-                        spots: movingAverage,
+                        spots: _toFlSpots(movingAverage),
                         isCurved: false,
                         color: Colors.orange,
                         barWidth: ChartDimensions.barWidthSmall,
                         dotData: const FlDotData(show: false),
                       ),
                     LineChartBarData(
-                      spots: trendLine,
+                      spots: _toFlSpots(trendLine),
                       isCurved: false,
                       color: trendColor,
                       barWidth: ChartDimensions.barWidthMedium,
@@ -319,7 +326,7 @@ class _TrendChart extends StatelessWidget {
 }
 
 class _TrendStatsCard extends StatelessWidget {
-  final List<FlSpot> trendLine;
+  final List<ChartPoint> trendLine;
   final AppLocalizations l10n;
 
   const _TrendStatsCard({

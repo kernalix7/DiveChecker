@@ -1,22 +1,25 @@
 // Copyright (C) 2025 Kim DaeHyun (kernalix7@kodenet.io)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
-import 'package:flutter/material.dart';
+import 'dart:math';
+
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../constants/app_constants.dart';
 import '../l10n/app_localizations.dart';
+import '../models/chart_point.dart';
 import '../providers/settings_provider.dart';
 import '../utils/peak_analyzer.dart';
 import '../widgets/analysis/analysis_type_tabs.dart';
-import '../widgets/analysis/overall_grade_card.dart';
-import '../widgets/analysis/intensity_distribution.dart';
-import '../widgets/analysis/segment_analysis_view.dart';
-import '../widgets/analysis/trend_graph_view.dart';
-import '../widgets/analysis/statistics_dashboard.dart';
-import '../widgets/analysis/pattern_recognition_view.dart';
 import '../widgets/analysis/analysis_widgets.dart';
-import '../constants/app_constants.dart';
-import 'dart:math';
+import '../widgets/analysis/intensity_distribution.dart';
+import '../widgets/analysis/overall_grade_card.dart';
+import '../widgets/analysis/pattern_recognition_view.dart';
+import '../widgets/analysis/segment_analysis_view.dart';
+import '../widgets/analysis/statistics_dashboard.dart';
+import '../widgets/analysis/trend_graph_view.dart';
 
 // Re-export AnalysisType from analysis_type_tabs.dart
 export '../widgets/analysis/analysis_type_tabs.dart' show AnalysisType;
@@ -24,7 +27,7 @@ export '../widgets/analysis/analysis_type_tabs.dart' show AnalysisType;
 /// 고급 분석 페이지
 /// 기록에서 분석 버튼 클릭 시 이동
 class PeakAnalysisPage extends StatefulWidget {
-  final List<FlSpot> chartData;
+  final List<ChartPoint> chartData;
   final Map<String, dynamic> session;
 
   const PeakAnalysisPage({
@@ -72,11 +75,16 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
     });
   }
 
+  /// Helper to convert ChartPoint list to FlSpot list
+  List<FlSpot> _toFlSpots(List<ChartPoint> points) {
+    return points.map((p) => FlSpot(p.x, p.y)).toList();
+  }
+
   /// 선택된 피크로 결과 재계산
   void _recalculateWithSelectedPeaks() {
     if (_analysisResult == null) return;
 
-    final selectedPeaks = <FlSpot>[];
+    final selectedPeaks = <ChartPoint>[];
     final selectedDetails = <PeakDetail>[];
     for (int i = 0; i < _analysisResult!.peaks.length; i++) {
       if (_peakSelections[i] == true) {
@@ -273,7 +281,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
                 });
                 _recalculateWithSelectedPeaks();
               },
-              icon: Icon(Icons.select_all, size: IconSizes.sm),
+              icon: const Icon(Icons.select_all, size: IconSizes.sm),
               label: Text(l10n.selectAll),
               style: TextButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: Spacing.sm),
@@ -291,7 +299,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
                 });
                 _recalculateWithSelectedPeaks();
               },
-              icon: Icon(Icons.deselect, size: IconSizes.sm),
+              icon: const Icon(Icons.deselect, size: IconSizes.sm),
               label: Text(l10n.deselectAll),
               style: TextButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: Spacing.sm),
@@ -459,7 +467,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
           children: [
             Row(
               children: [
-                Icon(Icons.show_chart, size: IconSizes.md),
+                const Icon(Icons.show_chart, size: IconSizes.md),
                 Spacing.horizontalSm,
                 Text(
                   l10n.peakVisualization,
@@ -533,7 +541,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
                       borderData: FlBorderData(show: false),
                       lineBarsData: [
                         LineChartBarData(
-                          spots: widget.chartData,
+                          spots: _toFlSpots(widget.chartData),
                           isCurved: false,
                           color: theme.colorScheme.primary,
                           barWidth: ChartDimensions.barWidthSmall,
@@ -607,7 +615,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
 
   Widget _buildDetailedPeakList(
     PeakAnalysisResult result,
-    List<FlSpot> allPeaks,
+    List<ChartPoint> allPeaks,
     ThemeData theme,
     AppLocalizations l10n,
   ) {
@@ -656,7 +664,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
 
   Widget _buildPeakListItem({
     required int index,
-    required FlSpot peak,
+    required ChartPoint peak,
     required PeakDetail? detail,
     required double timeInSeconds,
     required bool isSelected,

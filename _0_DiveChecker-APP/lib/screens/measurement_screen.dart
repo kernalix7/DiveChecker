@@ -4,11 +4,11 @@
 library;
 
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
 
 import '../l10n/app_localizations.dart';
 import '../constants/app_constants.dart';
+import '../models/chart_point.dart';
 import '../providers/providers.dart';
 import '../utils/formatters.dart';
 import '../utils/ui_helpers.dart';
@@ -182,7 +182,7 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
         notes: notes,
         deviceSerial: deviceSerial,
         deviceName: deviceName,
-        chartData: List<FlSpot>.from(state.pressureData),
+        chartData: List<ChartPoint>.from(state.pressureData),
         graphNotes: [],
       );
 
@@ -239,7 +239,7 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
                             pressure: state.currentPressure,
                             isRecording: state.isMeasuring,
                           ),
-                          Spacing.verticalXl,
+                          const SizedBox(height: Spacing.xl),
 
                           if (state.isMeasuring &&
                               state.pressureData.isNotEmpty) ...[
@@ -258,7 +258,7 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
                             sampleRate: controller.outputRate,
                           ),
 
-                          Spacing.verticalXxl,
+                          const SizedBox(height: Spacing.xxl),
 
                           if (!state.isMeasuring)
                             ConnectionStatusBanner(isConnected: isConnected),

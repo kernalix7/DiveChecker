@@ -36,7 +36,7 @@ class OverallGradeCard extends StatelessWidget {
               color: gradeColor,
               l10n: l10n,
             ),
-            Spacing.horizontalXl,
+            const SizedBox(width: Spacing.xl),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,9 +59,9 @@ class OverallGradeCard extends StatelessWidget {
                   ),
                   Spacing.verticalSm,
                   _MiniScoreBar(label: l10n.rhythmLabel, score: result.rhythmScore),
-                  Spacing.verticalXs,
+                  const SizedBox(height: Spacing.xs),
                   _MiniScoreBar(label: l10n.pressureLabel, score: result.pressureScore),
-                  Spacing.verticalXs,
+                  const SizedBox(height: Spacing.xs),
                   _MiniScoreBar(label: l10n.techniqueScore, score: result.techniqueScore),
                 ],
               ),
