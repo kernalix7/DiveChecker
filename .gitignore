@@ -1,3 +1,4 @@
+.proj-private
 # ===== Security Keys - NEVER COMMIT =====
 # ECDSA private keys - multiple layers of protection
 *.pem
@@ -27,8 +28,6 @@ ecdsa_private_keys.*
 # Firmware keys directory (explicit)
 0_Pico2-Firmware/Divechecker/keys/
 0_Pico2-Firmware/**/keys/
-0_ESP32_Firmware/**/keys/
-0_ESP32_Firmware/keys/
 
 # ===== Build outputs =====
 build/
@@ -38,11 +37,6 @@ build/
 *.hex
 *.map
 *.dis
-
-# ===== PlatformIO (ESP32) =====
-0_ESP32_Firmware/.pio/
-0_ESP32_Firmware/.vscode/
-0_ESP32_Firmware/**/.pio/
 
 # ===== Flutter/Dart =====
 _0_DiveChecker-APP/.dart_tool/

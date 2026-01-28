@@ -325,7 +325,7 @@ class _OpenSourceSection extends StatelessWidget {
           ),
         ),
         Spacing.verticalMd,
-        _LicenseItem(name: 'flutter_blue_plus', license: 'BSD-3-Clause', description: l10n.bleConnectivity, theme: theme),
+        _LicenseItem(name: 'flutter_midi_command', license: 'MIT', description: l10n.midiCommunication, theme: theme),
         _LicenseItem(name: 'fl_chart', license: 'MIT', description: l10n.chartVisualization, theme: theme),
         _LicenseItem(name: 'sqflite', license: 'MIT', description: l10n.sqliteDatabase, theme: theme),
         _LicenseItem(name: 'provider', license: 'MIT', description: l10n.stateManagement, theme: theme),

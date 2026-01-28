@@ -65,12 +65,12 @@ Feature requests are welcome! Please include:
 - [ ] No new warnings introduced
 - [ ] Tested on target platforms
 - [ ] Database migrations work correctly
-- [ ] Bluetooth connection stable
+- [ ] USB MIDI connection stable
 
 ### Test Areas
 - UI responsiveness
 - Data persistence
-- Bluetooth connectivity
+- USB MIDI connectivity
 - Graph interactions
 - Note management
 - Session recording
@@ -193,7 +193,7 @@ Closes #123
 ```
 
 ```
-fix(bluetooth): resolve connection stability issue
+fix(midi): resolve connection stability issue
 
 Fixed issue where connection would drop after 30 seconds.
 Updated timeout handling and added automatic reconnection.

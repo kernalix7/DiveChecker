@@ -12,6 +12,19 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appTitle => '다이브체커';
 
   @override
+  String get disclaimerTitle => '중요 안내';
+
+  @override
+  String get disclaimerContent =>
+      'DiveChecker는 프리다이빙 이퀄라이징 훈련 참조용으로만 설계되었습니다.\n\n⚠️ 이 앱은 의료 기기가 아니며, 의료 진단이나 치료 목적으로 사용할 수 없습니다.\n\n⚠️ 다이빙 시 항상 안전을 최우선으로 하세요. 이 앱에만 의존하여 다이빙 결정을 내리지 마세요.\n\n⚠️ 개발자는 이 앱 사용 중 발생할 수 있는 사고, 부상 또는 손해에 대해 어떠한 책임도 지지 않습니다.\n\n이 앱을 사용함으로써 위 조건에 동의하는 것으로 간주됩니다.';
+
+  @override
+  String get disclaimerAgree => '이해했으며 동의합니다';
+
+  @override
+  String get disclaimerDoNotShowAgain => '다시 표시하지 않음';
+
+  @override
   String get home => '홈';
 
   @override
@@ -500,7 +513,7 @@ class AppLocalizationsKo extends AppLocalizations {
       '라이선스와 NOTICE를 포함해 사용·수정·배포할 수 있으며, 모든 소프트웨어는 보증 없이 \"있는 그대로(AS IS)\" 제공됩니다.';
 
   @override
-  String get bleConnectivity => '블루투스 연결';
+  String get midiCommunication => 'USB MIDI 통신';
 
   @override
   String get chartVisualization => '차트 시각화';
@@ -1365,7 +1378,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get availableDevices => '사용 가능한 장치';
 
   @override
-  String get noDevicesFound => 'USB 시리얼 장치를 찾을 수 없습니다';
+  String get noDevicesFound => 'USB MIDI 장치를 찾을 수 없습니다';
 
   @override
   String get connecting => '연결 중...';

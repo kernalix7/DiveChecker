@@ -373,7 +373,7 @@ class PressureChart extends StatelessWidget {
                 ),
                 child: data.isEmpty
                     ? _EmptyChartPlaceholder()
-                    : _buildChart(context),
+                    : RepaintBoundary(child: _buildChart(context)),
               );
             },
           ),
@@ -465,28 +465,8 @@ class PressureChart extends StatelessWidget {
             isCurved: false,
             color: theme.colorScheme.primary,
             barWidth: ChartDimensions.barWidthSmall,
-            dotData: FlDotData(
-              show: true,
-              getDotPainter: (spot, percent, barData, index) {
-                return FlDotCirclePainter(
-                  radius: ChartDimensions.dotRadiusSmall,
-                  color: theme.colorScheme.primary,
-                  strokeWidth: ChartDimensions.strokeNormal,
-                  strokeColor: Colors.white,
-                );
-              },
-            ),
-            belowBarData: BarAreaData(
-              show: true,
-              gradient: LinearGradient(
-                colors: [
-                  theme.colorScheme.primary.withOpacity(Opacities.medium),
-                  theme.colorScheme.primary.withOpacity(Opacities.subtle),
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
+            dotData: const FlDotData(show: false), // Disabled for performance during real-time
+            belowBarData: BarAreaData(show: false), // Disabled for performance
           ),
         ],
         extraLinesData: ExtraLinesData(
@@ -499,25 +479,9 @@ class PressureChart extends StatelessWidget {
             ),
           ],
         ),
-        lineTouchData: LineTouchData(
-          enabled: true,
-          touchTooltipData: LineTouchTooltipData(
-            getTooltipItems: (touchedSpots) {
-              return touchedSpots.map((spot) {
-                final timeInSeconds = (spot.x * 0.001).toStringAsFixed(2);
-                return LineTooltipItem(
-                  '${spot.y.toStringAsFixed(1)} hPa\n${timeInSeconds}s',
-                  const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: FontSizes.bodySm,
-                  ),
-                );
-              }).toList();
-            },
-          ),
-        ),
+        lineTouchData: const LineTouchData(enabled: false), // Disabled for performance
       ),
+      duration: Duration.zero, // Disable animation for smooth updates
     );
   }
 }

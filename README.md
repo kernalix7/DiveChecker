@@ -29,12 +29,12 @@ Using a pressure sensor connected to a mouthpiece, it precisely measures subtle 
 **Smart MCU + Intelligent App**
 
 ```
-[BME280/BMP280] → 100Hz → [MCU] → USB Serial → [Flutter App]
-        │                   │                        │
-        └── Raw sensor      └── IIR + Averaging     └── All logic:
-            data               Firmware filtering       - Display
-                               Output: 4-50Hz           - Analysis
-                                                        - Storage
+[BMP280] → 100Hz → [MCU] → USB MIDI → [Flutter App]
+    │                   │                       │
+        └── Raw sensor      └── IIR + Averaging    └── All logic:
+            data               Firmware filtering      - Display
+                               Output: 4-50Hz          - Analysis
+                                                       - Storage
 ```
 
 | Component | Role |
@@ -46,7 +46,6 @@ Using a pressure sensor connected to a mouthpiece, it precisely measures subtle 
 
 | MCU | Sensor | Status |
 |-----|--------|--------|
-| **ESP32-C3** | BME280 | ✅ Fully supported |
 | **Pico RP2350** | BMP280 | ✅ Fully supported |
 
 ### Why DiveChecker?
@@ -140,7 +139,6 @@ Detailed equalization quality analysis after measurement:
 | Component | Version | Notes |
 |-----------|---------|-------|
 | Flutter SDK | 3.10.4+ | `flutter --version` |
-| PlatformIO | Latest | Install VSCode extension (for ESP32) |
 | Pico SDK | Latest | For RP2350 firmware |
 | USB Cable | - | Data transfer capable cable |
 
@@ -157,16 +155,9 @@ flutter run -d linux    # or android, windows, macos
 
 ### 2. Upload Firmware
 
-**For ESP32-C3:**
-```bash
-# Open 0_ESP32_Firmware folder in VSCode
-# PlatformIO: Click Upload or Ctrl+Alt+U
-```
-
-**For Pico RP2350:**
 ```bash
 # Build with Pico SDK
-cd 0_Pico2-Firmware
+cd 0_Pico2-Firmware/Divechecker
 mkdir build && cd build
 cmake .. && make
 # Copy .uf2 to Pico in BOOTSEL mode
@@ -195,7 +186,7 @@ cmake .. && make
 │   │   ├── l10n/                   # Localization (EN/KO)
 │   │   ├── models/                 # PressureData, GraphNote
 │   │   ├── providers/              # State management (Provider)
-│   │   │   ├── serial_provider.dart      # USB Serial connection
+│   │   │   ├── midi_provider.dart        # USB MIDI connection
 │   │   │   ├── measurement_controller.dart # Measurement logic
 │   │   │   └── session_repository.dart   # Session cache
 │   │   ├── screens/
@@ -208,78 +199,63 @@ cmake .. && make
 │   │   │   └── firmware_update_screen.dart   # OTA update
 │   │   ├── services/
 │   │   │   ├── unified_database_service.dart  # DB integration
-│   │   │   ├── backup_service.dart            # Backup/restore
-│   │   │   └── update_service.dart            # Firmware update
+│   │   │   └── backup_service.dart            # Backup/restore
+│   │   ├── security/
+│   │   │   └── device_authenticator.dart      # ECDSA authentication
 │   │   ├── utils/
 │   │   │   └── peak_analyzer.dart        # Peak analysis algorithms
 │   │   └── widgets/                # UI components
 │   └── pubspec.yaml
 │
-├── 🔧 0_ESP32_Firmware/            # ESP32-C3 PlatformIO project
-│   ├── src/main.cpp
-│   │   ├── 100Hz internal sampling (BME280)
-│   │   ├── IIR x2 + Averaging filter
-│   │   ├── 4-50Hz configurable output
-│   │   └── Text protocol (D:, CFG:, PONG, A:)
-│   └── platformio.ini
-│
 ├── 🔧 0_Pico2-Firmware/            # Pico RP2350 project
-│   ├── main.cpp
-│   │   ├── 100Hz internal sampling (BMP280)
-│   │   ├── Dual-core architecture
-│   │   ├── IIR x2 + Averaging filter
-│   │   ├── 4-50Hz configurable output
-│   │   └── Text protocol (D:, CFG:, PONG, A:)
-│   └── CMakeLists.txt
+│   └── Divechecker/
+│       ├── Divechecker.c           # Main firmware
+│       ├── CMakeLists.txt
+│       ├── 100Hz internal sampling (BMP280)
+│       ├── Dual-core architecture
+│       ├── IIR x2 + Averaging filter
+│       ├── USB MIDI SysEx protocol
+│       └── ECDSA device authentication
 │
 ├── 📐 0_CAD/                       # Hardware design (FreeCAD)
 │
 └── 📜 LICENSE                      # Apache 2.0 + CERN-OHL-S v2
 ```
 
-### Communication Protocol
+### Communication Protocol (USB MIDI SysEx)
 
 ```
-MCU → App (USB Serial 115200bps)
+MCU → App (USB MIDI SysEx)
 ──────────────────────────────────
-D:1234     Pressure data (x1000, e.g., 1.234 hPa)
-CFG:16,25  Config (oversampling, output rate Hz)
-PONG       Ping response
-INFO:msg   Info message
-ERR:msg    Error message
+SysEx Data   Pressure value (0.001 hPa resolution)
+CFG:os,hz    Config response (oversampling, output rate)
+PONG         Ping response
+AUTH:OK/FAIL Authentication result
+INFO:msg     Info message
+ERR:msg      Error message
 
 App → MCU
 ──────────────────────────────────
 P          Ping (connection check)
-A:xxxx     Authentication (4-digit code)
+A:nonce    ECDSA authentication
 R          Baseline reset
-O16        Oversampling setting (1/2/4/8/16)
-F25        Output rate setting (4-50 Hz)
+Oxx        Oversampling setting (1/2/4/8/16)
+Fxx        Output rate setting (4-50 Hz)
 C          Config request
+B          BOOTSEL reboot (for firmware update)
 ```
 
 ---
 
 ## 🔧 Hardware
 
-### Supported MCUs
+### Supported MCU
 
 | MCU | Sensor | Status | Notes |
 |-----|--------|--------|-------|
-| **ESP32-C3** | BME280 | ✅ Supported | Built-in USB CDC, low power |
-| **Pico RP2350** | BMP280 | ✅ Supported | Dual-core, high performance |
+| **Pico RP2350** | BMP280 | ✅ Supported | Dual-core, USB MIDI, ECDSA auth |
 
 ### Circuit Configuration
-
-**ESP32-C3 + BME280:**
-```
-ESP32-C3            BME280 (I2C)
-────────────        ────────────
-3.3V         ────── VCC
-GND          ────── GND
-GPIO8 (SDA)  ────── SDA
-GPIO9 (SCL)  ────── SCL
-```
 
 **Pico RP2350 + BMP280:**
 ```
@@ -293,11 +269,11 @@ GP5 (SCL)    ────── SCL
 
 ### Sensor Requirements
 
-- **Pressure Sensor**: BME280 (ESP32) or BMP280 (Pico)
+- **Pressure Sensor**: BMP280
 - **Sensitivity**: ±0.01 hPa or better recommended
 - **Mouthpiece Connection**: Connect to sensor via tube
 
-> 📌 See [0_ESP32_Firmware/README.md](0_ESP32_Firmware/README.md) or [0_Pico2-Firmware/README.md](0_Pico2-Firmware/README.md) for detailed setup
+> 📌 See [0_Pico2-Firmware/Divechecker/README.md](0_Pico2-Firmware/Divechecker/README.md) for detailed setup
 
 ---
 
@@ -310,7 +286,7 @@ GP5 (SCL)    ────── SCL
 - [x] 🌐 **Multi-language** - English, Korean
 - [x] 🔧 **Device settings** - Output rate, oversampling control
 - [x] 🔄 **Firmware update** - OTA update support
-- [x] 🔐 **Authentication** - 4-digit PIN protection
+- [x] 🔐 **Authentication** - ECDSA device authentication
 
 ### 🔜 Next Goals
 - [ ] 🫁 **Lung capacity measurement** - Max inhale/exhale volume check

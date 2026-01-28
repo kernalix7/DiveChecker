@@ -1,5 +1,7 @@
 # DiveChecker OTA 펌웨어 업데이트 테스트 가이드
 
+[🇺🇸 English](OTA_TEST_GUIDE.en.md)
+
 ## 테스트 환경 준비
 
 ### 1. 키 생성 (최초 1회)
@@ -135,7 +137,7 @@ openssl ecparam -genkey -name prime256v1 -noout -out fake_key.pem
 **해결**: `generate_keys.sh` 재실행 후 앱/펌웨어 모두 재빌드
 
 ### 문제: BOOTSEL 명령 무응답
-**원인**: 시리얼 연결 끊김 또는 펌웨어 미지원
+**원인**: MIDI 연결 끊김 또는 펌웨어 미지원
 **해결**: 기기 재연결 후 재시도, 펌웨어 버전 확인
 
 ### 문제: RPI-RP2 드라이브 안 보임

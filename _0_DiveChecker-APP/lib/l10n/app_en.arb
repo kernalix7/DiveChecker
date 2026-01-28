@@ -6,6 +6,11 @@
     "description": "The title of the application"
   },
 
+  "disclaimerTitle": "Important Notice",
+  "disclaimerContent": "DiveChecker is designed for freediving equalization training reference purposes only.\n\n⚠️ This app is NOT a medical device and should NOT be used for medical diagnosis or treatment.\n\n⚠️ Always prioritize your safety while diving. Never rely solely on this app for diving decisions.\n\n⚠️ The developer assumes no responsibility for any accidents, injuries, or damages that may occur during the use of this app.\n\nBy using this app, you acknowledge and accept these terms.",
+  "disclaimerAgree": "I Understand and Agree",
+  "disclaimerDoNotShowAgain": "Do not show again",
+
   "home": "Home",
   "measurement": "Measurement",
   "history": "History",
@@ -250,7 +255,7 @@
   "madeWithFlutter": "Made with Flutter",
   "mitLicense": "Apache License 2.0",
   "mitLicenseContent": "You may use, modify, and distribute with proper attribution and inclusion of the license and NOTICE file; provided \"AS IS\" without warranty.",
-  "bleConnectivity": "BLE connectivity",
+  "midiCommunication": "USB MIDI communication",
   "chartVisualization": "Chart visualization",
   "sqliteDatabase": "SQLite database",
   "stateManagement": "State management",
@@ -635,7 +640,7 @@
   "selectUsbDevice": "SELECT USB DEVICE",
   "rescan": "Rescan",
   "availableDevices": "Available Devices",
-  "noDevicesFound": "No USB serial devices found",
+  "noDevicesFound": "No USB MIDI devices found",
   "connecting": "Connecting...",
   "connectionError": "Connection error",
   

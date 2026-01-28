@@ -9,7 +9,7 @@ Hardware design files for freediving equalization pressure monitor.
 | File | Description |
 |------|-------------|
 | `Device_V4.FCStd` | Main case design v4 (FreeCAD) |
-| `BME280-5V.FCStd` | BME280 sensor module case (FreeCAD) |
+| `BMP280-5V.FCStd` | BMP280 sensor module case (FreeCAD) |
 
 > **Note**: `.legacy-files/` folder contains previous version design files.
 

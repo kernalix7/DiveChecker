@@ -495,87 +495,91 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
                 final chartHeight = (screenHeight * 0.22).clamp(160.0, 320.0);
                 return SizedBox(
                   height: chartHeight,
-                  child: LineChart(
-                    LineChartData(
-                      minY: minY,
-                      maxY: maxY,
-                      gridData: FlGridData(
-                        show: true,
-                        drawVerticalLine: false,
-                        horizontalInterval: ChartDimensions.intervalMedium,
-                        getDrawingHorizontalLine: (value) => FlLine(
-                          color: theme.colorScheme.outline.withOpacity(Opacities.low),
-                          strokeWidth: ChartDimensions.strokeNormal,
-                        ),
-                      ),
-                      titlesData: FlTitlesData(
-                        leftTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            reservedSize: ChartDimensions.reservedSizeXxxl,
-                            getTitlesWidget: (value, meta) => Text(
-                              '${value.toInt()}',
-                              style: TextStyle(
-                                fontSize: FontSizes.xs,
-                                color: theme.colorScheme.outline,
-                              ),
-                            ),
+                  child: RepaintBoundary(
+                    child: LineChart(
+                      LineChartData(
+                        minY: minY,
+                        maxY: maxY,
+                        gridData: FlGridData(
+                          show: true,
+                          drawVerticalLine: false,
+                          horizontalInterval: ChartDimensions.intervalMedium,
+                          getDrawingHorizontalLine: (value) => FlLine(
+                            color: theme.colorScheme.outline.withOpacity(Opacities.low),
+                            strokeWidth: ChartDimensions.strokeNormal,
                           ),
                         ),
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            reservedSize: ChartDimensions.reservedSizeSmall,
-                            getTitlesWidget: (value, meta) => Text(
-                              '${(value / 100).toStringAsFixed(0)}s',
-                              style: TextStyle(
-                                fontSize: FontSizes.xs,
-                                color: theme.colorScheme.outline,
-                              ),
-                            ),
-                          ),
-                        ),
-                        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                      ),
-                      borderData: FlBorderData(show: false),
-                      lineBarsData: [
-                        LineChartBarData(
-                          spots: _toFlSpots(widget.chartData),
-                          isCurved: false,
-                          color: theme.colorScheme.primary,
-                          barWidth: ChartDimensions.barWidthSmall,
-                          dotData: const FlDotData(show: false),
-                        ),
-                      ],
-                      extraLinesData: ExtraLinesData(
-                        verticalLines: List.generate(
-                          _analysisResult!.peaks.length,
-                          (index) {
-                            final peak = _analysisResult!.peaks[index];
-                            final isSelected = _peakSelections[index] ?? true;
-                            return VerticalLine(
-                              x: peak.x,
-                              color: isSelected
-                                  ? ScoreColors.excellent.withOpacity(Opacities.medium)
-                                  : Colors.grey.withOpacity(Opacities.mediumHigh),
-                              strokeWidth: isSelected ? 2 : 1,
-                              dashArray: isSelected ? null : [4, 4],
-                              label: VerticalLineLabel(
-                                show: true,
-                                alignment: Alignment.topCenter,
-                                padding: EdgeInsets.only(bottom: Spacing.xxs),
+                        titlesData: FlTitlesData(
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: ChartDimensions.reservedSizeXxxl,
+                              getTitlesWidget: (value, meta) => Text(
+                                '${value.toInt()}',
                                 style: TextStyle(
                                   fontSize: FontSizes.xs,
-                                  fontWeight: FontWeight.bold,
-                                  color: isSelected ? ScoreColors.excellent : Colors.grey,
+                                  color: theme.colorScheme.outline,
                                 ),
-                                labelResolver: (line) => '${index + 1}',
                               ),
-                            );
-                          },
+                            ),
+                          ),
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: ChartDimensions.reservedSizeSmall,
+                              getTitlesWidget: (value, meta) => Text(
+                                '${(value / 100).toStringAsFixed(0)}s',
+                                style: TextStyle(
+                                  fontSize: FontSizes.xs,
+                                  color: theme.colorScheme.outline,
+                                ),
+                              ),
+                            ),
+                          ),
+                          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        ),
+                        borderData: FlBorderData(show: false),
+                        lineBarsData: [
+                          LineChartBarData(
+                            spots: _toFlSpots(widget.chartData),
+                            isCurved: false,
+                            color: theme.colorScheme.primary,
+                            barWidth: ChartDimensions.barWidthSmall,
+                            dotData: const FlDotData(show: false),
+                          ),
+                        ],
+                        lineTouchData: const LineTouchData(enabled: false),
+                        extraLinesData: ExtraLinesData(
+                          verticalLines: List.generate(
+                            _analysisResult!.peaks.length,
+                            (index) {
+                              final peak = _analysisResult!.peaks[index];
+                              final isSelected = _peakSelections[index] ?? true;
+                              return VerticalLine(
+                                x: peak.x,
+                                color: isSelected
+                                    ? ScoreColors.excellent.withOpacity(Opacities.medium)
+                                    : Colors.grey.withOpacity(Opacities.mediumHigh),
+                                strokeWidth: isSelected ? 2 : 1,
+                                dashArray: isSelected ? null : [4, 4],
+                                label: VerticalLineLabel(
+                                  show: true,
+                                  alignment: Alignment.topCenter,
+                                  padding: EdgeInsets.only(bottom: Spacing.xxs),
+                                  style: TextStyle(
+                                    fontSize: FontSizes.xs,
+                                    fontWeight: FontWeight.bold,
+                                    color: isSelected ? ScoreColors.excellent : Colors.grey,
+                                  ),
+                                  labelResolver: (line) => '${index + 1}',
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
+                      duration: Duration.zero,
                     ),
                   ),
                 );

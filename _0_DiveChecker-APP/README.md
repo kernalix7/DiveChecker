@@ -40,11 +40,20 @@ flutter run -d linux    # or android, windows, macos, ios
 # Android APK
 flutter build apk --release
 
+# iOS
+flutter build ios --release
+
 # Linux
 flutter build linux --release
 
 # Windows
 flutter build windows --release
+
+# macOS
+flutter build macos --release
+
+# Web
+flutter build web --release
 ```
 
 ## Project Structure
@@ -145,4 +154,4 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-자세한 내용은 프로젝트 루트의 [LICENSE](../LICENSE) 파일을 참조하세요.
+See the [LICENSE](../LICENSE) file in the project root for details.

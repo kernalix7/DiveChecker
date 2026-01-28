@@ -145,6 +145,8 @@ class MidiProvider extends ChangeNotifier {
   bool _sensorConnected = true;
 
   // ECDSA authentication
+  // TODO: Re-enable authentication before production release
+  static const bool _authenticationEnabled = false; // Set to true to enable ECDSA verification
   bool _isAuthenticated = false;
   bool _authenticationComplete = false;
   String? _authNonce;
@@ -502,7 +504,15 @@ class MidiProvider extends ChangeNotifier {
     if (!_deviceInfoRequested) {
       _deviceInfoRequested = true;
       _requestDeviceInfo();
-      _authenticateDevice();
+      
+      // Skip authentication if disabled
+      if (!_authenticationEnabled) {
+        _isAuthenticated = true;
+        _authenticationComplete = true;
+        notifyListeners();
+      } else {
+        _authenticateDevice();
+      }
     }
   }
 

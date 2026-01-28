@@ -1,14 +1,27 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     
-    <!-- USB Host permissions -->
+    <!-- USB Host permissions (required) -->
     <uses-feature android:name="android.hardware.usb.host" android:required="true"/>
+    <uses-feature android:name="android.software.midi" android:required="false"/>
     
-    <!-- Location permissions (for USB device access on some devices) -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <!-- REMOVE unnecessary permissions added by dependencies -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:node="remove"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" tools:node="remove"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" tools:node="remove"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" tools:node="remove"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" tools:node="remove"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" tools:node="remove"/>
+    
+    <!-- REMOVE unnecessary features added by dependencies -->
+    <uses-feature android:name="android.hardware.bluetooth" tools:node="remove"/>
+    <uses-feature android:name="android.hardware.bluetooth_le" tools:node="remove"/>
+    <uses-feature android:name="android.hardware.location" tools:node="remove"/>
+    <uses-feature android:name="android.hardware.location.gps" tools:node="remove"/>
+    <uses-feature android:name="android.hardware.location.network" tools:node="remove"/>
     
     <application
-        android:label="_0_flutter_app"
+        android:label="DiveChecker"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

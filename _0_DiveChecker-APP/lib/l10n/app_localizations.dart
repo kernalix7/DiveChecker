@@ -104,6 +104,30 @@ abstract class AppLocalizations {
   /// **'DiveChecker'**
   String get appTitle;
 
+  /// No description provided for @disclaimerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Important Notice'**
+  String get disclaimerTitle;
+
+  /// No description provided for @disclaimerContent.
+  ///
+  /// In en, this message translates to:
+  /// **'DiveChecker is designed for freediving equalization training reference purposes only.\n\n⚠️ This app is NOT a medical device and should NOT be used for medical diagnosis or treatment.\n\n⚠️ Always prioritize your safety while diving. Never rely solely on this app for diving decisions.\n\n⚠️ The developer assumes no responsibility for any accidents, injuries, or damages that may occur during the use of this app.\n\nBy using this app, you acknowledge and accept these terms.'**
+  String get disclaimerContent;
+
+  /// No description provided for @disclaimerAgree.
+  ///
+  /// In en, this message translates to:
+  /// **'I Understand and Agree'**
+  String get disclaimerAgree;
+
+  /// No description provided for @disclaimerDoNotShowAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not show again'**
+  String get disclaimerDoNotShowAgain;
+
   /// No description provided for @home.
   ///
   /// In en, this message translates to:
@@ -1052,11 +1076,11 @@ abstract class AppLocalizations {
   /// **'You may use, modify, and distribute with proper attribution and inclusion of the license and NOTICE file; provided \"AS IS\" without warranty.'**
   String get mitLicenseContent;
 
-  /// No description provided for @bleConnectivity.
+  /// No description provided for @midiCommunication.
   ///
   /// In en, this message translates to:
-  /// **'BLE connectivity'**
-  String get bleConnectivity;
+  /// **'USB MIDI communication'**
+  String get midiCommunication;
 
   /// No description provided for @chartVisualization.
   ///
@@ -2693,7 +2717,7 @@ abstract class AppLocalizations {
   /// No description provided for @noDevicesFound.
   ///
   /// In en, this message translates to:
-  /// **'No USB serial devices found'**
+  /// **'No USB MIDI devices found'**
   String get noDevicesFound;
 
   /// No description provided for @connecting.

@@ -86,8 +86,8 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
       return;
     }
     
-    // Medium resolution: max 800 points for smooth rendering
-    _lodData = _downsample(data, 800);
+    // Medium resolution: max 400 points for smooth mobile rendering
+    _lodData = _downsample(data, 400);
   }
   
   /// Downsample using min-max bucketing (preserves peaks)
@@ -1256,7 +1256,8 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                                           ),
                                         ),
                                       ),
-                                    ),
+                                    duration: Duration.zero, // Disable animation for smooth panning
+                                  ),
                                 );
                             },
                           ),

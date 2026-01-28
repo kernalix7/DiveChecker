@@ -12,6 +12,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'DiveChecker';
 
   @override
+  String get disclaimerTitle => 'Important Notice';
+
+  @override
+  String get disclaimerContent =>
+      'DiveChecker is designed for freediving equalization training reference purposes only.\n\n⚠️ This app is NOT a medical device and should NOT be used for medical diagnosis or treatment.\n\n⚠️ Always prioritize your safety while diving. Never rely solely on this app for diving decisions.\n\n⚠️ The developer assumes no responsibility for any accidents, injuries, or damages that may occur during the use of this app.\n\nBy using this app, you acknowledge and accept these terms.';
+
+  @override
+  String get disclaimerAgree => 'I Understand and Agree';
+
+  @override
+  String get disclaimerDoNotShowAgain => 'Do not show again';
+
+  @override
   String get home => 'Home';
 
   @override
@@ -506,7 +519,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'You may use, modify, and distribute with proper attribution and inclusion of the license and NOTICE file; provided \"AS IS\" without warranty.';
 
   @override
-  String get bleConnectivity => 'BLE connectivity';
+  String get midiCommunication => 'USB MIDI communication';
 
   @override
   String get chartVisualization => 'Chart visualization';
@@ -1400,7 +1413,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get availableDevices => 'Available Devices';
 
   @override
-  String get noDevicesFound => 'No USB serial devices found';
+  String get noDevicesFound => 'No USB MIDI devices found';
 
   @override
   String get connecting => 'Connecting...';

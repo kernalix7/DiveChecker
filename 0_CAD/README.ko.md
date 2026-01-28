@@ -7,7 +7,7 @@
 | 파일 | 설명 |
 |------|------|
 | `Device_V4.FCStd` | 본체 케이스 설계 v4 (FreeCAD) |
-| `BME280-5V.FCStd` | BME280 센서 모듈 케이스 (FreeCAD) |
+| `BMP280-5V.FCStd` | BMP280 센서 모듈 케이스 (FreeCAD) |
 
 > **참고**: `.legacy-files/` 폴더에는 이전 버전의 설계 파일들이 보관되어 있습니다.
 

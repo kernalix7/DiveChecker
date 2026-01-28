@@ -118,9 +118,12 @@ class MeasurementController extends ChangeNotifier {
           _maxPressureValue = _dataList.isEmpty ? 0.0 : _dataList.map((e) => e.y).reduce(max);
         }
       }
+      // Don't call notifyListeners() here - timer handles UI updates during measurement
+      // This prevents excessive rebuilds (8Hz data = 8 rebuilds/sec avoided)
+    } else {
+      // Not measuring - update UI for live pressure display
+      notifyListeners();
     }
-    
-    notifyListeners();
   }
   
   /// Current firmware output rate (Hz)

@@ -784,84 +784,88 @@ class _PatternComparisonChart extends StatelessWidget {
                 final chartHeight = (screenHeight * 0.2).clamp(150.0, 300.0);
                 return SizedBox(
                   height: chartHeight,
-                  child: LineChart(
-                    LineChartData(
-                      minY: minY,
-                      maxY: maxY,
-                      gridData: FlGridData(
-                        show: true,
-                        drawVerticalLine: false,
-                        getDrawingHorizontalLine: (value) => FlLine(
-                          color: theme.colorScheme.outline.withOpacity(Opacities.low),
-                          strokeWidth: ChartDimensions.strokeNormal,
+                  child: RepaintBoundary(
+                    child: LineChart(
+                      LineChartData(
+                        minY: minY,
+                        maxY: maxY,
+                        gridData: FlGridData(
+                          show: true,
+                          drawVerticalLine: false,
+                          getDrawingHorizontalLine: (value) => FlLine(
+                            color: theme.colorScheme.outline.withOpacity(Opacities.low),
+                            strokeWidth: ChartDimensions.strokeNormal,
+                          ),
                         ),
-                      ),
-                      titlesData: FlTitlesData(
-                        leftTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            reservedSize: ChartDimensions.reservedSizeXl,
-                            getTitlesWidget: (value, meta) => Text(
-                              '${value.toInt()}',
-                              style: TextStyle(
-                                fontSize: FontSizes.sm,
-                                color: theme.colorScheme.outline,
+                        titlesData: FlTitlesData(
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: ChartDimensions.reservedSizeXl,
+                              getTitlesWidget: (value, meta) => Text(
+                                '${value.toInt()}',
+                                style: TextStyle(
+                                  fontSize: FontSizes.sm,
+                                  color: theme.colorScheme.outline,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            reservedSize: ChartDimensions.reservedSizeSmall,
-                            getTitlesWidget: (value, meta) => Text(
-                              '${value.toInt() + 1}',
-                              style: TextStyle(
-                                fontSize: FontSizes.sm,
-                                color: theme.colorScheme.outline,
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: ChartDimensions.reservedSizeSmall,
+                              getTitlesWidget: (value, meta) => Text(
+                                '${value.toInt() + 1}',
+                                style: TextStyle(
+                                  fontSize: FontSizes.sm,
+                                  color: theme.colorScheme.outline,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        topTitles: const AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
-                        ),
-                        rightTitles: const AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
-                        ),
-                      ),
-                      borderData: FlBorderData(show: false),
-                      lineBarsData: [
-                        // 이상적인 패턴
-                        LineChartBarData(
-                          spots: idealPattern,
-                          isCurved: false,
-                          color: ScoreColors.excellent.withOpacity(Opacities.high),
-                          barWidth: ChartDimensions.barWidthMedium,
-                          dotData: const FlDotData(show: false),
-                          dashArray: ChartDimensions.dashLong,
-                          belowBarData: BarAreaData(
-                            show: true,
-                            color: ScoreColors.excellent.withOpacity(Opacities.low),
+                          topTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          rightTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
                           ),
                         ),
-                        // 현재 패턴
-                        LineChartBarData(
-                          spots: currentPattern,
-                          isCurved: false,
-                          color: theme.colorScheme.primary,
-                          barWidth: ChartDimensions.barWidthSmall,
-                          dotData: FlDotData(
-                            show: true,
-                            getDotPainter: (spot, percent, barData, index) =>
-                                FlDotCirclePainter(
-                              radius: ChartDimensions.dotRadiusMedium,
-                              color: theme.colorScheme.primary,
-                              strokeWidth: ChartDimensions.strokeNone,
+                        borderData: FlBorderData(show: false),
+                        lineTouchData: const LineTouchData(enabled: false),
+                        lineBarsData: [
+                          // 이상적인 패턴
+                          LineChartBarData(
+                            spots: idealPattern,
+                            isCurved: false,
+                            color: ScoreColors.excellent.withOpacity(Opacities.high),
+                            barWidth: ChartDimensions.barWidthMedium,
+                            dotData: const FlDotData(show: false),
+                            dashArray: ChartDimensions.dashLong,
+                            belowBarData: BarAreaData(
+                              show: true,
+                              color: ScoreColors.excellent.withOpacity(Opacities.low),
                             ),
                           ),
-                        ),
-                      ],
+                          // 현재 패턴
+                          LineChartBarData(
+                            spots: currentPattern,
+                            isCurved: false,
+                            color: theme.colorScheme.primary,
+                            barWidth: ChartDimensions.barWidthSmall,
+                            dotData: FlDotData(
+                              show: true,
+                              getDotPainter: (spot, percent, barData, index) =>
+                                  FlDotCirclePainter(
+                                radius: ChartDimensions.dotRadiusMedium,
+                                color: theme.colorScheme.primary,
+                                strokeWidth: ChartDimensions.strokeNone,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      duration: Duration.zero,
                     ),
                   ),
                 );

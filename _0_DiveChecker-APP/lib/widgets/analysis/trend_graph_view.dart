@@ -242,79 +242,83 @@ class _TrendChart extends StatelessWidget {
 
             return SizedBox(
               height: chartHeight,
-              child: LineChart(
-                LineChartData(
-                  minY: minY,
-                  maxY: maxY,
-                  gridData: FlGridData(
-                    show: true,
-                    drawVerticalLine: false,
-                    horizontalInterval: ChartDimensions.intervalMedium,
-                    getDrawingHorizontalLine: (value) => FlLine(
-                      color: theme.colorScheme.outline.withOpacity(Opacities.low),
-                      strokeWidth: ChartDimensions.strokeNormal,
+              child: RepaintBoundary(
+                child: LineChart(
+                  LineChartData(
+                    minY: minY,
+                    maxY: maxY,
+                    gridData: FlGridData(
+                      show: true,
+                      drawVerticalLine: false,
+                      horizontalInterval: ChartDimensions.intervalMedium,
+                      getDrawingHorizontalLine: (value) => FlLine(
+                        color: theme.colorScheme.outline.withOpacity(Opacities.low),
+                        strokeWidth: ChartDimensions.strokeNormal,
+                      ),
                     ),
-                  ),
-                  titlesData: FlTitlesData(
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: ChartDimensions.reservedSizeXxxl,
-                        getTitlesWidget: (value, meta) => Text(
-                          '${value.toInt()}',
-                          style: TextStyle(
-                            fontSize: FontSizes.xxs,
-                            color: theme.colorScheme.outline,
+                    titlesData: FlTitlesData(
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: ChartDimensions.reservedSizeXxxl,
+                          getTitlesWidget: (value, meta) => Text(
+                            '${value.toInt()}',
+                            style: TextStyle(
+                              fontSize: FontSizes.xxs,
+                              color: theme.colorScheme.outline,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: ChartDimensions.reservedSizeSmall,
-                        getTitlesWidget: (value, meta) => Text(
-                          '${(value / 1000.0).toStringAsFixed(0)}s',
-                          style: TextStyle(
-                            fontSize: FontSizes.xxs,
-                            color: theme.colorScheme.outline,
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: ChartDimensions.reservedSizeSmall,
+                          getTitlesWidget: (value, meta) => Text(
+                            '${(value / 1000.0).toStringAsFixed(0)}s',
+                            style: TextStyle(
+                              fontSize: FontSizes.xxs,
+                              color: theme.colorScheme.outline,
+                            ),
                           ),
                         ),
                       ),
+                      topTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      rightTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
                     ),
-                    topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                  ),
-                  borderData: FlBorderData(show: false),
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: _toFlSpots(chartData),
-                      isCurved: false,
-                      color: theme.colorScheme.primary.withOpacity(Opacities.mediumHigh),
-                      barWidth: ChartDimensions.barWidthThin,
-                      dotData: const FlDotData(show: false),
-                    ),
-                    if (movingAverage.isNotEmpty)
+                    borderData: FlBorderData(show: false),
+                    lineTouchData: const LineTouchData(enabled: false),
+                    lineBarsData: [
                       LineChartBarData(
-                        spots: _toFlSpots(movingAverage),
+                        spots: _toFlSpots(chartData),
                         isCurved: false,
-                        color: Colors.orange,
-                        barWidth: ChartDimensions.barWidthSmall,
+                        color: theme.colorScheme.primary.withOpacity(Opacities.mediumHigh),
+                        barWidth: ChartDimensions.barWidthThin,
                         dotData: const FlDotData(show: false),
                       ),
-                    LineChartBarData(
-                      spots: _toFlSpots(trendLine),
-                      isCurved: false,
-                      color: trendColor,
-                      barWidth: ChartDimensions.barWidthMedium,
-                      dotData: const FlDotData(show: false),
-                      dashArray: ChartDimensions.dashLong,
-                    ),
-                  ],
+                      if (movingAverage.isNotEmpty)
+                        LineChartBarData(
+                          spots: _toFlSpots(movingAverage),
+                          isCurved: false,
+                          color: Colors.orange,
+                          barWidth: ChartDimensions.barWidthSmall,
+                          dotData: const FlDotData(show: false),
+                        ),
+                      LineChartBarData(
+                        spots: _toFlSpots(trendLine),
+                        isCurved: false,
+                        color: trendColor,
+                        barWidth: ChartDimensions.barWidthMedium,
+                        dotData: const FlDotData(show: false),
+                        dashArray: ChartDimensions.dashLong,
+                      ),
+                    ],
+                  ),
+                  duration: Duration.zero,
                 ),
               ),
             );

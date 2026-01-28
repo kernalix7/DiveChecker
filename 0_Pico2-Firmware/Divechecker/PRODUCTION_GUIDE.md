@@ -56,7 +56,7 @@ cp keys/ecdsa_public_key.dart ../_0_DiveChecker-APP/lib/security/
 1. 펌웨어 플래시
 2. 앱 빌드 및 설치
 3. 기기 연결 → 인증 성공 확인
-4. 시리얼 로그 확인: `Device authentication: SUCCESS ✓`
+4. USB 콘솔 로그 확인: `Device authentication: SUCCESS ✓`
 
 ---
 
@@ -100,7 +100,7 @@ make
 
 1. Production 펌웨어 플래시
 2. 앱에서 인증 테스트
-3. 시리얼 로그 확인: `INFO:Keys loaded from OTP`
+3. USB 콘솔 로그 확인: `INFO:Keys loaded from OTP`
 
 ---
 
@@ -159,7 +159,7 @@ picotool otp lock OTP_PRIVATE_KEY_ROW
 
 ### 인증 실패
 
-| 시리얼 출력 | 원인 | 해결 |
+| USB 콘솔 출력 | 원인 | 해결 |
 |------------|------|------|
 | `WARN:ECDSA keys not configured` | 플레이스홀더 키 | 키 생성/복사 |
 | `WARN:OTP keys not programmed` | OTP 미프로그래밍 | OTP 프로그래밍 |

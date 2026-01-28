@@ -1,4 +1,4 @@
-package com.example.u_0_flutter_app
+package io.kodenet.divechecker
 
 import io.flutter.embedding.android.FlutterActivity
 

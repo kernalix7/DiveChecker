@@ -2,21 +2,24 @@
 
 프리다이빙 이퀄라이징 훈련을 위한 크로스플랫폼 압력 모니터링 앱입니다.
 
+[🇺🇸 English](README.md)
+
 ## 지원 플랫폼
 
-| 플랫폼 | 상태 |
-|--------|------|
-| Android | ✅ 지원 |
-| iOS | ✅ 지원 |
-| Linux | ✅ 지원 |
-| Windows | ✅ 지원 |
-| macOS | ✅ 지원 |
-| Web | ⚠️ 제한적 (Serial 미지원) |
+| 플랫폼 | 상태 | 연결 |
+|--------|------|------|
+| Android | ✅ 지원 | USB MIDI |
+| iOS | ✅ 지원 | USB MIDI |
+| Linux | ✅ 지원 | USB MIDI |
+| Windows | ✅ 지원 | USB MIDI |
+| macOS | ✅ 지원 | USB MIDI |
+| Web | ⚠️ 제한적 | Web MIDI API |
 
 ## 요구사항
 
 - Flutter SDK 3.10.4+
 - Dart SDK 3.0+
+- DiveChecker V1 기기 (RP2350 Pico2)
 
 ## 시작하기
 
@@ -37,11 +40,17 @@ flutter run -d linux    # 또는 android, windows, macos, ios
 # Android APK
 flutter build apk --release
 
+# iOS
+flutter build ios --release
+
 # Linux
 flutter build linux --release
 
 # Windows
 flutter build windows --release
+
+# macOS
+flutter build macos --release
 ```
 
 ## 프로젝트 구조
@@ -56,7 +65,8 @@ lib/
 ├── l10n/                        # 다국어 지원 (EN/KO)
 ├── models/                      # 데이터 모델
 ├── providers/                   # 상태 관리 (Provider)
-│   ├── serial_provider.dart     # USB Serial 연결
+│   ├── midi_provider.dart       # USB MIDI 연결
+│   ├── serial_provider.dart     # midi_provider 별칭
 │   ├── measurement_controller.dart # 측정 로직
 │   ├── session_repository.dart  # 세션 캐시
 │   ├── settings_provider.dart   # 앱 설정
@@ -72,7 +82,10 @@ lib/
 ├── services/                    # 서비스
 │   ├── unified_database_service.dart # DB 통합
 │   └── backup_service.dart      # 백업/복원
+├── security/                    # 보안
+│   └── device_authenticator.dart # ECDSA 기기 인증
 ├── utils/                       # 유틸리티
+│   ├── chart_utils.dart         # 차트 헬퍼 함수
 │   └── peak_analyzer.dart       # 피크 분석 알고리즘
 └── widgets/                     # UI 컴포넌트
     ├── analysis/                # 분석 위젯
@@ -84,10 +97,17 @@ lib/
 
 ## 주요 기능
 
+### 🔌 USB MIDI 통신
+- 크로스플랫폼 USB MIDI 지원
+- ECDSA 기기 인증
+- SysEx 기반 데이터 프로토콜
+- 출력 속도 설정 가능 (4-50 Hz)
+
 ### 📊 실시간 압력 모니터링
 - 100Hz 내부 샘플링, 8Hz 출력
 - 실시간 라인 차트 (fl_chart)
 - 핀치 줌 / 드래그 팬 제스처
+- Hz 기준 그리드 라인
 
 ### 🔬 피크 분석
 - 리듬 점수 (피크 간격 일관성)

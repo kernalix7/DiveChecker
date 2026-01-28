@@ -10,6 +10,7 @@ library;
 import 'package:flutter/material.dart';
 
 import '../l10n/app_localizations.dart';
+import '../widgets/common/disclaimer_dialog.dart';
 import 'home_screen.dart';
 import 'measurement_screen.dart';
 import 'history_screen.dart';
@@ -45,6 +46,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
+  bool _disclaimerChecked = false;
 
   // Lazy-loaded screens
   static const List<Widget> _screens = [
@@ -53,6 +55,24 @@ class _MainScreenState extends State<MainScreen> {
     HistoryScreen(),
     SettingsScreen(),
   ];
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _checkDisclaimer();
+  }
+
+  Future<void> _checkDisclaimer() async {
+    if (_disclaimerChecked) return;
+    _disclaimerChecked = true;
+    
+    // Show disclaimer after frame is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        showDisclaimerIfNeeded(context);
+      }
+    });
+  }
 
   void _onDestinationSelected(int index) {
     if (_selectedIndex != index) {

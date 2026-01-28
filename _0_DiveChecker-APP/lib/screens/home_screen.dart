@@ -3,7 +3,7 @@
 
 /// HomeScreen - Device Connection & Status Overview
 ///
-/// Displays USB Serial connection status and current pressure reading.
+/// Displays USB MIDI connection status and current pressure reading.
 /// Uses SerialProvider for state management.
 library;
 

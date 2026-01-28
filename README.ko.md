@@ -27,12 +27,12 @@ DiveChecker는 프리다이버들이 **이퀄라이징(귀 압력 평형)** 훈�
 **스마트 MCU + 지능형 앱**
 
 ```
-[BME280/BMP280] → 100Hz → [MCU] → USB Serial → [Flutter 앱]
-        │                   │                        │
-        └── 원본 센서       └── IIR + 평균화         └── 모든 로직:
-            데이터             펌웨어 필터링              - 표시
-                               출력: 4-50Hz              - 분석
-                                                         - 저장
+[BMP280] → 100Hz → [MCU] → USB MIDI → [Flutter 앱]
+    │                   │                      │
+        └── 원본 센서       └── IIR + 평균화       └── 모든 로직:
+            데이터             펌웨어 필터링            - 표시
+                               출력: 4-50Hz            - 분석
+                                                       - 저장
 ```
 
 | 구성요소 | 역할 |
@@ -44,7 +44,6 @@ DiveChecker는 프리다이버들이 **이퀄라이징(귀 압력 평형)** 훈�
 
 | MCU | 센서 | 상태 |
 |-----|------|------|
-| **ESP32-C3** | BME280 | ✅ 완전 지원 |
 | **Pico RP2350** | BMP280 | ✅ 완전 지원 |
 
 ### 왜 DiveChecker인가?
@@ -139,7 +138,6 @@ DiveChecker는 프리다이버들이 **이퀄라이징(귀 압력 평형)** 훈�
 | 구성요소 | 버전 | 비고 |
 |----------|------|------|
 | Flutter SDK | 3.10.4+ | `flutter --version` |
-| PlatformIO | 최신 | VSCode 확장 설치 (ESP32용) |
 | Pico SDK | 최신 | RP2350 펌웨어용 |
 | USB 케이블 | - | 데이터 전송 지원 케이블 |
 
@@ -156,16 +154,9 @@ flutter run -d linux    # 또는 android, windows, macos
 
 ### 2. 펌웨어 업로드
 
-**ESP32-C3:**
-```bash
-# VSCode에서 0_ESP32_Firmware 폴더 열기
-# PlatformIO: Upload 클릭 또는 Ctrl+Alt+U
-```
-
-**Pico RP2350:**
 ```bash
 # Pico SDK로 빌드
-cd 0_Pico2-Firmware
+cd 0_Pico2-Firmware/Divechecker
 mkdir build && cd build
 cmake .. && make
 # BOOTSEL 모드에서 .uf2 파일을 Pico에 복사
@@ -201,47 +192,42 @@ cmake .. && make
 │   │   └── widgets/                # UI 컴포넌트
 │   └── pubspec.yaml
 │
-├── 🔧 0_ESP32_Firmware/            # ESP32-C3 PlatformIO 프로젝트
-│   ├── src/main.cpp
-│   │   ├── 100Hz 내부 샘플링 (BME280)
-│   │   ├── IIR x2 + 평균화 필터
-│   │   ├── 4-50Hz 출력 (설정 가능)
-│   │   └── 텍스트 프로토콜 (D:, CFG:, PONG, A:)
-│   └── platformio.ini
-│
 ├── 🔧 0_Pico2-Firmware/            # Pico RP2350 프로젝트
-│   ├── main.cpp
-│   │   ├── 100Hz 내부 샘플링 (BMP280)
-│   │   ├── 듀얼코어 아키텍처
-│   │   ├── IIR x2 + 평균화 필터
-│   │   ├── 4-50Hz 출력 (설정 가능)
-│   │   └── 텍스트 프로토콜 (D:, CFG:, PONG, A:)
-│   └── CMakeLists.txt
+│   └── Divechecker/
+│       ├── Divechecker.c           # 메인 펌웨어
+│       ├── CMakeLists.txt
+│       ├── 100Hz 내부 샘플링 (BMP280)
+│       ├── 듀얼코어 아키텍처
+│       ├── IIR x2 + 평균화 필터
+│       ├── USB MIDI SysEx 프로토콜
+│       └── ECDSA 기기 인증
 │
 ├── 📐 0_CAD/                       # 하드웨어 설계 (FreeCAD)
 │
 └── 📜 LICENSE                      # Apache 2.0 + CERN-OHL-S v2
 ```
 
-### 통신 프로토콜
+### 통신 프로토콜 (USB MIDI SysEx)
 
 ```
-MCU → App (USB Serial 115200bps)
+MCU → App (USB MIDI SysEx)
 ──────────────────────────────────
-D:1234     압력 데이터 (x1000, 예: 1.234 hPa)
-CFG:16,25  설정 (오버샘플링, 출력 Hz)
-PONG       핑 응답
-INFO:msg   정보 메시지
-ERR:msg    에러 메시지
+SysEx Data   압력 데이터 (0.001 hPa 분해능)
+CFG:os,hz    설정 응답 (오버샘플링, 출력 Hz)
+PONG         핑 응답
+AUTH:OK/FAIL 인증 결과
+INFO:msg     정보 메시지
+ERR:msg      에러 메시지
 
 App → MCU
 ──────────────────────────────────
 P          핑 (연결 확인)
-A:xxxx     인증 (4자리 코드)
+A:nonce    ECDSA 인증
 R          베이스라인 리셋
-O16        오버샘플링 설정 (1/2/4/8/16)
-F25        출력 속도 설정 (4-50 Hz)
+Oxx        오버샘플링 설정 (1/2/4/8/16)
+Fxx        출력 속도 설정 (4-50 Hz)
 C          설정 요청
+B          BOOTSEL 재부팅 (펌웨어 업데이트용)
 ```
 
 ---
@@ -252,20 +238,9 @@ C          설정 요청
 
 | MCU | 센서 | 상태 | 비고 |
 |-----|------|------|------|
-| **ESP32-C3** | BME280 | ✅ 지원 | USB CDC 내장, 저전력 |
-| **Pico RP2350** | BMP280 | ✅ 지원 | 듀얼코어, 고성능 |
+| **Pico RP2350** | BMP280 | ✅ 지원 | 듀얼코어, USB MIDI, ECDSA 인증 |
 
 ### 회로 구성
-
-**ESP32-C3 + BME280:**
-```
-ESP32-C3            BME280 (I2C)
-────────────        ────────────
-3.3V         ────── VCC
-GND          ────── GND
-GPIO8 (SDA)  ────── SDA
-GPIO9 (SCL)  ────── SCL
-```
 
 **Pico RP2350 + BMP280:**
 ```
@@ -279,11 +254,11 @@ GP5 (SCL)    ────── SCL
 
 ### 센서 요구사항
 
-- **압력 센서**: BME280 (ESP32) 또는 BMP280 (Pico)
+- **압력 센서**: BMP280
 - **감도**: ±0.01 hPa 이상 권장
 - **마우스피스 연결**: 튜브로 센서와 연결
 
-> 📌 상세 설정은 [0_ESP32_Firmware/README.md](0_ESP32_Firmware/README.md) 또는 [0_Pico2-Firmware/README.md](0_Pico2-Firmware/README.md) 참조
+> 📌 상세 설정은 [0_Pico2-Firmware/Divechecker/README.md](0_Pico2-Firmware/Divechecker/README.md) 참조
 
 ---
 
@@ -296,7 +271,7 @@ GP5 (SCL)    ────── SCL
 - [x] 🌐 **다국어** - 영어, 한국어
 - [x] 🔧 **장치 설정** - 출력 속도, 오버샘플링 제어
 - [x] 🔄 **펌웨어 업데이트** - OTA 업데이트 지원
-- [x] 🔐 **인증** - 4자리 PIN 보호
+- [x] 🔐 **인증** - ECDSA 기기 인증
 
 ### 🔜 다음 목표
 - [ ] 🫁 **폐활량 측정** - 최대 흡기/호기 용량 체크

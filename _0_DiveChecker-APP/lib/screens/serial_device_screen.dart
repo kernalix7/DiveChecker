@@ -3,8 +3,8 @@
 
 /// Serial Device Selection Screen
 /// 
-/// Scans for USB Serial devices and allows user to select one for connection.
-/// Uses flutter_libserialport for cross-platform support.
+/// Scans for USB MIDI devices and allows user to select one for connection.
+/// Uses flutter_midi_command for cross-platform support.
 library;
 
 import 'package:flutter/material.dart';
@@ -144,7 +144,7 @@ class _SerialDeviceScreenState extends State<SerialDeviceScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'USB Serial Devices',
+                        'USB MIDI Devices',
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           color: theme.colorScheme.onSurface,
