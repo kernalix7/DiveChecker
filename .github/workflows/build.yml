@@ -9,9 +9,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# 앱 프로젝트 경로
+# 앱 프로젝트 경로 및 Flutter 버전
 env:
   APP_DIR: _0_DiveChecker-APP
+  FLUTTER_VERSION: '3.27.0'
 
 jobs:
   # ─────────────────────────────────────────────
@@ -34,7 +35,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: 'stable'
       
       - name: Get dependencies
@@ -92,7 +93,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: 'stable'
       
       - name: Get dependencies
@@ -131,7 +132,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: 'stable'
       
       - name: Get dependencies
@@ -160,7 +161,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: 'stable'
       
       - name: Get dependencies
