@@ -88,10 +88,14 @@ class PeakAnalyzer {
   final double minPeakHeight;
   
   final int minPeakDistance;
+  
+  /// 피크 감지 민감도 (0.0 ~ 1.0, 높을수록 민감)
+  final double sensitivity;
 
   PeakAnalyzer({
-    this.minPeakHeight = 15.0,
-    this.minPeakDistance = 10,
+    this.minPeakHeight = 8.0,  // 15.0에서 8.0으로 낮춤 (더 민감)
+    this.minPeakDistance = 5,   // 10에서 5로 낮춤 (빠른 연속 피크 감지)
+    this.sensitivity = 0.7,     // 기본 민감도
   });
 
   PeakAnalysisResult analyze(List<ChartPoint> data) {
@@ -186,11 +190,34 @@ class PeakAnalyzer {
     
     if (data.length < 3) return peakIndices;
 
-    final avgPressure = data.map((d) => d.y).reduce((a, b) => a + b) / data.length;
-    final threshold = avgPressure + minPeakHeight;
+    // 동적 임계값 계산 (민감도 적용)
+    final pressures = data.map((d) => d.y).toList();
+    final avgPressure = pressures.reduce((a, b) => a + b) / pressures.length;
+    final maxPressure = pressures.reduce(max);
+    final minPressure = pressures.reduce(min);
+    
+    // 민감도에 따른 동적 임계값 (range 고려)
+    final range = maxPressure - minPressure;
+    final dynamicThreshold = avgPressure + (minPeakHeight * (1.0 - sensitivity * 0.5)) * (range > 50 ? 1.0 : 0.8);
+    
+    // 노이즈 레벨 추정 (표준편차 기반)
+    final variance = pressures.fold<double>(0.0, (sum, p) => sum + pow(p - avgPressure, 2)) / pressures.length;
+    final noiseLevel = sqrt(variance) * 0.3;
+    
+    // 최종 임계값 (노이즈 레벨 고려)
+    final threshold = max(dynamicThreshold, avgPressure + noiseLevel + 3.0);
 
     int lastPeakIndex = -minPeakDistance;
 
+    // 1단계: 데이터 스무딩 (3-point moving average)
+    final smoothed = _smoothData(data, windowSize: 3);
+    
+    // 2단계: 기울기 계산 (피크 검증에 사용)
+    final gradients = _calculateGradients(smoothed);
+    // ignore: unused_local_variable
+    final _ = gradients; // 향후 고급 피크 검증에 사용 예정
+
+    // 3단계: 첫 번째 피크 감지 (시작 부분)
     if (data[0].y > threshold && data[0].y > data[1].y) {
       bool isDescending = true;
       for (int j = 1; j < min(5, data.length); j++) {
@@ -205,10 +232,11 @@ class PeakAnalyzer {
       }
     }
     
+    // 4단계: 초기 구간에서 피크 찾기
     if (peakIndices.isEmpty && data.length > 3) {
       int earlyMaxIdx = 0;
       double earlyMax = data[0].y;
-      final checkRange = min(10, data.length - 1);
+      final checkRange = min(15, data.length - 1);  // 10에서 15로 확장
       
       for (int i = 1; i < checkRange; i++) {
         if (data[i].y > earlyMax) {
@@ -228,25 +256,126 @@ class PeakAnalyzer {
       }
     }
 
-    for (int i = 1; i < data.length - 1; i++) {
+    // 5단계: 메인 피크 감지 (개선된 알고리즘)
+    for (int i = 2; i < data.length - 2; i++) {
       if (peakIndices.contains(i)) continue;
       
-      final prev = data[i - 1].y;
       final curr = data[i].y;
-      final next = data[i + 1].y;
-
-      if (curr > prev && curr > next && curr > threshold) {
-        if (i - lastPeakIndex >= minPeakDistance) {
-          peakIndices.add(i);
-          lastPeakIndex = i;
-        } else if (peakIndices.isNotEmpty && curr > data[peakIndices.last].y) {
-          peakIndices[peakIndices.length - 1] = i;
-          lastPeakIndex = i;
+      
+      // 현재 값이 임계값 이상인지 확인
+      if (curr <= threshold) continue;
+      
+      // 로컬 맥시멈 확인 (좌우 2개 포인트 비교)
+      bool isLocalMax = curr >= data[i - 1].y && curr >= data[i + 1].y;
+      
+      // 평탄한 정상 감지 (같은 값이 연속될 때)
+      if (!isLocalMax && curr == data[i - 1].y && curr > data[i + 1].y) {
+        // 평탄 구간의 시작점 찾기
+        int flatStart = i - 1;
+        while (flatStart > 0 && data[flatStart].y == curr) {
+          flatStart--;
+        }
+        if (data[flatStart].y < curr) {
+          isLocalMax = true;
+          // 평탄 구간의 중앙점 사용
+          i = (flatStart + 1 + i) ~/ 2;
+        }
+      }
+      
+      // 더 넓은 윈도우에서 확인 (노이즈 제거)
+      if (isLocalMax) {
+        final windowSize = min(4, min(i, data.length - 1 - i));
+        bool isRealPeak = true;
+        
+        for (int j = 1; j <= windowSize; j++) {
+          if (data[i - j].y > curr * 1.02 || data[i + j].y > curr * 1.02) {
+            isRealPeak = false;
+            break;
+          }
+        }
+        
+        if (isRealPeak) {
+          // 기울기 변화 확인 (상승 → 하강)
+          final leftSlope = i >= 2 ? (data[i].y - data[i-2].y) : 0.0;
+          final rightSlope = i < data.length - 2 ? (data[i+2].y - data[i].y) : 0.0;
+          
+          // 상승 후 하강하는 패턴인지 확인
+          if (leftSlope >= 0 && rightSlope <= 0) {
+            if (i - lastPeakIndex >= minPeakDistance) {
+              peakIndices.add(i);
+              lastPeakIndex = i;
+            } else if (peakIndices.isNotEmpty && curr > data[peakIndices.last].y) {
+              // 더 높은 피크로 교체
+              peakIndices[peakIndices.length - 1] = i;
+              lastPeakIndex = i;
+            }
+          }
+        }
+      }
+    }
+    
+    // 6단계: 마지막 피크 감지 (끝 부분)
+    if (data.length > 5) {
+      final lastIdx = data.length - 1;
+      final checkStart = max(lastPeakIndex + minPeakDistance, lastIdx - 10);
+      
+      int endMaxIdx = checkStart;
+      double endMax = data[checkStart].y;
+      
+      for (int i = checkStart; i <= lastIdx; i++) {
+        if (data[i].y > endMax) {
+          endMax = data[i].y;
+          endMaxIdx = i;
+        }
+      }
+      
+      if (endMax > threshold && endMaxIdx - lastPeakIndex >= minPeakDistance) {
+        // 상승 후 끝나는 패턴 확인
+        if (endMaxIdx > 0 && data[endMaxIdx].y > data[endMaxIdx - 1].y) {
+          peakIndices.add(endMaxIdx);
         }
       }
     }
 
     return peakIndices;
+  }
+  
+  /// 데이터 스무딩 (이동 평균)
+  List<ChartPoint> _smoothData(List<ChartPoint> data, {int windowSize = 3}) {
+    if (data.length < windowSize) return data;
+    
+    final smoothed = <ChartPoint>[];
+    final halfWindow = windowSize ~/ 2;
+    
+    for (int i = 0; i < data.length; i++) {
+      double sum = 0;
+      int count = 0;
+      
+      for (int j = max(0, i - halfWindow); j <= min(data.length - 1, i + halfWindow); j++) {
+        sum += data[j].y;
+        count++;
+      }
+      
+      smoothed.add(ChartPoint(data[i].x, sum / count));
+    }
+    
+    return smoothed;
+  }
+  
+  /// 기울기 계산
+  List<double> _calculateGradients(List<ChartPoint> data) {
+    if (data.length < 2) return [];
+    
+    final gradients = <double>[];
+    
+    for (int i = 0; i < data.length - 1; i++) {
+      final dx = data[i + 1].x - data[i].x;
+      final dy = data[i + 1].y - data[i].y;
+      gradients.add(dx > 0 ? dy / dx * 1000 : 0.0);  // per second
+    }
+    
+    gradients.add(0.0);  // 마지막 포인트
+    return gradients;
   }
 
   List<PeakDetail> _calculatePeakDetails(List<ChartPoint> data, List<int> peakIndices, double baseline) {
@@ -291,10 +420,11 @@ class PeakAnalyzer {
       
       final amplitude = peak.y - baseline;
       
+      // 개선된 intensity 분류 (더 낮은 기준)
       String intensity;
-      if (amplitude < 25) {
+      if (amplitude < 15) {        // 25에서 15로 낮춤
         intensity = 'weak';
-      } else if (amplitude < 50) {
+      } else if (amplitude < 35) { // 50에서 35로 낮춤
         intensity = 'moderate';
       } else {
         intensity = 'strong';
@@ -303,8 +433,8 @@ class PeakAnalyzer {
       final balanceRatio = riseTime > 0 && fallTime > 0 
           ? min(riseTime, fallTime) / max(riseTime, fallTime) 
           : 0.5;
-      final idealWidth = 0.3;
-      final widthScore = 100 - min(100.0, (peakWidth - idealWidth).abs() * 200);
+      final idealWidth = 0.25;  // 0.3에서 0.25로 조정 (빠른 피크에 맞춤)
+      final widthScore = 100 - min(100.0, (peakWidth - idealWidth).abs() * 150);  // 200에서 150으로 완화
       final qualityScore = (balanceRatio * 50 + widthScore * 0.5).clamp(0.0, 100.0);
       
       double? intervalFromPrev;
