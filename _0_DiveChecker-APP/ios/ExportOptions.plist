@@ -15,7 +15,7 @@
     <key>provisioningProfiles</key>
     <dict>
         <key>io.kodenet.divechecker</key>
-        <string>DiveChecker Distribution</string>
+        <string>DiveChecker</string>
     </dict>
 </dict>
 </plist>
