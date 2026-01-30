@@ -145,8 +145,7 @@ class MidiProvider extends ChangeNotifier {
   bool _sensorConnected = true;
 
   // ECDSA authentication
-  // TODO: Re-enable authentication before production release
-  static const bool _authenticationEnabled = false; // Set to true to enable ECDSA verification
+  static const bool _authenticationEnabled = true; // ECDSA verification enabled
   bool _isAuthenticated = false;
   bool _authenticationComplete = false;
   String? _authNonce;

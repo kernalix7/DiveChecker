@@ -149,7 +149,7 @@ for ((i=0; i<130; i+=2)); do
     byte="${PUBLIC_HEX:$i:2}"
     if [ -n "$byte" ]; then
         PUB_FORMATTED+="0x$byte, "
-        ((count++))
+        count=$((count + 1))
         if [ $((count % 12)) -eq 0 ]; then
             PUB_FORMATTED+="\n    "
         fi
@@ -187,7 +187,7 @@ for ((i=0; i<130; i+=2)); do
     byte="${PUBLIC_HEX:$i:2}"
     if [ -n "$byte" ]; then
         PUB_DART+="0x$byte, "
-        ((count++))
+        count=$((count + 1))
         if [ $((count % 12)) -eq 0 ]; then
             PUB_DART+="\n  "
         fi
@@ -207,7 +207,7 @@ FLUTTER_APP_DIR="$SCRIPT_DIR/../../_0_DiveChecker-APP"
 FIRMWARE_DIR="$SCRIPT_DIR"
 
 FIRMWARE_KEY_FILE="$FIRMWARE_DIR/ecdsa_private_keys.h"
-FLUTTER_SECURITY_DIR="$FLUTTER_APP_DIR/lib/services/security"
+FLUTTER_SECURITY_DIR="$FLUTTER_APP_DIR/lib/security"
 FLUTTER_KEY_FILE="$FLUTTER_SECURITY_DIR/ecdsa_public_key.dart"
 
 echo ""

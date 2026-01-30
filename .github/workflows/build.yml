@@ -170,3 +170,31 @@ jobs:
         with:
           name: windows-build
           path: ${{ env.APP_DIR }}/build/windows/x64/runner/Release
+
+  # ─────────────────────────────────────────────
+  # macOS Build
+  # ─────────────────────────────────────────────
+  build-macos:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: ${{ env.APP_DIR }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      
+      - name: Get dependencies
+        run: flutter pub get
+      
+      - name: Build macOS
+        run: flutter build macos --release
+      
+      - name: Upload macOS Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-build
+          path: ${{ env.APP_DIR }}/build/macos/Build/Products/Release/*.app
