@@ -24,6 +24,17 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	
+	<!-- Privacy - Usage Descriptions -->
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>DiveChecker uses Bluetooth to connect with the pressure sensor device for real-time equalization monitoring.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>DiveChecker uses Bluetooth to connect with the pressure sensor device.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>DiveChecker may access your photo library to save or share measurement charts and analysis results.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>DiveChecker may save measurement charts and analysis results to your photo library.</string>
+	
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
