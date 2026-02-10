@@ -277,7 +277,9 @@ class PressureLineConfig {
   }) {
     return LineChartBarData(
       spots: spots,
-      isCurved: false,
+      isCurved: true,
+      curveSmoothness: 0.2,
+      preventCurveOverShooting: true,
       color: color,
       barWidth: ChartConstants.lineWidth,
       dotData: FlDotData(show: showDots),
@@ -303,7 +305,9 @@ class PressureLineConfig {
   }) {
     return LineChartBarData(
       spots: spots,
-      isCurved: false,
+      isCurved: true,
+      curveSmoothness: 0.2,
+      preventCurveOverShooting: true,
       color: color,
       barWidth: ChartConstants.lineWidth,
       dotData: const FlDotData(show: false),

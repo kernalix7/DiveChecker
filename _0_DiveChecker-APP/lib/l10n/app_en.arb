@@ -12,6 +12,7 @@
   "disclaimerDoNotShowAgain": "Do not show again",
 
   "home": "Home",
+  "monitor": "Monitor",
   "measurement": "Measurement",
   "history": "History",
   
@@ -678,6 +679,8 @@
   "bootselModeDescription": "Manual firmware update mode",
   "bootselRebootSent": "BOOTSEL reboot command sent",
   "deviceDisconnected": "Device disconnected",
+  "connectionLostDuringMeasurement": "Connection was lost during measurement. Do you want to save the recorded data?",
+  "discard": "Discard",
   "pinMismatch": "PINs do not match",
   "pinMustBe4Digits": "PIN must be 4 digits",
   "pinChangeRequested": "PIN change requested",
@@ -718,5 +721,13 @@
   "selectFile": "Select File",
   "backToFileList": "Back to file list",
   "readyToInstall": "Ready to install",
-  "verificationFailed": "Verification failed"
+  "verificationFailed": "Verification failed",
+  
+  "reset": "Reset",
+  "fullscreen": "Fullscreen",
+  "samples": "samples",
+  "waitingForData": "Waiting for data...",
+  
+  "overrangeWarningTitle": "Range Exceeded!",
+  "overrangeWarningMessage": "The sensor exceeded its measurement range. Please don't blow or suck too hard! The sensor is recovering..."
 }

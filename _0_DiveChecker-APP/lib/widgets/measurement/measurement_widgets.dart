@@ -462,7 +462,9 @@ class PressureChart extends StatelessWidget {
         lineBarsData: [
           LineChartBarData(
             spots: _toFlSpots(data),
-            isCurved: false,
+            isCurved: true,
+            curveSmoothness: 0.2,
+            preventCurveOverShooting: true,
             color: theme.colorScheme.primary,
             barWidth: ChartDimensions.barWidthSmall,
             dotData: const FlDotData(show: false), // Disabled for performance during real-time

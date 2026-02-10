@@ -142,7 +142,8 @@ class SessionRepository extends ChangeNotifier {
           graphNotes: const [],
         );
       }).toList();
-    } catch (e) {
+    } catch (e, stackTrace) {
+      if (kDebugMode) debugPrint('Failed to load sessions: $e\n$stackTrace');
       _error = e.toString();
     } finally {
       _isLoading = false;
@@ -175,7 +176,8 @@ class SessionRepository extends ChangeNotifier {
       await _dbService.deleteSession(sessionId);
       _sessions.removeWhere((s) => s.id == sessionId);
       notifyListeners();
-    } catch (e) {
+    } catch (e, stackTrace) {
+      if (kDebugMode) debugPrint('Failed to delete session: $e\n$stackTrace');
       _error = e.toString();
       notifyListeners();
       rethrow;
@@ -216,7 +218,8 @@ class SessionRepository extends ChangeNotifier {
         chartData: chartData,
         graphNotes: graphNotes,
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
+      if (kDebugMode) debugPrint('Failed to load chart data: $e\n$stackTrace');
       _error = e.toString();
       return session;
     }

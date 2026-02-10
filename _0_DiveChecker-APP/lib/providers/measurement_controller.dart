@@ -259,6 +259,7 @@ class MeasurementController extends ChangeNotifier {
   
   void reset() {
     _measurementTimer?.cancel();
+    _measurementTimer = null;
     _dataList.clear();
     _sumPressure = 0.0;
     _maxPressureValue = 0.0;
@@ -266,10 +267,25 @@ class MeasurementController extends ChangeNotifier {
     notifyListeners();
   }
   
+  bool _isDisposed = false;
+  
   @override
   void dispose() {
+    if (_isDisposed) return;
+    _isDisposed = true;
+    
     _measurementTimer?.cancel();
+    _measurementTimer = null;
     _pressureSubscription?.cancel();
+    _pressureSubscription = null;
+    _dataList.clear();
     super.dispose();
+  }
+  
+  @override
+  void notifyListeners() {
+    if (!_isDisposed) {
+      super.notifyListeners();
+    }
   }
 }

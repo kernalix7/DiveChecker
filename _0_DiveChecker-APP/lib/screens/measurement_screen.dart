@@ -25,6 +25,8 @@ class MeasurementScreen extends StatefulWidget {
 class _MeasurementScreenState extends State<MeasurementScreen> {
   MeasurementController? _controller;
   bool _isInitialized = false;
+  bool _wasConnected = false;
+  bool _isShowingDisconnectDialog = false;
 
   @override
   void initState() {
@@ -42,12 +44,127 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
       serialProvider: serial,
       settingsProvider: settings,
     );
+    _wasConnected = serial.isConnected;
+    
+    // Listen for connection changes
+    serial.addListener(_onConnectionChanged);
+    
     _isInitialized = true;
     setState(() {});
   }
 
+  void _onConnectionChanged() {
+    if (!mounted) return;
+    final serial = context.read<SerialProvider>();
+    final isConnected = serial.isConnected;
+    final controller = _controller;
+    
+    // Detect disconnection during measurement
+    if (_wasConnected && !isConnected && controller != null && controller.state.isMeasuring) {
+      _handleDisconnectDuringMeasurement();
+    }
+    
+    _wasConnected = isConnected;
+  }
+
+  void _handleDisconnectDuringMeasurement() {
+    if (_isShowingDisconnectDialog) return;
+    _isShowingDisconnectDialog = true;
+    
+    final controller = _controller;
+    if (controller == null) return;
+    
+    // Stop measurement but keep data
+    controller.stopMeasurement();
+    
+    _showDisconnectSaveDialog();
+  }
+
+  void _showDisconnectSaveDialog() {
+    final l10n = AppLocalizations.of(context)!;
+    final controller = _controller;
+    if (controller == null) return;
+    
+    final noteController = TextEditingController();
+    final state = controller.state;
+    final settings = context.read<SettingsProvider>();
+    
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        icon: Icon(
+          Icons.link_off,
+          size: UIConstants.xlIconSize,
+          color: Theme.of(dialogContext).colorScheme.error,
+        ),
+        title: Text(l10n.deviceDisconnected),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.connectionLostDuringMeasurement,
+              style: TextStyle(
+                color: Theme.of(dialogContext).colorScheme.error,
+              ),
+            ),
+            Spacing.verticalLg,
+            Text(
+              '${l10n.maxPressure}: ${formatPressure(settings.convertPressure(state.maxPressure))} ${settings.pressureUnitSymbol}',
+            ),
+            Text(
+              '${l10n.avgPressure}: ${formatPressure(settings.convertPressure(state.avgPressure))} ${settings.pressureUnitSymbol}',
+            ),
+            Text(
+              '${l10n.elapsedTime}: ${formatDuration(state.elapsedTime.inSeconds)}',
+            ),
+            Spacing.verticalLg,
+            TextField(
+              controller: noteController,
+              decoration: InputDecoration(
+                labelText: l10n.noteOptional,
+                hintText: l10n.noteHint,
+                border: const OutlineInputBorder(),
+              ),
+              maxLines: 2,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              _isShowingDisconnectDialog = false;
+              Navigator.pop(dialogContext);
+              controller.reset();
+            },
+            child: Text(l10n.discard),
+          ),
+          FilledButton(
+            onPressed: () async {
+              await _saveSession(noteController.text);
+              if (dialogContext.mounted) {
+                _isShowingDisconnectDialog = false;
+                Navigator.pop(dialogContext);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.measurementSaved)),
+                );
+              }
+            },
+            child: Text(l10n.save),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void dispose() {
+    // Remove listener before dispose
+    if (_isInitialized) {
+      final serial = context.read<SerialProvider>();
+      serial.removeListener(_onConnectionChanged);
+    }
     _controller?.dispose();
     super.dispose();
   }

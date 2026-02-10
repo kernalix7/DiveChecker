@@ -47,7 +47,7 @@ class DeviceAuthenticator {
       // Convert nonce hex to bytes
       final nonceBytes = _hexToBytes(nonce);
       if (nonceBytes.length != 32) {
-        debugPrint('Invalid nonce length: ${nonceBytes.length}');
+        if (kDebugMode) debugPrint('Invalid nonce length: ${nonceBytes.length}');
         return false;
       }
       
@@ -59,14 +59,14 @@ class DeviceAuthenticator {
       final signature = _hexToBytes(signatureHex);
       final ecSig = _parseDerSignature(signature);
       if (ecSig == null) {
-        debugPrint('Failed to parse signature');
+        if (kDebugMode) debugPrint('Failed to parse signature');
         return false;
       }
       
       // Load public key
       final ecPublicKey = _loadPublicKey(publicKey);
       if (ecPublicKey == null) {
-        debugPrint('Failed to load public key');
+        if (kDebugMode) debugPrint('Failed to load public key');
         return false;
       }
       
@@ -76,7 +76,7 @@ class DeviceAuthenticator {
       
       return verifier.verifySignature(hash, ecSig);
     } catch (e) {
-      debugPrint('Signature verification error: $e');
+      if (kDebugMode) debugPrint('Signature verification error: $e');
       return false;
     }
   }

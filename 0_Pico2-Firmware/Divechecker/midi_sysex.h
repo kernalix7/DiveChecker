@@ -25,6 +25,7 @@
 #define CMD_CONFIG              0x03    // Config response
 #define CMD_AUTH_RESPONSE       0x04    // Auth response
 #define CMD_SENSOR_STATUS       0x05    // Sensor status
+#define CMD_OVERRANGE_ALERT     0x06    // Sensor over-range warning
 
 // Command bytes (Bidirectional)
 #define CMD_PING                0x10    // Ping request
@@ -110,6 +111,12 @@ void midi_sysex_send_auth_response(const uint8_t* signature, uint8_t sig_len);
  * @param connected true if sensor is connected
  */
 void midi_sysex_send_sensor_status(bool connected);
+
+/**
+ * @brief Send over-range alert via SysEx
+ * @details Notifies the app that sensor exceeded measurement range
+ */
+void midi_sysex_send_overrange_alert(void);
 
 /**
  * @brief Send pong response

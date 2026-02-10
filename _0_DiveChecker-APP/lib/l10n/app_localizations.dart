@@ -134,6 +134,12 @@ abstract class AppLocalizations {
   /// **'Home'**
   String get home;
 
+  /// No description provided for @monitor.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor'**
+  String get monitor;
+
   /// No description provided for @measurement.
   ///
   /// In en, this message translates to:
@@ -983,7 +989,7 @@ abstract class AppLocalizations {
   /// No description provided for @samples.
   ///
   /// In en, this message translates to:
-  /// **'SAMPLES'**
+  /// **'samples'**
   String get samples;
 
   /// No description provided for @points.
@@ -2918,6 +2924,12 @@ abstract class AppLocalizations {
   /// **'Device disconnected'**
   String get deviceDisconnected;
 
+  /// No description provided for @connectionLostDuringMeasurement.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection was lost during measurement. Do you want to save the recorded data?'**
+  String get connectionLostDuringMeasurement;
+
   /// No description provided for @pinMismatch.
   ///
   /// In en, this message translates to:
@@ -3103,6 +3115,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Verification failed'**
   String get verificationFailed;
+
+  /// No description provided for @reset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get reset;
+
+  /// No description provided for @fullscreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Fullscreen'**
+  String get fullscreen;
+
+  /// No description provided for @waitingForData.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for data...'**
+  String get waitingForData;
+
+  /// No description provided for @overrangeWarningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Range Exceeded!'**
+  String get overrangeWarningTitle;
+
+  /// No description provided for @overrangeWarningMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The sensor exceeded its measurement range. Please don\'t blow or suck too hard! The sensor is recovering...'**
+  String get overrangeWarningMessage;
 }
 
 class _AppLocalizationsDelegate

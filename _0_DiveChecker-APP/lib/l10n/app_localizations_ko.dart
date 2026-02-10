@@ -28,6 +28,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get home => '홈';
 
   @override
+  String get monitor => '모니터';
+
+  @override
   String get measurement => '측정';
 
   @override
@@ -1482,6 +1485,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get deviceDisconnected => '기기 연결이 해제되었습니다';
 
   @override
+  String get connectionLostDuringMeasurement =>
+      '측정 중 연결이 끊어졌습니다. 기록된 데이터를 저장하시겠습니까?';
+
+  @override
   String get pinMismatch => 'PIN이 일치하지 않습니다';
 
   @override
@@ -1577,4 +1584,20 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get verificationFailed => '검증 실패';
+
+  @override
+  String get reset => '초기화';
+
+  @override
+  String get fullscreen => '전체화면';
+
+  @override
+  String get waitingForData => '데이터 대기 중...';
+
+  @override
+  String get overrangeWarningTitle => '측정 범위 초과!';
+
+  @override
+  String get overrangeWarningMessage =>
+      '센서의 측정 범위를 초과했습니다. 너무 강하게 불거나 빨아당기지 마세요! 센서가 복구 중입니다...';
 }

@@ -34,6 +34,8 @@
 #include "hardware/pio.h"
 #include "hardware/flash.h"
 #include "hardware/sync.h"
+#include "hardware/watchdog.h"
+#include "hardware/clocks.h"
 
 // TinyUSB for USB MIDI
 #include "tusb.h"
@@ -47,6 +49,7 @@
 
 #include "pico/rand.h"
 #include <stdlib.h>  // for strtol
+#include <math.h>    // for isnan, NAN
 
 #include "ws2812.pio.h"
 
@@ -191,6 +194,15 @@ typedef enum {
 #define BMP280_CTRL_STABLE      0x57    // T:x1, P:x16, normal mode
 #define BMP280_CONFIG_FILTERED  0x04    // standby=0.5ms, filter=x2
 
+// BMP280 valid measurement range (datasheet spec)
+#define BMP280_PRESSURE_MIN_HPA     300.0f
+#define BMP280_PRESSURE_MAX_HPA     1100.0f
+
+// Over-range recovery: discard initial samples after sensor reset
+// to let IIR filter stabilize with clean values
+#define OVERRANGE_RECOVERY_SAMPLES  30   // ~300ms at 100Hz
+#define OVERRANGE_CONSEC_THRESHOLD  3    // consecutive bad readings before reset
+
 // Removed adaptive baseline - send absolute pressure values
 // App will handle baseline and filtering
 
@@ -228,6 +240,9 @@ static queue_t g_pressure_queue;
 static PIO g_ws2812_pio = pio0;
 static uint g_ws2812_sm = 0;
 
+// Over-range alert flag (set by Core 1, consumed by Core 0)
+static volatile bool g_overrange_alert = false;
+
 // Command parsing
 // Command buffer (64 for auth nonce + margin)
 #define CMD_BUFFER_SIZE 72
@@ -250,6 +265,10 @@ static inline void led_set_color(uint8_t r, uint8_t g, uint8_t b) {
 static void led_init(void) {
     uint offset = pio_add_program(g_ws2812_pio, &ws2812_program);
     ws2812_program_init(g_ws2812_pio, g_ws2812_sm, offset, WS2812_PIN, 800000, WS2812_IS_RGBW);
+    
+    // EMC: Reduce drive strength and slew rate for LED data pin
+    gpio_set_drive_strength(WS2812_PIN, GPIO_DRIVE_STRENGTH_2MA);
+    gpio_set_slew_rate(WS2812_PIN, GPIO_SLEW_RATE_SLOW);
 }
 
 static void led_set_state(led_state_t state) {
@@ -464,17 +483,76 @@ static void ecdsa_sign_challenge(const char *nonce_hex, size_t nonce_len) {
 }
 
 /* ============================================================================
- * I2C Helper Functions
+ * I2C Helper Functions (with timeout and bus recovery for EMC)
  * ========================================================================== */
 
-static inline void i2c_write_register(uint8_t reg, uint8_t value) {
-    uint8_t buf[2] = {reg, value};
-    i2c_write_blocking(I2C_PORT, BMP280_I2C_ADDR, buf, 2, false);
+// I2C timeout in microseconds (50ms should be plenty for 400kHz)
+#define I2C_TIMEOUT_US      50000
+
+/**
+ * @brief Recover I2C bus from stuck state (SDA held low)
+ * @details Generates clock pulses to release stuck slave devices
+ */
+static void i2c_bus_recover(void) {
+    // Temporarily disable I2C function on pins
+    gpio_set_function(I2C_SDA_PIN, GPIO_FUNC_SIO);
+    gpio_set_function(I2C_SCL_PIN, GPIO_FUNC_SIO);
+    
+    gpio_set_dir(I2C_SDA_PIN, GPIO_IN);
+    gpio_set_dir(I2C_SCL_PIN, GPIO_OUT);
+    gpio_pull_up(I2C_SDA_PIN);
+    
+    // Generate 9 clock pulses to release any stuck slave
+    for (int i = 0; i < 9; i++) {
+        gpio_put(I2C_SCL_PIN, 0);
+        sleep_us(5);
+        gpio_put(I2C_SCL_PIN, 1);
+        sleep_us(5);
+        
+        // Check if SDA is released
+        if (gpio_get(I2C_SDA_PIN)) {
+            break;
+        }
+    }
+    
+    // Generate STOP condition
+    gpio_set_dir(I2C_SDA_PIN, GPIO_OUT);
+    gpio_put(I2C_SDA_PIN, 0);
+    sleep_us(5);
+    gpio_put(I2C_SCL_PIN, 1);
+    sleep_us(5);
+    gpio_put(I2C_SDA_PIN, 1);
+    sleep_us(5);
+    
+    // Restore I2C function
+    gpio_set_function(I2C_SDA_PIN, GPIO_FUNC_I2C);
+    gpio_set_function(I2C_SCL_PIN, GPIO_FUNC_I2C);
+    gpio_pull_up(I2C_SDA_PIN);
+    gpio_pull_up(I2C_SCL_PIN);
 }
 
-static inline void i2c_read_registers(uint8_t start_reg, uint8_t *buffer, size_t len) {
-    i2c_write_blocking(I2C_PORT, BMP280_I2C_ADDR, &start_reg, 1, true);
-    i2c_read_blocking(I2C_PORT, BMP280_I2C_ADDR, buffer, len, false);
+static inline bool i2c_write_register(uint8_t reg, uint8_t value) {
+    uint8_t buf[2] = {reg, value};
+    int ret = i2c_write_timeout_us(I2C_PORT, BMP280_I2C_ADDR, buf, 2, false, I2C_TIMEOUT_US);
+    if (ret < 0) {
+        i2c_bus_recover();
+        return false;
+    }
+    return true;
+}
+
+static inline bool i2c_read_registers(uint8_t start_reg, uint8_t *buffer, size_t len) {
+    int ret = i2c_write_timeout_us(I2C_PORT, BMP280_I2C_ADDR, &start_reg, 1, true, I2C_TIMEOUT_US);
+    if (ret < 0) {
+        i2c_bus_recover();
+        return false;
+    }
+    ret = i2c_read_timeout_us(I2C_PORT, BMP280_I2C_ADDR, buffer, len, false, I2C_TIMEOUT_US);
+    if (ret < 0) {
+        i2c_bus_recover();
+        return false;
+    }
+    return true;
 }
 
 /* ============================================================================
@@ -540,13 +618,43 @@ static bool bmp280_init(void) {
     return true;
 }
 
+/**
+ * @brief Reinitialize BMP280 config (clears IIR filter state)
+ * @details Called after over-range recovery to flush saturated values
+ *          from the sensor's internal IIR filter
+ */
+static bool bmp280_reinit_config(void) {
+    // Soft reset clears all internal registers including IIR filter
+    if (!i2c_write_register(BMP280_REG_RESET, BMP280_RESET_VALUE)) {
+        return false;
+    }
+    sleep_ms(10);
+    
+    // Re-apply configuration (must be done in sleep mode)
+    if (!i2c_write_register(BMP280_REG_CTRL_MEAS, 0x00)) return false;  // Sleep mode
+    sleep_ms(2);
+    if (!i2c_write_register(BMP280_REG_CONFIG, BMP280_CONFIG_FILTERED)) return false;
+    sleep_ms(2);
+    if (!i2c_write_register(BMP280_REG_CTRL_MEAS, BMP280_CTRL_STABLE)) return false;
+    sleep_ms(50);  // Wait for first clean measurement
+    
+    return true;
+}
+
 static float bmp280_read_pressure(void) {
-    uint8_t data[6];
-    i2c_read_registers(BMP280_REG_PRESS_MSB, data, 6);
+    uint8_t data[6] = {0};
+    if (!i2c_read_registers(BMP280_REG_PRESS_MSB, data, 6)) {
+        return NAN;  // I2C read failed - signal invalid reading
+    }
     
     // Parse 20-bit ADC values
     int32_t adc_P = ((int32_t)data[0] << 12) | ((int32_t)data[1] << 4) | (data[2] >> 4);
     int32_t adc_T = ((int32_t)data[3] << 12) | ((int32_t)data[4] << 4) | (data[5] >> 4);
+    
+    // ADC saturation check: 0x80000 means measurement was skipped/invalid
+    if (adc_P == 0x80000 || adc_T == 0x80000) {
+        return NAN;
+    }
     
     // Temperature compensation (required for accurate pressure)
     int32_t var1 = ((((adc_T >> 3) - ((int32_t)g_calib.dig_T1 << 1))) * 
@@ -573,7 +681,14 @@ static float bmp280_read_pressure(void) {
     p_var2 = (((int64_t)g_calib.dig_P8) * p) >> 19;
     p = ((p + p_var1 + p_var2) >> 8) + (((int64_t)g_calib.dig_P7) << 4);
     
-    return (float)p / 25600.0f;  // Convert to hPa
+    float pressure_hpa = (float)p / 25600.0f;  // Convert to hPa
+    
+    // Range validation: BMP280 only guarantees accuracy within 300-1100 hPa
+    if (pressure_hpa < BMP280_PRESSURE_MIN_HPA || pressure_hpa > BMP280_PRESSURE_MAX_HPA) {
+        return NAN;  // Out of valid range
+    }
+    
+    return pressure_hpa;
 }
 
 /* ============================================================================
@@ -758,6 +873,12 @@ static void core1_sensor_task(void) {
     gpio_pull_up(I2C_SDA_PIN);
     gpio_pull_up(I2C_SCL_PIN);
     
+    // EMC: Reduce drive strength and slew rate for I2C pins
+    gpio_set_drive_strength(I2C_SDA_PIN, GPIO_DRIVE_STRENGTH_2MA);
+    gpio_set_drive_strength(I2C_SCL_PIN, GPIO_DRIVE_STRENGTH_2MA);
+    gpio_set_slew_rate(I2C_SDA_PIN, GPIO_SLEW_RATE_SLOW);
+    gpio_set_slew_rate(I2C_SCL_PIN, GPIO_SLEW_RATE_SLOW);
+    
     sleep_ms(100);  // Sensor power-up delay
     
     g_sensor_ready = bmp280_init();
@@ -773,8 +894,16 @@ static void core1_sensor_task(void) {
     uint64_t last_sample_us = 0;
     uint64_t last_output_ms = 0;
     
+    // Over-range recovery state
+    int overrange_consec = 0;        // Consecutive out-of-range readings
+    bool in_recovery = false;        // Currently recovering from over-range
+    int recovery_remaining = 0;      // Samples to discard before trusting data
+    
     // Main sampling loop
     while (true) {
+        // Feed watchdog from Core 1 as well
+        watchdog_update();
+        
         if (g_sensor_ready && g_app_connected) {
             uint64_t now_us = time_us_64();
             uint64_t now_ms = now_us / 1000;
@@ -783,8 +912,52 @@ static void core1_sensor_task(void) {
             if (now_us - last_sample_us >= SAMPLE_INTERVAL_US) {
                 last_sample_us = now_us;
                 
-                if (sample_count < g_samples_per_output) {
-                    sample_buffer[sample_count++] = bmp280_read_pressure();
+                float reading = bmp280_read_pressure();
+                
+                if (isnan(reading)) {
+                    // Invalid reading: I2C failure, ADC saturation, or out-of-range
+                    overrange_consec++;
+                    
+                    if (overrange_consec >= OVERRANGE_CONSEC_THRESHOLD && !in_recovery) {
+                        // Sensor exceeded range — soft reset to clear IIR filter
+                        #if CFG_TUD_CDC
+                        printf("WARN:Sensor over-range, resetting...\n");
+                        #endif
+                        
+                        if (bmp280_reinit_config()) {
+                            in_recovery = true;
+                            recovery_remaining = OVERRANGE_RECOVERY_SAMPLES;
+                            sample_count = 0;  // Clear averaging buffer
+                            overrange_consec = 0;
+                            g_overrange_alert = true;  // Notify Core 0 -> App
+                            
+                            #if CFG_TUD_CDC
+                            printf("INFO:Sensor reset OK, stabilizing (%d samples)\n", 
+                                   OVERRANGE_RECOVERY_SAMPLES);
+                            #endif
+                        } else {
+                            // Reset failed — try full reinit next time
+                            g_sensor_ready = bmp280_init();
+                            overrange_consec = 0;
+                        }
+                    }
+                } else {
+                    // Valid reading
+                    overrange_consec = 0;
+                    
+                    if (in_recovery) {
+                        // Discard samples during recovery stabilization
+                        recovery_remaining--;
+                        if (recovery_remaining <= 0) {
+                            in_recovery = false;
+                            #if CFG_TUD_CDC
+                            printf("INFO:Sensor recovered, resuming normal operation\n");
+                            #endif
+                        }
+                        // Don't add to sample buffer during recovery
+                    } else if (sample_count < g_samples_per_output) {
+                        sample_buffer[sample_count++] = reading;
+                    }
                 }
             }
             
@@ -820,12 +993,20 @@ static void core1_sensor_task(void) {
                     pressure_packet_t packet = {
                         .delta_x1000 = delta_x1000
                     };
-                    queue_try_add(&g_pressure_queue, &packet);
+                    if (!queue_try_add(&g_pressure_queue, &packet)) {
+                        // Queue full - drop oldest and retry
+                        pressure_packet_t discard;
+                        queue_try_remove(&g_pressure_queue, &discard);
+                        queue_try_add(&g_pressure_queue, &packet);
+                    }
                 }
             }
         } else {
             // Reset when not connected
             sample_count = 0;
+            overrange_consec = 0;
+            in_recovery = false;
+            recovery_remaining = 0;
         }
         
         sleep_us(100);
@@ -865,7 +1046,67 @@ static void print_startup_banner(void) {
     #endif
 }
 
+/* ============================================================================
+ * TinyUSB Callbacks for Power Management (EMC)
+ * ========================================================================== */
+
+// USB suspend state flag
+static volatile bool g_usb_suspended = false;
+
+/**
+ * @brief Called when USB bus is suspended
+ * @details Reduce power consumption to minimize EMI during suspend
+ */
+void tud_suspend_cb(bool remote_wakeup_en) {
+    (void) remote_wakeup_en;
+    g_usb_suspended = true;
+    
+    // Turn off LED to save power
+    led_set_state(LED_STATE_OFF);
+    
+    // Optionally: Could slow down system clock here for more power savings
+    // But this requires careful handling of peripherals
+    
+    #if CFG_TUD_CDC
+    printf("USB: Suspended\n");
+    #endif
+}
+
+/**
+ * @brief Called when USB bus is resumed
+ */
+void tud_resume_cb(void) {
+    g_usb_suspended = false;
+    
+    // Restore LED state
+    led_set_state(g_app_connected ? LED_STATE_APP_CONNECTED : LED_STATE_USB_READY);
+    
+    #if CFG_TUD_CDC
+    printf("USB: Resumed\n");
+    #endif
+}
+
 int main(void) {
+    // =========================================================================
+    // EMC: Configure unused GPIO pins to prevent floating (reduce EMI)
+    // Used GPIOs: GP8 (I2C SDA), GP9 (I2C SCL), GP16 (WS2812 LED)
+    // =========================================================================
+    static const uint8_t used_gpios[] = {8, 9, 16};
+    for (uint gpio = 0; gpio <= 22; gpio++) {
+        bool in_use = false;
+        for (size_t i = 0; i < sizeof(used_gpios); i++) {
+            if (gpio == used_gpios[i]) {
+                in_use = true;
+                break;
+            }
+        }
+        if (!in_use) {
+            gpio_init(gpio);
+            gpio_set_dir(gpio, GPIO_IN);
+            gpio_pull_down(gpio);
+        }
+    }
+    
     // Initialize device identity
     init_serial_number();
     flash_load_settings();
@@ -904,8 +1145,17 @@ int main(void) {
     // Print startup info (to CDC debug port if available)
     print_startup_banner();
     
+    // =========================================================================
+    // EMC: Enable watchdog for auto-recovery from ESD-induced hangs
+    // Timeout: 2000ms - both cores must feed regularly
+    // =========================================================================
+    watchdog_enable(2000, true);  // 2 second timeout, pause on debug
+    
     // Main loop: USB MIDI communication on Core 0
     while (true) {
+        // Feed watchdog at start of each iteration
+        watchdog_update();
+        
         uint64_t now_ms = time_us_64() / 1000;
         
         // TinyUSB device task - MUST be called frequently
@@ -938,6 +1188,12 @@ int main(void) {
                 // Send pressure via MIDI SysEx
                 midi_sysex_send_pressure(packet.delta_x1000);
             }
+        }
+        
+        // Send over-range alert to app (set by Core 1)
+        if (g_overrange_alert && g_app_connected) {
+            g_overrange_alert = false;
+            midi_sysex_send_overrange_alert();
         }
         
         sleep_us(100);

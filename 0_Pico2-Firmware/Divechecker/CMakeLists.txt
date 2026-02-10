@@ -108,6 +108,8 @@ target_link_libraries(Divechecker
         hardware_sync
         hardware_sha256
         hardware_regs  # For OTP register access
+        hardware_watchdog  # For EMC: auto-reboot on ESD hang
+        hardware_clocks    # For USB suspend power management
         pico_multicore
         pico_unique_id
         pico_rand

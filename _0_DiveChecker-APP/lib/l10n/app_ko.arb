@@ -9,6 +9,7 @@
   "disclaimerDoNotShowAgain": "다시 표시하지 않음",
   
   "home": "홈",
+  "monitor": "모니터",
   "measurement": "측정",
   "history": "기록",
   
@@ -535,6 +536,8 @@
   "bootselModeDescription": "펌웨어 수동 업데이트 모드",
   "bootselRebootSent": "BOOTSEL 재부팅 명령 전송됨",
   "deviceDisconnected": "기기 연결이 해제되었습니다",
+  "connectionLostDuringMeasurement": "측정 중 연결이 끊어졌습니다. 기록된 데이터를 저장하시겠습니까?",
+  "discard": "삭제",
   "pinMismatch": "PIN이 일치하지 않습니다",
   "pinMustBe4Digits": "PIN은 4자리 숫자여야 합니다",
   "pinChangeRequested": "PIN 변경 요청됨",
@@ -568,5 +571,13 @@
   "selectFile": "파일 선택",
   "backToFileList": "파일 목록으로",
   "readyToInstall": "설치 준비 완료",
-  "verificationFailed": "검증 실패"
+  "verificationFailed": "검증 실패",
+  
+  "reset": "초기화",
+  "fullscreen": "전체화면",
+  "samples": "샘플",
+  "waitingForData": "데이터 대기 중...",
+  
+  "overrangeWarningTitle": "측정 범위 초과!",
+  "overrangeWarningMessage": "센서의 측정 범위를 초과했습니다. 너무 강하게 불거나 빨아당기지 마세요! 센서가 복구 중입니다..."
 }

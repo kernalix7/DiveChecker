@@ -295,7 +295,9 @@ class _TrendChart extends StatelessWidget {
                     lineBarsData: [
                       LineChartBarData(
                         spots: _toFlSpots(chartData),
-                        isCurved: false,
+                        isCurved: true,
+                        curveSmoothness: 0.2,
+                        preventCurveOverShooting: true,
                         color: theme.colorScheme.primary.withOpacity(Opacities.mediumHigh),
                         barWidth: ChartDimensions.barWidthThin,
                         dotData: const FlDotData(show: false),
@@ -303,14 +305,18 @@ class _TrendChart extends StatelessWidget {
                       if (movingAverage.isNotEmpty)
                         LineChartBarData(
                           spots: _toFlSpots(movingAverage),
-                          isCurved: false,
+                          isCurved: true,
+                          curveSmoothness: 0.3,
+                          preventCurveOverShooting: true,
                           color: Colors.orange,
                           barWidth: ChartDimensions.barWidthSmall,
                           dotData: const FlDotData(show: false),
                         ),
                       LineChartBarData(
                         spots: _toFlSpots(trendLine),
-                        isCurved: false,
+                        isCurved: true,
+                        curveSmoothness: 0.3,
+                        preventCurveOverShooting: true,
                         color: trendColor,
                         barWidth: ChartDimensions.barWidthMedium,
                         dotData: const FlDotData(show: false),

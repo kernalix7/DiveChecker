@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
 import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show debugPrint, kDebugMode, kIsWeb;
 import '../models/pressure_data.dart';
 import 'unified_database_service.dart';
 
@@ -159,7 +159,8 @@ class BackupService {
     try {
       final json = jsonDecode(jsonString) as Map<String, dynamic>;
       return BackupData.fromJson(json);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      if (kDebugMode) debugPrint('Failed to parse backup: $e\n$stackTrace');
       return null;
     }
   }

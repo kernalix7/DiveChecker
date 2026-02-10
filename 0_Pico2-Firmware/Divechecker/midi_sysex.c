@@ -125,27 +125,34 @@ void midi_sysex_send(uint8_t command, const uint8_t* data, uint8_t len) {
 static volatile bool g_sysex_sending = false;
 
 // Wait for USB send to complete and release lock
+// Optimized: only wait until buffer is actually flushed, not a fixed 10ms
 static void midi_sysex_flush_and_unlock(void) {
-    // Wait for USB buffer to flush
-    for (int i = 0; i < 100; i++) {
+    // Quick flush: just run a few tud_task cycles to push data out
+    for (int i = 0; i < 5; i++) {
         tud_task();
-        sleep_us(100);
     }
     g_sysex_sending = false;
 }
 
-// Acquire send lock (blocking)
-static void midi_sysex_lock(void) {
-    while (g_sysex_sending) {
+// Acquire send lock (non-blocking timeout)
+static bool midi_sysex_lock(void) {
+    int timeout = 100;  // ~5ms max wait
+    while (g_sysex_sending && timeout-- > 0) {
         tud_task();
         sleep_us(50);
     }
+    if (g_sysex_sending) {
+        return false;  // Lock timeout - skip this send
+    }
     g_sysex_sending = true;
+    return true;
 }
 
 // Send raw SysEx with retry for full transmission
 static void midi_sysex_send_raw(uint8_t command, const uint8_t* data, uint16_t len) {
-    midi_sysex_lock();
+    if (!midi_sysex_lock()) {
+        return;  // Skip if locked (another send in progress)
+    }
     
     uint8_t buffer[SYSEX_MAX_SIZE];
     uint16_t idx = 0;
@@ -164,7 +171,7 @@ static void midi_sysex_send_raw(uint8_t command, const uint8_t* data, uint16_t l
     // Send with retry to handle buffer full conditions
     uint16_t sent = 0;
     int retry_count = 0;
-    while (sent < idx && retry_count < 1000) {
+    while (sent < idx && retry_count < 50) {
         uint32_t written = tud_midi_stream_write(0, buffer + sent, idx - sent);
         if (written > 0) {
             sent += written;
@@ -172,7 +179,7 @@ static void midi_sysex_send_raw(uint8_t command, const uint8_t* data, uint16_t l
         } else {
             // Buffer full, process USB and retry
             tud_task();
-            sleep_us(100);
+            sleep_us(50);
             retry_count++;
         }
     }
@@ -257,6 +264,10 @@ void midi_sysex_send_auth_response(const uint8_t* signature, uint8_t sig_len) {
 void midi_sysex_send_sensor_status(bool connected) {
     uint8_t data[1] = { connected ? 0x01 : 0x00 };
     midi_sysex_send_raw(CMD_SENSOR_STATUS, data, 1);
+}
+
+void midi_sysex_send_overrange_alert(void) {
+    midi_sysex_send_raw(CMD_OVERRANGE_ALERT, NULL, 0);
 }
 
 void midi_sysex_send_pong(void) {

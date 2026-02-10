@@ -115,6 +115,7 @@ class MidiProvider extends ChangeNotifier {
   static const int _cmdConfig = 0x03;
   static const int _cmdAuthResponse = 0x04;
   static const int _cmdSensorStatus = 0x05;
+  static const int _cmdOverrangeAlert = 0x06;
   static const int _cmdPing = 0x10;
   static const int _cmdPong = 0x11;
   static const int _cmdRequestInfo = 0x20;
@@ -133,16 +134,29 @@ class MidiProvider extends ChangeNotifier {
   double _atmosphericPressureOffset = 0.0;
   final List<double> _calibrationSamples = [];
   static const int _calibrationDurationMs = 3000;
+  static const int _calibrationTimeoutMs = 5000; // Timeout if no data received
+  static const int _minCalibrationSamples = 8; // Minimum samples for valid calibration
   DateTime? _calibrationStartTime;
+  Timer? _calibrationTimeoutTimer;
 
   final _pressureController = StreamController<double>.broadcast();
   StreamSubscription? _midiSubscription;
 
   Timer? _pingTimer;
   static const int _pingIntervalMs = 1000;
+  
+  // Throttle notifyListeners for pressure updates (reduce UI rebuilds)
+  DateTime _lastNotifyTime = DateTime.now();
+  static const int _notifyThrottleMs = 200;  // Max 5 UI updates/sec
 
   bool _deviceInfoRequested = false;
   bool _sensorConnected = true;
+  
+  // Over-range alert state
+  bool _isOverrange = false;
+  DateTime? _overrangeTime;
+  final _overrangeController = StreamController<void>.broadcast();
+  static const int _overrangeDisplayMs = 5000;  // Show warning for 5 seconds
 
   // ECDSA authentication
   static const bool _authenticationEnabled = true; // ECDSA verification enabled
@@ -156,6 +170,7 @@ class MidiProvider extends ChangeNotifier {
   // SysEx buffering for fragmented messages
   final List<int> _sysexBuffer = [];
   bool _inSysex = false;
+  DateTime? _sysexStartTime;  // SysEx timeout tracking
 
   // Device name cache
   static const String _deviceNameCacheKey = 'midi_device_name_cache';
@@ -178,6 +193,8 @@ class MidiProvider extends ChangeNotifier {
   bool get isSensorConnected => _sensorConnected;
   bool get isDeviceAuthenticated => _isAuthenticated;
   bool get isAuthenticationComplete => _authenticationComplete;
+  bool get isOverrange => _isOverrange;
+  Stream<void> get overrangeStream => _overrangeController.stream;
   int get outputRate => _outputRate;
   int get outputIntervalMs => 1000 ~/ _outputRate;
   String? get deviceName => _connectedDevice?.deviceName;
@@ -213,7 +230,12 @@ class MidiProvider extends ChangeNotifier {
     final adjustedPressure = rawPressure - _atmosphericPressureOffset;
     _currentPressure = adjustedPressure;
     _pressureController.add(adjustedPressure);
-    notifyListeners();
+    // Throttled notifyListeners - max 5/sec for UI widgets reading currentPressure
+    final now = DateTime.now();
+    if (now.difference(_lastNotifyTime).inMilliseconds >= _notifyThrottleMs) {
+      _lastNotifyTime = now;
+      notifyListeners();
+    }
   }
 
   /// Scan for MIDI devices
@@ -287,10 +309,6 @@ class MidiProvider extends ChangeNotifier {
   void _handleMidiData(Uint8List data) {
     if (data.isEmpty) return;
 
-    if (kDebugMode) {
-      debugPrint('MIDI raw data (${data.length} bytes): ${data.map((b) => b.toRadixString(16).padLeft(2, '0')).join(' ')}');
-    }
-
     // Process each byte for SysEx reassembly
     for (final byte in data) {
       if (byte == 0xF0) {
@@ -298,19 +316,30 @@ class MidiProvider extends ChangeNotifier {
         _sysexBuffer.clear();
         _sysexBuffer.add(byte);
         _inSysex = true;
+        _sysexStartTime = DateTime.now();
       } else if (byte == 0xF7 && _inSysex) {
         // End of SysEx
         _sysexBuffer.add(byte);
         _inSysex = false;
+        _sysexStartTime = null;
         
         // Process complete SysEx message
         final completeMessage = Uint8List.fromList(_sysexBuffer);
         _sysexBuffer.clear();
-        if (kDebugMode) {
-          debugPrint('Complete SysEx (${completeMessage.length} bytes): ${completeMessage.map((b) => b.toRadixString(16).padLeft(2, '0')).join(' ')}');
+        if (kDebugMode && completeMessage.length > 10) {
+          debugPrint('SysEx (${completeMessage.length} bytes) cmd=0x${completeMessage.length > 3 ? completeMessage[3].toRadixString(16) : "?"}');
         }
         _handleSysEx(completeMessage);
       } else if (_inSysex) {
+        // Check SysEx timeout (500ms max for assembly)
+        if (_sysexStartTime != null &&
+            DateTime.now().difference(_sysexStartTime!).inMilliseconds > 500) {
+          if (kDebugMode) debugPrint('SysEx timeout - discarding incomplete buffer');
+          _inSysex = false;
+          _sysexBuffer.clear();
+          _sysexStartTime = null;
+          continue;
+        }
         // Middle of SysEx - only accept valid data bytes (< 0x80)
         // Except for real-time messages which can appear anywhere
         if (byte < 0x80) {
@@ -324,6 +353,7 @@ class MidiProvider extends ChangeNotifier {
           }
           _inSysex = false;
           _sysexBuffer.clear();
+          _sysexStartTime = null;
         }
       }
     }
@@ -355,6 +385,9 @@ class MidiProvider extends ChangeNotifier {
         break;
       case _cmdSensorStatus:
         _handleSensorStatus(payload);
+        break;
+      case _cmdOverrangeAlert:
+        _handleOverrangeAlert();
         break;
       case _cmdPong:
         _handlePong();
@@ -499,6 +532,25 @@ class MidiProvider extends ChangeNotifier {
     }
   }
 
+  void _handleOverrangeAlert() {
+    _isOverrange = true;
+    _overrangeTime = DateTime.now();
+    _overrangeController.add(null);
+    notifyListeners();
+    
+    // Auto-clear after display duration
+    Future.delayed(Duration(milliseconds: _overrangeDisplayMs), () {
+      if (_overrangeTime != null &&
+          DateTime.now().difference(_overrangeTime!).inMilliseconds >= _overrangeDisplayMs) {
+        _isOverrange = false;
+        _overrangeTime = null;
+        notifyListeners();
+      }
+    });
+    
+    if (kDebugMode) debugPrint('WARN: Sensor over-range detected!');
+  }
+
   void _handlePong() {
     if (!_deviceInfoRequested) {
       _deviceInfoRequested = true;
@@ -559,15 +611,28 @@ class MidiProvider extends ChangeNotifier {
   Future<bool> _authenticateDevice() async {
     if (_connectedDevice == null) return false;
 
+    // Cancel any pending authentication
+    if (_authCompleter != null && !_authCompleter!.isCompleted) {
+      _authCompleter!.complete(false);
+    }
+    
     _authNonce = DeviceAuthenticator.generateNonce();
     _authCompleter = Completer<bool>();
 
     // Send auth challenge with nonce
     final nonceBytes = _authNonce!.codeUnits;
-    _sendSysEx(_cmdAuthChallenge, nonceBytes);
+    final sent = await _sendSysEx(_cmdAuthChallenge, nonceBytes);
+    if (!sent) {
+      _authenticationComplete = true;
+      _authCompleter = null;
+      return false;
+    }
 
     try {
-      final result = await _authCompleter!.future.timeout(
+      final completer = _authCompleter;
+      if (completer == null) return false;
+      
+      final result = await completer.future.timeout(
         const Duration(seconds: 3),
         onTimeout: () {
           _isAuthenticated = false;
@@ -596,14 +661,25 @@ class MidiProvider extends ChangeNotifier {
       trimmedName = trimmedName.substring(0, trimmedName.length - 1);
     }
 
+    // Cancel any pending name change
+    if (_nameChangeCompleter != null && !_nameChangeCompleter!.isCompleted) {
+      _nameChangeCompleter!.complete(false);
+    }
     _nameChangeCompleter = Completer<bool>();
 
     // Format: <pin_4_bytes> <name_bytes>
     final payload = [...pin.codeUnits, ...trimmedName.codeUnits];
-    _sendSysEx(_cmdSetName, payload);
+    final sent = await _sendSysEx(_cmdSetName, payload);
+    if (!sent) {
+      _nameChangeCompleter = null;
+      return false;
+    }
 
     try {
-      final success = await _nameChangeCompleter!.future.timeout(
+      final completer = _nameChangeCompleter;
+      if (completer == null) return false;
+      
+      final success = await completer.future.timeout(
         const Duration(seconds: 2),
         onTimeout: () => false,
       );
@@ -614,6 +690,8 @@ class MidiProvider extends ChangeNotifier {
       return success;
     } catch (_) {
       return false;
+    } finally {
+      _nameChangeCompleter = null;
     }
   }
 
@@ -623,17 +701,31 @@ class MidiProvider extends ChangeNotifier {
     if (oldPin.length != 4 || !RegExp(r'^\d{4}$').hasMatch(oldPin)) return false;
     if (newPin.length != 4 || !RegExp(r'^\d{4}$').hasMatch(newPin)) return false;
 
+    // Cancel any pending PIN change
+    if (_pinChangeCompleter != null && !_pinChangeCompleter!.isCompleted) {
+      _pinChangeCompleter!.complete(false);
+    }
     _pinChangeCompleter = Completer<bool>();
+    
     final payload = [...oldPin.codeUnits, ...newPin.codeUnits];
-    _sendSysEx(_cmdSetPin, payload);
+    final sent = await _sendSysEx(_cmdSetPin, payload);
+    if (!sent) {
+      _pinChangeCompleter = null;
+      return false;
+    }
 
     try {
-      return await _pinChangeCompleter!.future.timeout(
+      final completer = _pinChangeCompleter;
+      if (completer == null) return false;
+      
+      return await completer.future.timeout(
         const Duration(seconds: 2),
         onTimeout: () => false,
       );
     } catch (_) {
       return false;
+    } finally {
+      _pinChangeCompleter = null;
     }
   }
 
@@ -751,23 +843,82 @@ class MidiProvider extends ChangeNotifier {
     _calibrationSamples.clear();
     _calibrationStartTime = DateTime.now();
     _atmosphericPressureOffset = 0.0;
+    
+    // Set timeout timer in case no data is received
+    _calibrationTimeoutTimer?.cancel();
+    _calibrationTimeoutTimer = Timer(
+      Duration(milliseconds: _calibrationTimeoutMs),
+      _handleCalibrationTimeout,
+    );
+    
     notifyListeners();
+  }
+  
+  void _handleCalibrationTimeout() {
+    if (!_isCalibrating) return;
+    
+    if (kDebugMode) {
+      debugPrint('Calibration timeout - samples collected: ${_calibrationSamples.length}');
+    }
+    
+    // If we have enough samples, finish calibration
+    if (_calibrationSamples.length >= _minCalibrationSamples) {
+      _finishCalibration();
+    } else {
+      // Not enough samples - cancel and use 0 offset
+      if (kDebugMode) {
+        debugPrint('Calibration failed - not enough samples');
+      }
+      _isCalibrating = false;
+      _calibrationStartTime = null;
+      _calibrationSamples.clear();
+      notifyListeners();
+    }
   }
 
   void _finishCalibration() {
-    if (_calibrationSamples.isEmpty) {
+    _calibrationTimeoutTimer?.cancel();
+    _calibrationTimeoutTimer = null;
+    
+    if (_calibrationSamples.length < _minCalibrationSamples) {
+      if (kDebugMode) {
+        debugPrint('Calibration incomplete - only ${_calibrationSamples.length} samples');
+      }
       _isCalibrating = false;
       _calibrationStartTime = null;
+      _calibrationSamples.clear();
       notifyListeners();
       return;
     }
 
-    final sum = _calibrationSamples.reduce((a, b) => a + b);
-    _atmosphericPressureOffset = sum / _calibrationSamples.length;
+    // Remove outliers using IQR method for more stable calibration
+    final sortedSamples = List<double>.from(_calibrationSamples)..sort();
+    final n = sortedSamples.length;
+    final q1Index = (n * 0.25).floor();
+    final q3Index = (n * 0.75).floor();
+    final q1 = sortedSamples[q1Index];
+    final q3 = sortedSamples[q3Index];
+    final iqr = q3 - q1;
+    final lowerBound = q1 - 1.5 * iqr;
+    final upperBound = q3 + 1.5 * iqr;
+    
+    final filteredSamples = sortedSamples
+        .where((s) => s >= lowerBound && s <= upperBound)
+        .toList();
+    
+    if (filteredSamples.isEmpty) {
+      // Fallback to simple average if filtering removed all samples
+      final sum = _calibrationSamples.reduce((a, b) => a + b);
+      _atmosphericPressureOffset = sum / _calibrationSamples.length;
+    } else {
+      final sum = filteredSamples.reduce((a, b) => a + b);
+      _atmosphericPressureOffset = sum / filteredSamples.length;
+    }
 
     if (kDebugMode) {
       debugPrint(
-          'Atmospheric calibration complete: offset = $_atmosphericPressureOffset (${_calibrationSamples.length} samples)');
+          'Atmospheric calibration complete: offset = $_atmosphericPressureOffset '
+          '(${filteredSamples.length}/${_calibrationSamples.length} samples after filtering)');
     }
 
     _isCalibrating = false;
@@ -777,6 +928,8 @@ class MidiProvider extends ChangeNotifier {
   }
 
   void cancelCalibration() {
+    _calibrationTimeoutTimer?.cancel();
+    _calibrationTimeoutTimer = null;
     _isCalibrating = false;
     _calibrationStartTime = null;
     _calibrationSamples.clear();
@@ -863,15 +1016,59 @@ class MidiProvider extends ChangeNotifier {
           .join(',');
       await prefs.setString(_deviceNameCacheKey, '{$json}');
     } catch (e) {
-      debugPrint('Failed to save device name cache: $e');
+      if (kDebugMode) debugPrint('Failed to save device name cache: $e');
     }
   }
 
+  bool _isDisposed = false;
+
   @override
   void dispose() {
+    if (_isDisposed) return;
+    _isDisposed = true;
+
     _pingTimer?.cancel();
+    _pingTimer = null;
+
+    _calibrationTimeoutTimer?.cancel();
+    _calibrationTimeoutTimer = null;
+
     _midiSubscription?.cancel();
-    _pressureController.close();
+    _midiSubscription = null;
+
+    // Cancel any pending operations
+    if (_authCompleter != null && !_authCompleter!.isCompleted) {
+      _authCompleter!.complete(false);
+    }
+    _authCompleter = null;
+
+    if (_nameChangeCompleter != null && !_nameChangeCompleter!.isCompleted) {
+      _nameChangeCompleter!.complete(false);
+    }
+    _nameChangeCompleter = null;
+
+    if (_pinChangeCompleter != null && !_pinChangeCompleter!.isCompleted) {
+      _pinChangeCompleter!.complete(false);
+    }
+    _pinChangeCompleter = null;
+
+    // Close the pressure stream
+    if (!_pressureController.isClosed) {
+      _pressureController.close();
+    }
+    
+    // Close the overrange stream
+    if (!_overrangeController.isClosed) {
+      _overrangeController.close();
+    }
+
     super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_isDisposed) {
+      super.notifyListeners();
+    }
   }
 }

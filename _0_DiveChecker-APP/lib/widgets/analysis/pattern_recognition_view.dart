@@ -837,7 +837,9 @@ class _PatternComparisonChart extends StatelessWidget {
                           // 이상적인 패턴
                           LineChartBarData(
                             spots: idealPattern,
-                            isCurved: false,
+                            isCurved: true,
+                            curveSmoothness: 0.3,
+                            preventCurveOverShooting: true,
                             color: ScoreColors.excellent.withOpacity(Opacities.high),
                             barWidth: ChartDimensions.barWidthMedium,
                             dotData: const FlDotData(show: false),
@@ -850,7 +852,9 @@ class _PatternComparisonChart extends StatelessWidget {
                           // 현재 패턴
                           LineChartBarData(
                             spots: currentPattern,
-                            isCurved: false,
+                            isCurved: true,
+                            curveSmoothness: 0.3,
+                            preventCurveOverShooting: true,
                             color: theme.colorScheme.primary,
                             barWidth: ChartDimensions.barWidthSmall,
                             dotData: FlDotData(

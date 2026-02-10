@@ -28,6 +28,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home => 'Home';
 
   @override
+  String get monitor => 'Monitor';
+
+  @override
   String get measurement => 'Measurement';
 
   @override
@@ -467,7 +470,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appDescription => 'Freediving Equalizing Tool';
 
   @override
-  String get samples => 'SAMPLES';
+  String get samples => 'samples';
 
   @override
   String get points => 'points';
@@ -1518,6 +1521,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deviceDisconnected => 'Device disconnected';
 
   @override
+  String get connectionLostDuringMeasurement =>
+      'Connection was lost during measurement. Do you want to save the recorded data?';
+
+  @override
   String get pinMismatch => 'PINs do not match';
 
   @override
@@ -1613,4 +1620,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get verificationFailed => 'Verification failed';
+
+  @override
+  String get reset => 'Reset';
+
+  @override
+  String get fullscreen => 'Fullscreen';
+
+  @override
+  String get waitingForData => 'Waiting for data...';
+
+  @override
+  String get overrangeWarningTitle => 'Range Exceeded!';
+
+  @override
+  String get overrangeWarningMessage =>
+      'The sensor exceeded its measurement range. Please don\'t blow or suck too hard! The sensor is recovering...';
 }

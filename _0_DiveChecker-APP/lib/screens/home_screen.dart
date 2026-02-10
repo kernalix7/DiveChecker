@@ -26,27 +26,31 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool _sensorErrorShown = false; // Track if sensor error dialog was shown
   bool _authWarningShown = false; // Track if authentication warning was shown
+  SerialProvider? _serialProvider; // Cache provider reference for safe dispose
 
   @override
   void initState() {
     super.initState();
     // Listen for sensor status changes
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final serial = context.read<SerialProvider>();
-      serial.addListener(_checkDeviceStatus);
+      if (!mounted) return;
+      _serialProvider = context.read<SerialProvider>();
+      _serialProvider?.addListener(_checkDeviceStatus);
     });
   }
 
   @override
   void dispose() {
-    // Remove listener when widget is disposed
-    final serial = context.read<SerialProvider>();
-    serial.removeListener(_checkDeviceStatus);
+    // Safely remove listener using cached reference
+    _serialProvider?.removeListener(_checkDeviceStatus);
+    _serialProvider = null;
     super.dispose();
   }
 
   void _checkDeviceStatus() {
-    final serial = context.read<SerialProvider>();
+    if (!mounted) return;
+    final serial = _serialProvider;
+    if (serial == null) return;
 
     // Show sensor error dialog when connected and sensor is not OK
     if (serial.isConnected && !serial.isSensorConnected && !_sensorErrorShown) {
