@@ -133,7 +133,7 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
             child: Text(l10n.cancel),
           ),
           FilledButton(
-            onPressed: () {
+            onPressed: () async {
               if (newPinController.text != confirmPinController.text) {
                 context.showSnackBar(l10n.pinMismatch);
                 return;
@@ -142,10 +142,22 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
                 context.showSnackBar(l10n.pinMustBe4Digits);
                 return;
               }
-              // Send PIN change command: W:currentPin:newPin
-              provider.sendCommand('W:${currentPinController.text}:${newPinController.text}');
-              Navigator.pop(context);
-              context.showSnackBar(l10n.pinChangeRequested);
+              if (currentPinController.text.length != 4) {
+                context.showSnackBar(l10n.pinMustBe4Digits);
+                return;
+              }
+              // Send PIN change command and await result
+              final success = await provider.changeDevicePin(
+                currentPinController.text,
+                newPinController.text,
+              );
+              if (!context.mounted) return;
+              if (success) {
+                Navigator.pop(context);
+                context.showSnackBar(l10n.pinChanged);
+              } else {
+                context.showSnackBar(l10n.wrongPin);
+              }
             },
             child: Text(l10n.change),
           ),
@@ -193,15 +205,23 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
             child: Text(l10n.cancel),
           ),
           FilledButton(
-            onPressed: () {
+            onPressed: () async {
               if (_pinController.text.length != 4) {
                 context.showSnackBar(l10n.pinMustBe4Digits);
                 return;
               }
-              // Send name change command: N:pin:newName
-              provider.sendCommand('N:${_pinController.text}:${_nameController.text}');
-              Navigator.pop(context);
-              context.showSnackBar(l10n.nameChangeRequested);
+              // Send name change command and await result
+              final success = await provider.setDeviceName(
+                _nameController.text,
+                _pinController.text,
+              );
+              if (!context.mounted) return;
+              if (success) {
+                Navigator.pop(context);
+                context.showSnackBar(l10n.nameChangeRequested);
+              } else {
+                context.showSnackBar(l10n.wrongPin);
+              }
             },
             child: Text(l10n.change),
           ),
@@ -463,19 +483,44 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
   }
 
   Future<void> _confirmBootsel(BuildContext context, AppLocalizations l10n, SerialProvider provider) async {
+    final pinController = TextEditingController();
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         icon: Icon(Icons.developer_mode, size: IconSizes.huge, color: ScoreColors.poor),
         title: Text(l10n.bootselMode),
-        content: Text(l10n.firmwareRebootDescription),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(l10n.firmwareRebootDescription),
+            Spacing.verticalLg,
+            TextField(
+              controller: pinController,
+              decoration: InputDecoration(
+                labelText: l10n.devicePin,
+                border: const OutlineInputBorder(),
+                helperText: l10n.pinRequiredForChange,
+              ),
+              keyboardType: TextInputType.number,
+              maxLength: 4,
+              obscureText: true,
+            ),
+          ],
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text(l10n.cancel),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(context, true),
+            onPressed: () {
+              if (pinController.text.length != 4) {
+                context.showSnackBar(l10n.pinMustBe4Digits);
+                return;
+              }
+              Navigator.pop(context, true);
+            },
             style: FilledButton.styleFrom(backgroundColor: ScoreColors.poor),
             child: Text(l10n.reboot),
           ),
@@ -484,8 +529,13 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
     );
 
     if (confirmed == true && mounted) {
-      provider.sendCommand('B');  // BOOTSEL reboot command
-      context.showSnackBar(l10n.bootselRebootSent);
+      final result = await provider.sendCommand('B${pinController.text}');
+      if (!mounted) return;
+      if (result) {
+        context.showSnackBar(l10n.bootselRebootSent);
+      } else {
+        context.showSnackBar(l10n.wrongPin);
+      }
     }
   }
 }

@@ -148,7 +148,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
     try {
       // Lazy load chart data if not already loaded
-      final sessionRepo = Provider.of<SessionRepository>(context, listen: false);
+      final sessionRepo = context.read<SessionRepository>();
       SessionData loadedSession;
       
       if (session.chartData.isEmpty && session.id != null) {

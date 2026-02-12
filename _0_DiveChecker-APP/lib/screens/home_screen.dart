@@ -26,6 +26,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool _sensorErrorShown = false; // Track if sensor error dialog was shown
   bool _authWarningShown = false; // Track if authentication warning was shown
+  bool _authProgressShown = false; // Track if auth progress snackbar was shown
+  bool _calibProgressShown = false; // Track if calibration progress snackbar was shown
+  bool _connectionCompleteShown = false; // Track if final success snackbar was shown
   SerialProvider? _serialProvider; // Cache provider reference for safe dispose
 
   @override
@@ -52,10 +55,35 @@ class _HomeScreenState extends State<HomeScreen> {
     final serial = _serialProvider;
     if (serial == null) return;
 
+    // Connection progress SnackBars (sequential)
+    if (serial.isConnected) {
+      final l10n = AppLocalizations.of(context)!;
+
+      // Step 1: Show "Verifying device..." when connected but auth not complete
+      if (!serial.isAuthenticationComplete && !_authProgressShown) {
+        _authProgressShown = true;
+        _showProgressSnackBar(l10n.verifyingDevice, Icons.verified_user_outlined);
+      }
+
+      // Step 2: Show "Calibrating atmospheric pressure..." when auth done + calibrating
+      if (serial.isAuthenticationComplete && serial.isCalibrating && !_calibProgressShown) {
+        _calibProgressShown = true;
+        _showProgressSnackBar(l10n.atmosphericCalibrating, Icons.compress);
+      }
+
+      // Step 3: Show "Device connected successfully!" when auth + calibration both done
+      if (serial.isAuthenticationComplete && !serial.isCalibrating && _calibProgressShown && !_connectionCompleteShown) {
+        _connectionCompleteShown = true;
+        _showSuccessSnackBar(l10n.deviceConnectedSuccessfully);
+      }
+    }
+
     // Show sensor error dialog when connected and sensor is not OK
     if (serial.isConnected && !serial.isSensorConnected && !_sensorErrorShown) {
       _sensorErrorShown = true;
-      _showSensorErrorDialog();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _showSensorErrorDialog();
+      });
     }
 
     // Show authentication warning when connected but not authenticated
@@ -65,14 +93,73 @@ class _HomeScreenState extends State<HomeScreen> {
         !serial.isDeviceAuthenticated &&
         !_authWarningShown) {
       _authWarningShown = true;
-      _showCounterfeitWarningDialog();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _showCounterfeitWarningDialog();
+      });
     }
 
     // Reset flags when disconnected
     if (!serial.isConnected) {
       _sensorErrorShown = false;
       _authWarningShown = false;
+      _authProgressShown = false;
+      _calibProgressShown = false;
+      _connectionCompleteShown = false;
+      // Clear any lingering progress SnackBars
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) ScaffoldMessenger.of(context).clearSnackBars();
+      });
     }
+  }
+
+  void _showProgressSnackBar(String message, IconData icon) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(width: Spacing.sm),
+                Text(message),
+              ],
+            ),
+            duration: const Duration(seconds: 10),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+    });
+  }
+
+  void _showSuccessSnackBar(String message) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.white, size: 20),
+                const SizedBox(width: Spacing.sm),
+                Text(message),
+              ],
+            ),
+            backgroundColor: Colors.green.shade700,
+            duration: const Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+    });
   }
 
   void _showSensorErrorDialog() {
@@ -169,11 +256,9 @@ class _HomeScreenState extends State<HomeScreen> {
       MaterialPageRoute(builder: (context) => const SerialDeviceScreen()),
     );
 
-    if (result == true && mounted) {
-      final l10n = AppLocalizations.of(context)!;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.deviceConnectedSuccessfully)));
+    // Connection progress SnackBars are handled by _checkDeviceStatus listener
+    if (result != true && mounted) {
+      // Only show error feedback if connection failed
     }
   }
 

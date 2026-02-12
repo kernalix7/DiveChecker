@@ -6,6 +6,7 @@
 library;
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
@@ -26,6 +27,7 @@ enum MidiConnectionState {
 class MidiDeviceInfo {
   final MidiDeviceData device;
   String? deviceName; // Custom device name from MCU Flash
+  String? firmwareSerial; // Serial number from firmware (CMD_DEVICE_INFO)
 
   MidiDeviceInfo({
     required this.device,
@@ -42,8 +44,8 @@ class MidiDeviceInfo {
   /// Manufacturer - MIDI devices don't expose this, return null
   String? get manufacturer => null;
   
-  /// Serial number - MIDI devices don't expose this, return null
-  String? get serialNumber => null;
+  /// Serial number - returns firmware-reported serial if available
+  String? get serialNumber => firmwareSerial;
   
   /// Vendor ID - MIDI devices don't expose this, return null
   int? get vendorId => null;
@@ -109,19 +111,37 @@ class MidiProvider extends ChangeNotifier {
   static const int _manufacturerId = 0x7D; // Educational/development
   static const int _deviceId = 0x01; // DiveChecker
 
-  // Command bytes
+  // Command bytes — Device -> App
   static const int _cmdPressure = 0x01;
   static const int _cmdDeviceInfo = 0x02;
   static const int _cmdConfig = 0x03;
   static const int _cmdAuthResponse = 0x04;
   static const int _cmdSensorStatus = 0x05;
   static const int _cmdOverrangeAlert = 0x06;
+  static const int _cmdTemperature = 0x07;
+  static const int _cmdDiagnostics = 0x08;
+  static const int _cmdFullConfig = 0x09;
+  static const int _cmdAck = 0x0A;
+  
+  // Command bytes — Bidirectional
   static const int _cmdPing = 0x10;
   static const int _cmdPong = 0x11;
+  
+  // Command bytes — App -> Device
   static const int _cmdRequestInfo = 0x20;
   static const int _cmdSetName = 0x21;
   static const int _cmdSetOutputRate = 0x22;
   static const int _cmdResetBaseline = 0x23;
+  static const int _cmdGetConfig = 0x24;
+  static const int _cmdSetLed = 0x25;
+  static const int _cmdResetSensor = 0x26;
+  static const int _cmdFactoryReset = 0x27;
+  static const int _cmdSetNoiseFloor = 0x28;
+  static const int _cmdGetTemperature = 0x29;
+  static const int _cmdEnterBootloader = 0x2A;
+  static const int _cmdGetDiagnostics = 0x2B;
+  static const int _cmdSetOversampling = 0x2C;
+  static const int _cmdSetIirFilter = 0x2D;
   static const int _cmdAuthChallenge = 0x30;
   static const int _cmdSetPin = 0x31;
 
@@ -154,9 +174,9 @@ class MidiProvider extends ChangeNotifier {
   
   // Over-range alert state
   bool _isOverrange = false;
-  DateTime? _overrangeTime;
   final _overrangeController = StreamController<void>.broadcast();
   static const int _overrangeDisplayMs = 5000;  // Show warning for 5 seconds
+  Timer? _overrangeTimer;
 
   // ECDSA authentication
   static const bool _authenticationEnabled = true; // ECDSA verification enabled
@@ -168,6 +188,7 @@ class MidiProvider extends ChangeNotifier {
   int _outputRate = 8;
   
   // SysEx buffering for fragmented messages
+  static const int _maxSysexBufferSize = 512;  // Prevent OOM from malicious/broken SysEx
   final List<int> _sysexBuffer = [];
   bool _inSysex = false;
   DateTime? _sysexStartTime;  // SysEx timeout tracking
@@ -179,6 +200,35 @@ class MidiProvider extends ChangeNotifier {
   // Completers for async commands
   Completer<bool>? _nameChangeCompleter;
   Completer<bool>? _pinChangeCompleter;
+  
+  // Extended config state (from CMD_FULL_CONFIG)
+  int _ledBrightness = 50;
+  int _noiseFloor = 1;
+  int _oversampling = 5;   // 0=skip,1=x1,2=x2,3=x4,4=x8,5=x16
+  int _iirFilter = 1;      // 0=off,1=x2,2=x4,3=x8,4=x16
+  
+  // Temperature
+  double _temperature = 0.0;  // °C
+  
+  // Diagnostics
+  int _uptimeSec = 0;
+  int _sensorErrors = 0;
+  int _overrangeCount = 0;
+  int _i2cRecoveryCount = 0;
+  double _cpuTemperature = 0.0;
+  
+  // ACK handling
+  final _ackController = StreamController<({int cmd, int status})>.broadcast();
+  Completer<int>? _pendingAckCompleter;
+  int _pendingAckCmd = 0;
+
+  // Unexpected disconnect notification
+  final _disconnectController = StreamController<void>.broadcast();
+  StreamSubscription? _setupSubscription;
+
+  // Pong timeout tracking
+  DateTime? _lastPongTime;
+  static const int _pongTimeoutMs = 5000;  // 5 seconds without pong = lost
 
   // Getters
   MidiConnectionState get state => _state;
@@ -198,7 +248,21 @@ class MidiProvider extends ChangeNotifier {
   int get outputRate => _outputRate;
   int get outputIntervalMs => 1000 ~/ _outputRate;
   String? get deviceName => _connectedDevice?.deviceName;
-  String? get deviceSerial => _connectedDevice?.id;
+  String? get deviceSerial => _connectedDevice?.firmwareSerial ?? _connectedDevice?.id;
+  
+  // Extended config getters
+  int get ledBrightness => _ledBrightness;
+  int get noiseFloor => _noiseFloor;
+  int get oversampling => _oversampling;
+  int get iirFilter => _iirFilter;
+  double get temperature => _temperature;
+  int get uptimeSec => _uptimeSec;
+  int get sensorErrors => _sensorErrors;
+  int get overrangeCount => _overrangeCount;
+  int get i2cRecoveryCount => _i2cRecoveryCount;
+  double get cpuTemperature => _cpuTemperature;
+  Stream<({int cmd, int status})> get ackStream => _ackController.stream;
+  Stream<void> get disconnectStream => _disconnectController.stream;
 
   double get calibrationProgress => _calibrationStartTime == null
       ? 0.0
@@ -288,12 +352,19 @@ class MidiProvider extends ChangeNotifier {
         _handleMidiData,
         onError: (error) {
           if (kDebugMode) debugPrint('MIDI error: $error');
-          disconnect();
+          _onUnexpectedDisconnect();
         },
       );
 
+      // Listen to device setup changes (USB plug/unplug)
+      _setupSubscription?.cancel();
+      _setupSubscription = _midiHandler.onDeviceSetupChanged.listen((_) {
+        _checkDeviceStillConnected();
+      });
+
       _setState(MidiConnectionState.connected);
       _deviceInfoRequested = false;
+      _lastPongTime = DateTime.now();
       _startPing();
 
       return true;
@@ -335,6 +406,14 @@ class MidiProvider extends ChangeNotifier {
         if (_sysexStartTime != null &&
             DateTime.now().difference(_sysexStartTime!).inMilliseconds > 500) {
           if (kDebugMode) debugPrint('SysEx timeout - discarding incomplete buffer');
+          _inSysex = false;
+          _sysexBuffer.clear();
+          _sysexStartTime = null;
+          continue;
+        }
+        // Check buffer size limit
+        if (_sysexBuffer.length >= _maxSysexBufferSize) {
+          if (kDebugMode) debugPrint('SysEx buffer overflow - discarding');
           _inSysex = false;
           _sysexBuffer.clear();
           _sysexStartTime = null;
@@ -389,6 +468,18 @@ class MidiProvider extends ChangeNotifier {
       case _cmdOverrangeAlert:
         _handleOverrangeAlert();
         break;
+      case _cmdTemperature:
+        _handleTemperature(payload);
+        break;
+      case _cmdDiagnostics:
+        _handleDiagnostics(payload);
+        break;
+      case _cmdFullConfig:
+        _handleFullConfig(payload);
+        break;
+      case _cmdAck:
+        _handleAck(payload);
+        break;
       case _cmdPong:
         _handlePong();
         break;
@@ -433,6 +524,11 @@ class MidiProvider extends ChangeNotifier {
     final serial = String.fromCharCodes(payload.sublist(idx, idx + serialLen));
     idx += serialLen;
     if (kDebugMode) debugPrint('Device serial: $serial');
+    
+    // Store firmware serial in device info
+    if (_connectedDevice != null && serial.isNotEmpty) {
+      _connectedDevice!.firmwareSerial = serial;
+    }
     
     // Parse name
     if (idx >= payload.length) return;
@@ -534,24 +630,101 @@ class MidiProvider extends ChangeNotifier {
 
   void _handleOverrangeAlert() {
     _isOverrange = true;
-    _overrangeTime = DateTime.now();
     _overrangeController.add(null);
     notifyListeners();
     
-    // Auto-clear after display duration
-    Future.delayed(Duration(milliseconds: _overrangeDisplayMs), () {
-      if (_overrangeTime != null &&
-          DateTime.now().difference(_overrangeTime!).inMilliseconds >= _overrangeDisplayMs) {
-        _isOverrange = false;
-        _overrangeTime = null;
-        notifyListeners();
-      }
+    // Cancel previous timer and start a new one
+    _overrangeTimer?.cancel();
+    _overrangeTimer = Timer(Duration(milliseconds: _overrangeDisplayMs), () {
+      if (_isDisposed) return;
+      _isOverrange = false;
+      _overrangeTimer = null;
+      notifyListeners();
     });
     
     if (kDebugMode) debugPrint('WARN: Sensor over-range detected!');
   }
 
+  void _handleTemperature(Uint8List payload) {
+    // Format: [sign][high7][low7]
+    if (payload.length < 3) return;
+    final isNegative = payload[0] == 0x01;
+    int absVal = ((payload[1] & 0x7F) << 7) | (payload[2] & 0x7F);
+    _temperature = (isNegative ? -absVal : absVal) / 100.0;
+    notifyListeners();
+  }
+
+  void _handleDiagnostics(Uint8List payload) {
+    if (payload.length < 14) return;
+    int idx = 0;
+    
+    // Uptime: 5 bytes (32-bit, 7-bit encoded)
+    _uptimeSec = ((payload[idx] & 0x0F) << 28) |
+                 ((payload[idx + 1] & 0x7F) << 21) |
+                 ((payload[idx + 2] & 0x7F) << 14) |
+                 ((payload[idx + 3] & 0x7F) << 7) |
+                 (payload[idx + 4] & 0x7F);
+    idx += 5;
+    
+    // Sensor errors: 2 bytes
+    _sensorErrors = ((payload[idx] & 0x7F) << 7) | (payload[idx + 1] & 0x7F);
+    idx += 2;
+    
+    // Over-range count: 2 bytes
+    _overrangeCount = ((payload[idx] & 0x7F) << 7) | (payload[idx + 1] & 0x7F);
+    idx += 2;
+    
+    // I2C recovery count: 2 bytes
+    _i2cRecoveryCount = ((payload[idx] & 0x7F) << 7) | (payload[idx + 1] & 0x7F);
+    idx += 2;
+    
+    // CPU temp x100: sign + 2 bytes
+    final tempNeg = payload[idx] == 0x01;
+    idx++;
+    int absTemp = ((payload[idx] & 0x7F) << 7) | (payload[idx + 1] & 0x7F);
+    _cpuTemperature = (tempNeg ? -absTemp : absTemp) / 100.0;
+    
+    notifyListeners();
+  }
+
+  void _handleFullConfig(Uint8List payload) {
+    // Format: [output_rate][led_brightness][noise_floor][oversampling][iir_filter]
+    if (payload.length < 5) return;
+    _outputRate = payload[0];
+    _ledBrightness = payload[1];
+    _noiseFloor = payload[2];
+    _oversampling = payload[3];
+    _iirFilter = payload[4];
+    notifyListeners();
+  }
+
+  void _handleAck(Uint8List payload) {
+    if (payload.length < 2) return;
+    final cmd = payload[0];
+    final status = payload[1];
+    if (kDebugMode) {
+      debugPrint('ACK: cmd=0x${cmd.toRadixString(16)} status=$status');
+    }
+    _ackController.add((cmd: cmd, status: status));
+    
+    // Complete pending ACK completer
+    if (_pendingAckCompleter != null && cmd == _pendingAckCmd) {
+      _pendingAckCompleter!.complete(status);
+      _pendingAckCompleter = null;
+      _pendingAckCmd = 0;
+    }
+
+    // Complete name/pin change completers based on command-specific ACKs
+    if (cmd == _cmdSetName && _nameChangeCompleter != null && !_nameChangeCompleter!.isCompleted) {
+      _nameChangeCompleter!.complete(status == 0);
+    }
+    if (cmd == _cmdSetPin && _pinChangeCompleter != null && !_pinChangeCompleter!.isCompleted) {
+      _pinChangeCompleter!.complete(status == 0);
+    }
+  }
+
   void _handlePong() {
+    _lastPongTime = DateTime.now();
     if (!_deviceInfoRequested) {
       _deviceInfoRequested = true;
       _requestDeviceInfo();
@@ -598,8 +771,38 @@ class MidiProvider extends ChangeNotifier {
 
   void _sendPing() {
     if (_state == MidiConnectionState.connected) {
+      // Check pong timeout
+      if (_lastPongTime != null &&
+          DateTime.now().difference(_lastPongTime!).inMilliseconds > _pongTimeoutMs) {
+        if (kDebugMode) debugPrint('Pong timeout - device unresponsive');
+        _onUnexpectedDisconnect();
+        return;
+      }
       _sendSysEx(_cmdPing);
     }
+  }
+
+  /// Check if connected device is still present after setup change
+  Future<void> _checkDeviceStillConnected() async {
+    if (_connectedDevice == null || _state != MidiConnectionState.connected) return;
+
+    try {
+      final devices = await _midiHandler.getDevices();
+      final stillPresent = devices.any((d) => d.id == _connectedDevice!.id);
+      if (!stillPresent) {
+        if (kDebugMode) debugPrint('Device removed from MIDI setup');
+        _onUnexpectedDisconnect();
+      }
+    } catch (e) {
+      if (kDebugMode) debugPrint('Setup check error: $e');
+    }
+  }
+
+  /// Handle unexpected disconnect (USB unplug, device power off, etc.)
+  void _onUnexpectedDisconnect() {
+    if (_state != MidiConnectionState.connected) return;
+    _disconnectController.add(null);
+    disconnect();
   }
 
   void _requestDeviceInfo() {
@@ -729,13 +932,7 @@ class MidiProvider extends ChangeNotifier {
     }
   }
 
-  int _getUtf8ByteLength(String str) {
-    return str.codeUnits.fold(0, (sum, code) {
-      if (code <= 0x7F) return sum + 1;
-      if (code <= 0x7FF) return sum + 2;
-      return sum + 3;
-    });
-  }
+  int _getUtf8ByteLength(String str) => utf8.encode(str).length;
 
   /// Set output rate
   Future<bool> setOutputRate(int hz) async {
@@ -751,6 +948,140 @@ class MidiProvider extends ChangeNotifier {
   /// Reset pressure baseline
   Future<bool> resetBaseline() async {
     return _sendSysEx(_cmdResetBaseline);
+  }
+
+  /// Request full device configuration
+  Future<bool> requestFullConfig() async {
+    return _sendSysEx(_cmdGetConfig);
+  }
+
+  /// Set LED brightness (0-100)
+  Future<int> setLedBrightness(int brightness) async {
+    final clamped = brightness.clamp(0, 100);
+    _setupAckCompleter(_cmdSetLed);
+    final sent = await _sendSysEx(_cmdSetLed, [clamped]);
+    if (!sent) {
+      _pendingAckCompleter = null;
+      _pendingAckCmd = 0;
+      return -2;
+    }
+    return _waitForAckResult();
+  }
+
+  /// Reset sensor manually
+  Future<int> resetSensor() async {
+    _setupAckCompleter(_cmdResetSensor);
+    final sent = await _sendSysEx(_cmdResetSensor);
+    if (!sent) {
+      _pendingAckCompleter = null;
+      _pendingAckCmd = 0;
+      return -2;
+    }
+    return _waitForAckResult();
+  }
+
+  /// Factory reset (requires PIN)
+  Future<int> factoryReset(String pin) async {
+    if (pin.length != 4) return 1;
+    final pinBytes = pin.codeUnits;
+    _setupAckCompleter(_cmdFactoryReset);
+    final sent = await _sendSysEx(_cmdFactoryReset, pinBytes);
+    if (!sent) {
+      _pendingAckCompleter = null;
+      _pendingAckCmd = 0;
+      return -2;
+    }
+    return _waitForAckResult();
+  }
+
+  /// Set noise floor threshold (0-50, represents x1000 hPa)
+  Future<int> setNoiseFloor(int threshold) async {
+    final clamped = threshold.clamp(0, 50);
+    _setupAckCompleter(_cmdSetNoiseFloor);
+    final sent = await _sendSysEx(_cmdSetNoiseFloor, [clamped]);
+    if (!sent) {
+      _pendingAckCompleter = null;
+      _pendingAckCmd = 0;
+      return -2;
+    }
+    return _waitForAckResult();
+  }
+
+  /// Request current temperature
+  Future<bool> requestTemperature() async {
+    return _sendSysEx(_cmdGetTemperature);
+  }
+
+  /// Enter bootloader mode (requires PIN, device will disconnect!)
+  Future<int> enterBootloader(String pin) async {
+    if (pin.length != 4) return 1;
+    final pinBytes = pin.codeUnits;
+    _setupAckCompleter(_cmdEnterBootloader);
+    final sent = await _sendSysEx(_cmdEnterBootloader, pinBytes);
+    if (!sent) {
+      _pendingAckCompleter = null;
+      _pendingAckCmd = 0;
+      return -2;
+    }
+    return _waitForAckResult();
+  }
+
+  /// Request runtime diagnostics
+  Future<bool> requestDiagnostics() async {
+    return _sendSysEx(_cmdGetDiagnostics);
+  }
+
+  /// Set BMP280 pressure oversampling (0=skip, 1=x1, 2=x2, 3=x4, 4=x8, 5=x16)
+  Future<int> setOversampling(int value) async {
+    if (value < 0 || value > 5) return 1;
+    _setupAckCompleter(_cmdSetOversampling);
+    final sent = await _sendSysEx(_cmdSetOversampling, [value]);
+    if (!sent) {
+      _pendingAckCompleter = null;
+      _pendingAckCmd = 0;
+      return -2;
+    }
+    return _waitForAckResult();
+  }
+
+  /// Set BMP280 IIR filter coefficient (0=off, 1=x2, 2=x4, 3=x8, 4=x16)
+  Future<int> setIirFilter(int value) async {
+    if (value < 0 || value > 4) return 1;
+    _setupAckCompleter(_cmdSetIirFilter);
+    final sent = await _sendSysEx(_cmdSetIirFilter, [value]);
+    if (!sent) {
+      _pendingAckCompleter = null;
+      _pendingAckCmd = 0;
+      return -2;
+    }
+    return _waitForAckResult();
+  }
+
+  /// Prepare a new ACK completer, cancelling any pending one
+  void _setupAckCompleter(int cmdId) {
+    if (_pendingAckCompleter != null && !_pendingAckCompleter!.isCompleted) {
+      _pendingAckCompleter!.complete(-1); // cancel previous
+    }
+    _pendingAckCmd = cmdId;
+    _pendingAckCompleter = Completer<int>();
+  }
+
+  /// Wait for ACK response (completer already set up by caller)
+  Future<int> _waitForAckResult({int timeoutMs = 3000}) async {
+    try {
+      return await _pendingAckCompleter!.future.timeout(
+        Duration(milliseconds: timeoutMs),
+        onTimeout: () {
+          _pendingAckCompleter = null;
+          _pendingAckCmd = 0;
+          return -1; // timeout
+        },
+      );
+    } catch (e) {
+      _pendingAckCompleter = null;
+      _pendingAckCmd = 0;
+      return -2; // error
+    }
   }
 
   /// Request device config
@@ -774,7 +1105,9 @@ class MidiProvider extends ChangeNotifier {
     if (cmd.isEmpty) return false;
     
     final prefix = cmd[0];
-    final payload = cmd.length > 1 ? cmd.substring(1) : '';
+    // Strip the prefix character; also strip a leading ':' separator if present
+    var payload = cmd.length > 1 ? cmd.substring(1) : '';
+    if (payload.startsWith(':')) payload = payload.substring(1);
     
     switch (prefix) {
       case 'P':
@@ -823,6 +1156,14 @@ class MidiProvider extends ChangeNotifier {
       case 'A':
         // Auth challenge - handled internally
         return true;
+      case 'B':
+        // Enter BOOTSEL bootloader mode (requires PIN as payload)
+        if (payload.length >= 4) {
+          final pin = payload.substring(0, 4);
+          final result = await enterBootloader(pin);
+          return result == 0;
+        }
+        return false;
       default:
         if (kDebugMode) debugPrint('Unknown command: $cmd');
         return false;
@@ -855,6 +1196,7 @@ class MidiProvider extends ChangeNotifier {
   }
   
   void _handleCalibrationTimeout() {
+    if (_isDisposed) return;
     if (!_isCalibrating) return;
     
     if (kDebugMode) {
@@ -941,8 +1283,19 @@ class MidiProvider extends ChangeNotifier {
     _pingTimer?.cancel();
     _pingTimer = null;
 
+    _setupSubscription?.cancel();
+    _setupSubscription = null;
+    _lastPongTime = null;
+
     _midiSubscription?.cancel();
     _midiSubscription = null;
+
+    _overrangeTimer?.cancel();
+    _overrangeTimer = null;
+    _isOverrange = false;
+
+    _calibrationTimeoutTimer?.cancel();
+    _calibrationTimeoutTimer = null;
 
     _isCalibrating = false;
     _calibrationSamples.clear();
@@ -953,21 +1306,58 @@ class MidiProvider extends ChangeNotifier {
     _sysexBuffer.clear();
     _inSysex = false;
 
-    if (_connectedDevice != null) {
-      try {
-        await _midiHandler.disconnect();
-      } catch (_) {}
-    }
-
-    _connectedDevice = null;
+    // Reset state flags BEFORE async disconnect so UI updates immediately
     _currentPressure = 0.0;
     _deviceInfoRequested = false;
     _sensorConnected = true;
     _isAuthenticated = false;
     _authenticationComplete = false;
     _authNonce = null;
+
+    // Reset config/diagnostics to defaults (prevent stale data on next connection)
+    _temperature = 0.0;
+    _uptimeSec = 0;
+    _sensorErrors = 0;
+    _overrangeCount = 0;
+    _i2cRecoveryCount = 0;
+    _cpuTemperature = 0.0;
+    _ledBrightness = 50;
+    _noiseFloor = 1;
+    _oversampling = 5;
+    _iirFilter = 1;
+    _outputRate = 8;
+    _onConfigReceived = null;
+
+    // Complete any pending completers to unblock awaiting callers
+    if (_authCompleter != null && !_authCompleter!.isCompleted) {
+      _authCompleter!.complete(false);
+    }
     _authCompleter = null;
+    if (_nameChangeCompleter != null && !_nameChangeCompleter!.isCompleted) {
+      _nameChangeCompleter!.complete(false);
+    }
+    _nameChangeCompleter = null;
+    if (_pinChangeCompleter != null && !_pinChangeCompleter!.isCompleted) {
+      _pinChangeCompleter!.complete(false);
+    }
+    _pinChangeCompleter = null;
+    if (_pendingAckCompleter != null && !_pendingAckCompleter!.isCompleted) {
+      _pendingAckCompleter!.complete(-1);
+    }
+    _pendingAckCompleter = null;
+    _pendingAckCmd = 0;
+
+    // Notify UI immediately — dismisses calibration overlay, loading states
     _setState(MidiConnectionState.disconnected);
+
+    // Now do async native disconnect (may be slow if device already unplugged)
+    final device = _connectedDevice;
+    _connectedDevice = null;
+    if (device != null) {
+      try {
+        await _midiHandler.disconnect();
+      } catch (_) {}
+    }
   }
 
   // Device name cache
@@ -977,9 +1367,7 @@ class MidiProvider extends ChangeNotifier {
       final cacheJson = prefs.getString(_deviceNameCacheKey);
       if (cacheJson != null) {
         final Map<String, dynamic> decoded =
-            Map<String, dynamic>.from(await Future.value(
-          cacheJson.isNotEmpty ? _parseJson(cacheJson) : {},
-        ));
+            cacheJson.isNotEmpty ? _parseJson(cacheJson) : {};
         _deviceNameCache = decoded.map((k, v) => MapEntry(k, v.toString()));
       }
     } catch (e) {
@@ -987,21 +1375,13 @@ class MidiProvider extends ChangeNotifier {
     }
   }
 
-  Map<String, dynamic> _parseJson(String json) {
-    // Simple JSON parsing for cache
+  Map<String, dynamic> _parseJson(String jsonStr) {
     try {
-      return Map<String, String>.fromEntries(
-        json
-            .replaceAll('{', '')
-            .replaceAll('}', '')
-            .replaceAll('"', '')
-            .split(',')
-            .where((s) => s.contains(':'))
-            .map((s) {
-          final parts = s.split(':');
-          return MapEntry(parts[0].trim(), parts[1].trim());
-        }),
-      );
+      final decoded = jsonDecode(jsonStr);
+      if (decoded is Map) {
+        return Map<String, dynamic>.from(decoded);
+      }
+      return {};
     } catch (_) {
       return {};
     }
@@ -1011,10 +1391,7 @@ class MidiProvider extends ChangeNotifier {
     try {
       _deviceNameCache[id] = name;
       final prefs = await SharedPreferences.getInstance();
-      final json = _deviceNameCache.entries
-          .map((e) => '"${e.key}":"${e.value}"')
-          .join(',');
-      await prefs.setString(_deviceNameCacheKey, '{$json}');
+      await prefs.setString(_deviceNameCacheKey, jsonEncode(_deviceNameCache));
     } catch (e) {
       if (kDebugMode) debugPrint('Failed to save device name cache: $e');
     }
@@ -1023,12 +1400,16 @@ class MidiProvider extends ChangeNotifier {
   bool _isDisposed = false;
 
   @override
+  // ignore: must_call_super
   void dispose() {
     if (_isDisposed) return;
     _isDisposed = true;
 
     _pingTimer?.cancel();
     _pingTimer = null;
+
+    _setupSubscription?.cancel();
+    _setupSubscription = null;
 
     _calibrationTimeoutTimer?.cancel();
     _calibrationTimeoutTimer = null;
@@ -1052,17 +1433,19 @@ class MidiProvider extends ChangeNotifier {
     }
     _pinChangeCompleter = null;
 
-    // Close the pressure stream
-    if (!_pressureController.isClosed) {
-      _pressureController.close();
-    }
-    
-    // Close the overrange stream
-    if (!_overrangeController.isClosed) {
-      _overrangeController.close();
-    }
+    _overrangeTimer?.cancel();
+    _overrangeTimer = null;
 
-    super.dispose();
+    // NOTE: Do NOT close stream controllers in singleton dispose().
+    // They cannot be recreated, and the singleton may be re-provided.
+    // The streams will be garbage collected when the app exits.
+    
+    // Dispose native MIDI handler
+    _midiHandler.dispose();
+
+    // Do NOT call super.dispose() on singleton — would permanently
+    // invalidate the ChangeNotifier, making it unusable if re-provided.
+    // super.dispose();
   }
 
   @override

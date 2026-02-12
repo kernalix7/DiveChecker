@@ -35,6 +35,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final localeProvider = context.watch<LocaleProvider>();
+    final settingsProvider = context.watch<SettingsProvider>();
     final screenPadding = Responsive.padding(context);
     final maxWidth = Responsive.maxContentWidth(context);
     
@@ -93,7 +94,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     l10n.theme,
                     style: AppTextStyles.semiBold,
                   ),
-                  subtitle: Text(_getThemeDisplayName(context, context.watch<SettingsProvider>().themeMode)),
+                  subtitle: Text(_getThemeDisplayName(context, settingsProvider.themeMode)),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _showThemeDialog(context),
                 ),
@@ -117,7 +118,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     l10n.pressureUnit,
                     style: AppTextStyles.semiBold,
                   ),
-                  subtitle: Text(context.watch<SettingsProvider>().pressureUnit.displayName),
+                  subtitle: Text(settingsProvider.pressureUnit.displayName),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _showPressureUnitDialog(context),
                 ),
@@ -236,7 +237,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Card(
             child: Column(
               children: [
-                SwitchListTile(
+                Consumer<SettingsProvider>(
+                  builder: (context, settings, _) => SwitchListTile(
                   secondary: IconContainer(
                     icon: Icons.notifications,
                     color: theme.colorScheme.primary,
@@ -246,12 +248,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: AppTextStyles.semiBold,
                   ),
                   subtitle: Text(l10n.getAlertsForMeasurements),
-                  value: true,
+                  value: settings.notificationsEnabled,
                   onChanged: (value) {
+                    settings.setNotificationsEnabled(value);
                   },
                 ),
+                ),
                 const AppDivider(),
-                SwitchListTile(
+                Consumer<SettingsProvider>(
+                  builder: (context, settings, _) => SwitchListTile(
                   secondary: IconContainer(
                     icon: Icons.vibration,
                     color: theme.colorScheme.primary,
@@ -261,9 +266,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: AppTextStyles.semiBold,
                   ),
                   subtitle: Text(l10n.vibrateOnKeyActions),
-                  value: true,
+                  value: settings.hapticFeedbackEnabled,
                   onChanged: (value) {
+                    settings.setHapticFeedbackEnabled(value);
                   },
+                ),
                 ),
               ],
             ),
@@ -369,6 +376,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () {
+                    // TODO: Implement help & support screen
                   },
                 ),
                 const AppDivider(),

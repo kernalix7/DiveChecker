@@ -248,8 +248,9 @@ Pico RP2350         BMP280 (I2C)
 ────────────        ────────────
 3.3V         ────── VCC
 GND          ────── GND
-GP4 (SDA)    ────── SDA
-GP5 (SCL)    ────── SCL
+GP8 (SDA)    ────── SDA
+GP9 (SCL)    ────── SCL
+GP16         ────── WS2812 LED
 ```
 
 ### 센서 요구사항

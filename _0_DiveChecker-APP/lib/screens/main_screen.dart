@@ -56,6 +56,7 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   bool _disclaimerChecked = false;
   StreamSubscription? _overrangeSubscription;
+  StreamSubscription? _disconnectSubscription;
 
   // Lazy-loaded screens
   static const List<Widget> _screens = [
@@ -78,6 +79,9 @@ class _MainScreenState extends State<MainScreen> {
     final serial = context.read<SerialProvider>();
     _overrangeSubscription = serial.overrangeStream.listen((_) {
       if (mounted) _showOverrangeWarning();
+    });
+    _disconnectSubscription ??= serial.disconnectStream.listen((_) {
+      if (mounted) _showDisconnectNotification();
     });
   }
 
@@ -128,6 +132,53 @@ class _MainScreenState extends State<MainScreen> {
       );
   }
 
+  void _showDisconnectNotification() {
+    final l10n = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.link_off, color: Colors.white, size: 28),
+              const SizedBox(width: Spacing.sm),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.deviceDisconnected,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: FontSizes.body,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      l10n.pleaseReconnectDevice,
+                      style: const TextStyle(
+                        fontSize: FontSizes.bodySm,
+                        color: Colors.white70,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.red.shade700,
+          duration: const Duration(seconds: 5),
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(Spacing.md),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+  }
+
   Future<void> _checkDisclaimer() async {
     if (_disclaimerChecked) return;
     _disclaimerChecked = true;
@@ -149,6 +200,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void dispose() {
     _overrangeSubscription?.cancel();
+    _disconnectSubscription?.cancel();
     super.dispose();
   }
 

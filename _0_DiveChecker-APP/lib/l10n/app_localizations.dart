@@ -2924,6 +2924,12 @@ abstract class AppLocalizations {
   /// **'Device disconnected'**
   String get deviceDisconnected;
 
+  /// No description provided for @pleaseReconnectDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Please reconnect the device.'**
+  String get pleaseReconnectDevice;
+
   /// No description provided for @connectionLostDuringMeasurement.
   ///
   /// In en, this message translates to:

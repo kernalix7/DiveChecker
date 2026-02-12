@@ -536,6 +536,7 @@
   "bootselModeDescription": "펌웨어 수동 업데이트 모드",
   "bootselRebootSent": "BOOTSEL 재부팅 명령 전송됨",
   "deviceDisconnected": "기기 연결이 해제되었습니다",
+  "pleaseReconnectDevice": "기기를 다시 연결해 주세요.",
   "connectionLostDuringMeasurement": "측정 중 연결이 끊어졌습니다. 기록된 데이터를 저장하시겠습니까?",
   "discard": "삭제",
   "pinMismatch": "PIN이 일치하지 않습니다",

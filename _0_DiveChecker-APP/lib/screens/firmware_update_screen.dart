@@ -136,26 +136,32 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
     }
     
     // Get the extracted .uf2 filename for the dialog
-    String uf2FileName = 'the verified .uf2 file';
-    if (_selectedPackage != null && _selectedPackage!.isValid) {
-      final baseName = _selectedPackage!.fileName.replaceAll('_signed.bin', '').replaceAll('.bin', '');
-      uf2FileName = '${baseName}_verified.uf2';
-    }
-
     final l10n = AppLocalizations.of(context)!;
-    // Show confirmation dialog
+    final pinController = TextEditingController();
+
+    // Show confirmation dialog with PIN input
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         icon: Icon(Icons.restart_alt, size: IconSizes.huge, color: ScoreColors.warning),
         title: Text(l10n.bootselMode),
-        content: Text(
-          'The device will reboot into BOOTSEL mode for firmware update.\n\n'
-          'After rebooting:\n'
-          '1. A new drive "RPI-RP2" will appear\n'
-          '2. Copy "$uf2FileName" to it\n'
-          '3. Device will automatically restart\n\n'
-          '⚠️ Only copy the _verified.uf2 file extracted by this app!',
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(l10n.firmwareRebootDescription),
+            Spacing.verticalLg,
+            TextField(
+              controller: pinController,
+              decoration: InputDecoration(
+                labelText: l10n.devicePin,
+                border: const OutlineInputBorder(),
+                helperText: l10n.pinRequiredForChange,
+              ),
+              keyboardType: TextInputType.number,
+              maxLength: 4,
+              obscureText: true,
+            ),
+          ],
         ),
         actions: [
           TextButton(
@@ -163,7 +169,15 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
             child: Text(l10n.cancel),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(context, true),
+            onPressed: () {
+              if (pinController.text.length != 4) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.pinMustBe4Digits)),
+                );
+                return;
+              }
+              Navigator.pop(context, true);
+            },
             child: Text(l10n.reboot),
           ),
         ],
@@ -171,8 +185,13 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
     );
 
     if (confirmed == true) {
-      serial.sendCommand('B');  // Reboot to BOOTSEL command
-      context.showSnackBar('Reboot command sent');
+      final result = await serial.sendCommand('B${pinController.text}');
+      if (!mounted) return;
+      if (result) {
+        context.showSnackBar(l10n.bootselRebootSent);
+      } else {
+        context.showSnackBar(l10n.wrongPin);
+      }
     }
   }
 

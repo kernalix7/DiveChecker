@@ -49,6 +49,9 @@ _0_DiveChecker-APP/.idea/
 _0_DiveChecker-APP/android/.gradle/
 _0_DiveChecker-APP/android/local.properties
 _0_DiveChecker-APP/android/app/release/
+_0_DiveChecker-APP/android/key.properties
+_0_DiveChecker-APP/android/*.jks
+_0_DiveChecker-APP/android/app/*.jks
 
 # ===== Android (0_Android-APP) =====
 0_Android-APP/.gradle/

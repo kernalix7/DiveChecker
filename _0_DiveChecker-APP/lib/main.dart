@@ -36,10 +36,18 @@ class DiveCheckerApp extends StatefulWidget {
 }
 
 class _DiveCheckerAppState extends State<DiveCheckerApp> with WidgetsBindingObserver {
+  SerialProvider? _serialProvider;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _serialProvider = context.read<SerialProvider>();
   }
 
   @override
@@ -50,10 +58,8 @@ class _DiveCheckerAppState extends State<DiveCheckerApp> with WidgetsBindingObse
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    final serial = context.read<SerialProvider>();
-    
-    if (state == AppLifecycleState.detached || state == AppLifecycleState.paused) {
-      serial.disconnect();
+    if (state == AppLifecycleState.detached) {
+      _serialProvider?.disconnect();
     }
   }
 

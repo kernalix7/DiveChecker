@@ -1485,6 +1485,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get deviceDisconnected => '기기 연결이 해제되었습니다';
 
   @override
+  String get pleaseReconnectDevice => '기기를 다시 연결해 주세요.';
+
+  @override
   String get connectionLostDuringMeasurement =>
       '측정 중 연결이 끊어졌습니다. 기록된 데이터를 저장하시겠습니까?';
 

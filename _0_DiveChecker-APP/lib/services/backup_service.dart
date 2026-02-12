@@ -230,7 +230,11 @@ class BackupService {
             endTime: oldSession.endTime,
             maxPressure: oldSession.maxPressure,
             avgPressure: oldSession.avgPressure,
+            sampleRate: oldSession.sampleRate,
             notes: oldSession.notes,
+            displayTitle: oldSession.displayTitle,
+            deviceSerial: oldSession.deviceSerial,
+            deviceName: oldSession.deviceName,
           );
           
           final newId = await _db.createSession(newSession);

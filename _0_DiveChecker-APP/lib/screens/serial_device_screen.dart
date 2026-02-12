@@ -267,10 +267,28 @@ class _DeviceTile extends StatelessWidget {
     this.onTap,
   });
 
+  /// Normalize platform-specific MIDI device IDs for display
+  /// Android: "0", "1" → shown as-is
+  /// Linux: "28:0" or "hw:1,0,0" → shown as-is
+  /// macOS/iOS: long CoreMIDI endpoint → last 8 chars
+  /// Windows: long USB path → extract VID/PID or last 8 chars
+  String _formatDeviceId(String rawId) {
+    // Short IDs (Android integer, Linux ALSA) — show as-is
+    if (rawId.length <= 12) return rawId;
+    // Windows USB path: extract VID & PID if present
+    final vidMatch = RegExp(r'vid_([0-9a-fA-F]{4})').firstMatch(rawId);
+    final pidMatch = RegExp(r'pid_([0-9a-fA-F]{4})').firstMatch(rawId);
+    if (vidMatch != null && pidMatch != null) {
+      return '${vidMatch.group(1)!.toUpperCase()}:${pidMatch.group(1)!.toUpperCase()}';
+    }
+    // Long IDs (macOS CoreMIDI, etc.) — show last 8 chars
+    return '...${rawId.substring(rawId.length - 8)}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: Spacing.lg, vertical: Spacing.sm),
       leading: Container(
@@ -296,47 +314,22 @@ class _DeviceTile extends StatelessWidget {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (device.manufacturer != null && device.manufacturer!.isNotEmpty)
-            Text(
-              device.manufacturer!,
-              style: TextStyle(
-                fontSize: FontSizes.bodySm,
-                color: theme.colorScheme.onSurface.withOpacity(Opacities.medium),
-              ),
+          // Show MIDI device name (consistent across platforms)
+          Text(
+            device.name,
+            style: TextStyle(
+              fontSize: FontSizes.bodySm,
+              color: theme.colorScheme.onSurface.withOpacity(Opacities.mediumHigh),
             ),
-          Row(
-            children: [
-              Text(
-                device.portName,
-                style: TextStyle(
-                  fontSize: FontSizes.bodySm,
-                  fontFamily: 'monospace',
-                  color: theme.colorScheme.onSurface.withOpacity(Opacities.mediumHigh),
-                ),
-              ),
-              if (device.vendorId != null) ...[
-                Spacing.horizontalSm,
-                Text(
-                  'VID: ${device.vendorId!.toRadixString(16).toUpperCase().padLeft(4, '0')}',
-                  style: TextStyle(
-                    fontSize: FontSizes.sm,
-                    fontFamily: 'monospace',
-                    color: theme.colorScheme.onSurface.withOpacity(Opacities.medium),
-                  ),
-                ),
-              ],
-              if (device.productId != null) ...[
-                Spacing.horizontalXs,
-                Text(
-                  'PID: ${device.productId!.toRadixString(16).toUpperCase().padLeft(4, '0')}',
-                  style: TextStyle(
-                    fontSize: FontSizes.sm,
-                    fontFamily: 'monospace',
-                    color: theme.colorScheme.onSurface.withOpacity(Opacities.medium),
-                  ),
-                ),
-              ],
-            ],
+          ),
+          // Show device ID in a platform-normalized way
+          Text(
+            'ID: ${_formatDeviceId(device.portName)}',
+            style: TextStyle(
+              fontSize: FontSizes.sm,
+              fontFamily: 'monospace',
+              color: theme.colorScheme.onSurface.withOpacity(Opacities.medium),
+            ),
           ),
           if (device.isDiveChecker)
             Container(

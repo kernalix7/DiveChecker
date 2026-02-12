@@ -100,9 +100,9 @@ class NativeMidiHandler implements MidiHandler {
   void dispose() {
     _dataSubscription?.cancel();
     _setupSubscription?.cancel();
+    disconnect();
     _dataController?.close();
     _setupController?.close();
-    disconnect();
   }
 }
 

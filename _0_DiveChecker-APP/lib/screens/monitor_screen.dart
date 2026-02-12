@@ -8,6 +8,7 @@
 library;
 
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,7 @@ class MonitorScreen extends StatefulWidget {
 }
 
 class _MonitorScreenState extends State<MonitorScreen> {
-  final List<ChartPoint> _dataBuffer = [];
+  final Queue<ChartPoint> _dataBuffer = Queue<ChartPoint>();
   StreamSubscription<double>? _pressureSubscription;
   double _currentPressure = 0.0;
   int _sampleIndex = 0;
@@ -61,9 +62,9 @@ class _MonitorScreenState extends State<MonitorScreen> {
       _dataBuffer.add(ChartPoint(xMs, pressure));
       _sampleIndex++;
       
-      // Keep buffer size limited
+      // Keep buffer size limited (Queue.removeFirst is O(1))
       while (_dataBuffer.length > _maxBufferSize) {
-        _dataBuffer.removeAt(0);
+        _dataBuffer.removeFirst();
       }
     });
   }
@@ -71,6 +72,8 @@ class _MonitorScreenState extends State<MonitorScreen> {
   @override
   void dispose() {
     _pressureSubscription?.cancel();
+    // Ensure orientations are unlocked when leaving screen
+    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     super.dispose();
   }
 
@@ -101,10 +104,11 @@ class _MonitorScreenState extends State<MonitorScreen> {
                 return _buildNotConnectedView(l10n, theme);
               }
               
+              final settings = context.watch<SettingsProvider>();
               return SafeArea(
                 child: isLandscape 
-                    ? _buildLandscapeLayout(l10n, theme)
-                    : _buildPortraitLayout(l10n, theme),
+                    ? _buildLandscapeLayout(l10n, theme, settings)
+                    : _buildPortraitLayout(l10n, theme, settings),
               );
             },
           ),
@@ -184,13 +188,13 @@ class _MonitorScreenState extends State<MonitorScreen> {
     );
   }
 
-  Widget _buildPortraitLayout(AppLocalizations l10n, ThemeData theme) {
+  Widget _buildPortraitLayout(AppLocalizations l10n, ThemeData theme, SettingsProvider settings) {
     return Padding(
       padding: const EdgeInsets.all(Spacing.lg),
       child: Column(
         children: [
           // Current pressure display
-          _buildPressureDisplay(l10n, theme),
+          _buildPressureDisplay(l10n, theme, settings),
           Spacing.verticalXl,
           
           // Chart
@@ -228,7 +232,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
     );
   }
 
-  Widget _buildLandscapeLayout(AppLocalizations l10n, ThemeData theme) {
+  Widget _buildLandscapeLayout(AppLocalizations l10n, ThemeData theme, SettingsProvider settings) {
     return Row(
       children: [
         // Side panel with pressure
@@ -253,7 +257,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
               ),
               Spacing.verticalMd,
               Text(
-                formatPressure(_currentPressure),
+                formatPressure(settings.convertPressure(_currentPressure)),
                 style: TextStyle(
                   fontSize: FontSizes.display,
                   fontWeight: FontWeight.bold,
@@ -262,7 +266,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
                 ),
               ),
               Text(
-                'hPa',
+                settings.pressureUnitSymbol,
                 style: TextStyle(
                   fontSize: FontSizes.body,
                   color: theme.colorScheme.onSurface.withOpacity(Opacities.high),
@@ -289,7 +293,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
     );
   }
 
-  Widget _buildPressureDisplay(AppLocalizations l10n, ThemeData theme) {
+  Widget _buildPressureDisplay(AppLocalizations l10n, ThemeData theme, SettingsProvider settings) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(Spacing.xl),
@@ -327,7 +331,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
                   textBaseline: TextBaseline.alphabetic,
                   children: [
                     Text(
-                      formatPressure(_currentPressure),
+                      formatPressure(settings.convertPressure(_currentPressure)),
                       style: TextStyle(
                         fontSize: FontSizes.displayLg,
                         fontWeight: FontWeight.bold,
@@ -337,7 +341,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
                     ),
                     Spacing.horizontalSm,
                     Text(
-                      'hPa',
+                      settings.pressureUnitSymbol,
                       style: TextStyle(
                         fontSize: FontSizes.bodyLg,
                         color: theme.colorScheme.onSurface.withOpacity(Opacities.high),

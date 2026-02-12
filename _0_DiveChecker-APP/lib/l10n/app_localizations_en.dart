@@ -1521,6 +1521,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deviceDisconnected => 'Device disconnected';
 
   @override
+  String get pleaseReconnectDevice => 'Please reconnect the device.';
+
+  @override
   String get connectionLostDuringMeasurement =>
       'Connection was lost during measurement. Do you want to save the recorded data?';
 

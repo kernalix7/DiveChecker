@@ -48,32 +48,53 @@ Pico RP2350         BMP280 (I2C)
 ────────────        ────────────
 3.3V         ────── VCC
 GND          ────── GND
-GP4 (SDA)    ────── SDA
-GP5 (SCL)    ────── SCL
+GP8 (SDA)    ────── SDA
+GP9 (SCL)    ────── SCL
+GP16         ────── WS2812 LED (status indicator)
 ```
 
 ## Communication Protocol
 
 USB MIDI SysEx-based protocol for cross-platform compatibility.
 
-### MCU → App
-| Message | Description |
-|---------|-------------|
-| SysEx Data | Pressure value (0.001 hPa resolution) |
-| CFG:os,hz | Config response (oversampling, output rate) |
-| PONG | Ping response |
-| AUTH:OK/FAIL | Authentication result |
+SysEx format: `F0 7D 01 [cmd] [data...] F7`
+- Manufacturer ID: `0x7D` (educational/development)
+- Device ID: `0x01` (DiveChecker)
 
-### App → MCU
-| Command | Description |
-|---------|-------------|
-| P | Ping (connection check) |
-| A:nonce | ECDSA authentication (hex nonce for signing) |
-| R | Baseline reset |
-| Oxx | Oversampling setting (1/2/4/8/16) |
-| Fxx | Output rate setting (4-50 Hz) |
-| C | Config request |
-| B | BOOTSEL reboot (for firmware update) |
+### Device → App
+| Command | Hex | Description |
+|---------|-----|-------------|
+| Pressure | 0x01 | Delta pressure (7-bit encoded int32, hPa×1000) |
+| Device Info | 0x02 | Serial, name, FW version, sensor status |
+| Config | 0x03 | Output rate response |
+| Auth Response | 0x04 | ECDSA signature (nibble-encoded) |
+| Sensor Status | 0x05 | Sensor connection status |
+| Over-range Alert | 0x06 | Sensor exceeded measurement range |
+| Temperature | 0x07 | BMP280 temperature (int16×100) |
+| Diagnostics | 0x08 | Uptime, error counts, I2C recovery |
+| Full Config | 0x09 | All configurable parameters |
+| ACK | 0x0A | Command acknowledgment (cmd + status) |
+
+### App → Device
+| Command | Hex | Description |
+|---------|-----|-------------|
+| Ping | 0x10 | Connection keepalive |
+| Request Info | 0x20 | Request device info |
+| Set Name | 0x21 | Set device name (PIN required) |
+| Set Output Rate | 0x22 | Set output rate (4-50 Hz) |
+| Reset Baseline | 0x23 | Reset pressure baseline |
+| Get Config | 0x24 | Request full config dump |
+| Set LED | 0x25 | Set LED brightness (0-100) |
+| Reset Sensor | 0x26 | Manual sensor re-init |
+| Factory Reset | 0x27 | Factory reset (PIN required) |
+| Set Noise Floor | 0x28 | Set noise threshold (0-50) |
+| Get Temperature | 0x29 | Request temperature |
+| Enter Bootloader | 0x2A | Enter BOOTSEL mode (PIN required) |
+| Get Diagnostics | 0x2B | Request runtime diagnostics |
+| Set Oversampling | 0x2C | Set pressure oversampling (0-5) |
+| Set IIR Filter | 0x2D | Set IIR filter coefficient (0-4) |
+| Auth Challenge | 0x30 | ECDSA auth (64-char hex nonce) |
+| Set PIN | 0x31 | Change PIN (old PIN + new PIN) |
 
 ## Key Generation
 

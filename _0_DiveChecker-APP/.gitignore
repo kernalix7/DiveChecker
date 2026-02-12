@@ -44,5 +44,10 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Android signing keys (NEVER commit)
+/android/key.properties
+/android/*.jks
+/android/app/*.jks
+
 # iOS Certificates (NEVER commit these)
 ios/certs/

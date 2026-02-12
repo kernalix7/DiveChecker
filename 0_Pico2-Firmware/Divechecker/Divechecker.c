@@ -36,6 +36,7 @@
 #include "hardware/sync.h"
 #include "hardware/watchdog.h"
 #include "hardware/clocks.h"
+#include "pico/mutex.h"
 
 // TinyUSB for USB MIDI
 #include "tusb.h"
@@ -243,12 +244,28 @@ static uint g_ws2812_sm = 0;
 // Over-range alert flag (set by Core 1, consumed by Core 0)
 static volatile bool g_overrange_alert = false;
 
-// Command parsing
-// Command buffer (64 for auth nonce + margin)
-#define CMD_BUFFER_SIZE 72
-static char g_cmd_buffer[CMD_BUFFER_SIZE];
-static uint8_t g_cmd_pos = 0;
-static char g_cmd_type = 0;
+// Runtime-configurable parameters (via SysEx) — Core 0 only
+static uint8_t g_led_brightness = LED_BRIGHTNESS;    // 0-100
+static volatile uint8_t g_noise_floor = 1;           // x1000 threshold (Core 1 reads)
+static uint8_t g_oversampling_ctrl = 5;              // 0=skip,1=x1,2=x2,3=x4,4=x8,5=x16
+static uint8_t g_iir_config = 1;                     // 0=off,1=x2,2=x4,3=x8,4=x16
+
+// Diagnostics counters
+static volatile uint16_t g_sensor_error_count = 0;
+static volatile uint16_t g_overrange_event_count = 0;
+static volatile uint16_t g_i2c_recovery_count = 0;
+static volatile int16_t g_last_temperature_x100 = 0;  // From BMP280 t_fine
+static uint32_t g_boot_time_ms = 0;
+
+// I2C cross-core protection (Core 0 commands + Core 1 sensor reads)
+static mutex_t g_i2c_mutex;
+static volatile bool g_sensor_reconfiguring = false;
+
+// PIN brute-force protection
+static int g_pin_fail_count = 0;
+static absolute_time_t g_pin_lockout_until;
+#define PIN_MAX_FAILURES    5
+#define PIN_LOCKOUT_MAX_SEC 60
 
 /* ============================================================================
  * WS2812 LED Functions
@@ -272,14 +289,20 @@ static void led_init(void) {
 }
 
 static void led_set_state(led_state_t state) {
+    uint8_t br = g_led_brightness;
     switch (state) {
-        case LED_STATE_OFF:          led_set_color(0, 0, 0);                     break;
-        case LED_STATE_BOOT:         led_set_color(LED_BRIGHTNESS, 0, 0);        break;
-        case LED_STATE_USB_WAIT:     led_set_color(60, 25, 0);                   break;
-        case LED_STATE_USB_READY:    led_set_color(0, 0, LED_BRIGHTNESS);        break;
-        case LED_STATE_APP_CONNECTED:led_set_color(0, LED_BRIGHTNESS, 0);        break;
+        case LED_STATE_OFF:          led_set_color(0, 0, 0);                           break;
+        case LED_STATE_BOOT:         led_set_color(br, 0, 0);                           break;
+        case LED_STATE_USB_WAIT:     led_set_color(br * 60 / 100, br * 25 / 100, 0);    break;
+        case LED_STATE_USB_READY:    led_set_color(0, 0, br);                           break;
+        case LED_STATE_APP_CONNECTED:led_set_color(0, br, 0);                           break;
+        default:                     led_set_color(0, 0, 0);                           break;
     }
 }
+
+// Forward declarations
+static bool pin_is_valid_format(const char *pin);
+static bool bmp280_apply_config(void);
 
 /* ============================================================================
  * Flash Storage Functions
@@ -297,6 +320,10 @@ static void flash_load_settings(void) {
         g_device_name[DEVICE_NAME_MAX_LEN] = '\0';
         strncpy(g_device_pin, settings->pin, DEVICE_PIN_LEN);
         g_device_pin[DEVICE_PIN_LEN] = '\0';
+        // Guard against corrupted PIN in flash
+        if (!pin_is_valid_format(g_device_pin)) {
+            strcpy(g_device_pin, "0000");
+        }
     } else {
         strcpy(g_device_name, "DiveChecker");
         strcpy(g_device_pin, "0000");
@@ -311,10 +338,13 @@ static void flash_save_settings(void) {
     new_settings.name[DEVICE_NAME_MAX_LEN] = '\0';
     memset(new_settings._reserved, 0xFF, sizeof(new_settings._reserved));
     
+    // CRITICAL: Core 1 executes from flash (XIP). Must pause it during flash ops.
+    multicore_lockout_start_blocking();
     uint32_t irq_state = save_and_disable_interrupts();
     flash_range_erase(FLASH_SETTINGS_OFFSET, FLASH_SECTOR_SIZE);
     flash_range_program(FLASH_SETTINGS_OFFSET, (const uint8_t*)&new_settings, FLASH_PAGE_SIZE);
     restore_interrupts(irq_state);
+    multicore_lockout_end_blocking();
 }
 
 /* ============================================================================
@@ -322,7 +352,37 @@ static void flash_save_settings(void) {
  * ========================================================================== */
 
 static bool pin_verify(const char *pin) {
-    return strncmp(pin, g_device_pin, DEVICE_PIN_LEN) == 0;
+    // Constant-time comparison to prevent timing side-channel attacks
+    volatile uint8_t result = 0;
+    for (int i = 0; i < DEVICE_PIN_LEN; i++) {
+        result |= pin[i] ^ g_device_pin[i];
+    }
+    return result == 0;
+}
+
+static bool pin_check_rate_limit(void) {
+    if (g_pin_fail_count >= PIN_MAX_FAILURES) {
+        if (!time_reached(g_pin_lockout_until)) {
+            return false;  // Still locked out
+        }
+        // Lockout expired — don't reset count so escalation continues
+    }
+    return true;
+}
+
+static void pin_record_failure(void) {
+    g_pin_fail_count++;
+    if (g_pin_fail_count >= PIN_MAX_FAILURES) {
+        int shift = g_pin_fail_count - PIN_MAX_FAILURES;
+        if (shift > 6) shift = 6;  // Cap at 64 seconds
+        int delay_sec = 1 << shift;
+        if (delay_sec > PIN_LOCKOUT_MAX_SEC) delay_sec = PIN_LOCKOUT_MAX_SEC;
+        g_pin_lockout_until = make_timeout_time_ms(delay_sec * 1000);
+    }
+}
+
+static void pin_record_success(void) {
+    g_pin_fail_count = 0;
 }
 
 static bool pin_is_valid_format(const char *pin) {
@@ -332,9 +392,22 @@ static bool pin_is_valid_format(const char *pin) {
     return true;
 }
 
+/**
+ * @brief Sanitize device name by replacing control characters
+ */
+static void sanitize_device_name(char *name) {
+    for (int i = 0; name[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)name[i];
+        if (c < 0x20 || c == 0x7F) {
+            name[i] = '_';  // Replace control chars and DEL
+        }
+    }
+}
+
 static void device_set_name(const char *name) {
     strncpy(g_device_name, name, DEVICE_NAME_MAX_LEN);
     g_device_name[DEVICE_NAME_MAX_LEN] = '\0';
+    sanitize_device_name(g_device_name);
     flash_save_settings();
 }
 
@@ -432,56 +505,6 @@ static bool ecdsa_init(void) {
     return true;
 }
 
-/**
- * @brief Sign a challenge (nonce) with ECDSA
- * @param nonce_hex 32-byte challenge from app (hex string, 64 chars)
- * @param nonce_len Length of nonce string
- */
-static void ecdsa_sign_challenge(const char *nonce_hex, size_t nonce_len) {
-    if (!g_ecdsa_initialized) {
-        if (!ecdsa_init()) {
-            printf("AUTH_ERR:ECDSA not ready\n");
-            return;
-        }
-    }
-    
-    // Validate nonce length (expect 64 hex chars = 32 bytes)
-    if (nonce_len != 64) {
-        printf("AUTH_ERR:Invalid nonce length\n");
-        return;
-    }
-    
-    // Convert hex string to bytes
-    uint8_t nonce[32];
-    for (int i = 0; i < 32; i++) {
-        char hex_byte[3] = {nonce_hex[i*2], nonce_hex[i*2+1], '\0'};
-        nonce[i] = (uint8_t)strtol(hex_byte, NULL, 16);
-    }
-    
-    // Hash the nonce with SHA-256
-    uint8_t hash[32];
-    mbedtls_sha256(nonce, 32, hash, 0);
-    
-    // Sign the hash
-    uint8_t sig[MBEDTLS_ECDSA_MAX_LEN];
-    size_t sig_len = 0;
-    
-    int ret = mbedtls_ecdsa_write_signature(&g_ecdsa_ctx, MBEDTLS_MD_SHA256,
-                                             hash, 32, sig, sizeof(sig), &sig_len,
-                                             mbedtls_ctr_drbg_random, &g_ctr_drbg);
-    if (ret != 0) {
-        printf("AUTH_ERR:Sign failed: %d\n", ret);
-        return;
-    }
-    
-    // Output signature as hex
-    printf("AUTH_OK:");
-    for (size_t i = 0; i < sig_len; i++) {
-        printf("%02x", sig[i]);
-    }
-    printf("\n");
-}
-
 /* ============================================================================
  * I2C Helper Functions (with timeout and bus recovery for EMC)
  * ========================================================================== */
@@ -531,27 +554,37 @@ static void i2c_bus_recover(void) {
     gpio_pull_up(I2C_SCL_PIN);
 }
 
-static inline bool i2c_write_register(uint8_t reg, uint8_t value) {
+static bool i2c_write_register(uint8_t reg, uint8_t value) {
+    mutex_enter_blocking(&g_i2c_mutex);
     uint8_t buf[2] = {reg, value};
     int ret = i2c_write_timeout_us(I2C_PORT, BMP280_I2C_ADDR, buf, 2, false, I2C_TIMEOUT_US);
     if (ret < 0) {
         i2c_bus_recover();
+        g_i2c_recovery_count++;
+        mutex_exit(&g_i2c_mutex);
         return false;
     }
+    mutex_exit(&g_i2c_mutex);
     return true;
 }
 
-static inline bool i2c_read_registers(uint8_t start_reg, uint8_t *buffer, size_t len) {
+static bool i2c_read_registers(uint8_t start_reg, uint8_t *buffer, size_t len) {
+    mutex_enter_blocking(&g_i2c_mutex);
     int ret = i2c_write_timeout_us(I2C_PORT, BMP280_I2C_ADDR, &start_reg, 1, true, I2C_TIMEOUT_US);
     if (ret < 0) {
         i2c_bus_recover();
+        g_i2c_recovery_count++;
+        mutex_exit(&g_i2c_mutex);
         return false;
     }
     ret = i2c_read_timeout_us(I2C_PORT, BMP280_I2C_ADDR, buffer, len, false, I2C_TIMEOUT_US);
     if (ret < 0) {
         i2c_bus_recover();
+        g_i2c_recovery_count++;
+        mutex_exit(&g_i2c_mutex);
         return false;
     }
+    mutex_exit(&g_i2c_mutex);
     return true;
 }
 
@@ -561,7 +594,10 @@ static inline bool i2c_read_registers(uint8_t start_reg, uint8_t *buffer, size_t
 
 static bool bmp280_init(void) {
     uint8_t chip_id;
-    i2c_read_registers(BMP280_REG_ID, &chip_id, 1);
+    if (!i2c_read_registers(BMP280_REG_ID, &chip_id, 1)) {
+        printf("ERR:I2C read chip ID failed\n");
+        return false;
+    }
     
     printf("INFO:ChipID=0x%02X", chip_id);
     if (chip_id == BMP280_CHIP_ID) {
@@ -574,12 +610,17 @@ static bool bmp280_init(void) {
     }
     
     // Soft reset
-    i2c_write_register(BMP280_REG_RESET, BMP280_RESET_VALUE);
+    if (!i2c_write_register(BMP280_REG_RESET, BMP280_RESET_VALUE)) {
+        return false;
+    }
     sleep_ms(10);
     
     // Read calibration data
     uint8_t calib_raw[BMP280_CALIB_LEN];
-    i2c_read_registers(BMP280_REG_CALIB_START, calib_raw, BMP280_CALIB_LEN);
+    if (!i2c_read_registers(BMP280_REG_CALIB_START, calib_raw, BMP280_CALIB_LEN)) {
+        printf("ERR:Failed to read calibration data\n");
+        return false;
+    }
     
     // Parse calibration (little-endian 16-bit values)
     g_calib.dig_T1 = calib_raw[0]  | (calib_raw[1]  << 8);
@@ -597,20 +638,20 @@ static bool bmp280_init(void) {
     
     // BMP280 requires config to be written in sleep mode FIRST
     // Step 1: Ensure sleep mode (after reset, already in sleep)
-    i2c_write_register(BMP280_REG_CTRL_MEAS, 0x00);  // Force sleep mode
+    if (!i2c_write_register(BMP280_REG_CTRL_MEAS, 0x00)) return false;
     sleep_ms(5);
     
     // Step 2: Write config register (IIR filter) while in sleep mode
-    i2c_write_register(BMP280_REG_CONFIG, BMP280_CONFIG_FILTERED);
+    if (!i2c_write_register(BMP280_REG_CONFIG, BMP280_CONFIG_FILTERED)) return false;
     sleep_ms(5);
     
     // Step 3: Write ctrl_meas to enable measurements and start normal mode
     // Stable: osrs_t=001 (x1), osrs_p=101 (x16), mode=11 (normal) = 0x57
-    i2c_write_register(BMP280_REG_CTRL_MEAS, BMP280_CTRL_STABLE);
+    if (!i2c_write_register(BMP280_REG_CTRL_MEAS, BMP280_CTRL_STABLE)) return false;
     sleep_ms(50);  // Wait for first measurement
     
     // Verify registers were written correctly
-    uint8_t ctrl_meas_read, config_read;
+    uint8_t ctrl_meas_read = 0, config_read = 0;
     i2c_read_registers(BMP280_REG_CTRL_MEAS, &ctrl_meas_read, 1);
     i2c_read_registers(BMP280_REG_CONFIG, &config_read, 1);
     printf("INFO:CTRL_MEAS=0x%02X CONFIG=0x%02X (X16+IIR2)\n", ctrl_meas_read, config_read);
@@ -624,20 +665,85 @@ static bool bmp280_init(void) {
  *          from the sensor's internal IIR filter
  */
 static bool bmp280_reinit_config(void) {
+    g_sensor_reconfiguring = true;  // Signal Core 1 to skip reads
+    
     // Soft reset clears all internal registers including IIR filter
     if (!i2c_write_register(BMP280_REG_RESET, BMP280_RESET_VALUE)) {
+        g_sensor_reconfiguring = false;
         return false;
     }
     sleep_ms(10);
     
     // Re-apply configuration (must be done in sleep mode)
-    if (!i2c_write_register(BMP280_REG_CTRL_MEAS, 0x00)) return false;  // Sleep mode
+    if (!i2c_write_register(BMP280_REG_CTRL_MEAS, 0x00)) {
+        g_sensor_reconfiguring = false;
+        return false;
+    }
     sleep_ms(2);
-    if (!i2c_write_register(BMP280_REG_CONFIG, BMP280_CONFIG_FILTERED)) return false;
+    if (!i2c_write_register(BMP280_REG_CONFIG, BMP280_CONFIG_FILTERED)) {
+        g_sensor_reconfiguring = false;
+        return false;
+    }
     sleep_ms(2);
-    if (!i2c_write_register(BMP280_REG_CTRL_MEAS, BMP280_CTRL_STABLE)) return false;
+    if (!i2c_write_register(BMP280_REG_CTRL_MEAS, BMP280_CTRL_STABLE)) {
+        g_sensor_reconfiguring = false;
+        return false;
+    }
     sleep_ms(50);  // Wait for first clean measurement
     
+    g_sensor_reconfiguring = false;
+    
+    // Re-apply user-configured oversampling and IIR settings
+    return bmp280_apply_config();
+}
+
+/**
+ * @brief Apply dynamic BMP280 configuration (oversampling + IIR filter)
+ * @details Uses g_oversampling_ctrl and g_iir_config global variables
+ *          Must put sensor in sleep mode before changing config registers
+ */
+static bool bmp280_apply_config(void) {
+    g_sensor_reconfiguring = true;  // Signal Core 1 to skip reads
+    
+    // Oversampling control value mapping: 0=skip, 1=x1, 2=x2, 3=x4, 4=x8, 5=x16
+    static const uint8_t osrs_map[] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 };
+    // IIR filter coefficient mapping: 0=off, 1=x2, 2=x4, 3=x8, 4=x16
+    static const uint8_t iir_map[] = { 0x00, 0x01, 0x02, 0x03, 0x04 };
+    
+    uint8_t osrs_idx = g_oversampling_ctrl;
+    uint8_t iir_idx = g_iir_config;
+    if (osrs_idx > 5) osrs_idx = 5;  // Defensive bounds check
+    if (iir_idx > 4) iir_idx = 4;
+    uint8_t osrs = osrs_map[osrs_idx];
+    uint8_t iir = iir_map[iir_idx];
+    
+    // ctrl_meas: osrs_t[7:5]=x2(0b010), osrs_p[4:2]=variable, mode[1:0]=normal(0b11)
+    uint8_t ctrl_meas = (0x02 << 5) | (osrs << 2) | 0x03;
+    // config: t_sb[7:5]=0.5ms(0b000), filter[4:2]=variable, spi3w_en=0
+    uint8_t config_reg = (iir << 2);
+    
+    // Enter sleep mode first
+    if (!i2c_write_register(BMP280_REG_CTRL_MEAS, 0x00)) {
+        g_sensor_reconfiguring = false;
+        return false;
+    }
+    sleep_ms(2);
+    
+    // Apply config (only writable in sleep mode)
+    if (!i2c_write_register(BMP280_REG_CONFIG, config_reg)) {
+        g_sensor_reconfiguring = false;
+        return false;
+    }
+    sleep_ms(2);
+    
+    // Back to normal mode with new oversampling
+    if (!i2c_write_register(BMP280_REG_CTRL_MEAS, ctrl_meas)) {
+        g_sensor_reconfiguring = false;
+        return false;
+    }
+    sleep_ms(50);  // Wait for first measurement with new config
+    
+    g_sensor_reconfiguring = false;
     return true;
 }
 
@@ -664,6 +770,9 @@ static float bmp280_read_pressure(void) {
                     ((int32_t)g_calib.dig_T3)) >> 14;
     g_calib.t_fine = var1 + var2;
     
+    // Store temperature for CMD_GET_TEMPERATURE (in °C x100)
+    g_last_temperature_x100 = (int16_t)((g_calib.t_fine * 5 + 128) >> 8);
+    
     // Pressure compensation (64-bit arithmetic for precision)
     int64_t p_var1 = ((int64_t)g_calib.t_fine) - 128000;
     int64_t p_var2 = p_var1 * p_var1 * (int64_t)g_calib.dig_P6;
@@ -673,7 +782,7 @@ static float bmp280_read_pressure(void) {
              ((p_var1 * (int64_t)g_calib.dig_P2) << 12);
     p_var1 = ((((int64_t)1) << 47) + p_var1) * ((int64_t)g_calib.dig_P1) >> 33;
     
-    if (p_var1 == 0) return 0.0f;
+    if (p_var1 == 0) return NAN;  // Corrupt calibration data
     
     int64_t p = 1048576 - adc_P;
     p = (((p << 31) - p_var2) * 3125) / p_var1;
@@ -728,9 +837,12 @@ static void midi_process_sysex(sysex_message_t* msg) {
             if (msg->data_len >= 1) {
                 int rate = msg->data[0];
                 if (rate >= MIN_OUTPUT_RATE_HZ && rate <= MAX_OUTPUT_RATE_HZ) {
+                    // Calculate all values before updating (minimize cross-core inconsistency)
+                    int new_interval = 1000 / rate;
+                    int new_samples = INTERNAL_SAMPLE_RATE_HZ / rate;
+                    g_samples_per_output = new_samples;
+                    g_output_interval_ms = new_interval;
                     g_output_rate = rate;
-                    g_output_interval_ms = 1000 / rate;
-                    g_samples_per_output = INTERNAL_SAMPLE_RATE_HZ / rate;
                 }
                 midi_sysex_send_config(g_output_rate);
             }
@@ -739,18 +851,29 @@ static void midi_process_sysex(sysex_message_t* msg) {
         case CMD_SET_NAME:
             // Format: [4 bytes PIN][name...]
             if (msg->data_len > DEVICE_PIN_LEN) {
+                if (!pin_check_rate_limit()) {
+                    midi_sysex_send_ack(CMD_SET_NAME, 0x02);
+                    break;
+                }
                 char pin[DEVICE_PIN_LEN + 1];
                 memcpy(pin, msg->data, DEVICE_PIN_LEN);
                 pin[DEVICE_PIN_LEN] = '\0';
                 
                 if (pin_verify(pin)) {
+                    pin_record_success();
                     char name[DEVICE_NAME_MAX_LEN + 1];
                     uint8_t name_len = msg->data_len - DEVICE_PIN_LEN;
                     if (name_len > DEVICE_NAME_MAX_LEN) name_len = DEVICE_NAME_MAX_LEN;
                     memcpy(name, &msg->data[DEVICE_PIN_LEN], name_len);
                     name[name_len] = '\0';
                     device_set_name(name);
+                    midi_sysex_send_ack(CMD_SET_NAME, 0x00);
+                } else {
+                    pin_record_failure();
+                    midi_sysex_send_ack(CMD_SET_NAME, 0x02);
                 }
+            } else {
+                midi_sysex_send_ack(CMD_SET_NAME, 0x01);
             }
             // Send updated device info
             midi_sysex_send_device_info(g_serial_number, g_device_name,
@@ -760,6 +883,10 @@ static void midi_process_sysex(sysex_message_t* msg) {
         case CMD_SET_PIN:
             // Format: [4 bytes old PIN][4 bytes new PIN]
             if (msg->data_len == DEVICE_PIN_LEN * 2) {
+                if (!pin_check_rate_limit()) {
+                    midi_sysex_send_ack(CMD_SET_PIN, 0x02);
+                    break;
+                }
                 char old_pin[DEVICE_PIN_LEN + 1];
                 char new_pin[DEVICE_PIN_LEN + 1];
                 memcpy(old_pin, msg->data, DEVICE_PIN_LEN);
@@ -768,8 +895,15 @@ static void midi_process_sysex(sysex_message_t* msg) {
                 new_pin[DEVICE_PIN_LEN] = '\0';
                 
                 if (pin_verify(old_pin) && pin_is_valid_format(new_pin)) {
+                    pin_record_success();
                     device_set_pin(new_pin);
+                    midi_sysex_send_ack(CMD_SET_PIN, 0x00);
+                } else {
+                    pin_record_failure();
+                    midi_sysex_send_ack(CMD_SET_PIN, 0x02);
                 }
+            } else {
+                midi_sysex_send_ack(CMD_SET_PIN, 0x01);
             }
             break;
             
@@ -781,22 +915,42 @@ static void midi_process_sysex(sysex_message_t* msg) {
                 memcpy(nonce_hex, msg->data, 64);
                 nonce_hex[64] = '\0';
                 
+                // Validate hex characters
+                bool valid_hex = true;
+                for (int i = 0; i < 64; i++) {
+                    char c = nonce_hex[i];
+                    if (!((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))) {
+                        valid_hex = false;
+                        break;
+                    }
+                }
+                if (!valid_hex) {
+                    midi_sysex_send_ack(CMD_AUTH_CHALLENGE, 0x01);
+                    break;
+                }
+                
                 // Sign and send response
                 if (!g_ecdsa_initialized) {
                     ecdsa_init();
                 }
                 
                 if (g_ecdsa_initialized) {
-                    // Convert hex to bytes
+                    // Convert hex to bytes using inline nibble lookup
                     uint8_t nonce[32];
                     for (int i = 0; i < 32; i++) {
-                        char hex_byte[3] = {nonce_hex[i*2], nonce_hex[i*2+1], '\0'};
-                        nonce[i] = (uint8_t)strtol(hex_byte, NULL, 16);
+                        uint8_t hi = nonce_hex[i*2];
+                        uint8_t lo = nonce_hex[i*2+1];
+                        hi = (hi <= '9') ? (hi - '0') : ((hi <= 'F') ? (hi - 'A' + 10) : (hi - 'a' + 10));
+                        lo = (lo <= '9') ? (lo - '0') : ((lo <= 'F') ? (lo - 'A' + 10) : (lo - 'a' + 10));
+                        nonce[i] = (hi << 4) | lo;
                     }
                     
                     // Hash the nonce
                     uint8_t hash[32];
                     mbedtls_sha256(nonce, 32, hash, 0);
+                    
+                    // Feed watchdog before potentially long ECDSA signing
+                    watchdog_update();
                     
                     // Sign
                     uint8_t sig[MBEDTLS_ECDSA_MAX_LEN];
@@ -806,8 +960,177 @@ static void midi_process_sysex(sysex_message_t* msg) {
                                                             mbedtls_ctr_drbg_random, &g_ctr_drbg);
                     if (ret == 0) {
                         midi_sysex_send_auth_response(sig, sig_len);
+                    } else {
+                        midi_sysex_send_ack(CMD_AUTH_CHALLENGE, 0x03);  // Signing failed
                     }
+                } else {
+                    midi_sysex_send_ack(CMD_AUTH_CHALLENGE, 0x03);  // ECDSA not initialized
                 }
+            } else {
+                midi_sysex_send_ack(CMD_AUTH_CHALLENGE, 0x01);  // Invalid data length
+            }
+            break;
+            
+        case CMD_GET_CONFIG:
+            midi_sysex_send_full_config(g_output_rate, g_led_brightness,
+                                         g_noise_floor, g_oversampling_ctrl,
+                                         g_iir_config);
+            break;
+            
+        case CMD_SET_LED:
+            if (msg->data_len >= 1) {
+                uint8_t brightness = msg->data[0];
+                if (brightness > 100) brightness = 100;
+                g_led_brightness = brightness;
+                // Re-apply current LED state with new brightness
+                if (g_app_connected) {
+                    led_set_state(LED_STATE_APP_CONNECTED);
+                }
+                midi_sysex_send_ack(CMD_SET_LED, 0x00);
+            } else {
+                midi_sysex_send_ack(CMD_SET_LED, 0x01);
+            }
+            break;
+            
+        case CMD_RESET_SENSOR:
+            if (bmp280_reinit_config()) {
+                g_sensor_ready = true;
+                midi_sysex_send_ack(CMD_RESET_SENSOR, 0x00);
+            } else {
+                g_sensor_ready = false;
+                g_sensor_error_count++;
+                midi_sysex_send_ack(CMD_RESET_SENSOR, 0x03);
+            }
+            break;
+            
+        case CMD_FACTORY_RESET:
+            // Format: [4 bytes PIN]
+            if (msg->data_len >= DEVICE_PIN_LEN) {
+                if (!pin_check_rate_limit()) {
+                    midi_sysex_send_ack(CMD_FACTORY_RESET, 0x02);
+                    break;
+                }
+                char pin[DEVICE_PIN_LEN + 1];
+                memcpy(pin, msg->data, DEVICE_PIN_LEN);
+                pin[DEVICE_PIN_LEN] = '\0';
+                
+                if (pin_verify(pin)) {
+                    pin_record_success();
+                    // Reset to defaults (set both in memory, then single flash write)
+                    strncpy(g_device_name, "DiveChecker", DEVICE_NAME_MAX_LEN);
+                    g_device_name[DEVICE_NAME_MAX_LEN] = '\0';
+                    strncpy(g_device_pin, "0000", DEVICE_PIN_LEN);
+                    g_device_pin[DEVICE_PIN_LEN] = '\0';
+                    flash_save_settings();
+                    g_led_brightness = LED_BRIGHTNESS;
+                    g_noise_floor = 1;
+                    g_oversampling_ctrl = 5;
+                    g_iir_config = 1;
+                    g_output_rate = DEFAULT_OUTPUT_RATE_HZ;
+                    g_output_interval_ms = 1000 / DEFAULT_OUTPUT_RATE_HZ;
+                    g_samples_per_output = INTERNAL_SAMPLE_RATE_HZ / DEFAULT_OUTPUT_RATE_HZ;
+                    // Re-apply sensor config
+                    bmp280_apply_config();
+                    midi_sysex_send_ack(CMD_FACTORY_RESET, 0x00);
+                    // Send updated info
+                    midi_sysex_send_device_info(g_serial_number, g_device_name,
+                                                 FW_VERSION_STRING, g_sensor_ready);
+                } else {
+                    pin_record_failure();
+                    midi_sysex_send_ack(CMD_FACTORY_RESET, 0x02);  // Auth required
+                }
+            } else {
+                midi_sysex_send_ack(CMD_FACTORY_RESET, 0x01);
+            }
+            break;
+            
+        case CMD_SET_NOISE_FLOOR:
+            if (msg->data_len >= 1) {
+                uint8_t nf = msg->data[0];
+                if (nf <= 50) {
+                    g_noise_floor = nf;
+                    midi_sysex_send_ack(CMD_SET_NOISE_FLOOR, 0x00);
+                } else {
+                    midi_sysex_send_ack(CMD_SET_NOISE_FLOOR, 0x01);
+                }
+            } else {
+                midi_sysex_send_ack(CMD_SET_NOISE_FLOOR, 0x01);
+            }
+            break;
+            
+        case CMD_GET_TEMPERATURE:
+            midi_sysex_send_temperature(g_last_temperature_x100);
+            break;
+            
+        case CMD_ENTER_BOOTLOADER:
+            // Format: [4 bytes PIN]
+            if (msg->data_len >= DEVICE_PIN_LEN) {
+                if (!pin_check_rate_limit()) {
+                    midi_sysex_send_ack(CMD_ENTER_BOOTLOADER, 0x02);
+                    break;
+                }
+                char pin[DEVICE_PIN_LEN + 1];
+                memcpy(pin, msg->data, DEVICE_PIN_LEN);
+                pin[DEVICE_PIN_LEN] = '\0';
+                
+                if (pin_verify(pin)) {
+                    pin_record_success();
+                    midi_sysex_send_ack(CMD_ENTER_BOOTLOADER, 0x00);
+                    sleep_ms(100);  // Let ACK be sent
+                    reset_usb_boot(0, 0);  // Enter BOOTSEL mode
+                } else {
+                    pin_record_failure();
+                    midi_sysex_send_ack(CMD_ENTER_BOOTLOADER, 0x02);
+                }
+            } else {
+                midi_sysex_send_ack(CMD_ENTER_BOOTLOADER, 0x01);
+            }
+            break;
+            
+        case CMD_GET_DIAGNOSTICS: {
+            uint32_t uptime = (uint32_t)((time_us_64() / 1000 - g_boot_time_ms) / 1000);
+            midi_sysex_send_diagnostics(uptime, g_sensor_error_count,
+                                         g_overrange_event_count,
+                                         g_i2c_recovery_count,
+                                         g_last_temperature_x100);
+            break;
+        }
+            
+        case CMD_SET_OVERSAMPLING:
+            if (msg->data_len >= 1) {
+                uint8_t osrs = msg->data[0];
+                if (osrs <= 5) {
+                    g_oversampling_ctrl = osrs;
+                    if (bmp280_apply_config()) {
+                        midi_sysex_send_ack(CMD_SET_OVERSAMPLING, 0x00);
+                    } else {
+                        g_sensor_error_count++;
+                        midi_sysex_send_ack(CMD_SET_OVERSAMPLING, 0x03);
+                    }
+                } else {
+                    midi_sysex_send_ack(CMD_SET_OVERSAMPLING, 0x01);
+                }
+            } else {
+                midi_sysex_send_ack(CMD_SET_OVERSAMPLING, 0x01);
+            }
+            break;
+            
+        case CMD_SET_IIR_FILTER:
+            if (msg->data_len >= 1) {
+                uint8_t iir = msg->data[0];
+                if (iir <= 4) {
+                    g_iir_config = iir;
+                    if (bmp280_apply_config()) {
+                        midi_sysex_send_ack(CMD_SET_IIR_FILTER, 0x00);
+                    } else {
+                        g_sensor_error_count++;
+                        midi_sysex_send_ack(CMD_SET_IIR_FILTER, 0x03);
+                    }
+                } else {
+                    midi_sysex_send_ack(CMD_SET_IIR_FILTER, 0x01);
+                }
+            } else {
+                midi_sysex_send_ack(CMD_SET_IIR_FILTER, 0x01);
             }
             break;
     }
@@ -866,6 +1189,9 @@ static void midi_task(void) {
  * ========================================================================== */
 
 static void core1_sensor_task(void) {
+    // Allow Core 0 to lockout Core 1 during flash operations
+    multicore_lockout_victim_init();
+    
     // Initialize I2C on Core 1
     i2c_init(I2C_PORT, I2C_BAUDRATE);
     gpio_set_function(I2C_SDA_PIN, GPIO_FUNC_I2C);
@@ -912,7 +1238,12 @@ static void core1_sensor_task(void) {
             if (now_us - last_sample_us >= SAMPLE_INTERVAL_US) {
                 last_sample_us = now_us;
                 
-                float reading = bmp280_read_pressure();
+                float reading;
+                if (g_sensor_reconfiguring) {
+                    reading = NAN;  // Skip reads during sensor reconfiguration
+                } else {
+                    reading = bmp280_read_pressure();
+                }
                 
                 if (isnan(reading)) {
                     // Invalid reading: I2C failure, ADC saturation, or out-of-range
@@ -923,6 +1254,7 @@ static void core1_sensor_task(void) {
                         #if CFG_TUD_CDC
                         printf("WARN:Sensor over-range, resetting...\n");
                         #endif
+                        g_overrange_event_count++;
                         
                         if (bmp280_reinit_config()) {
                             in_recovery = true;
@@ -938,6 +1270,7 @@ static void core1_sensor_task(void) {
                         } else {
                             // Reset failed — try full reinit next time
                             g_sensor_ready = bmp280_init();
+                            g_sensor_error_count++;
                             overrange_consec = 0;
                         }
                     }
@@ -984,8 +1317,9 @@ static void core1_sensor_task(void) {
                     float delta = avg_pressure - g_baseline_pressure;
                     int32_t delta_x1000 = (int32_t)(delta * 1000.0f);
                     
-                    // Noise floor
-                    if (delta_x1000 > -1 && delta_x1000 < 1) {
+                    // Noise floor (configurable via CMD_SET_NOISE_FLOOR)
+                    int32_t nf = (int32_t)g_noise_floor;
+                    if (delta_x1000 > -nf && delta_x1000 < nf) {
                         delta_x1000 = 0;
                     }
                     
@@ -997,7 +1331,9 @@ static void core1_sensor_task(void) {
                         // Queue full - drop oldest and retry
                         pressure_packet_t discard;
                         queue_try_remove(&g_pressure_queue, &discard);
-                        queue_try_add(&g_pressure_queue, &packet);
+                        if (!queue_try_add(&g_pressure_queue, &packet)) {
+                            // Still full — extremely rare, skip this sample
+                        }
                     }
                 }
             }
@@ -1120,6 +1456,9 @@ int main(void) {
     // Initialize inter-core queue
     queue_init(&g_pressure_queue, sizeof(pressure_packet_t), PRESSURE_QUEUE_SIZE);
     
+    // Initialize I2C mutex for cross-core access protection
+    mutex_init(&g_i2c_mutex);
+    
     // Initialize LED
     led_init();
     led_set_state(LED_STATE_BOOT);
@@ -1144,6 +1483,9 @@ int main(void) {
     
     // Print startup info (to CDC debug port if available)
     print_startup_banner();
+    
+    // Record boot time for uptime calculation
+    g_boot_time_ms = (uint32_t)(time_us_64() / 1000);
     
     // =========================================================================
     // EMC: Enable watchdog for auto-recovery from ESD-induced hangs

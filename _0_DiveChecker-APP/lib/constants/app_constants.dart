@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 class AppConfig {
   static const String appName = 'DiveChecker';
   static const String version = '1.1.0';
-  static const String build = '5';
+  static const String build = '8';
   static const String versionDisplay = '$version (Build $build)';
   
   /// Device product info
@@ -222,8 +222,8 @@ class Spacing {
   static const SizedBox horizontalXxl = SizedBox(width: xxl);
   
   // Alias for consistency
-  static const SizedBox verticalXxs = SizedBox(height: xs);
-  static const SizedBox horizontalXxs = SizedBox(width: xs);
+  static const SizedBox verticalXxs = SizedBox(height: xxs);
+  static const SizedBox horizontalXxs = SizedBox(width: xxs);
   
   /// Pre-built padding constants
   static const EdgeInsets screenPadding = EdgeInsets.all(lg);
@@ -393,7 +393,7 @@ class Dimensions {
   /// Aliases for convenience
   static const double scoreCircleSm = scoreCircleSmall;
   static const double scoreCircleMd = scoreCircleMedium;
-  static const double scoreCircleLg = scoreCircleMedium;  // 70px - commonly used
+  static const double scoreCircleLg = scoreCircleLarge;  // 90px
   static const double scoreCircleXl = scoreCircleXL;
   
   /// Progress bar heights

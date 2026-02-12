@@ -93,34 +93,6 @@ sysex_message_t* midi_sysex_get_message(void) {
     return NULL;
 }
 
-void midi_sysex_send(uint8_t command, const uint8_t* data, uint8_t len) {
-    uint8_t buffer[SYSEX_MAX_SIZE];
-    uint8_t idx = 0;
-    
-    buffer[idx++] = SYSEX_START;
-    buffer[idx++] = SYSEX_MANUFACTURER_ID;
-    buffer[idx++] = SYSEX_DEVICE_ID;
-    buffer[idx++] = command;
-    
-    // Copy data, ensuring no bytes >= 0x80 (MIDI data bytes are 7-bit)
-    for (uint8_t i = 0; i < len && idx < SYSEX_MAX_SIZE - 1; i++) {
-        // For binary data, we need to encode bytes >= 0x80
-        // Use simple encoding: split into two 7-bit values if needed
-        buffer[idx++] = data[i] & 0x7F;
-        if (data[i] & 0x80) {
-            // High bit was set, send an extra byte
-            if (idx < SYSEX_MAX_SIZE - 1) {
-                buffer[idx++] = 0x01;  // Flag: previous byte had high bit
-            }
-        }
-    }
-    
-    buffer[idx++] = SYSEX_END;
-    
-    // Send via TinyUSB MIDI
-    tud_midi_stream_write(0, buffer, idx);
-}
-
 // SysEx send lock to prevent interleaving
 static volatile bool g_sysex_sending = false;
 
@@ -272,4 +244,73 @@ void midi_sysex_send_overrange_alert(void) {
 
 void midi_sysex_send_pong(void) {
     midi_sysex_send_raw(CMD_PONG, NULL, 0);
+}
+
+void midi_sysex_send_full_config(uint8_t output_rate, uint8_t led_brightness,
+                                  uint8_t noise_floor, uint8_t oversampling,
+                                  uint8_t iir_filter) {
+    uint8_t data[5] = { output_rate, led_brightness, noise_floor, oversampling, iir_filter };
+    midi_sysex_send_raw(CMD_FULL_CONFIG, data, 5);
+}
+
+void midi_sysex_send_temperature(int16_t temp_x100) {
+    // 7-bit encode: sign byte + 2 data bytes
+    uint8_t data[3];
+    uint16_t abs_val;
+    if (temp_x100 < 0) {
+        data[0] = 0x01;  // negative
+        abs_val = (uint16_t)(-temp_x100);
+    } else {
+        data[0] = 0x00;  // positive
+        abs_val = (uint16_t)temp_x100;
+    }
+    data[1] = (abs_val >> 7) & 0x7F;
+    data[2] = abs_val & 0x7F;
+    midi_sysex_send_raw(CMD_TEMPERATURE, data, 3);
+}
+
+void midi_sysex_send_diagnostics(uint32_t uptime_sec, uint16_t sensor_errors,
+                                  uint16_t overrange_count, uint16_t i2c_recovery_count,
+                                  int16_t cpu_temp_x100) {
+    // Pack into 7-bit safe bytes
+    uint8_t data[16];
+    uint8_t idx = 0;
+    
+    // Uptime: 5 bytes (32-bit, 7-bit encoded)
+    data[idx++] = (uptime_sec >> 28) & 0x0F;
+    data[idx++] = (uptime_sec >> 21) & 0x7F;
+    data[idx++] = (uptime_sec >> 14) & 0x7F;
+    data[idx++] = (uptime_sec >> 7) & 0x7F;
+    data[idx++] = uptime_sec & 0x7F;
+    
+    // Sensor errors: 2 bytes (14-bit)
+    data[idx++] = (sensor_errors >> 7) & 0x7F;
+    data[idx++] = sensor_errors & 0x7F;
+    
+    // Over-range count: 2 bytes (14-bit)
+    data[idx++] = (overrange_count >> 7) & 0x7F;
+    data[idx++] = overrange_count & 0x7F;
+    
+    // I2C recovery count: 2 bytes (14-bit)
+    data[idx++] = (i2c_recovery_count >> 7) & 0x7F;
+    data[idx++] = i2c_recovery_count & 0x7F;
+    
+    // CPU temp x100: sign + 2 bytes (14-bit)
+    uint16_t abs_temp;
+    if (cpu_temp_x100 < 0) {
+        data[idx++] = 0x01;
+        abs_temp = (uint16_t)(-cpu_temp_x100);
+    } else {
+        data[idx++] = 0x00;
+        abs_temp = (uint16_t)cpu_temp_x100;
+    }
+    data[idx++] = (abs_temp >> 7) & 0x7F;
+    data[idx++] = abs_temp & 0x7F;
+    
+    midi_sysex_send_raw(CMD_DIAGNOSTICS, data, idx);
+}
+
+void midi_sysex_send_ack(uint8_t cmd_id, uint8_t status) {
+    uint8_t data[2] = { cmd_id & 0x7F, status & 0x7F };
+    midi_sysex_send_raw(CMD_ACK, data, 2);
 }

@@ -28,6 +28,9 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
   bool _wasConnected = false;
   bool _isShowingDisconnectDialog = false;
 
+  // Store reference for dispose cleanup
+  SerialProvider? _serialProvider;
+
   @override
   void initState() {
     super.initState();
@@ -38,16 +41,16 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
 
   void _initController() {
     if (_isInitialized) return;
-    final serial = context.read<SerialProvider>();
+    _serialProvider = context.read<SerialProvider>();
     final settings = context.read<SettingsProvider>();
     _controller = MeasurementController(
-      serialProvider: serial,
+      serialProvider: _serialProvider!,
       settingsProvider: settings,
     );
-    _wasConnected = serial.isConnected;
+    _wasConnected = _serialProvider!.isConnected;
     
     // Listen for connection changes
-    serial.addListener(_onConnectionChanged);
+    _serialProvider!.addListener(_onConnectionChanged);
     
     _isInitialized = true;
     setState(() {});
@@ -55,7 +58,8 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
 
   void _onConnectionChanged() {
     if (!mounted) return;
-    final serial = context.read<SerialProvider>();
+    final serial = _serialProvider;
+    if (serial == null) return;
     final isConnected = serial.isConnected;
     final controller = _controller;
     
@@ -160,10 +164,9 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
 
   @override
   void dispose() {
-    // Remove listener before dispose
-    if (_isInitialized) {
-      final serial = context.read<SerialProvider>();
-      serial.removeListener(_onConnectionChanged);
+    // Remove listener using stored reference (safe in dispose)
+    if (_isInitialized && _serialProvider != null) {
+      _serialProvider!.removeListener(_onConnectionChanged);
     }
     _controller?.dispose();
     super.dispose();
@@ -276,38 +279,34 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
     final controller = _controller;
     if (controller == null) return;
 
-    try {
-      // Get device info from SerialProvider
-      final serialProvider = context.read<SerialProvider>();
-      final deviceSerial = serialProvider.deviceSerial;
-      final deviceName = serialProvider.deviceName;
+    // Get device info from SerialProvider
+    final serialProvider = _serialProvider;
+    final deviceSerial = serialProvider?.deviceSerial;
+    final deviceName = serialProvider?.deviceName;
 
-      final sessionId = await controller.saveSession(
-        notes,
-        deviceSerial: deviceSerial,
-        deviceName: deviceName,
-      );
+    final sessionId = await controller.saveSession(
+      notes,
+      deviceSerial: deviceSerial,
+      deviceName: deviceName,
+    );
 
-      // Add to SessionRepository cache
-      final state = controller.state;
-      final newSession = SessionData(
-        id: sessionId,
-        date: state.sessionStartTime ?? DateTime.now(),
-        maxPressure: state.maxPressure,
-        avgPressure: state.avgPressure,
-        duration: controller.actualDurationSeconds,  // Use actual data duration
-        notes: notes,
-        deviceSerial: deviceSerial,
-        deviceName: deviceName,
-        chartData: List<ChartPoint>.from(state.pressureData),
-        graphNotes: [],
-      );
+    // Add to SessionRepository cache
+    final state = controller.state;
+    final newSession = SessionData(
+      id: sessionId,
+      date: state.sessionStartTime ?? DateTime.now(),
+      maxPressure: state.maxPressure,
+      avgPressure: state.avgPressure,
+      duration: controller.actualDurationSeconds,  // Use actual data duration
+      notes: notes,
+      deviceSerial: deviceSerial,
+      deviceName: deviceName,
+      chartData: List<ChartPoint>.from(state.pressureData),
+      graphNotes: [],
+    );
 
-      if (mounted) {
-        context.read<SessionRepository>().addSession(newSession);
-      }
-    } catch (e) {
-      rethrow;
+    if (mounted) {
+      context.read<SessionRepository>().addSession(newSession);
     }
   }
 

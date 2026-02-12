@@ -679,6 +679,7 @@
   "bootselModeDescription": "Manual firmware update mode",
   "bootselRebootSent": "BOOTSEL reboot command sent",
   "deviceDisconnected": "Device disconnected",
+  "pleaseReconnectDevice": "Please reconnect the device.",
   "connectionLostDuringMeasurement": "Connection was lost during measurement. Do you want to save the recorded data?",
   "discard": "Discard",
   "pinMismatch": "PINs do not match",
