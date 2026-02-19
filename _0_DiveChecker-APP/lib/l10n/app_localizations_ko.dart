@@ -1603,4 +1603,56 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get overrangeWarningMessage =>
       '센서의 측정 범위를 초과했습니다. 너무 강하게 불거나 빨아당기지 마세요! 센서가 복구 중입니다...';
+
+  @override
+  String get usbMidiDevicesTitle => 'USB MIDI 장치';
+
+  @override
+  String get connectViaCable => 'USB 케이블로 압력 센서를 연결하세요';
+
+  @override
+  String get noUsbDevicesFound => 'USB 장치를 찾을 수 없습니다';
+
+  @override
+  String get connectDeviceViaCable => 'USB 케이블로 기기를 연결하세요';
+
+  @override
+  String get diveCheckerCompatible => 'DiveChecker 호환';
+
+  @override
+  String scanFailedError(String error) {
+    return '검색 실패: $error';
+  }
+
+  @override
+  String connectionErrorWithMessage(String error) {
+    return '연결 오류: $error';
+  }
+
+  @override
+  String get noFirmwareFilesFound => '펌웨어 파일을 찾을 수 없습니다';
+
+  @override
+  String get lookingForFirmwareFiles => '*.bin 또는 *_signed.bin 파일을 찾고 있습니다';
+
+  @override
+  String get deviceNotConnectedError => '기기가 연결되지 않았습니다';
+
+  @override
+  String get signatureValid => '서명 확인됨 ✓';
+
+  @override
+  String get signatureInvalid => '서명 확인 실패 ✗';
+
+  @override
+  String get firmwareUntrustedWarning =>
+      '이 펌웨어는 유효한 키로 서명되지 않았습니다. 손상되었거나 신뢰할 수 없는 소스에서 만든 것일 수 있습니다.';
+
+  @override
+  String verifiedFirmwareSaved(String filename) {
+    return '검증된 펌웨어 저장됨: $filename';
+  }
+
+  @override
+  String get calibrationTimedOut => '보정 시간 초과 - 센서 데이터가 충분하지 않습니다';
 }

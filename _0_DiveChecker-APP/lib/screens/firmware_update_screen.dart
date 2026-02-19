@@ -30,6 +30,7 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
   FirmwarePackage? _selectedPackage;
   bool _isLoading = false;
   bool _isVerifying = false;
+  bool _isProcessing = false; // Double-tap guard
   String? _errorMessage;
   String _searchPath = '';
 
@@ -117,7 +118,10 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
       if (package.isValid) {
         final extractedPath = await package.extractVerifiedFirmware(_searchPath);
         if (extractedPath != null) {
-          if (mounted) context.showSnackBar('Verified firmware saved: ${extractedPath.split('/').last}');
+          if (mounted) {
+            final l10n = AppLocalizations.of(context)!;
+            context.showSnackBar(l10n.verifiedFirmwareSaved(extractedPath.split('/').last));
+          }
         }
       }
     } catch (e) {
@@ -129,9 +133,11 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
   }
 
   Future<void> _rebootToBootsel() async {
+    if (_isProcessing) return;
     final serial = context.read<SerialProvider>();
     if (!serial.isConnected) {
-      context.showSnackBar('Device not connected');
+      final l10nErr = AppLocalizations.of(context)!;
+      context.showSnackBar(l10nErr.deviceNotConnectedError);
       return;
     }
     
@@ -185,12 +191,17 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
     );
 
     if (confirmed == true) {
-      final result = await serial.sendCommand('B${pinController.text}');
-      if (!mounted) return;
-      if (result) {
-        context.showSnackBar(l10n.bootselRebootSent);
-      } else {
-        context.showSnackBar(l10n.wrongPin);
+      setState(() => _isProcessing = true);
+      try {
+        final result = await serial.enterBootloader(pinController.text);
+        if (!mounted) return;
+        if (result == 0) {
+          context.showSnackBar(l10n.bootselRebootSent);
+        } else {
+          context.showSnackBar(l10n.wrongPin);
+        }
+      } finally {
+        if (mounted) setState(() => _isProcessing = false);
       }
     }
   }
@@ -289,12 +300,12 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
             Icon(Icons.folder_off, size: IconSizes.display, color: StatusColors.disabled),
             Spacing.verticalLg,
             Text(
-              'No firmware files found',
+              l10n.noFirmwareFilesFound,
               style: TextStyle(fontSize: FontSizes.bodyLg, color: StatusColors.neutral),
             ),
             Spacing.verticalSm,
             Text(
-              'Looking for *.bin or *_signed.bin files',
+              l10n.lookingForFirmwareFiles,
               style: TextStyle(fontSize: FontSizes.bodySm, color: StatusColors.disabled),
             ),
             Spacing.verticalXxl,
@@ -381,8 +392,8 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
                       children: [
                         Text(
                           package.isValid
-                              ? 'Signature Valid ✓'
-                              : 'Signature Invalid ✗',
+                              ? l10n.signatureValid
+                              : l10n.signatureInvalid,
                           style: TextStyle(
                             fontSize: FontSizes.titleSm,
                             fontWeight: FontWeight.bold,
@@ -430,8 +441,7 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
                   Spacing.horizontalMd,
                   Expanded(
                     child: Text(
-                      'This firmware is not signed with a valid key. '
-                      'It may be corrupted or from an untrusted source.',
+                      l10n.firmwareUntrustedWarning,
                       style: TextStyle(color: ScoreColors.goodLight),
                     ),
                   ),

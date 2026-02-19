@@ -1639,4 +1639,58 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get overrangeWarningMessage =>
       'The sensor exceeded its measurement range. Please don\'t blow or suck too hard! The sensor is recovering...';
+
+  @override
+  String get usbMidiDevicesTitle => 'USB MIDI Devices';
+
+  @override
+  String get connectViaCable => 'Connect your pressure sensor via USB cable';
+
+  @override
+  String get noUsbDevicesFound => 'No USB devices found';
+
+  @override
+  String get connectDeviceViaCable => 'Connect your device via USB cable';
+
+  @override
+  String get diveCheckerCompatible => 'DiveChecker Compatible';
+
+  @override
+  String scanFailedError(String error) {
+    return 'Scan failed: $error';
+  }
+
+  @override
+  String connectionErrorWithMessage(String error) {
+    return 'Connection error: $error';
+  }
+
+  @override
+  String get noFirmwareFilesFound => 'No firmware files found';
+
+  @override
+  String get lookingForFirmwareFiles =>
+      'Looking for *.bin or *_signed.bin files';
+
+  @override
+  String get deviceNotConnectedError => 'Device not connected';
+
+  @override
+  String get signatureValid => 'Signature Valid ✓';
+
+  @override
+  String get signatureInvalid => 'Signature Invalid ✗';
+
+  @override
+  String get firmwareUntrustedWarning =>
+      'This firmware is not signed with a valid key. It may be corrupted or from an untrusted source.';
+
+  @override
+  String verifiedFirmwareSaved(String filename) {
+    return 'Verified firmware saved: $filename';
+  }
+
+  @override
+  String get calibrationTimedOut =>
+      'Calibration timed out - not enough sensor data received';
 }

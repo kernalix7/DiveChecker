@@ -3151,6 +3151,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The sensor exceeded its measurement range. Please don\'t blow or suck too hard! The sensor is recovering...'**
   String get overrangeWarningMessage;
+
+  /// No description provided for @usbMidiDevicesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'USB MIDI Devices'**
+  String get usbMidiDevicesTitle;
+
+  /// No description provided for @connectViaCable.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect your pressure sensor via USB cable'**
+  String get connectViaCable;
+
+  /// No description provided for @noUsbDevicesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No USB devices found'**
+  String get noUsbDevicesFound;
+
+  /// No description provided for @connectDeviceViaCable.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect your device via USB cable'**
+  String get connectDeviceViaCable;
+
+  /// No description provided for @diveCheckerCompatible.
+  ///
+  /// In en, this message translates to:
+  /// **'DiveChecker Compatible'**
+  String get diveCheckerCompatible;
+
+  /// No description provided for @scanFailedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan failed: {error}'**
+  String scanFailedError(String error);
+
+  /// No description provided for @connectionErrorWithMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection error: {error}'**
+  String connectionErrorWithMessage(String error);
+
+  /// No description provided for @noFirmwareFilesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No firmware files found'**
+  String get noFirmwareFilesFound;
+
+  /// No description provided for @lookingForFirmwareFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking for *.bin or *_signed.bin files'**
+  String get lookingForFirmwareFiles;
+
+  /// No description provided for @deviceNotConnectedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Device not connected'**
+  String get deviceNotConnectedError;
+
+  /// No description provided for @signatureValid.
+  ///
+  /// In en, this message translates to:
+  /// **'Signature Valid ✓'**
+  String get signatureValid;
+
+  /// No description provided for @signatureInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Signature Invalid ✗'**
+  String get signatureInvalid;
+
+  /// No description provided for @firmwareUntrustedWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This firmware is not signed with a valid key. It may be corrupted or from an untrusted source.'**
+  String get firmwareUntrustedWarning;
+
+  /// No description provided for @verifiedFirmwareSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified firmware saved: {filename}'**
+  String verifiedFirmwareSaved(String filename);
+
+  /// No description provided for @calibrationTimedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Calibration timed out - not enough sensor data received'**
+  String get calibrationTimedOut;
 }
 
 class _AppLocalizationsDelegate

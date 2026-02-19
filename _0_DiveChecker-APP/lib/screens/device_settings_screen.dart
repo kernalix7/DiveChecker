@@ -48,6 +48,8 @@ class DeviceSettingsScreen extends StatefulWidget {
 class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
   final _pinController = TextEditingController();
   final _nameController = TextEditingController();
+  bool _isProcessing = false; // Double-tap guard
+  bool _hasPopped = false;    // Prevent double Navigator.pop on disconnect
 
   @override
   void dispose() {
@@ -65,11 +67,8 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
     String productName = AppConfig.productNameV1;
     String productId = AppConfig.productIdV1;
     
-    // TODO: Parse actual firmware version from device response
-    String? firmwareVersion;
-    if (provider.isConnected) {
-      firmwareVersion = AppConfig.defaultFirmwareVersion; // Placeholder - should come from device
-    }
+    // Firmware version from device
+    String? firmwareVersion = provider.firmwareVersion;
     
     return DeviceProductInfo(
       productName: productName,
@@ -238,10 +237,13 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
     return Consumer<SerialProvider>(
       builder: (context, serialProvider, _) {
         if (!serialProvider.isConnected) {
-          // Device disconnected - go back
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) Navigator.pop(context);
-          });
+          // Device disconnected - go back (guard against duplicate pops)
+          if (!_hasPopped) {
+            _hasPopped = true;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) Navigator.pop(context);
+            });
+          }
           return const Scaffold(body: Center(child: CircularProgressIndicator()));
         }
         
@@ -454,6 +456,7 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
   }
   
   Future<void> _confirmReboot(BuildContext context, AppLocalizations l10n, SerialProvider provider) async {
+    if (_isProcessing) return;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -475,14 +478,24 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
     );
 
     if (confirmed == true && mounted) {
-      // Send soft reboot command (not BOOTSEL)
-      // For now, we don't have a soft reboot command, just disconnect
-      provider.disconnect();
-      context.showSnackBar(l10n.deviceDisconnected);
+      // Send soft reboot command
+      setState(() => _isProcessing = true);
+      try {
+        final sent = await provider.softReboot();
+        if (!mounted) return;
+        if (sent) {
+          context.showSnackBar(l10n.deviceDisconnected);
+        } else {
+          context.showSnackBar(l10n.connectionError);
+        }
+      } finally {
+        if (mounted) setState(() => _isProcessing = false);
+      }
     }
   }
 
   Future<void> _confirmBootsel(BuildContext context, AppLocalizations l10n, SerialProvider provider) async {
+    if (_isProcessing) return;
     final pinController = TextEditingController();
 
     final confirmed = await showDialog<bool>(
@@ -529,12 +542,17 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
     );
 
     if (confirmed == true && mounted) {
-      final result = await provider.sendCommand('B${pinController.text}');
-      if (!mounted) return;
-      if (result) {
-        context.showSnackBar(l10n.bootselRebootSent);
-      } else {
-        context.showSnackBar(l10n.wrongPin);
+      setState(() => _isProcessing = true);
+      try {
+        final result = await provider.enterBootloader(pinController.text);
+        if (!mounted) return;
+        if (result == 0) {
+          context.showSnackBar(l10n.bootselRebootSent);
+        } else {
+          context.showSnackBar(l10n.wrongPin);
+        }
+      } finally {
+        if (mounted) setState(() => _isProcessing = false);
       }
     }
   }

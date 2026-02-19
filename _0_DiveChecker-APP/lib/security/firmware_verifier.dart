@@ -12,6 +12,7 @@ import 'package:flutter/foundation.dart';
 import 'package:pointycastle/export.dart';
 
 import 'ecdsa_public_key.dart';
+import 'ecdsa_utils.dart' as ecdsa;
 
 /// Firmware package information
 class FirmwarePackage {
@@ -96,7 +97,6 @@ class FirmwarePackage {
 /// Firmware signature verifier using ECDSA P-256
 class FirmwareVerifier {
   static const List<int> _magic = [0x44, 0x43, 0x30, 0x31]; // "DC01"
-  static final ECDomainParameters _ecParams = ECCurve_secp256r1();
   
   /// List firmware files from a directory
   static Future<List<FileSystemEntity>> listFirmwareFiles(String directoryPath) async {
@@ -134,6 +134,14 @@ class FirmwareVerifier {
     try {
       if (!await file.exists()) {
         return _errorPackage(fileName, filePath, 'File not found');
+      }
+      
+      // Prevent OOM from accidentally selecting a huge file
+      final stat = await file.stat();
+      const maxFirmwareSize = 16 * 1024 * 1024; // 16 MB max
+      if (stat.size > maxFirmwareSize) {
+        return _errorPackage(fileName, filePath, 
+            'File too large: ${(stat.size / (1024 * 1024)).toStringAsFixed(1)} MB (max 16 MB)');
       }
       
       final bytes = await file.readAsBytes();
@@ -202,13 +210,15 @@ class FirmwareVerifier {
   
   /// Extract version info from firmware binary
   /// Looks for patterns like "DiveChecker Firmware v4.5.0" in the binary
+  /// Only scans first 64KB to avoid scanning entire firmware
   static Map<String, dynamic> _extractVersionInfo(Uint8List firmwareData) {
     final result = <String, dynamic>{};
     
     try {
-      // Convert to string for pattern matching (only printable ASCII)
+      // Only scan first 64KB (version strings are in .rodata near beginning)
+      final scanLen = firmwareData.length < 65536 ? firmwareData.length : 65536;
       final dataStr = String.fromCharCodes(
-        firmwareData.where((b) => b >= 32 && b < 127)
+        firmwareData.sublist(0, scanLen).where((b) => b >= 32 && b < 127)
       );
       
       // Look for version pattern: "v4.5.0" or "4.5.0"
@@ -239,15 +249,15 @@ class FirmwareVerifier {
       final sha256 = SHA256Digest();
       final hash = sha256.process(data);
       
-      // Parse DER signature
-      final ecSig = _parseDerSignature(signature);
+      // Parse DER signature (with length validation)
+      final ecSig = ecdsa.parseDerSignature(signature);
       if (ecSig == null) {
         if (kDebugMode) debugPrint('Failed to parse DER signature');
         return false;
       }
       
       // Load public key
-      final ecPublicKey = _loadPublicKey(ecdsaPublicKey);
+      final ecPublicKey = ecdsa.loadEcPublicKey(ecdsaPublicKey);
       if (ecPublicKey == null) {
         if (kDebugMode) debugPrint('Failed to load public key');
         return false;
@@ -262,61 +272,6 @@ class FirmwareVerifier {
       if (kDebugMode) debugPrint('Signature verification error: $e');
       return false;
     }
-  }
-  
-  /// Load EC public key from uncompressed format
-  static ECPublicKey? _loadPublicKey(Uint8List publicKeyBytes) {
-    if (publicKeyBytes.length != 65 || publicKeyBytes[0] != 0x04) {
-      return null;
-    }
-    
-    final x = _bytesToBigInt(publicKeyBytes.sublist(1, 33));
-    final y = _bytesToBigInt(publicKeyBytes.sublist(33, 65));
-    
-    final Q = _ecParams.curve.createPoint(x, y);
-    return ECPublicKey(Q, _ecParams);
-  }
-  
-  /// Parse DER-encoded ECDSA signature
-  static ECSignature? _parseDerSignature(Uint8List derSig) {
-    try {
-      if (derSig.length < 8 || derSig[0] != 0x30) {
-        return null;
-      }
-      
-      int pos = 2;
-      
-      // Parse r
-      if (derSig[pos] != 0x02) return null;
-      pos++;
-      int rLen = derSig[pos];
-      pos++;
-      final rBytes = derSig.sublist(pos, pos + rLen);
-      pos += rLen;
-      
-      // Parse s
-      if (derSig[pos] != 0x02) return null;
-      pos++;
-      int sLen = derSig[pos];
-      pos++;
-      final sBytes = derSig.sublist(pos, pos + sLen);
-      
-      final r = _bytesToBigInt(rBytes);
-      final s = _bytesToBigInt(sBytes);
-      
-      return ECSignature(r, s);
-    } catch (e) {
-      return null;
-    }
-  }
-  
-  /// Convert bytes to BigInt
-  static BigInt _bytesToBigInt(Uint8List bytes) {
-    BigInt result = BigInt.zero;
-    for (int i = 0; i < bytes.length; i++) {
-      result = (result << 8) | BigInt.from(bytes[i]);
-    }
-    return result;
   }
   
   /// Create error package

@@ -71,10 +71,15 @@ class _HomeScreenState extends State<HomeScreen> {
         _showProgressSnackBar(l10n.atmosphericCalibrating, Icons.compress);
       }
 
-      // Step 3: Show "Device connected successfully!" when auth + calibration both done
+      // Step 3: Show feedback when calibration completes
       if (serial.isAuthenticationComplete && !serial.isCalibrating && _calibProgressShown && !_connectionCompleteShown) {
         _connectionCompleteShown = true;
-        _showSuccessSnackBar(l10n.deviceConnectedSuccessfully);
+        if (serial.atmosphericPressureOffset == 0.0) {
+          // Calibration timed out or failed
+          _showWarningSnackBar(l10n.calibrationTimedOut);
+        } else {
+          _showSuccessSnackBar(l10n.deviceConnectedSuccessfully);
+        }
       }
     }
 
@@ -156,6 +161,28 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             backgroundColor: Colors.green.shade700,
             duration: const Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+    });
+  }
+
+  void _showWarningSnackBar(String message) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.warning_amber, color: Colors.white, size: 20),
+                const SizedBox(width: Spacing.sm),
+                Expanded(child: Text(message)),
+              ],
+            ),
+            backgroundColor: Colors.orange.shade700,
+            duration: const Duration(seconds: 5),
             behavior: SnackBarBehavior.floating,
           ),
         );

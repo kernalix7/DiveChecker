@@ -730,5 +730,36 @@
   "waitingForData": "Waiting for data...",
   
   "overrangeWarningTitle": "Range Exceeded!",
-  "overrangeWarningMessage": "The sensor exceeded its measurement range. Please don't blow or suck too hard! The sensor is recovering..."
+  "overrangeWarningMessage": "The sensor exceeded its measurement range. Please don't blow or suck too hard! The sensor is recovering...",
+  
+  "usbMidiDevicesTitle": "USB MIDI Devices",
+  "connectViaCable": "Connect your pressure sensor via USB cable",
+  "noUsbDevicesFound": "No USB devices found",
+  "connectDeviceViaCable": "Connect your device via USB cable",
+  "diveCheckerCompatible": "DiveChecker Compatible",
+  "scanFailedError": "Scan failed: {error}",
+  "@scanFailedError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "connectionErrorWithMessage": "Connection error: {error}",
+  "@connectionErrorWithMessage": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "noFirmwareFilesFound": "No firmware files found",
+  "lookingForFirmwareFiles": "Looking for *.bin or *_signed.bin files",
+  "deviceNotConnectedError": "Device not connected",
+  "signatureValid": "Signature Valid ✓",
+  "signatureInvalid": "Signature Invalid ✗",
+  "firmwareUntrustedWarning": "This firmware is not signed with a valid key. It may be corrupted or from an untrusted source.",
+  "verifiedFirmwareSaved": "Verified firmware saved: {filename}",
+  "@verifiedFirmwareSaved": {
+    "placeholders": {
+      "filename": {"type": "String"}
+    }
+  },
+  "calibrationTimedOut": "Calibration timed out - not enough sensor data received"
 }

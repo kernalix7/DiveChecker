@@ -57,6 +57,7 @@ target_compile_definitions(Divechecker PRIVATE
     USBD_MANUFACTURER="kodenet.io"
     USBD_PRODUCT="DiveChecker V1"
     PICO_STDIO_USB_ENABLE_RESET_VIA_BAUD_RATE=0
+    PICO_STACK_SIZE=8192
 )
 
 # Add the standard library to the build

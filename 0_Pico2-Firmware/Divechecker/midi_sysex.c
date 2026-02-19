@@ -21,17 +21,28 @@ typedef enum {
 static sysex_state_t g_rx_state = SYSEX_STATE_IDLE;
 static sysex_message_t g_rx_message;
 static bool g_message_ready = false;
+static uint64_t g_sysex_start_us = 0;  // SysEx receive timeout tracking
+#define SYSEX_RECEIVE_TIMEOUT_US  500000  // 500ms timeout for SysEx assembly
 
 void midi_sysex_init(void) {
     g_rx_state = SYSEX_STATE_IDLE;
     g_message_ready = false;
     memset(&g_rx_message, 0, sizeof(g_rx_message));
+    g_rx_message.overflow = false;
 }
 
 bool midi_sysex_receive_byte(uint8_t byte) {
     // Real-time messages can appear anywhere, ignore them
     if (byte >= 0xF8) {
         return false;
+    }
+    
+    // Timeout any in-progress SysEx assembly (all states except IDLE)
+    if (g_rx_state != SYSEX_STATE_IDLE &&
+        time_us_64() - g_sysex_start_us > SYSEX_RECEIVE_TIMEOUT_US) {
+        g_rx_state = SYSEX_STATE_IDLE;
+        g_rx_message.data_len = 0;
+        g_rx_message.overflow = false;
     }
     
     // Any status byte (except real-time) resets SysEx
@@ -46,6 +57,8 @@ bool midi_sysex_receive_byte(uint8_t byte) {
                 g_rx_state = SYSEX_STATE_MANUFACTURER;
                 g_message_ready = false;
                 g_rx_message.data_len = 0;
+                g_rx_message.overflow = false;
+                g_sysex_start_us = time_us_64();
             }
             break;
             
@@ -71,14 +84,29 @@ bool midi_sysex_receive_byte(uint8_t byte) {
             break;
             
         case SYSEX_STATE_DATA:
+            // Check receive timeout
+            if (time_us_64() - g_sysex_start_us > SYSEX_RECEIVE_TIMEOUT_US) {
+                g_rx_state = SYSEX_STATE_IDLE;
+                g_rx_message.data_len = 0;
+                return false;
+            }
             if (byte == SYSEX_END) {
+                // Discard entire message if buffer overflowed
+                if (g_rx_message.overflow) {
+                    g_rx_state = SYSEX_STATE_IDLE;
+                    g_rx_message.data_len = 0;
+                    g_rx_message.overflow = false;
+                    return false;
+                }
                 g_message_ready = true;
                 g_rx_state = SYSEX_STATE_IDLE;
                 return true;
             } else if (g_rx_message.data_len < sizeof(g_rx_message.data)) {
                 g_rx_message.data[g_rx_message.data_len++] = byte;
+            } else {
+                // Buffer full: set overflow flag, discard on SYSEX_END
+                g_rx_message.overflow = true;
             }
-            // If buffer full, keep receiving but discard extra data
             break;
     }
     
@@ -135,7 +163,7 @@ static void midi_sysex_send_raw(uint8_t command, const uint8_t* data, uint16_t l
     buffer[idx++] = command;
     
     for (uint16_t i = 0; i < len && idx < SYSEX_MAX_SIZE - 1; i++) {
-        buffer[idx++] = data[i];
+        buffer[idx++] = data[i] & 0x7F;  // Mask to 7-bit (MIDI spec compliance)
     }
     
     buffer[idx++] = SYSEX_END;
@@ -189,6 +217,7 @@ void midi_sysex_send_device_info(const char* serial, const char* name,
     // Serial (max 24 chars)
     uint8_t serial_len = strlen(serial);
     if (serial_len > 24) serial_len = 24;
+    if (idx + 1 + serial_len > sizeof(data)) return;
     data[idx++] = serial_len;
     memcpy(&data[idx], serial, serial_len);
     idx += serial_len;
@@ -196,6 +225,7 @@ void midi_sysex_send_device_info(const char* serial, const char* name,
     // Name (max 24 chars)
     uint8_t name_len = strlen(name);
     if (name_len > 24) name_len = 24;
+    if (idx + 1 + name_len > sizeof(data)) return;
     data[idx++] = name_len;
     memcpy(&data[idx], name, name_len);
     idx += name_len;
@@ -203,6 +233,7 @@ void midi_sysex_send_device_info(const char* serial, const char* name,
     // Firmware version (max 16 chars)
     uint8_t fw_len = strlen(fw_version);
     if (fw_len > 16) fw_len = 16;
+    if (idx + 1 + fw_len + 1 > sizeof(data)) return;  // +1 for sensor_ok
     data[idx++] = fw_len;
     memcpy(&data[idx], fw_version, fw_len);
     idx += fw_len;

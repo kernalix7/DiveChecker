@@ -50,6 +50,7 @@
 #define CMD_GET_DIAGNOSTICS     0x2B    // Request runtime diagnostics
 #define CMD_SET_OVERSAMPLING    0x2C    // Set pressure oversampling (1 byte: 0-5)
 #define CMD_SET_IIR_FILTER      0x2D    // Set IIR filter coefficient (1 byte: 0-4)
+#define CMD_SOFT_REBOOT         0x2E    // Soft reboot via watchdog
 #define CMD_AUTH_CHALLENGE      0x30    // Auth challenge (32 bytes nonce)
 #define CMD_SET_PIN             0x31    // Set PIN (old PIN + new PIN)
 
@@ -62,7 +63,8 @@
 typedef struct {
     uint8_t command;
     uint8_t data[SYSEX_MAX_SIZE - 5];  // Exclude F0, mfr, dev, cmd, F7
-    uint8_t data_len;
+    uint16_t data_len;                  // uint16_t to avoid silent truncation
+    bool overflow;                      // Set if data exceeded buffer capacity
 } sysex_message_t;
 
 /**

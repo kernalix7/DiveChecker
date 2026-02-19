@@ -195,8 +195,12 @@ class WebMidiHandler implements MidiHandler {
   
   @override
   void dispose() {
+    if (_isDisposed) return;
+    _isDisposed = true;
     disconnect();
     _dataController.close();
     _setupController.close();
   }
+  
+  bool _isDisposed = false;
 }

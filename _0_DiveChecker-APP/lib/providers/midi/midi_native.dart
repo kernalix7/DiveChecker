@@ -14,12 +14,13 @@ import 'midi_interface.dart';
 class NativeMidiHandler implements MidiHandler {
   final MidiCommand _midiCommand = MidiCommand();
   
-  StreamController<Uint8List>? _dataController;
-  StreamController<void>? _setupController;
+  late final StreamController<Uint8List> _dataController;
+  late final StreamController<void> _setupController;
   StreamSubscription? _dataSubscription;
   StreamSubscription? _setupSubscription;
   
   MidiDevice? _connectedDevice;
+  bool _isDisposed = false;
   
   NativeMidiHandler() {
     _dataController = StreamController<Uint8List>.broadcast();
@@ -27,13 +28,13 @@ class NativeMidiHandler implements MidiHandler {
     
     // Listen to device setup changes
     _setupSubscription = _midiCommand.onMidiSetupChanged?.listen((_) {
-      _setupController?.add(null);
+      _setupController.add(null);
     });
     
     // Listen to incoming MIDI data
     _dataSubscription = _midiCommand.onMidiDataReceived?.listen((packet) {
       if (packet.data.isNotEmpty) {
-        _dataController?.add(Uint8List.fromList(packet.data));
+        _dataController.add(Uint8List.fromList(packet.data));
       }
     });
   }
@@ -88,21 +89,23 @@ class NativeMidiHandler implements MidiHandler {
   }
   
   @override
-  Stream<Uint8List> get onDataReceived => _dataController!.stream;
+  Stream<Uint8List> get onDataReceived => _dataController.stream;
   
   @override
-  Stream<void> get onDeviceSetupChanged => _setupController!.stream;
+  Stream<void> get onDeviceSetupChanged => _setupController.stream;
   
   @override
   bool get isConnected => _connectedDevice != null;
   
   @override
   void dispose() {
+    if (_isDisposed) return;
+    _isDisposed = true;
     _dataSubscription?.cancel();
     _setupSubscription?.cancel();
     disconnect();
-    _dataController?.close();
-    _setupController?.close();
+    _dataController.close();
+    _setupController.close();
   }
 }
 

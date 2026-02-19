@@ -16,7 +16,8 @@ extern "C" {
 // COMMON CONFIGURATION
 //--------------------------------------------------------------------
 
-#define CFG_TUSB_MCU                OPT_MCU_RP2040
+// Note: CFG_TUSB_MCU is auto-detected by Pico SDK via tinyusb_board
+// Do NOT define it manually for RP2350 compatibility
 #define CFG_TUSB_OS                 OPT_OS_PICO
 #define CFG_TUSB_DEBUG              0
 
@@ -43,7 +44,7 @@ extern "C" {
 // MIDI Class
 #define CFG_TUD_MIDI                1
 #define CFG_TUD_MIDI_RX_BUFSIZE     64
-#define CFG_TUD_MIDI_TX_BUFSIZE     64
+#define CFG_TUD_MIDI_TX_BUFSIZE     256
 
 // CDC Class (for debug output, optional)
 #define CFG_TUD_CDC                 1

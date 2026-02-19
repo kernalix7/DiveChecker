@@ -82,7 +82,7 @@ class MidiDeviceInfo {
 /// Device ID: 0x01 (DiveChecker)
 /// 
 /// Commands:
-/// - 0x01: Pressure data (4 bytes: int32 mPa, big-endian)
+/// - 0x01: Pressure data (5 bytes: 7-bit encoded int32 delta_x1000)
 /// - 0x02: Device info response
 /// - 0x03: Config response
 /// - 0x04: Auth response
@@ -142,6 +142,7 @@ class MidiProvider extends ChangeNotifier {
   static const int _cmdGetDiagnostics = 0x2B;
   static const int _cmdSetOversampling = 0x2C;
   static const int _cmdSetIirFilter = 0x2D;
+  static const int _cmdSoftReboot = 0x2E;
   static const int _cmdAuthChallenge = 0x30;
   static const int _cmdSetPin = 0x31;
 
@@ -182,6 +183,7 @@ class MidiProvider extends ChangeNotifier {
   static const bool _authenticationEnabled = true; // ECDSA verification enabled
   bool _isAuthenticated = false;
   bool _authenticationComplete = false;
+  bool _authenticationStarted = false; // Guard against duplicate auth
   String? _authNonce;
   Completer<bool>? _authCompleter;
 
@@ -207,6 +209,9 @@ class MidiProvider extends ChangeNotifier {
   int _oversampling = 5;   // 0=skip,1=x1,2=x2,3=x4,4=x8,5=x16
   int _iirFilter = 1;      // 0=off,1=x2,2=x4,3=x8,4=x16
   
+  // Firmware version (from CMD_DEVICE_INFO)
+  String? _firmwareVersion;
+  
   // Temperature
   double _temperature = 0.0;  // °C
   
@@ -229,6 +234,14 @@ class MidiProvider extends ChangeNotifier {
   // Pong timeout tracking
   DateTime? _lastPongTime;
   static const int _pongTimeoutMs = 5000;  // 5 seconds without pong = lost
+
+  // Debounce for device re-enumeration
+  Timer? _setupDebounceTimer;
+
+  // Auto-reconnect on unexpected disconnect
+  int _reconnectAttempts = 0;
+  static const int _maxReconnectAttempts = 3;
+  Timer? _reconnectTimer;
 
   // Getters
   MidiConnectionState get state => _state;
@@ -255,6 +268,7 @@ class MidiProvider extends ChangeNotifier {
   int get noiseFloor => _noiseFloor;
   int get oversampling => _oversampling;
   int get iirFilter => _iirFilter;
+  String? get firmwareVersion => _firmwareVersion;
   double get temperature => _temperature;
   int get uptimeSec => _uptimeSec;
   int get sensorErrors => _sensorErrors;
@@ -272,6 +286,11 @@ class MidiProvider extends ChangeNotifier {
 
   void _setState(MidiConnectionState newState) {
     if (_state != newState) {
+      // Cancel ping timer when leaving connected state
+      if (_state == MidiConnectionState.connected && newState != MidiConnectionState.connected) {
+        _pingTimer?.cancel();
+        _pingTimer = null;
+      }
       _state = newState;
       notifyListeners();
     }
@@ -279,7 +298,9 @@ class MidiProvider extends ChangeNotifier {
 
   void _updatePressure(double rawPressure) {
     if (_isCalibrating) {
-      _calibrationSamples.add(rawPressure);
+      if (_calibrationSamples.length < 500) {
+        _calibrationSamples.add(rawPressure);
+      }
       if (_calibrationStartTime != null) {
         final elapsed =
             DateTime.now().difference(_calibrationStartTime!).inMilliseconds;
@@ -365,6 +386,7 @@ class MidiProvider extends ChangeNotifier {
       _setState(MidiConnectionState.connected);
       _deviceInfoRequested = false;
       _lastPongTime = DateTime.now();
+      _reconnectAttempts = 0;  // Reset reconnect counter on successful connect
       _startPing();
 
       return true;
@@ -521,7 +543,7 @@ class MidiProvider extends ChangeNotifier {
     if (idx >= payload.length) return;
     final serialLen = payload[idx++];
     if (idx + serialLen > payload.length) return;
-    final serial = String.fromCharCodes(payload.sublist(idx, idx + serialLen));
+    final serial = utf8.decode(payload.sublist(idx, idx + serialLen), allowMalformed: true);
     idx += serialLen;
     if (kDebugMode) debugPrint('Device serial: $serial');
     
@@ -534,7 +556,7 @@ class MidiProvider extends ChangeNotifier {
     if (idx >= payload.length) return;
     final nameLen = payload[idx++];
     if (idx + nameLen > payload.length) return;
-    final name = String.fromCharCodes(payload.sublist(idx, idx + nameLen));
+    final name = utf8.decode(payload.sublist(idx, idx + nameLen), allowMalformed: true);
     idx += nameLen;
     
     // Parse firmware version
@@ -544,6 +566,7 @@ class MidiProvider extends ChangeNotifier {
     final fwVersion = String.fromCharCodes(payload.sublist(idx, idx + fwLen));
     idx += fwLen;
     if (kDebugMode) debugPrint('Firmware version: $fwVersion');
+    _firmwareVersion = fwVersion;
     
     // Parse sensor status
     if (idx >= payload.length) return;
@@ -560,11 +583,8 @@ class MidiProvider extends ChangeNotifier {
   }
 
   void _handleConfig(Uint8List payload) {
-    if (payload.length >= 2) {
-      final oversampling = payload[0];
-      final sampleRate = payload[1];
-      _outputRate = sampleRate;
-      _onConfigReceived?.call(oversampling, sampleRate);
+    if (payload.length >= 1) {
+      _outputRate = payload[0].clamp(4, 50);
       notifyListeners();
     }
   }
@@ -690,11 +710,11 @@ class MidiProvider extends ChangeNotifier {
   void _handleFullConfig(Uint8List payload) {
     // Format: [output_rate][led_brightness][noise_floor][oversampling][iir_filter]
     if (payload.length < 5) return;
-    _outputRate = payload[0];
-    _ledBrightness = payload[1];
-    _noiseFloor = payload[2];
-    _oversampling = payload[3];
-    _iirFilter = payload[4];
+    _outputRate = payload[0].clamp(4, 50);
+    _ledBrightness = payload[1].clamp(0, 100);
+    _noiseFloor = payload[2].clamp(0, 50);
+    _oversampling = payload[3].clamp(0, 5);
+    _iirFilter = payload[4].clamp(0, 4);
     notifyListeners();
   }
 
@@ -734,7 +754,8 @@ class MidiProvider extends ChangeNotifier {
         _isAuthenticated = true;
         _authenticationComplete = true;
         notifyListeners();
-      } else {
+      } else if (!_authenticationStarted) {
+        _authenticationStarted = true;
         _authenticateDevice();
       }
     }
@@ -783,26 +804,54 @@ class MidiProvider extends ChangeNotifier {
   }
 
   /// Check if connected device is still present after setup change
+  /// Debounced to avoid rapid re-enumeration on USB hotplug events
   Future<void> _checkDeviceStillConnected() async {
     if (_connectedDevice == null || _state != MidiConnectionState.connected) return;
 
-    try {
-      final devices = await _midiHandler.getDevices();
-      final stillPresent = devices.any((d) => d.id == _connectedDevice!.id);
-      if (!stillPresent) {
-        if (kDebugMode) debugPrint('Device removed from MIDI setup');
-        _onUnexpectedDisconnect();
+    // Debounce: cancel any pending check and wait 300ms
+    _setupDebounceTimer?.cancel();
+    _setupDebounceTimer = Timer(const Duration(milliseconds: 300), () async {
+      if (_connectedDevice == null || _state != MidiConnectionState.connected) return;
+      try {
+        final devices = await _midiHandler.getDevices();
+        final stillPresent = devices.any((d) => d.id == _connectedDevice!.id);
+        if (!stillPresent) {
+          if (kDebugMode) debugPrint('Device removed from MIDI setup');
+          _onUnexpectedDisconnect();
+        }
+      } catch (e) {
+        if (kDebugMode) debugPrint('Setup check error: $e');
       }
-    } catch (e) {
-      if (kDebugMode) debugPrint('Setup check error: $e');
-    }
+    });
   }
 
   /// Handle unexpected disconnect (USB unplug, device power off, etc.)
+  /// Attempts auto-reconnect with exponential backoff (up to 3 attempts)
   void _onUnexpectedDisconnect() {
     if (_state != MidiConnectionState.connected) return;
+    final deviceToReconnect = _connectedDevice;
     _disconnectController.add(null);
     disconnect();
+    
+    // Auto-reconnect: try to re-establish connection
+    if (deviceToReconnect != null && _reconnectAttempts < _maxReconnectAttempts) {
+      _reconnectAttempts++;
+      final delay = Duration(seconds: _reconnectAttempts * 2); // 2, 4, 6 sec
+      if (kDebugMode) {
+        debugPrint('Auto-reconnect attempt $_reconnectAttempts/$_maxReconnectAttempts in ${delay.inSeconds}s');
+      }
+      _reconnectTimer?.cancel();
+      _reconnectTimer = Timer(delay, () async {
+        if (_isDisposed || _state == MidiConnectionState.connected) return;
+        final success = await connect(deviceToReconnect);
+        if (!success && _reconnectAttempts < _maxReconnectAttempts) {
+          _onUnexpectedDisconnect(); // Retry chain
+        } else if (!success) {
+          _reconnectAttempts = 0; // Give up, reset for next manual connect
+          if (kDebugMode) debugPrint('Auto-reconnect failed after $_maxReconnectAttempts attempts');
+        }
+      });
+    }
   }
 
   void _requestDeviceInfo() {
@@ -870,8 +919,8 @@ class MidiProvider extends ChangeNotifier {
     }
     _nameChangeCompleter = Completer<bool>();
 
-    // Format: <pin_4_bytes> <name_bytes>
-    final payload = [...pin.codeUnits, ...trimmedName.codeUnits];
+    // Format: <pin_4_bytes> <name_bytes_utf8>
+    final payload = [...pin.codeUnits, ...utf8.encode(trimmedName)];
     final sent = await _sendSysEx(_cmdSetName, payload);
     if (!sent) {
       _nameChangeCompleter = null;
@@ -1026,6 +1075,20 @@ class MidiProvider extends ChangeNotifier {
     return _waitForAckResult();
   }
 
+  /// Soft reboot device (no PIN required, sends CMD_SOFT_REBOOT)
+  Timer? _softRebootTimer;
+  Future<bool> softReboot() async {
+    final sent = await _sendSysEx(_cmdSoftReboot);
+    if (sent) {
+      // Device will reboot and disconnect
+      _softRebootTimer?.cancel();
+      _softRebootTimer = Timer(const Duration(milliseconds: 500), () {
+        if (!_isDisposed) disconnect();
+      });
+    }
+    return sent;
+  }
+
   /// Request runtime diagnostics
   Future<bool> requestDiagnostics() async {
     return _sendSysEx(_cmdGetDiagnostics);
@@ -1087,93 +1150,6 @@ class MidiProvider extends ChangeNotifier {
   /// Request device config
   void requestDeviceConfig() {
     _sendSysEx(_cmdRequestInfo);
-  }
-  
-  /// Legacy compatibility: Send command string (translates to SysEx)
-  /// 
-  /// Supported commands:
-  /// - 'P' : Ping
-  /// - 'I' : Request device info
-  /// - 'C' : Request config
-  /// - 'R' : Reset baseline
-  /// - `O[value]` : Set oversampling
-  /// - `F[hz]` : Set output rate
-  /// - `N:[pin]:[name]` or `N[pin][name]` : Set device name
-  /// - `W:[oldPin]:[newPin]` or `W[oldPin][newPin]` : Change PIN
-  /// - `A[nonce]` : Auth challenge
-  Future<bool> sendCommand(String cmd) async {
-    if (cmd.isEmpty) return false;
-    
-    final prefix = cmd[0];
-    // Strip the prefix character; also strip a leading ':' separator if present
-    var payload = cmd.length > 1 ? cmd.substring(1) : '';
-    if (payload.startsWith(':')) payload = payload.substring(1);
-    
-    switch (prefix) {
-      case 'P':
-        return _sendSysEx(_cmdPing);
-      case 'I':
-        return _sendSysEx(_cmdRequestInfo);
-      case 'C':
-        return _sendSysEx(_cmdRequestInfo); // Config is part of device info
-      case 'R':
-        return _sendSysEx(_cmdResetBaseline);
-      case 'O':
-        // Oversampling - not supported via MIDI, ignore
-        return true;
-      case 'F':
-        final hz = int.tryParse(payload);
-        if (hz != null) {
-          return setOutputRate(hz);
-        }
-        return false;
-      case 'N':
-        // Name change: N:<pin>:<name> or N<pin><name>
-        if (payload.contains(':')) {
-          final parts = payload.split(':');
-          if (parts.length >= 2) {
-            return setDeviceName(parts.sublist(1).join(':'), parts[0]);
-          }
-        } else if (payload.length >= 4) {
-          final pin = payload.substring(0, 4);
-          final name = payload.substring(4);
-          return setDeviceName(name, pin);
-        }
-        return false;
-      case 'W':
-        // PIN change: W:<oldPin>:<newPin> or W<oldPin><newPin>
-        if (payload.contains(':')) {
-          final parts = payload.split(':');
-          if (parts.length >= 2) {
-            return changeDevicePin(parts[0], parts[1]);
-          }
-        } else if (payload.length >= 8) {
-          final oldPin = payload.substring(0, 4);
-          final newPin = payload.substring(4, 8);
-          return changeDevicePin(oldPin, newPin);
-        }
-        return false;
-      case 'A':
-        // Auth challenge - handled internally
-        return true;
-      case 'B':
-        // Enter BOOTSEL bootloader mode (requires PIN as payload)
-        if (payload.length >= 4) {
-          final pin = payload.substring(0, 4);
-          final result = await enterBootloader(pin);
-          return result == 0;
-        }
-        return false;
-      default:
-        if (kDebugMode) debugPrint('Unknown command: $cmd');
-        return false;
-    }
-  }
-
-  Function(int oversampling, int sampleRate)? _onConfigReceived;
-
-  void setConfigReceivedCallback(Function(int, int)? callback) {
-    _onConfigReceived = callback;
   }
 
   /// Start atmospheric calibration
@@ -1294,6 +1270,12 @@ class MidiProvider extends ChangeNotifier {
     _overrangeTimer = null;
     _isOverrange = false;
 
+    _softRebootTimer?.cancel();
+    _softRebootTimer = null;
+
+    _reconnectTimer?.cancel();
+    _reconnectTimer = null;
+
     _calibrationTimeoutTimer?.cancel();
     _calibrationTimeoutTimer = null;
 
@@ -1306,12 +1288,17 @@ class MidiProvider extends ChangeNotifier {
     _sysexBuffer.clear();
     _inSysex = false;
 
+    // Cancel debounce timer
+    _setupDebounceTimer?.cancel();
+    _setupDebounceTimer = null;
+
     // Reset state flags BEFORE async disconnect so UI updates immediately
     _currentPressure = 0.0;
     _deviceInfoRequested = false;
     _sensorConnected = true;
     _isAuthenticated = false;
     _authenticationComplete = false;
+    _authenticationStarted = false;
     _authNonce = null;
 
     // Reset config/diagnostics to defaults (prevent stale data on next connection)
@@ -1326,7 +1313,7 @@ class MidiProvider extends ChangeNotifier {
     _oversampling = 5;
     _iirFilter = 1;
     _outputRate = 8;
-    _onConfigReceived = null;
+    _firmwareVersion = null;
 
     // Complete any pending completers to unblock awaiting callers
     if (_authCompleter != null && !_authCompleter!.isCompleted) {
@@ -1413,6 +1400,15 @@ class MidiProvider extends ChangeNotifier {
 
     _calibrationTimeoutTimer?.cancel();
     _calibrationTimeoutTimer = null;
+
+    _setupDebounceTimer?.cancel();
+    _setupDebounceTimer = null;
+
+    _softRebootTimer?.cancel();
+    _softRebootTimer = null;
+
+    _reconnectTimer?.cancel();
+    _reconnectTimer = null;
 
     _midiSubscription?.cancel();
     _midiSubscription = null;

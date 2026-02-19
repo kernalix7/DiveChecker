@@ -144,14 +144,14 @@ class _SerialDeviceScreenState extends State<SerialDeviceScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'USB MIDI Devices',
+                        l10n.usbMidiDevicesTitle,
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           color: theme.colorScheme.onSurface,
                         ),
                       ),
                       Text(
-                        'Connect your pressure sensor via USB cable',
+                        l10n.connectViaCable,
                         style: TextStyle(
                           fontSize: FontSizes.bodySm,
                           color: theme.colorScheme.onSurface.withOpacity(Opacities.high),
@@ -210,7 +210,7 @@ class _SerialDeviceScreenState extends State<SerialDeviceScreen> {
                           ),
                           Spacing.verticalLg,
                           Text(
-                            'No USB devices found',
+                            l10n.noUsbDevicesFound,
                             style: TextStyle(
                               fontSize: FontSizes.bodyLg,
                               color: StatusColors.secondaryText,
@@ -218,7 +218,7 @@ class _SerialDeviceScreenState extends State<SerialDeviceScreen> {
                           ),
                           Spacing.verticalSm,
                           Text(
-                            'Connect your device via USB cable',
+                            l10n.connectDeviceViaCable,
                             style: TextStyle(
                               fontSize: FontSizes.body,
                               color: StatusColors.tertiaryText,
@@ -340,7 +340,7 @@ class _DeviceTile extends StatelessWidget {
                 borderRadius: BorderRadii.xsAll,
               ),
               child: Text(
-                'DiveChecker Compatible',
+                AppLocalizations.of(context)!.diveCheckerCompatible,
                 style: TextStyle(
                   fontSize: FontSizes.sm,
                   fontWeight: FontWeight.bold,
