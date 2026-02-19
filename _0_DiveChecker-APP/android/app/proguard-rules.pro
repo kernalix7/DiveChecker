@@ -9,6 +9,9 @@
 -keep class io.flutter.**  { *; }
 -keep class io.flutter.plugins.**  { *; }
 
+# Google Play Core (referenced by Flutter deferred components)
+-dontwarn com.google.android.play.core.**
+
 # BouncyCastle/PointyCastle (used for ECDSA authentication)
 -keep class org.bouncycastle.** { *; }
 -dontwarn org.bouncycastle.**
