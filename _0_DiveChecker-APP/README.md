@@ -124,6 +124,13 @@ lib/
 - Session recording and graph notes
 - JSON backup/restore
 
+### 🔐 Security & Reliability
+- **ECDSA P-256 Authentication**: Challenge-response device verification
+- **Auto-Reconnect**: Exponential backoff on USB disconnect (2/4/6s, max 3 attempts)
+- **Input Validation**: Config value range clamping
+- **Timer Cleanup**: All timers cancelled on disconnect
+- **Double-pop Guard**: Prevents duplicate Navigator.pop calls
+
 ### 🌐 Multi-language Support
 - 🇺🇸 English
 - 🇰🇷 Korean

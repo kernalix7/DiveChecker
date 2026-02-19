@@ -1,4 +1,4 @@
-// Copyright (C) 2025 Kim DaeHyun (kernalix7@kodenet.io)
+// Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
 /// MIDI-based communication provider for DiveChecker device.
@@ -1075,18 +1075,28 @@ class MidiProvider extends ChangeNotifier {
     return _waitForAckResult();
   }
 
-  /// Soft reboot device (no PIN required, sends CMD_SOFT_REBOOT)
+  /// Soft reboot device (requires PIN, sends CMD_SOFT_REBOOT)
+  /// Returns: 0=success, 1=invalid data, 2=wrong PIN/rate limited, -1=timeout, -2=send failed
   Timer? _softRebootTimer;
-  Future<bool> softReboot() async {
-    final sent = await _sendSysEx(_cmdSoftReboot);
-    if (sent) {
+  Future<int> softReboot(String pin) async {
+    if (pin.length != 4) return 1;
+    final pinBytes = pin.codeUnits;
+    _setupAckCompleter(_cmdSoftReboot);
+    final sent = await _sendSysEx(_cmdSoftReboot, pinBytes);
+    if (!sent) {
+      _pendingAckCompleter = null;
+      _pendingAckCmd = 0;
+      return -2;
+    }
+    final result = await _waitForAckResult();
+    if (result == 0) {
       // Device will reboot and disconnect
       _softRebootTimer?.cancel();
       _softRebootTimer = Timer(const Duration(milliseconds: 500), () {
         if (!_isDisposed) disconnect();
       });
     }
-    return sent;
+    return result;
   }
 
   /// Request runtime diagnostics

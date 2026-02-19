@@ -2,6 +2,8 @@
 
 Pressure monitoring firmware for Raspberry Pi Pico 2 (RP2350).
 
+[🇰🇷 한국어](README.ko.md)
+
 ## Features
 
 - 100Hz internal sampling with BMP280 sensor
@@ -105,6 +107,59 @@ For ECDSA device authentication:
 ```
 
 See [PRODUCTION_GUIDE.md](PRODUCTION_GUIDE.md) for production deployment.
+
+---
+
+## Security & Reliability Features
+
+### Security
+
+| Feature | Implementation |
+|---------|----------------|
+| **ECDSA P-256 Auth** | Challenge-response with 32-byte nonce |
+| **Private Key in OTP** | Non-extractable one-time programmable storage |
+| **Constant-Time Compare** | PIN verification prevents timing attacks |
+| **Crypto Buffer Zeroing** | `mbedtls_platform_zeroize()` after use |
+| **PIN Rate Limiting** | Exponential backoff (1s → 60s max) |
+| **Persistent Lockout** | PIN failure count survives reboot |
+
+### Reliability
+
+| Feature | Implementation |
+|---------|----------------|
+| **Watchdog Timer** | 8s during boot, 2s during operation |
+| **Sensor Auto-Recovery** | 5-second periodic retry on failure |
+| **Flash CRC32** | Data integrity verification on load |
+| **Wear Leveling** | 16-slot rotation in 4KB sector |
+| **Flash Write Debounce** | 3-second delay prevents rapid writes |
+| **SysEx Timeout** | 500ms parser reset (all states) |
+| **PIO Fallback** | Auto-switch to PIO1 if PIO0 unavailable |
+
+### Performance
+
+| Metric | Value |
+|--------|-------|
+| **Internal Sampling** | 100Hz (BMP280) |
+| **Output Rate** | 4-50Hz (configurable) |
+| **Sensor-to-App Latency** | ~10ms |
+| **Core 0** | USB MIDI + Command processing |
+| **Core 1** | Sensor sampling + IIR filtering |
+| **Inter-Core** | Lock-free FIFO queue |
+
+### Memory Layout
+
+```
+Flash (4MB total)
+├── 0x000000-0x3FEFFF: Application code + data
+└── 0x3FF000-0x3FFFFF: Settings sector (4KB)
+    └── 16 × 256-byte slots (wear leveling)
+        ├── magic (4B)
+        ├── PIN (5B)
+        ├── name (25B)
+        ├── config (8B)
+        ├── reserved (210B)
+        └── CRC32 (4B)
+```
 
 ## License
 

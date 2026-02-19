@@ -24,10 +24,3 @@ plugins {
 }
 
 include(":app")
-
-// Fix namespace for legacy Flutter plugins that don't specify one
-gradle.beforeProject {
-    if (project.name == "flutter_libserialport") {
-        project.extensions.extraProperties.set("android.namespace", "dev.flutter.flutter_libserialport")
-    }
-}

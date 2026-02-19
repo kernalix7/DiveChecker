@@ -1,4 +1,4 @@
-// Copyright (C) 2025 Kim DaeHyun (kernalix7@kodenet.io)
+// Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
 // Licensed under the Apache License, Version 2.0.
 
 /// Device-specific Settings Screen
@@ -457,19 +457,44 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
   
   Future<void> _confirmReboot(BuildContext context, AppLocalizations l10n, SerialProvider provider) async {
     if (_isProcessing) return;
+    final pinController = TextEditingController();
+    
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         icon: Icon(Icons.restart_alt, size: IconSizes.huge, color: ScoreColors.warning),
         title: Text(l10n.rebootDevice),
-        content: Text(l10n.rebootConfirmMessage),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(l10n.rebootConfirmMessage),
+            Spacing.verticalLg,
+            TextField(
+              controller: pinController,
+              decoration: InputDecoration(
+                labelText: l10n.devicePin,
+                border: const OutlineInputBorder(),
+                helperText: l10n.pinRequiredForChange,
+              ),
+              keyboardType: TextInputType.number,
+              maxLength: 4,
+              obscureText: true,
+            ),
+          ],
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text(l10n.cancel),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(context, true),
+            onPressed: () {
+              if (pinController.text.length != 4) {
+                context.showSnackBar(l10n.pinMustBe4Digits);
+                return;
+              }
+              Navigator.pop(context, true);
+            },
             style: FilledButton.styleFrom(backgroundColor: ScoreColors.warning),
             child: Text(l10n.reboot),
           ),
@@ -478,13 +503,14 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
     );
 
     if (confirmed == true && mounted) {
-      // Send soft reboot command
       setState(() => _isProcessing = true);
       try {
-        final sent = await provider.softReboot();
+        final result = await provider.softReboot(pinController.text);
         if (!mounted) return;
-        if (sent) {
+        if (result == 0) {
           context.showSnackBar(l10n.deviceDisconnected);
+        } else if (result == 2) {
+          context.showSnackBar(l10n.wrongPin);
         } else {
           context.showSnackBar(l10n.connectionError);
         }

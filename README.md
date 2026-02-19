@@ -24,7 +24,7 @@ DiveChecker is a professional monitoring system that helps freedivers effectivel
 
 Using a pressure sensor connected to a mouthpiece, it precisely measures subtle pressure changes (-10 to +25 hPa) when blowing or sucking through the mouth with **100Hz internal sampling + configurable output rate (4-50Hz)**, and visualizes them in real-time graphs.
 
-### Architecture (v4.5.0)
+### Architecture (v5.1.0)
 
 **Smart MCU + Intelligent App**
 
@@ -118,6 +118,57 @@ Detailed equalization quality analysis after measurement:
 - **Atmospheric Calibration**: 3-second sample collection then baseline setting
 - **Output Rate Control**: 4-50Hz via F command
 - **Oversampling Adjustment**: 1x ~ 16x (MCU command)
+
+---
+
+## 🔐 Security & Reliability
+
+### Device Authentication (ECDSA P-256)
+
+| Feature | Description |
+|---------|-------------|
+| **Challenge-Response** | 32-byte random nonce + ECDSA signature verification |
+| **Private Key Storage** | OTP (One-Time Programmable) memory — non-extractable |
+| **Constant-Time Comparison** | Timing attack prevention |
+| **Memory Zeroing** | `mbedtls_platform_zeroize()` after crypto operations |
+
+### PIN Protection
+
+| Feature | Description |
+|---------|-------------|
+| **Rate Limiting** | Exponential backoff (1s → 2s → ... → 60s max) |
+| **Persistent Lockout** | PIN failure count survives reboot (Flash stored) |
+| **Constant-Time PIN Verify** | No timing side-channel |
+
+### Data Integrity
+
+| Feature | Description |
+|---------|-------------|
+| **Flash CRC32** | Settings integrity check on load |
+| **Legacy Migration** | Old settings (no CRC) auto-upgraded on save |
+| **Wear Leveling** | 16-slot rotation in 4KB sector |
+| **3s Write Debounce** | Prevents flash wear from rapid slider changes |
+
+### Self-Recovery Mechanisms
+
+| Mechanism | Trigger | Recovery Action |
+|-----------|---------|-----------------|
+| **Watchdog** | 8s boot / 2s operational | Auto reboot |
+| **Sensor Auto-Retry** | I2C failure | 5-second periodic retry (Core 1) |
+| **App Auto-Reconnect** | USB disconnect | Exponential backoff (2/4/6s, 3 attempts) |
+| **SysEx Parser Timeout** | Incomplete message | 500ms → reset to IDLE |
+| **PIO Fallback** | PIO0 unavailable | Automatically use PIO1 |
+| **Over-range Recovery** | Sensor saturation | Discard 30 samples after reset |
+
+### Stability Features
+
+| Feature | Description |
+|---------|-------------|
+| **Dual-Core Isolation** | Core 0: USB/MIDI, Core 1: Sensor (100Hz) |
+| **I2C Mutex Protection** | Cross-core access serialization |
+| **FIFO Communication** | Lock-free inter-core message passing |
+| **Saturating Counters** | Diagnostics counters never overflow |
+| **Atomic Config Updates** | Output rate changes via volatile + barrier |
 
 ---
 

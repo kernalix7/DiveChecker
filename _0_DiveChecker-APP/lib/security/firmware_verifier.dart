@@ -209,7 +209,7 @@ class FirmwareVerifier {
   }
   
   /// Extract version info from firmware binary
-  /// Looks for patterns like "DiveChecker Firmware v4.5.0" in the binary
+  /// Looks for patterns like "DiveChecker Firmware v5.1.0" in the binary
   /// Only scans first 64KB to avoid scanning entire firmware
   static Map<String, dynamic> _extractVersionInfo(Uint8List firmwareData) {
     final result = <String, dynamic>{};
@@ -221,7 +221,7 @@ class FirmwareVerifier {
         firmwareData.sublist(0, scanLen).where((b) => b >= 32 && b < 127)
       );
       
-      // Look for version pattern: "v4.5.0" or "4.5.0"
+      // Look for version pattern: "v5.1.0" or "5.1.0"
       final versionRegex = RegExp(r'v?(\d+)\.(\d+)\.(\d+)');
       final match = versionRegex.firstMatch(dataStr);
       if (match != null) {

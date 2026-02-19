@@ -1,4 +1,4 @@
-// Copyright (C) 2025 Kim DaeHyun (kernalix7@kodenet.io)
+// Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
 import 'package:flutter/material.dart';
@@ -376,7 +376,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () {
-                    // TODO: Implement help & support screen
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text(l10n.helpAndSupport),
+                        content: const Text(
+                          'GitHub: github.com/kernalix7/DiveChecker\n\n'
+                          'For bug reports and feature requests,\n'
+                          'please open an issue on GitHub.',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
                   },
                 ),
                 const AppDivider(),

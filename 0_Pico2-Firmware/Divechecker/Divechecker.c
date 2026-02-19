@@ -1,6 +1,6 @@
 /**
  * @file Divechecker.c
- * @brief DiveChecker RP2350 (Pico 2) Firmware v5.0.0
+ * @brief DiveChecker RP2350 (Pico 2) Firmware v5.1.0
  * 
  * @details
  * Dual-core architecture for high-precision pressure monitoring:
@@ -87,9 +87,9 @@
 
 // Firmware version
 #define FW_VERSION_MAJOR    5
-#define FW_VERSION_MINOR    0
+#define FW_VERSION_MINOR    1
 #define FW_VERSION_PATCH    0
-#define FW_VERSION_STRING   "5.0.0"
+#define FW_VERSION_STRING   "5.1.0"
 
 // I2C Configuration
 #define I2C_PORT            i2c0
@@ -102,7 +102,7 @@
 #define BMP280_CHIP_ID      0x58
 #define BME280_CHIP_ID      0x60
 
-// Sampling Configuration (Stable v3.0.0 style)
+// Sampling Configuration
 #define INTERNAL_SAMPLE_RATE_HZ  100     // Fixed internal sampling rate
 #define DEFAULT_OUTPUT_RATE_HZ   8       // Default output rate
 #define MIN_OUTPUT_RATE_HZ       4       // Minimum (most stable)
@@ -137,6 +137,7 @@
 /**
  * @brief Flash-stored device settings structure
  * @note Must be exactly FLASH_PAGE_SIZE (256 bytes) for flash programming
+ * @note CRC32 at end covers bytes 0..(size-5), using polynomial 0xEDB88320
  */
 typedef struct __attribute__((packed)) {
     uint32_t magic;
@@ -148,8 +149,10 @@ typedef struct __attribute__((packed)) {
     uint8_t oversampling_ctrl;   // 0-5
     uint8_t iir_config;          // 0-4
     uint8_t output_rate;         // 4-50 Hz
-    uint8_t _config_reserved[3]; // Future use
-    uint8_t _reserved[FLASH_PAGE_SIZE - sizeof(uint32_t) - (DEVICE_PIN_LEN + 1) - (DEVICE_NAME_MAX_LEN + 1) - 8];
+    uint8_t pin_fail_count;      // Persisted PIN failure count
+    uint8_t _config_reserved[2]; // Future use
+    uint8_t _reserved[FLASH_PAGE_SIZE - sizeof(uint32_t) - (DEVICE_PIN_LEN + 1) - (DEVICE_NAME_MAX_LEN + 1) - 8 - sizeof(uint32_t)];
+    uint32_t crc32;              // CRC32 of bytes 0..(size-5)
 } device_settings_t;
 
 _Static_assert(sizeof(device_settings_t) == FLASH_PAGE_SIZE, 
@@ -261,6 +264,19 @@ static uint8_t g_iir_config = 1;                     // 0=off,1=x2,2=x4,3=x8,4=x
 static inline void sat_inc_u16(volatile uint16_t *val) {
     if (*val < UINT16_MAX) (*val)++;
 }
+
+/// CRC32 (polynomial 0xEDB88320, same as zlib/PNG)
+static uint32_t crc32_compute(const uint8_t *data, size_t len) {
+    uint32_t crc = 0xFFFFFFFF;
+    for (size_t i = 0; i < len; i++) {
+        crc ^= data[i];
+        for (int j = 0; j < 8; j++) {
+            crc = (crc >> 1) ^ ((crc & 1) ? 0xEDB88320 : 0);
+        }
+    }
+    return ~crc;
+}
+
 static volatile uint16_t g_sensor_error_count = 0;
 static volatile uint16_t g_overrange_event_count = 0;
 static volatile uint16_t g_i2c_recovery_count = 0;
@@ -354,13 +370,22 @@ static const device_settings_t* flash_get_settings_ptr(void) {
     return (const device_settings_t*)(XIP_BASE + FLASH_SETTINGS_OFFSET);
 }
 
-/// Find the latest valid settings slot (wear leveling)
+/// Verify CRC32 of settings (legacy 0xFFFFFFFF accepted for migration)
+static bool flash_verify_crc(const device_settings_t *settings) {
+    // Legacy settings have erased CRC field (0xFFFFFFFF)
+    if (settings->crc32 == 0xFFFFFFFF) return true;
+    uint32_t computed = crc32_compute((const uint8_t*)settings, 
+                                       sizeof(device_settings_t) - sizeof(uint32_t));
+    return computed == settings->crc32;
+}
+
+/// Find the latest valid settings slot (wear leveling + CRC verification)
 static int flash_find_active_slot(void) {
     const device_settings_t *base = flash_get_settings_ptr();
     // Scan all slots, find the last valid one (highest index)
     int active = -1;
     for (int i = 0; i < WEAR_LEVEL_SLOTS; i++) {
-        if (base[i].magic == SETTINGS_MAGIC) {
+        if (base[i].magic == SETTINGS_MAGIC && flash_verify_crc(&base[i])) {
             active = i;
         }
     }
@@ -391,6 +416,16 @@ static void flash_load_settings(void) {
             g_output_interval_ms = 1000 / g_output_rate;
             g_samples_per_output = INTERNAL_SAMPLE_RATE_HZ / g_output_rate;
         }
+        // Restore PIN lockout state
+        g_pin_fail_count = (settings->pin_fail_count <= 20) ? settings->pin_fail_count : 0;
+        if (g_pin_fail_count >= PIN_MAX_FAILURES) {
+            // Recalculate lockout time based on fail count
+            int shift = g_pin_fail_count - PIN_MAX_FAILURES;
+            if (shift > 6) shift = 6;
+            int delay_sec = 1 << shift;
+            if (delay_sec > PIN_LOCKOUT_MAX_SEC) delay_sec = PIN_LOCKOUT_MAX_SEC;
+            g_pin_lockout_until = make_timeout_time_ms(delay_sec * 1000);
+        }
     } else {
         strcpy(g_device_name, "DiveChecker");
         strcpy(g_device_pin, "0000");
@@ -409,8 +444,12 @@ static void flash_save_settings(void) {
     new_settings.oversampling_ctrl = g_oversampling_ctrl;
     new_settings.iir_config = g_iir_config;
     new_settings.output_rate = g_output_rate;
+    new_settings.pin_fail_count = (g_pin_fail_count <= 20) ? g_pin_fail_count : 20;
     memset(new_settings._config_reserved, 0xFF, sizeof(new_settings._config_reserved));
     memset(new_settings._reserved, 0xFF, sizeof(new_settings._reserved));
+    // Compute CRC32 over all bytes except the crc32 field itself
+    new_settings.crc32 = crc32_compute((const uint8_t*)&new_settings,
+                                        sizeof(device_settings_t) - sizeof(uint32_t));
     
     // Wear leveling: advance to next slot
     int next_slot = (g_wear_slot + 1) % WEAR_LEVEL_SLOTS;
@@ -462,10 +501,15 @@ static void pin_record_failure(void) {
         if (delay_sec > PIN_LOCKOUT_MAX_SEC) delay_sec = PIN_LOCKOUT_MAX_SEC;
         g_pin_lockout_until = make_timeout_time_ms(delay_sec * 1000);
     }
+    // Persist failure count to survive reboot (debounced via dirty flag)
+    mark_settings_dirty();
 }
 
 static void pin_record_success(void) {
-    g_pin_fail_count = 0;
+    if (g_pin_fail_count > 0) {
+        g_pin_fail_count = 0;
+        mark_settings_dirty();  // Clear persisted lockout
+    }
 }
 
 static bool pin_is_valid_format(const char *pin) {
@@ -1240,10 +1284,28 @@ static void midi_process_sysex(sysex_message_t* msg) {
             break;
             
         case CMD_SOFT_REBOOT:
-            // Soft reboot via watchdog (no PIN required)
-            midi_sysex_send_ack(CMD_SOFT_REBOOT, 0x00);
-            sleep_ms(100);  // Let ACK be sent
-            watchdog_reboot(0, 0, 0);  // Immediate watchdog reset
+            // Soft reboot via watchdog (PIN required for security)
+            if (msg->data_len >= DEVICE_PIN_LEN) {
+                if (!pin_check_rate_limit()) {
+                    midi_sysex_send_ack(CMD_SOFT_REBOOT, 0x02);  // Rate limited
+                    break;
+                }
+                char pin[DEVICE_PIN_LEN + 1];
+                memcpy(pin, msg->data, DEVICE_PIN_LEN);
+                pin[DEVICE_PIN_LEN] = '\0';
+                
+                if (pin_verify(pin)) {
+                    pin_record_success();
+                    midi_sysex_send_ack(CMD_SOFT_REBOOT, 0x00);
+                    sleep_ms(100);  // Let ACK be sent
+                    watchdog_reboot(0, 0, 0);  // Immediate watchdog reset
+                } else {
+                    pin_record_failure();
+                    midi_sysex_send_ack(CMD_SOFT_REBOOT, 0x02);  // Wrong PIN
+                }
+            } else {
+                midi_sysex_send_ack(CMD_SOFT_REBOOT, 0x01);  // Invalid data
+            }
             break;
             
         default:

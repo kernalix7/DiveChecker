@@ -43,7 +43,7 @@ add_executable(Divechecker
 )
 
 pico_set_program_name(Divechecker "Divechecker")
-pico_set_program_version(Divechecker "5.0.0")
+pico_set_program_version(Divechecker "5.1.0")
 
 # Generate PIO header from .pio file
 pico_generate_pio_header(Divechecker ${CMAKE_CURRENT_LIST_DIR}/ws2812.pio)
@@ -57,7 +57,6 @@ target_compile_definitions(Divechecker PRIVATE
     USBD_MANUFACTURER="kodenet.io"
     USBD_PRODUCT="DiveChecker V1"
     PICO_STDIO_USB_ENABLE_RESET_VIA_BAUD_RATE=0
-    PICO_STACK_SIZE=8192
 )
 
 # Add the standard library to the build

@@ -20,6 +20,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [3.0.0] - 2026-02-19 (RTM 3.0)
+
+### Security Enhancements
+- 🔐 **Soft Reboot PIN Protection** - CMD_SOFT_REBOOT now requires PIN authentication
+- 🔒 **Persistent PIN Lockout** - Brute-force protection survives device reboot
+- 🛡️ **Flash CRC32 Validation** - Data integrity check on settings load
+- 🔑 **Crypto Buffer Zeroing** - Secure memory cleanup after authentication
+- ⏱️ **Constant-Time Hex Validation** - Prevents timing side-channel attacks
+
+### Reliability Improvements
+- 🔄 **Auto-Reconnect** - Exponential backoff (2/4/6s) on USB disconnect, max 3 attempts
+- 🩺 **Sensor Auto-Recovery** - 5-second periodic retry on BMP280 I2C failure
+- ⏰ **Early Watchdog** - 8s timeout during boot, 2s during operation
+- 🔧 **PIO Fallback** - Automatic switch to PIO1 if PIO0 unavailable
+- 📝 **SysEx Timeout All States** - Parser resets from any state after 500ms
+
+### Data Integrity
+- 💾 **Flash Write Debounce** - 3-second delay prevents wear from rapid slider changes
+- 📊 **Saturating Counters** - Diagnostics counters never overflow (uint16 max)
+- 🕐 **64-bit Uptime** - Overflow-safe uptime tracking (584 years)
+
+### Flutter App Improvements
+- ✅ **hexToBytes Validation** - Throws FormatException on odd-length hex
+- 📏 **Firmware Size Check** - 16MB limit before loading file into memory
+- 🔢 **Config Value Clamping** - All settings values range-validated
+- 🔤 **Serial UTF-8 Decode** - Proper unicode handling for device serial
+- ⏱️ **Soft Reboot Timer Cancellation** - Prevents orphan timer on disconnect
+- 🔒 **Double-Pop Guard** - Prevents duplicate Navigator.pop on disconnect
+- 🌐 **Web MIDI Dispose Guard** - Prevents use-after-dispose errors
+
+### Bug Fixes
+- 🐛 **FIFO Handshake Bug** - Fixed dual-push causing stale status reads
+- 🐛 **Concurrent Reinit Race** - Guard against simultaneous sensor reconfig
+- 🐛 **mbedTLS Context Leak** - Free contexts before re-initialization
+- 🐛 **ecdsa_public_key.dart** - Fixed literal `\n` in byte array
+
+---
+
 ## [1.2.0] - 2025-01-XX
 
 ### Performance Improvements

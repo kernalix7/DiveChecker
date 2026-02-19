@@ -1,4 +1,4 @@
-// Copyright (C) 2025 Kim DaeHyun (kernalix7@kodenet.io)
+// Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
 // ignore: avoid_web_libraries_in_flutter

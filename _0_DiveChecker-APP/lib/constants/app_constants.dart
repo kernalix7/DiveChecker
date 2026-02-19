@@ -1,4 +1,4 @@
-// Copyright (C) 2025 Kim DaeHyun (kernalix7@kodenet.io)
+// Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
 /// Application-wide constants and configuration values
@@ -12,14 +12,14 @@ import 'package:flutter/material.dart';
 /// App Configuration
 class AppConfig {
   static const String appName = 'DiveChecker';
-  static const String version = '1.1.0';
-  static const String build = '8';
+  static const String version = '3.0.0';
+  static const String build = '1';
   static const String versionDisplay = '$version (Build $build)';
   
   /// Device product info
   static const String productNameV1 = 'DiveChecker V1';
   static const String productIdV1 = 'DC-V1';
-  static const String defaultFirmwareVersion = '4.5.0';
+  static const String defaultFirmwareVersion = '5.1.0';
 }
 
 /// Status indicator colors
