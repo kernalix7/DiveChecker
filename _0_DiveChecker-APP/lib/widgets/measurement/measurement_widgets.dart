@@ -25,104 +25,48 @@ class PressureDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(Spacing.xxl),
+      padding: const EdgeInsets.symmetric(horizontal: Spacing.lg, vertical: Spacing.md),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadii.xlAll,
+        borderRadius: BorderRadii.lgAll,
         border: Border.all(
           color: theme.colorScheme.outline.withOpacity(Opacities.mediumHigh),
           width: ChartDimensions.lineWidthSmall,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: theme.colorScheme.primary.withOpacity(Opacities.light),
-            blurRadius: Shadows.blurLarge,
-            offset: const Offset(0, Spacing.xs),
-          ),
-        ],
       ),
-      child: Column(
+      child: Row(
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.sensors_rounded,
-                size: IconSizes.sm,
-                color: theme.colorScheme.primary,
-              ),
-              Spacing.horizontalSm,
-              Text(
-                l10n.liveSensorData,
-                style: TextStyle(
-                  fontSize: FontSizes.bodySm,
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.onSurface.withOpacity(Opacities.high),
-                  letterSpacing: LetterSpacings.widest,
-                ),
-              ),
-              const Spacer(),
-              if (isRecording) _RecordingBadge(),
-            ],
+          Icon(
+            Icons.sensors_rounded,
+            size: IconSizes.sm,
+            color: theme.colorScheme.primary,
           ),
-          Spacing.verticalXl,
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: Spacing.xxl, horizontal: Spacing.xl),
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(Opacities.faint),
-              borderRadius: BorderRadii.mdAll,
-              border: Border.all(
-                color: theme.colorScheme.outline.withOpacity(Opacities.low),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Text(
-                  formatPressure(pressure),
-                  style: TextStyle(
-                    fontSize: FontSizes.displayXl,
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary,
-                    letterSpacing: -3,
-                    fontFamily: 'monospace',
-                    height: 1,
-                  ),
-                ),
-                Spacing.horizontalLg,
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'hPa',
-                      style: TextStyle(
-                        fontSize: FontSizes.title,
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.onSurface.withOpacity(Opacities.veryHigh),
-                        letterSpacing: LetterSpacings.normal,
-                      ),
-                    ),
-                    Spacing.verticalXxs,
-                    Text(
-                      'pressure',
-                      style: TextStyle(
-                        fontSize: FontSizes.bodySm,
-                        color: theme.colorScheme.onSurfaceVariant,
-                        letterSpacing: LetterSpacings.normal,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+          Spacing.horizontalSm,
+          Text(
+            formatPressure(pressure),
+            style: TextStyle(
+              fontSize: FontSizes.titleLg,
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.primary,
+              letterSpacing: -1,
+              fontFamily: 'monospace',
+              height: 1,
             ),
           ),
+          Spacing.horizontalSm,
+          Text(
+            'hPa',
+            style: TextStyle(
+              fontSize: FontSizes.body,
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.onSurface.withOpacity(Opacities.high),
+            ),
+          ),
+          const Spacer(),
+          if (isRecording) _RecordingBadge(),
         ],
       ),
     );
@@ -317,8 +261,38 @@ class PressureChart extends StatelessWidget {
     this.sampleRate = 8,
   });
 
-  List<FlSpot> _toFlSpots(List<ChartPoint> points) {
-    return points.map((p) => FlSpot(p.x, p.y)).toList();
+  /// Filter data to visible range only
+  List<FlSpot> _toVisibleFlSpots(List<ChartPoint> points) {
+    return points
+        .where((p) => p.x >= minX && p.x <= maxX)
+        .map((p) => FlSpot(p.x, p.y))
+        .toList();
+  }
+
+  /// Dynamic Y-axis min based on visible data
+  double _calculateMinY(List<FlSpot> visibleSpots) {
+    if (visibleSpots.isEmpty) return -5;
+    final minVal = visibleSpots.map((p) => p.y).reduce((a, b) => a < b ? a : b);
+    return (minVal - 2).floorToDouble().clamp(-50, 0);
+  }
+
+  /// Dynamic Y-axis max based on visible data
+  double _calculateMaxY(List<FlSpot> visibleSpots) {
+    if (visibleSpots.isEmpty) return 10;
+    final maxVal = visibleSpots.map((p) => p.y).reduce((a, b) => a > b ? a : b);
+    return (maxVal + 2).ceilToDouble().clamp(5, 200);
+  }
+
+  /// Dynamic Y interval based on range
+  double _calculateYInterval(double minY, double maxY) {
+    final range = maxY - minY;
+    if (range <= 5) return 1;
+    if (range <= 10) return 2;
+    if (range <= 20) return 2;
+    if (range <= 30) return 5;
+    if (range <= 50) return 5;
+    if (range <= 100) return 10;
+    return 20;
   }
 
   /// Calculate X axis interval - delegates to shared utility
@@ -338,10 +312,10 @@ class PressureChart extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(Spacing.lg),
+      padding: const EdgeInsets.all(Spacing.md),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadii.xlAll,
+        borderRadius: BorderRadii.lgAll,
         border: Border.all(
           color: theme.colorScheme.outline.withOpacity(Opacities.mediumHigh),
           width: ChartDimensions.lineWidthSmall,
@@ -350,32 +324,27 @@ class PressureChart extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _ChartHeader(sampleCount: data.length),
-          Spacing.verticalLg,
-          Builder(
-            builder: (context) {
-              final screenHeight = MediaQuery.of(context).size.height;
-              final chartHeight = (screenHeight * 0.30).clamp(200.0, 400.0);
-              return Container(
-                height: chartHeight,
-                padding: const EdgeInsets.only(
-                  top: Spacing.sm,
-                  bottom: Spacing.sm,
-                  left: Spacing.sm,
-                  right: Spacing.xl,
+          _ChartHeader(),
+          Spacing.verticalSm,
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.only(
+                top: Spacing.sm,
+                bottom: Spacing.sm,
+                left: Spacing.sm,
+                right: Spacing.xl,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(Opacities.subtle),
+                borderRadius: BorderRadii.mdAll,
+                border: Border.all(
+                  color: theme.colorScheme.outline.withOpacity(Opacities.low),
                 ),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(Opacities.subtle),
-                  borderRadius: BorderRadii.mdAll,
-                  border: Border.all(
-                    color: theme.colorScheme.outline.withOpacity(Opacities.low),
-                  ),
-                ),
-                child: data.isEmpty
-                    ? _EmptyChartPlaceholder()
-                    : RepaintBoundary(child: _buildChart(context)),
-              );
-            },
+              ),
+              child: data.isEmpty
+                  ? _EmptyChartPlaceholder()
+                  : RepaintBoundary(child: _buildChart(context)),
+            ),
           ),
         ],
       ),
@@ -385,47 +354,53 @@ class PressureChart extends StatelessWidget {
   Widget _buildChart(BuildContext context) {
     final theme = Theme.of(context);
     final xInterval = _calculateXInterval(maxX - minX);
+    final isDark = theme.brightness == Brightness.dark;
+    final visibleSpots = _toVisibleFlSpots(data);
+    final minY = _calculateMinY(visibleSpots);
+    final maxY = _calculateMaxY(visibleSpots);
+    final yInterval = _calculateYInterval(minY, maxY);
 
     return LineChart(
       LineChartData(
         clipData: FlClipData.all(),
         minX: minX,
         maxX: maxX,
-        minY: -10,
-        maxY: 25,
+        minY: minY,
+        maxY: maxY,
         gridData: FlGridData(
           show: true,
           drawVerticalLine: true,
-          horizontalInterval: ChartDimensions.intervalSmall,
+          horizontalInterval: yInterval,
           verticalInterval: xInterval,
-          getDrawingHorizontalLine: (value) =>
-              FlLine(color: Colors.grey.shade500, strokeWidth: ChartDimensions.strokeThin),
-          getDrawingVerticalLine: (value) =>
-              FlLine(color: Colors.grey.shade400, strokeWidth: ChartDimensions.strokeThin),
+          getDrawingHorizontalLine: (value) => FlLine(
+            color: isDark
+                ? theme.colorScheme.outline.withOpacity(Opacities.high)
+                : theme.colorScheme.outline.withOpacity(Opacities.veryHigh),
+            strokeWidth: ChartDimensions.strokeThin,
+          ),
+          getDrawingVerticalLine: (value) => FlLine(
+            color: isDark
+                ? theme.colorScheme.outline.withOpacity(Opacities.moderate)
+                : theme.colorScheme.outline.withOpacity(Opacities.strong),
+            strokeWidth: ChartDimensions.strokeThin,
+          ),
         ),
         titlesData: FlTitlesData(
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              reservedSize: ChartDimensions.reservedSizeXxl,
-              interval: ChartDimensions.intervalSmall,
-              getTitlesWidget: (value, meta) => Text(
-                value.toInt().toString(),
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: FontSizes.xxs,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            axisNameWidget: Padding(
-              padding: const EdgeInsets.only(right: Spacing.sm),
-              child: Text(
-                'hPa',
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: FontSizes.xxs,
-                  fontWeight: FontWeight.bold,
+              reservedSize: ChartDimensions.reservedSizeMax,
+              interval: yInterval,
+              getTitlesWidget: (value, meta) => Padding(
+                padding: const EdgeInsets.only(right: Spacing.sm),
+                child: Text(
+                  '${value.toInt()}',
+                  style: TextStyle(
+                    fontSize: FontSizes.xxs,
+                    color: theme.colorScheme.onSurface,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'monospace',
+                  ),
                 ),
               ),
             ),
@@ -433,19 +408,23 @@ class PressureChart extends StatelessWidget {
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              reservedSize: ChartDimensions.reservedSizeMd,
+              reservedSize: ChartDimensions.reservedSizeLarge,
               interval: _calculateXInterval(maxX - minX),
               getTitlesWidget: (value, meta) {
+                if (value <= minX || value >= maxX) {
+                  return const SizedBox.shrink();
+                }
                 final seconds = (value / 1000.0);
                 final timeLabel = _formatTimeLabel(seconds);
                 return Padding(
-                  padding: const EdgeInsets.only(top: Spacing.xs),
+                  padding: const EdgeInsets.only(top: Spacing.sm),
                   child: Text(
                     timeLabel,
                     style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontSize: FontSizes.xxs,
+                      fontSize: FontSizes.xs,
+                      color: theme.colorScheme.onSurface,
                       fontWeight: FontWeight.w500,
+                      fontFamily: 'monospace',
                     ),
                   ),
                 );
@@ -457,41 +436,69 @@ class PressureChart extends StatelessWidget {
         ),
         borderData: FlBorderData(
           show: true,
-          border: Border.all(color: Colors.grey.shade300, width: ChartDimensions.strokeNormal),
+          border: Border.all(
+            color: isDark
+                ? theme.colorScheme.outline.withOpacity(Opacities.mediumHigh)
+                : theme.colorScheme.outline.withOpacity(Opacities.high),
+            width: ChartDimensions.strokeSmMedium,
+          ),
         ),
         lineBarsData: [
           LineChartBarData(
-            spots: _toFlSpots(data),
+            spots: visibleSpots,
             isCurved: true,
-            curveSmoothness: 0.2,
+            curveSmoothness: 0.15,
             preventCurveOverShooting: true,
             color: theme.colorScheme.primary,
-            barWidth: ChartDimensions.barWidthSmall,
-            dotData: const FlDotData(show: false), // Disabled for performance during real-time
-            belowBarData: BarAreaData(show: false), // Disabled for performance
+            barWidth: ChartDimensions.barWidthSmThin,
+            dotData: const FlDotData(show: false),
+            belowBarData: BarAreaData(show: false),
           ),
         ],
         extraLinesData: ExtraLinesData(
           horizontalLines: [
             HorizontalLine(
               y: 0,
-              color: Colors.red.shade400,
+              color: ScoreColors.poor.withOpacity(Opacities.high),
               strokeWidth: ChartDimensions.strokeSmMedium,
               dashArray: ChartDimensions.dashShort,
             ),
           ],
         ),
-        lineTouchData: const LineTouchData(enabled: false), // Disabled for performance
+        lineTouchData: LineTouchData(
+          enabled: true,
+          touchTooltipData: LineTouchTooltipData(
+            fitInsideHorizontally: true,
+            fitInsideVertically: true,
+            tooltipPadding: const EdgeInsets.symmetric(
+              horizontal: Spacing.sm,
+              vertical: Spacing.xs,
+            ),
+            tooltipRoundedRadius: BorderRadii.xs,
+            getTooltipColor: (spot) => theme.colorScheme.surfaceContainerHighest.withOpacity(Opacities.veryHigh),
+            getTooltipItems: (touchedSpots) {
+              return touchedSpots.map((spot) {
+                final seconds = (spot.x / 1000.0).toStringAsFixed(1);
+                return LineTooltipItem(
+                  '${spot.y.toStringAsFixed(2)} hPa\n${seconds}s',
+                  TextStyle(
+                    color: theme.colorScheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                    fontSize: FontSizes.xs,
+                  ),
+                );
+              }).toList();
+            },
+          ),
+        ),
       ),
-      duration: Duration.zero, // Disable animation for smooth updates
+      duration: Duration.zero,
     );
   }
 }
 
 class _ChartHeader extends StatelessWidget {
-  final int sampleCount;
-
-  const _ChartHeader({required this.sampleCount});
+  const _ChartHeader();
 
   @override
   Widget build(BuildContext context) {
@@ -515,24 +522,7 @@ class _ChartHeader extends StatelessWidget {
             letterSpacing: LetterSpacings.widest,
           ),
         ),
-        const Spacer(),
-        if (sampleCount > 0)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: Spacing.sm, vertical: Spacing.xs),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.secondary.withOpacity(Opacities.mediumLow),
-              borderRadius: BorderRadii.xsAll,
-            ),
-            child: Text(
-              l10n.sampleCount(sampleCount),
-              style: TextStyle(
-                fontSize: FontSizes.xs,
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.secondary,
-                letterSpacing: LetterSpacings.normal,
-              ),
-            ),
-          ),
+
       ],
     );
   }

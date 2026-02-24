@@ -851,16 +851,42 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
           IconButton(
             icon: const Icon(Icons.analytics_outlined),
             tooltip: l10n.peakAnalysis,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PeakAnalysisPage(
-                    chartData: widget.chartData,
-                    session: widget.session,
+            onPressed: () async {
+              final proceed = await showDialog<bool>(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  icon: Icon(
+                    Icons.info_outline,
+                    color: Theme.of(ctx).colorScheme.primary,
+                    size: IconSizes.xl,
                   ),
+                  title: Text(l10n.advancedAnalysis),
+                  content: Text(
+                    l10n.peakAnalysisDisclaimer,
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx, false),
+                      child: Text(l10n.cancel),
+                    ),
+                    FilledButton(
+                      onPressed: () => Navigator.pop(ctx, true),
+                      child: Text(l10n.confirm),
+                    ),
+                  ],
                 ),
               );
+              if (proceed == true && context.mounted) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PeakAnalysisPage(
+                      chartData: widget.chartData,
+                      session: widget.session,
+                    ),
+                  ),
+                );
+              }
             },
           ),
           Spacing.horizontalSm,

@@ -262,7 +262,33 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           return SessionCard(
                             session: session,
                             onTap: () => _showSessionDetail(session),
-                            onAnalyze: () {
+                            onAnalyze: () async {
+                              final l10nLocal = AppLocalizations.of(context)!;
+                              final proceed = await showDialog<bool>(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  icon: Icon(
+                                    Icons.info_outline,
+                                    color: Theme.of(ctx).colorScheme.primary,
+                                    size: IconSizes.xl,
+                                  ),
+                                  title: Text(l10nLocal.advancedAnalysis),
+                                  content: Text(
+                                    l10nLocal.peakAnalysisDisclaimer,
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(ctx, false),
+                                      child: Text(l10nLocal.cancel),
+                                    ),
+                                    FilledButton(
+                                      onPressed: () => Navigator.pop(ctx, true),
+                                      child: Text(l10nLocal.confirm),
+                                    ),
+                                  ],
+                                ),
+                              );
+                              if (proceed != true || !context.mounted) return;
                               final chartData = session.chartData.isNotEmpty
                                   ? session.chartData
                                   : _generateDemoChartData(

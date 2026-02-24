@@ -242,6 +242,7 @@ class MidiProvider extends ChangeNotifier {
   int _reconnectAttempts = 0;
   static const int _maxReconnectAttempts = 3;
   Timer? _reconnectTimer;
+  bool _suppressReconnect = false;  // Suppress after intentional BOOTSEL/soft reboot
 
   // Getters
   MidiConnectionState get state => _state;
@@ -285,6 +286,7 @@ class MidiProvider extends ChangeNotifier {
           .clamp(0.0, 1.0);
 
   void _setState(MidiConnectionState newState) {
+    if (_isDisposed) return;  // Prevent notifyListeners on disposed provider
     if (_state != newState) {
       // Cancel ping timer when leaving connected state
       if (_state == MidiConnectionState.connected && newState != MidiConnectionState.connected) {
@@ -387,6 +389,7 @@ class MidiProvider extends ChangeNotifier {
       _deviceInfoRequested = false;
       _lastPongTime = DateTime.now();
       _reconnectAttempts = 0;  // Reset reconnect counter on successful connect
+      _suppressReconnect = false;  // Allow auto-reconnect for this connection
       _startPing();
 
       return true;
@@ -402,8 +405,9 @@ class MidiProvider extends ChangeNotifier {
   void _handleMidiData(Uint8List data) {
     if (data.isEmpty) return;
 
-    // Process each byte for SysEx reassembly
-    for (final byte in data) {
+    try {
+      // Process each byte for SysEx reassembly
+      for (final byte in data) {
       if (byte == 0xF0) {
         // Start of SysEx
         _sysexBuffer.clear();
@@ -457,6 +461,13 @@ class MidiProvider extends ChangeNotifier {
           _sysexStartTime = null;
         }
       }
+      }
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error handling MIDI data: $e');
+      // Reset SysEx state on error
+      _inSysex = false;
+      _sysexBuffer.clear();
+      _sysexStartTime = null;
     }
   }
 
@@ -833,6 +844,13 @@ class MidiProvider extends ChangeNotifier {
     _disconnectController.add(null);
     disconnect();
     
+    // Skip auto-reconnect if explicitly suppressed (BOOTSEL, soft reboot)
+    if (_suppressReconnect) {
+      if (kDebugMode) debugPrint('Auto-reconnect suppressed (intentional disconnect)');
+      _reconnectAttempts = 0;
+      return;
+    }
+    
     // Auto-reconnect: try to re-establish connection
     if (deviceToReconnect != null && _reconnectAttempts < _maxReconnectAttempts) {
       _reconnectAttempts++;
@@ -845,7 +863,16 @@ class MidiProvider extends ChangeNotifier {
         if (_isDisposed || _state == MidiConnectionState.connected) return;
         final success = await connect(deviceToReconnect);
         if (!success && _reconnectAttempts < _maxReconnectAttempts) {
-          _onUnexpectedDisconnect(); // Retry chain
+          // Check if device still exists before retrying
+          final devices = await _midiHandler.getDevices();
+          final deviceStillExists = devices.any((d) => d.id == deviceToReconnect.device.id);
+          if (deviceStillExists) {
+            _onUnexpectedDisconnect(); // Retry chain
+          } else {
+            // Device gone (e.g., BOOTSEL mode) - stop trying
+            _reconnectAttempts = 0;
+            if (kDebugMode) debugPrint('Device no longer available, stopping reconnect');
+          }
         } else if (!success) {
           _reconnectAttempts = 0; // Give up, reset for next manual connect
           if (kDebugMode) debugPrint('Auto-reconnect failed after $_maxReconnectAttempts attempts');
@@ -1072,7 +1099,20 @@ class MidiProvider extends ChangeNotifier {
       _pendingAckCmd = 0;
       return -2;
     }
-    return _waitForAckResult();
+    final result = await _waitForAckResult();
+    if (result == 0) {
+      // Device will enter BOOTSEL and disappear - suppress auto-reconnect
+      _suppressReconnect = true;
+      _reconnectTimer?.cancel();
+      _reconnectTimer = null;
+      // Clean disconnect after ACK is processed
+      Future.delayed(const Duration(milliseconds: 200), () {
+        if (!_isDisposed && _state == MidiConnectionState.connected) {
+          disconnect();
+        }
+      });
+    }
+    return result;
   }
 
   /// Soft reboot device (requires PIN, sends CMD_SOFT_REBOOT)
@@ -1090,7 +1130,9 @@ class MidiProvider extends ChangeNotifier {
     }
     final result = await _waitForAckResult();
     if (result == 0) {
-      // Device will reboot and disconnect
+      // Device will reboot and disconnect - suppress auto-reconnect
+      _suppressReconnect = true;
+      _reconnectTimer?.cancel();
       _softRebootTimer?.cancel();
       _softRebootTimer = Timer(const Duration(milliseconds: 500), () {
         if (!_isDisposed) disconnect();

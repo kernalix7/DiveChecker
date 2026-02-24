@@ -248,6 +248,12 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get cancel;
 
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
   /// No description provided for @ok.
   ///
   /// In en, this message translates to:
@@ -266,6 +272,12 @@ abstract class AppLocalizations {
   /// **'Add'**
   String get add;
 
+  /// No description provided for @peakAnalysisDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'This analysis provides reference values only and is not complete. Please use caution when interpreting results.'**
+  String get peakAnalysisDisclaimer;
+
   /// No description provided for @connectedSuccess.
   ///
   /// In en, this message translates to:
@@ -277,6 +289,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Divechecker disconnected'**
   String get disconnected;
+
+  /// No description provided for @unsupportedDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsupported Device'**
+  String get unsupportedDevice;
+
+  /// No description provided for @onlyDiveCheckerSupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Only DiveChecker devices are supported. This device cannot be used with the app.'**
+  String get onlyDiveCheckerSupported;
 
   /// No description provided for @startMeasurement.
   ///

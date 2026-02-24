@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Planned Features
+### Planned Features (Next Release)
+- ⏸️ Monitor tab pause button
+- 💾 Monitor specific range save
 - ⏱️ Lung volume/capacity measurement
 - 🫁 CO2 tolerance trainer
 - 💨 O2 optimization exercises
@@ -49,6 +51,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ⏱️ **Soft Reboot Timer Cancellation** - Prevents orphan timer on disconnect
 - 🔒 **Double-Pop Guard** - Prevents duplicate Navigator.pop on disconnect
 - 🌐 **Web MIDI Dispose Guard** - Prevents use-after-dispose errors
+
+### Sensor & Chart Improvements
+- 📏 **Extended Measurement Range** - BMP280 max pressure raised from 1100 to 1250 hPa
+- 📈 **Dynamic Y-axis (Measurement)** - Chart Y-axis auto-scales to visible data range
+- 📈 **Dynamic Y-axis (Monitor)** - Monitor chart Y-axis auto-scales to visible data
+- 〰️ **Curved Measurement Chart** - Smooth bezier curves instead of polylines
+- 🔄 **X-axis Auto-Scroll** - Measurement chart scrolls and filters to visible range
+- 📊 **Chart Max Extended** - Y-axis max extended to 200 hPa (from 100 hPa)
+
+### Stability & Crash Fixes
+- 🛡️ **BOOTSEL Safe Shutdown** - Multicore lockout + interrupt disable before reset_usb_boot
+- 🐛 **Measurement Disconnect Crash** - Fixed crash when save dialog appears during disconnect
+- 🐛 **BOOTSEL ALSA Crash** - Fixed ALSA assertion failure after BOOTSEL reboot
+- 🐛 **Auto-Reconnect Suppression** - Prevents reconnect loop after intentional BOOTSEL/soft reboot
+- 🚫 **Non-DiveChecker Device Block** - Shows warning dialog instead of crashing on unsupported devices
+- 🛡️ **MIDI Data Handler Guard** - Try-catch wrapper prevents crash from malformed MIDI data
 
 ### Bug Fixes
 - 🐛 **FIFO Handshake Bug** - Fixed dual-push causing stale status reads

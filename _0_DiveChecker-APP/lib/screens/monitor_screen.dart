@@ -420,6 +420,32 @@ class _MonitorScreenState extends State<MonitorScreen> {
     );
   }
 
+  /// Dynamic Y-axis min based on visible data
+  double _calcMinY(List<FlSpot> visibleData) {
+    if (visibleData.isEmpty) return -10;
+    final minVal = visibleData.map((p) => p.y).reduce((a, b) => a < b ? a : b);
+    return (minVal - 2).floorToDouble().clamp(-50, 0);
+  }
+
+  /// Dynamic Y-axis max based on visible data
+  double _calcMaxY(List<FlSpot> visibleData) {
+    if (visibleData.isEmpty) return 25;
+    final maxVal = visibleData.map((p) => p.y).reduce((a, b) => a > b ? a : b);
+    return (maxVal + 2).ceilToDouble().clamp(5, 200);
+  }
+
+  /// Dynamic Y interval based on range
+  double _calcYInterval(double minY, double maxY) {
+    final range = maxY - minY;
+    if (range <= 5) return 1;
+    if (range <= 10) return 2;
+    if (range <= 20) return 2;
+    if (range <= 30) return 5;
+    if (range <= 50) return 5;
+    if (range <= 100) return 10;
+    return 20;
+  }
+
   Widget _buildChart(ThemeData theme) {
     // Calculate visible range
     double minX, maxX;
@@ -443,6 +469,10 @@ class _MonitorScreenState extends State<MonitorScreen> {
         .map((p) => FlSpot(p.x, p.y))
         .toList();
 
+    final minY = _calcMinY(visibleData);
+    final maxY = _calcMaxY(visibleData);
+    final yInterval = _calcYInterval(minY, maxY);
+
     return Padding(
       padding: const EdgeInsets.only(
         top: Spacing.md,
@@ -455,12 +485,12 @@ class _MonitorScreenState extends State<MonitorScreen> {
           clipData: const FlClipData.all(),
           minX: minX,
           maxX: maxX,
-          minY: -10,
-          maxY: 25,
+          minY: minY,
+          maxY: maxY,
           gridData: FlGridData(
             show: true,
             drawVerticalLine: true,
-            horizontalInterval: 5,
+            horizontalInterval: yInterval,
             verticalInterval: 5000, // 5 seconds
             getDrawingHorizontalLine: (value) => FlLine(
               color: Colors.grey.shade500,
@@ -476,7 +506,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 35,
-                interval: 5,
+                interval: yInterval,
                 getTitlesWidget: (value, meta) => Text(
                   value.toInt().toString(),
                   style: TextStyle(

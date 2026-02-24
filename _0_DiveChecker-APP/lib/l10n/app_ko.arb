@@ -31,12 +31,16 @@
   "connectionRequiredMessage": "측정을 시작하려면 먼저 Divechecker 본체에 연결하세요.\n\n홈 탭에서 기기를 연결할 수 있습니다.",
   "goToHome": "홈으로 이동",
   "cancel": "취소",
+  "confirm": "확인",
   "ok": "확인",
   "close": "닫기",
   "add": "추가",
+  "peakAnalysisDisclaimer": "이 분석은 참고치이며 완전하지 않습니다. 결과 해석에 유의하시기 바랍니다.",
   
   "connectedSuccess": "Divechecker 본체 연결 성공!",
   "disconnected": "Divechecker 본체 연결 해제됨",
+  "unsupportedDevice": "지원하지 않는 기기",
+  "onlyDiveCheckerSupported": "DiveChecker 기기만 지원됩니다. 이 기기는 앱에서 사용할 수 없습니다.",
   
   "startMeasurement": "측정 시작",
   "stopMeasurement": "측정 종료",

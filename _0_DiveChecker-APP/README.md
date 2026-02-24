@@ -108,9 +108,11 @@ lib/
 
 ### 📊 Real-time Pressure Monitoring
 - 100Hz internal sampling, configurable output (default 8Hz)
-- Real-time line chart (fl_chart)
+- Real-time line chart (fl_chart) with smooth bezier curves
+- Dynamic Y-axis auto-scaling on measurement & monitor charts
 - Pinch zoom / drag pan gestures
 - Hz-aligned grid lines
+- Extended chart range up to 200 hPa
 
 ### 🔬 Peak Analysis
 - Rhythm score (peak interval consistency)
@@ -127,9 +129,12 @@ lib/
 ### 🔐 Security & Reliability
 - **ECDSA P-256 Authentication**: Challenge-response device verification
 - **Auto-Reconnect**: Exponential backoff on USB disconnect (2/4/6s, max 3 attempts)
+- **Reconnect Suppression**: Prevents auto-reconnect after intentional BOOTSEL/soft reboot
+- **Non-DiveChecker Device Block**: Warning dialog for unsupported MIDI devices
 - **Input Validation**: Config value range clamping
 - **Timer Cleanup**: All timers cancelled on disconnect
 - **Double-pop Guard**: Prevents duplicate Navigator.pop calls
+- **MIDI Data Guard**: Try-catch wrapper on incoming MIDI data handler
 
 ### 🌐 Multi-language Support
 - 🇺🇸 English

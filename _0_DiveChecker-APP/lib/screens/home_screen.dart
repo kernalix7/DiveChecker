@@ -273,10 +273,6 @@ class _HomeScreenState extends State<HomeScreen> {
     provider.disconnect();
   }
 
-  void _recalibrateAtmospheric(SerialProvider provider) {
-    provider.startAtmosphericCalibration();
-  }
-
   Future<void> _openDeviceSelection() async {
     final result = await Navigator.push<bool>(
       context,
@@ -357,14 +353,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                               pressure: serial.currentPressure,
                                               isCompact: isCompact,
                                             ),
-                                            SizedBox(height: isCompact ? Spacing.md : Spacing.lg),
-                                            // Atmospheric Pressure Recalibration Button (only when sensor OK)
-                                            if (serial.isSensorConnected)
-                                              RecalibrateAtmosphericButton(
-                                                isCalibrating: serial.isCalibrating,
-                                                onPressed: () =>
-                                                    _recalibrateAtmospheric(serial),
-                                              ),
                                             SizedBox(height: isCompact ? Spacing.md : Spacing.xl),
                                             const LiveMonitoringIndicator(),
                                           ],

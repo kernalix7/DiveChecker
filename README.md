@@ -22,7 +22,7 @@
 
 DiveChecker is a professional monitoring system that helps freedivers effectively practice **equalization (ear pressure equalization)** training.
 
-Using a pressure sensor connected to a mouthpiece, it precisely measures subtle pressure changes (-10 to +25 hPa) when blowing or sucking through the mouth with **100Hz internal sampling + configurable output rate (4-50Hz)**, and visualizes them in real-time graphs.
+Using a pressure sensor connected to a mouthpiece, it precisely measures subtle pressure changes (-10 to +200 hPa) when blowing or sucking through the mouth with **100Hz internal sampling + configurable output rate (4-50Hz)**, and visualizes them in real-time graphs.
 
 ### Architecture (v5.1.0)
 
@@ -70,7 +70,8 @@ Using a pressure sensor connected to a mouthpiece, it precisely measures subtle 
 - **Sampling**: 100Hz internal → 4-50Hz output (configurable)
 - **Firmware Filtering**: IIR x2 + Averaging
 - **Latency**: ~10ms (sensor to app)
-- **Pressure Range**: -10 to +25 hPa (negative/positive)
+- **Pressure Range**: -10 to +200 hPa (negative/positive)
+- **Sensor Absolute Range**: 300-1250 hPa (extended)
 - **Resolution**: 0.001 hPa (0.0016 hPa sensor resolution)
 
 </td>
@@ -80,6 +81,8 @@ Using a pressure sensor connected to a mouthpiece, it precisely measures subtle 
 - Real-time line chart (fl_chart)
 - Pinch zoom / drag pan gestures
 - 30-second sliding window
+- Dynamic Y-axis auto-scaling
+- Curved chart with smooth bezier
 - Max/Avg pressure real-time display
 
 </td>
@@ -177,7 +180,8 @@ Detailed equalization quality analysis after measurement:
 | Screen | Description |
 |--------|-------------|
 | 🏠 **Home** | Device connection, real-time pressure display, calibration |
-| 📈 **Measurement** | Live graph, Start/Stop/Pause, session recording |
+| � **Monitor** | Real-time streaming chart with dynamic Y-axis |
+| �📈 **Measurement** | Live graph, Start/Stop/Pause, session recording |
 | 📋 **History** | Session list → Graph detail → Peak analysis |
 | ⚙️ **Settings** | Language, backup/restore, device settings, firmware update |
 
@@ -341,6 +345,7 @@ GP16         ────── WS2812 LED
 - [x] 🔐 **Authentication** - ECDSA device authentication
 
 ### 🔜 Next Goals
+- [ ] ⏸️ **Monitor pause & range save** - Pause monitoring and save specific ranges
 - [ ] 🫁 **Lung capacity measurement** - Max inhale/exhale volume check
 - [ ] 🧘 **CO₂ table trainer** - Carbon dioxide tolerance training
 - [ ] 💨 **O₂ table trainer** - Hypoxia adaptation training

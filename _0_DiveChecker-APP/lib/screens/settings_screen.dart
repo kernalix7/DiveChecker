@@ -122,42 +122,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _showPressureUnitDialog(context),
                 ),
-                // Output Rate - Firmware setting (requires device connection)
-                Consumer<SerialProvider>(
-                  builder: (context, serialProvider, _) {
-                    final isConnected = serialProvider.isConnected;
-                    return Column(
-                      children: [
-                        const AppDivider(),
-                        ListTile(
-                          leading: IconContainer(
-                            icon: Icons.waves,
-                            color: isConnected ? theme.colorScheme.primary : StatusColors.disabled,
-                          ),
-                          title: Text(
-                            l10n.outputRate,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: isConnected ? null : StatusColors.disabled,
-                            ),
-                          ),
-                          subtitle: Text(
-                            isConnected 
-                                ? '${serialProvider.outputRate} Hz' 
-                                : l10n.connectDeviceFirst,
-                            style: TextStyle(color: isConnected ? null : StatusColors.disabled),
-                          ),
-                          trailing: Icon(
-                            Icons.chevron_right,
-                            color: isConnected ? null : StatusColors.disabled,
-                          ),
-                          enabled: isConnected,
-                          onTap: isConnected ? () => _showOutputRateDialog(context, serialProvider) : null,
-                        ),
-                      ],
-                    );
-                  },
-                ),
               ],
             ),
           ),
@@ -737,45 +701,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(l10n.cancel),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showOutputRateDialog(BuildContext context, SerialProvider serialProvider) {
-    final l10n = AppLocalizations.of(context)!;
-    final currentRate = serialProvider.outputRate;
-    
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(l10n.outputRate),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: OutputRate.values.map((rate) {
-            final isSelected = rate.value == currentRate;
-            return ListTile(
-              leading: Icon(
-                isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                color: Theme.of(dialogContext).colorScheme.primary,
-              ),
-              title: Text(rate.displayName),
-              subtitle: Text(rate.description),
-              onTap: () async {
-                final success = await serialProvider.setOutputRate(rate.value);
-                if (success && context.mounted) {
-                  context.showSnackBar('Output rate: ${rate.value} Hz');
-                }
-                Navigator.of(dialogContext).pop();
-              },
-            );
-          }).toList(),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
             child: Text(l10n.cancel),
           ),
         ],

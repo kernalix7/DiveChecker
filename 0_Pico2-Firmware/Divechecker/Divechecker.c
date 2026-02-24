@@ -205,9 +205,9 @@ typedef enum {
 #define BMP280_CTRL_STABLE      0x57    // T:x1, P:x16, normal mode
 #define BMP280_CONFIG_FILTERED  0x04    // standby=0.5ms, filter=x2
 
-// BMP280 valid measurement range (datasheet spec)
+// BMP280 valid measurement range (extended beyond datasheet 300-1100 hPa spec)
 #define BMP280_PRESSURE_MIN_HPA     300.0f
-#define BMP280_PRESSURE_MAX_HPA     1100.0f
+#define BMP280_PRESSURE_MAX_HPA     1250.0f
 
 // Over-range recovery: discard initial samples after sensor reset
 // to let IIR filter stabilize with clean values
@@ -1224,7 +1224,17 @@ static void midi_process_sysex(sysex_message_t* msg) {
                     pin_record_success();
                     midi_sysex_send_ack(CMD_ENTER_BOOTLOADER, 0x00);
                     sleep_ms(100);  // Let ACK be sent
+                    
+                    // CRITICAL: Stop Core 1 and disable watchdog before
+                    // entering BOOTSEL. Core 1 runs from XIP flash and
+                    // accesses I2C — if it's active during ROM bootloader
+                    // entry the chip hangs.
+                    watchdog_disable();
+                    multicore_lockout_start_blocking();
+                    uint32_t irq_state = save_and_disable_interrupts();
                     reset_usb_boot(0, 0);  // Enter BOOTSEL mode
+                    // Never returns
+                    restore_interrupts(irq_state);  // Unreachable, for safety
                 } else {
                     pin_record_failure();
                     midi_sysex_send_ack(CMD_ENTER_BOOTLOADER, 0x02);

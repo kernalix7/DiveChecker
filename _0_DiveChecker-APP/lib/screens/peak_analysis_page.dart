@@ -12,17 +12,9 @@ import '../l10n/app_localizations.dart';
 import '../models/chart_point.dart';
 import '../providers/settings_provider.dart';
 import '../utils/peak_analyzer.dart';
-import '../widgets/analysis/analysis_type_tabs.dart';
 import '../widgets/analysis/analysis_widgets.dart';
 import '../widgets/analysis/intensity_distribution.dart';
 import '../widgets/analysis/overall_grade_card.dart';
-import '../widgets/analysis/pattern_recognition_view.dart';
-import '../widgets/analysis/segment_analysis_view.dart';
-import '../widgets/analysis/statistics_dashboard.dart';
-import '../widgets/analysis/trend_graph_view.dart';
-
-// Re-export AnalysisType from analysis_type_tabs.dart
-export '../widgets/analysis/analysis_type_tabs.dart' show AnalysisType;
 
 /// 고급 분석 페이지
 /// 기록에서 분석 버튼 클릭 시 이동
@@ -43,7 +35,6 @@ class PeakAnalysisPage extends StatefulWidget {
 class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
   PeakAnalysisResult? _analysisResult;
   bool _isLoading = true;
-  AnalysisType _selectedType = AnalysisType.peak;
 
   // 피크 선택 상태 (인덱스 -> 선택 여부)
   Map<int, bool> _peakSelections = {};
@@ -114,51 +105,17 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
       appBar: AppBar(title: Text(l10n.advancedAnalysis), elevation: Elevations.none),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                AnalysisTypeTabs(
-                  selectedType: _selectedType,
-                  onTypeChanged: (type) => setState(() => _selectedType = type),
-                ),
-                Expanded(child: _buildSelectedAnalysis(l10n)),
-              ],
-            ),
+          : _buildPeakContent(l10n),
     );
   }
 
-  /// 선택된 분석 유형에 따른 뷰 빌드
-  Widget _buildSelectedAnalysis(AppLocalizations l10n) {
+  /// 피크 분석 콘텐츠 빌드
+  Widget _buildPeakContent(AppLocalizations l10n) {
     final theme = Theme.of(context);
-    switch (_selectedType) {
-      case AnalysisType.peak:
-        if (_analysisResult == null || _analysisResult!.peaks.isEmpty) {
-          return _buildNoDataView(l10n, theme);
-        }
-        return _buildPeakAnalysisView(l10n, theme);
-      case AnalysisType.statistics:
-        return StatisticsDashboard(
-          chartData: widget.chartData,
-          analysisResult: _analysisResult,
-          l10n: l10n,
-        );
-      case AnalysisType.segment:
-        return SegmentAnalysisView(
-          chartData: widget.chartData,
-          analysisResult: _analysisResult,
-          l10n: l10n,
-        );
-      case AnalysisType.trend:
-        return TrendGraphView(
-          chartData: widget.chartData,
-          l10n: l10n,
-        );
-      case AnalysisType.pattern:
-        return PatternRecognitionView(
-          analysisResult: _analysisResult,
-          filteredResult: _filteredResult,
-          l10n: l10n,
-        );
+    if (_analysisResult == null || _analysisResult!.peaks.isEmpty) {
+      return _buildNoDataView(l10n, theme);
     }
+    return _buildPeakAnalysisView(l10n, theme);
   }
 
   Widget _buildNoDataView(AppLocalizations l10n, ThemeData theme) {

@@ -41,7 +41,15 @@ class NativeMidiHandler implements MidiHandler {
   
   @override
   Future<List<MidiDeviceData>> getDevices() async {
-    final devices = await _midiCommand.devices ?? [];
+    var devices = await _midiCommand.devices ?? [];
+    
+    // On iOS, CoreMIDI may take a moment to enumerate USB devices.
+    // If no devices found on first try, wait briefly and retry once.
+    if (devices.isEmpty) {
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+      devices = await _midiCommand.devices ?? [];
+    }
+    
     return devices.map((d) => MidiDeviceData(
       id: d.id,
       name: d.name,
@@ -69,21 +77,30 @@ class NativeMidiHandler implements MidiHandler {
   
   @override
   Future<void> disconnect() async {
-    if (_connectedDevice != null) {
-      _midiCommand.disconnectDevice(_connectedDevice!);
-      _connectedDevice = null;
+    final device = _connectedDevice;
+    _connectedDevice = null;  // Clear FIRST to prevent any further writes
+    if (device != null) {
+      try {
+        // Device may already be gone (BOOTSEL, unplug) - catch any native errors
+        _midiCommand.disconnectDevice(device);
+      } catch (e) {
+        if (kDebugMode) debugPrint('Native MIDI disconnect (device may be gone): $e');
+      }
     }
   }
   
   @override
   Future<bool> sendSysEx(List<int> data) async {
-    if (_connectedDevice == null) return false;
+    final device = _connectedDevice;
+    if (device == null) return false;
     
     try {
-      _midiCommand.sendData(Uint8List.fromList(data), deviceId: _connectedDevice!.id);
+      _midiCommand.sendData(Uint8List.fromList(data), deviceId: device.id);
       return true;
     } catch (e) {
       if (kDebugMode) debugPrint('Native MIDI send error: $e');
+      // Device may have disappeared - clear reference
+      _connectedDevice = null;
       return false;
     }
   }

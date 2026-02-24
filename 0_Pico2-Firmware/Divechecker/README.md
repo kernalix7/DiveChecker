@@ -7,8 +7,10 @@ Pressure monitoring firmware for Raspberry Pi Pico 2 (RP2350).
 ## Features
 
 - 100Hz internal sampling with BMP280 sensor
+- Extended measurement range: 300-1250 hPa
 - Dual-core architecture for stable performance
 - IIR + Averaging filter for smooth data
+- Safe BOOTSEL entry (multicore lockout + interrupt disable)
 - USB MIDI SysEx protocol for cross-platform compatibility
 - ECDSA device authentication
 - Configurable output rate (4-50 Hz)
@@ -95,6 +97,7 @@ SysEx format: `F0 7D 01 [cmd] [data...] F7`
 | Get Diagnostics | 0x2B | Request runtime diagnostics |
 | Set Oversampling | 0x2C | Set pressure oversampling (0-5) |
 | Set IIR Filter | 0x2D | Set IIR filter coefficient (0-4) |
+| Soft Reboot | 0x2E | Soft reboot (PIN required) |
 | Auth Challenge | 0x30 | ECDSA auth (64-char hex nonce) |
 | Set PIN | 0x31 | Change PIN (old PIN + new PIN) |
 
@@ -129,6 +132,7 @@ See [PRODUCTION_GUIDE.md](PRODUCTION_GUIDE.md) for production deployment.
 |---------|----------------|
 | **Watchdog Timer** | 8s during boot, 2s during operation |
 | **Sensor Auto-Recovery** | 5-second periodic retry on failure |
+| **BOOTSEL Safe Shutdown** | Multicore lockout + interrupt disable before reset |
 | **Flash CRC32** | Data integrity verification on load |
 | **Wear Leveling** | 16-slot rotation in 4KB sector |
 | **Flash Write Debounce** | 3-second delay prevents rapid writes |
@@ -140,6 +144,7 @@ See [PRODUCTION_GUIDE.md](PRODUCTION_GUIDE.md) for production deployment.
 | Metric | Value |
 |--------|-------|
 | **Internal Sampling** | 100Hz (BMP280) |
+| **Measurement Range** | 300-1250 hPa (extended beyond 1100 hPa datasheet spec) |
 | **Output Rate** | 4-50Hz (configurable) |
 | **Sensor-to-App Latency** | ~10ms |
 | **Core 0** | USB MIDI + Command processing |

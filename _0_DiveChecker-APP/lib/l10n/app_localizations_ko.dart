@@ -86,6 +86,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get cancel => '취소';
 
   @override
+  String get confirm => '확인';
+
+  @override
   String get ok => '확인';
 
   @override
@@ -95,10 +98,21 @@ class AppLocalizationsKo extends AppLocalizations {
   String get add => '추가';
 
   @override
+  String get peakAnalysisDisclaimer =>
+      '이 분석은 참고치이며 완전하지 않습니다. 결과 해석에 유의하시기 바랍니다.';
+
+  @override
   String get connectedSuccess => 'Divechecker 본체 연결 성공!';
 
   @override
   String get disconnected => 'Divechecker 본체 연결 해제됨';
+
+  @override
+  String get unsupportedDevice => '지원하지 않는 기기';
+
+  @override
+  String get onlyDiveCheckerSupported =>
+      'DiveChecker 기기만 지원됩니다. 이 기기는 앱에서 사용할 수 없습니다.';
 
   @override
   String get startMeasurement => '측정 시작';

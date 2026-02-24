@@ -69,7 +69,7 @@ class YAxisRange {
     // Calculate interval
     final range = maxY - minY;
     double interval = (range / divisions).ceilToDouble();
-    interval = interval.clamp(1.0, 20.0);
+    interval = interval.clamp(1.0, 50.0);
     
     return YAxisRange(minY: minY, maxY: maxY, interval: interval);
   }

@@ -31,6 +31,18 @@
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>DiveChecker may save measurement charts and analysis results to your photo library.</string>
 	
+	<!-- Bluetooth - Required by flutter_midi_command even for USB MIDI -->
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>DiveChecker uses Bluetooth to discover and communicate with MIDI-compatible dive instruments.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>DiveChecker uses Bluetooth to discover and communicate with MIDI-compatible dive instruments.</string>
+	
+	<!-- CoreMIDI network session support -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
+	
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

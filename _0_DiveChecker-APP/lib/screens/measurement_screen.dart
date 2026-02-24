@@ -85,6 +85,7 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
   }
 
   void _showDisconnectSaveDialog() {
+    if (!mounted) return;  // Guard against showing dialog after unmount
     final l10n = AppLocalizations.of(context)!;
     final controller = _controller;
     if (controller == null) return;
@@ -92,6 +93,9 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
     final noteController = TextEditingController();
     final state = controller.state;
     final settings = context.read<SettingsProvider>();
+    
+    // Capture references before async gap
+    final sessionRepo = context.read<SessionRepository>();
     
     showDialog(
       context: context,
@@ -146,10 +150,12 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
           ),
           FilledButton(
             onPressed: () async {
-              await _saveSession(noteController.text);
+              final savedId = await _saveSessionToRepo(noteController.text, sessionRepo);
               if (dialogContext.mounted) {
                 _isShowingDisconnectDialog = false;
                 Navigator.pop(dialogContext);
+              }
+              if (savedId != null && mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(l10n.measurementSaved)),
                 );
@@ -275,6 +281,41 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
     );
   }
 
+  /// Save session with pre-captured SessionRepository (avoids context.read after async gap)
+  Future<int?> _saveSessionToRepo(String notes, SessionRepository sessionRepo) async {
+    final controller = _controller;
+    if (controller == null) return null;
+
+    // Get device info from SerialProvider
+    final serialProvider = _serialProvider;
+    final deviceSerial = serialProvider?.deviceSerial;
+    final deviceName = serialProvider?.deviceName;
+
+    final sessionId = await controller.saveSession(
+      notes,
+      deviceSerial: deviceSerial,
+      deviceName: deviceName,
+    );
+
+    // Add to SessionRepository cache
+    final state = controller.state;
+    final newSession = SessionData(
+      id: sessionId,
+      date: state.sessionStartTime ?? DateTime.now(),
+      maxPressure: state.maxPressure,
+      avgPressure: state.avgPressure,
+      duration: controller.actualDurationSeconds,
+      notes: notes,
+      deviceSerial: deviceSerial,
+      deviceName: deviceName,
+      chartData: List<ChartPoint>.from(state.pressureData),
+      graphNotes: [],
+    );
+
+    sessionRepo.addSession(newSession);
+    return sessionId;
+  }
+
   Future<void> _saveSession(String notes) async {
     final controller = _controller;
     if (controller == null) return;
@@ -346,47 +387,48 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
               body: Center(
                 child: ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: maxWidth),
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: screenPadding,
-                      child: Column(
-                        children: [
-                          PressureDisplay(
-                            pressure: state.currentPressure,
-                            isRecording: state.isMeasuring,
+                  child: Padding(
+                    padding: screenPadding,
+                    child: Column(
+                      children: [
+                        PressureDisplay(
+                          pressure: state.currentPressure,
+                          isRecording: state.isMeasuring,
+                        ),
+                        const SizedBox(height: Spacing.sm),
+
+                        if (state.isMeasuring &&
+                            state.pressureData.isNotEmpty) ...[
+                          StatsRow(
+                            maxPressure: state.maxPressure,
+                            avgPressure: state.avgPressure,
+                            durationSeconds: controller.actualDurationSeconds,
                           ),
-                          const SizedBox(height: Spacing.xl),
+                          Spacing.verticalSm,
+                        ],
 
-                          if (state.isMeasuring &&
-                              state.pressureData.isNotEmpty) ...[
-                            StatsRow(
-                              maxPressure: state.maxPressure,
-                              avgPressure: state.avgPressure,
-                              durationSeconds: controller.actualDurationSeconds,
-                            ),
-                            Spacing.verticalXl,
-                          ],
-
-                          PressureChart(
+                        Expanded(
+                          child: PressureChart(
                             data: state.pressureData,
                             minX: state.minX,
                             maxX: state.maxX,
                             sampleRate: controller.outputRate,
                           ),
+                        ),
 
-                          const SizedBox(height: Spacing.xxl),
+                        const SizedBox(height: Spacing.sm),
 
-                          if (!state.isMeasuring)
-                            ConnectionStatusBanner(isConnected: isConnected),
+                        if (!state.isMeasuring)
+                          ConnectionStatusBanner(isConnected: isConnected),
 
-                          MeasurementControlButtons(
-                            isMeasuring: state.isMeasuring,
-                            isPaused: state.isPaused,
-                            onToggleMeasurement: _toggleMeasurement,
-                            onTogglePause: controller.togglePause,
-                          ),
-                        ],
-                      ),
+                        MeasurementControlButtons(
+                          isMeasuring: state.isMeasuring,
+                          isPaused: state.isPaused,
+                          onToggleMeasurement: _toggleMeasurement,
+                          onTogglePause: controller.togglePause,
+                        ),
+                        const SizedBox(height: Spacing.sm),
+                      ],
                     ),
                   ),
                 ),

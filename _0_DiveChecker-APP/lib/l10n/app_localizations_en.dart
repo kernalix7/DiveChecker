@@ -88,6 +88,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancel => 'Cancel';
 
   @override
+  String get confirm => 'Confirm';
+
+  @override
   String get ok => 'OK';
 
   @override
@@ -97,10 +100,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get add => 'Add';
 
   @override
+  String get peakAnalysisDisclaimer =>
+      'This analysis provides reference values only and is not complete. Please use caution when interpreting results.';
+
+  @override
   String get connectedSuccess => 'Divechecker connected successfully!';
 
   @override
   String get disconnected => 'Divechecker disconnected';
+
+  @override
+  String get unsupportedDevice => 'Unsupported Device';
+
+  @override
+  String get onlyDiveCheckerSupported =>
+      'Only DiveChecker devices are supported. This device cannot be used with the app.';
 
   @override
   String get startMeasurement => 'START MEASUREMENT';

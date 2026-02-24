@@ -63,6 +63,31 @@ class _SerialDeviceScreenState extends State<SerialDeviceScreen> {
   }
 
   Future<void> _connectToDevice(SerialDeviceInfo device) async {
+    // Block connection to non-DiveChecker devices
+    if (!device.isDiveChecker) {
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
+      showDialog(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          icon: Icon(
+            Icons.warning_amber_rounded,
+            size: 48,
+            color: Theme.of(dialogContext).colorScheme.error,
+          ),
+          title: Text(l10n.unsupportedDevice),
+          content: Text(l10n.onlyDiveCheckerSupported),
+          actions: [
+            FilledButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(l10n.ok),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+    
     final serial = context.read<SerialProvider>();
     
     setState(() {

@@ -34,12 +34,16 @@
   "connectionRequiredMessage": "To start measurement, please connect to Divechecker device first.\n\nGo to Home tab and connect the device.",
   "goToHome": "Go to Home",
   "cancel": "Cancel",
+  "confirm": "Confirm",
   "ok": "OK",
   "close": "Close",
   "add": "Add",
+  "peakAnalysisDisclaimer": "This analysis provides reference values only and is not complete. Please use caution when interpreting results.",
   
   "connectedSuccess": "Divechecker connected successfully!",
   "disconnected": "Divechecker disconnected",
+  "unsupportedDevice": "Unsupported Device",
+  "onlyDiveCheckerSupported": "Only DiveChecker devices are supported. This device cannot be used with the app.",
   
   "startMeasurement": "START MEASUREMENT",
   "stopMeasurement": "STOP MEASUREMENT",
