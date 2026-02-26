@@ -12,14 +12,14 @@ import 'package:flutter/material.dart';
 /// App Configuration
 class AppConfig {
   static const String appName = 'DiveChecker';
-  static const String version = '3.0.0';
+  static const String version = '4.0.0';
   static const String build = '1';
   static const String versionDisplay = '$version (Build $build)';
   
   /// Device product info
   static const String productNameV1 = 'DiveChecker V1';
   static const String productIdV1 = 'DC-V1';
-  static const String defaultFirmwareVersion = '5.1.0';
+  static const String defaultFirmwareVersion = '6.0.0';
 }
 
 /// Status indicator colors

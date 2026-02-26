@@ -7,7 +7,6 @@ library;
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,8 +36,7 @@ class MidiDeviceInfo {
   String get id => device.id;
   String get name => device.name;
   
-  // Compatibility getters for SerialDeviceInfo interface
-  /// Port name - uses MIDI device ID for compatibility
+  /// Port name - uses MIDI device ID
   String get portName => device.id;
   
   /// Manufacturer - MIDI devices don't expose this, return null
@@ -168,7 +166,7 @@ class MidiProvider extends ChangeNotifier {
   
   // Throttle notifyListeners for pressure updates (reduce UI rebuilds)
   DateTime _lastNotifyTime = DateTime.now();
-  static const int _notifyThrottleMs = 200;  // Max 5 UI updates/sec
+  static const int _notifyThrottleMs = 125;  // 8Hz — matches default output rate
 
   bool _deviceInfoRequested = false;
   bool _sensorConnected = true;
@@ -233,7 +231,11 @@ class MidiProvider extends ChangeNotifier {
 
   // Pong timeout tracking
   DateTime? _lastPongTime;
-  static const int _pongTimeoutMs = 5000;  // 5 seconds without pong = lost
+  static const int _pongTimeoutMs = 8000;  // 8 seconds without pong = lost
+
+  // MIDI stream error resilience — single transient errors are ignored
+  int _consecutiveMidiErrors = 0;
+  static const int _maxConsecutiveMidiErrors = 3;
 
   // Debounce for device re-enumeration
   Timer? _setupDebounceTimer;
@@ -372,10 +374,18 @@ class MidiProvider extends ChangeNotifier {
       // Listen to MIDI messages
       _midiSubscription?.cancel();
       _midiSubscription = _midiHandler.onDataReceived.listen(
-        _handleMidiData,
+        (data) {
+          _consecutiveMidiErrors = 0;
+          _handleMidiData(data);
+        },
         onError: (error) {
-          if (kDebugMode) debugPrint('MIDI error: $error');
-          _onUnexpectedDisconnect();
+          _consecutiveMidiErrors++;
+          if (kDebugMode) {
+            debugPrint('MIDI error ($_consecutiveMidiErrors/$_maxConsecutiveMidiErrors): $error');
+          }
+          if (_consecutiveMidiErrors >= _maxConsecutiveMidiErrors) {
+            _onUnexpectedDisconnect();
+          }
         },
       );
 
@@ -594,7 +604,7 @@ class MidiProvider extends ChangeNotifier {
   }
 
   void _handleConfig(Uint8List payload) {
-    if (payload.length >= 1) {
+    if (payload.isNotEmpty) {
       _outputRate = payload[0].clamp(4, 50);
       notifyListeners();
     }
@@ -1336,9 +1346,10 @@ class MidiProvider extends ChangeNotifier {
     _calibrationStartTime = null;
     _atmosphericPressureOffset = 0.0;
     
-    // Clear SysEx buffer
+    // Clear SysEx buffer and error state
     _sysexBuffer.clear();
     _inSysex = false;
+    _consecutiveMidiErrors = 0;
 
     // Cancel debounce timer
     _setupDebounceTimer?.cancel();

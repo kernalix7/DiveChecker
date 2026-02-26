@@ -29,7 +29,7 @@ class IndexedDbDatabaseService implements IDatabaseService {
   
   List<MeasurementSession>? _sessionsCache;
   final Map<int, List<PressureData>> _pressureDataCache = {};
-  final Map<int, List<GraphNote>> _graphNotesCache = {};
+  final Map<int, List<DbGraphNote>> _graphNotesCache = {};
   
   bool _sessionsCacheValid = false;
   final Set<int> _pressureCacheValidSessions = {};
@@ -286,7 +286,7 @@ class IndexedDbDatabaseService implements IDatabaseService {
   }
 
   @override
-  Future<List<GraphNote>> getGraphNotesBySession(int sessionId) async {
+  Future<List<DbGraphNote>> getGraphNotesBySession(int sessionId) async {
     if (_notesCacheValidSessions.contains(sessionId) && 
         _graphNotesCache.containsKey(sessionId)) {
       return List.from(_graphNotesCache[sessionId]!);
@@ -297,13 +297,13 @@ class IndexedDbDatabaseService implements IDatabaseService {
     final store = txn.objectStore(_graphNotesStore);
     final index = store.index('session_id');
     
-    final notes = <GraphNote>[];
+    final notes = <DbGraphNote>[];
     final cursor = index.openCursor(key: sessionId, autoAdvance: true);
     
     await cursor.forEach((cursor) {
       final map = Map<String, dynamic>.from(cursor.value as Map);
       map['id'] = cursor.primaryKey;
-      notes.add(GraphNote.fromMap(map));
+      notes.add(DbGraphNote.fromMap(map));
     });
     
     await txn.completed;

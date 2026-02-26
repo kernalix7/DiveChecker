@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- 🔧 **Root Cause Stabilization (Sensor Pipeline)** - Firmware Core 1 sampling/filtering no longer depends on app connection state; reconnection no longer cold-starts sensor averaging/IIR pipeline.
+- 🔧 **Reconnect Baseline Preservation** - Removed implicit baseline reset on transient reconnect to prevent sudden 0.0-style pressure re-zero events.
+- 🔧 **Flash Lockout Recovery Guard** - Added post-lockout I2C grace window and raised over-range trigger threshold to avoid false sensor reset loops after settings writes.
+- 🔧 **Keepalive Resilience** - Increased firmware/app timeout margins and made MIDI stream errors tolerant to transient bursts before forcing disconnect.
+
 ### Planned Features (Next Release)
 - ⏸️ Monitor tab pause button
 - 💾 Monitor specific range save
@@ -19,6 +25,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 🎯 Guided training programs
 - 📱 iOS-specific optimizations
 - 🔔 Notification support
+
+---
+
+## [4.0.0] - 2026-02-26 (RTM 4.0)
+
+### Security Enhancements
+- 🔐 **Backup Integrity Verification** - Checksum validation prevents tampered backup restoration
+- 🛡️ **Enhanced Flash CRC Validation** - Legacy CRC acceptance now requires magic field verification
+- 🔒 **INT32_MIN Safe Encoding** - Fixed undefined behavior in MIDI SysEx pressure encoding
+- 🔑 **Memory Barrier for Cross-Core** - Proper `__dmb()` barriers for output rate changes
+
+### Bug Fixes (Critical)
+- 🐛 **Peak Analysis Time Calculation** - Fixed incorrect time display (was using `*0.25` instead of `/1000.0`)
+- 🐛 **GraphNote Class Collision** - Resolved duplicate class names between models and database layer
+- 🐛 **USB Serial Number** - Firmware now correctly sets USB descriptor serial from chip ID
+- 🐛 **LED Init Safety** - Added initialization guard to prevent infinite PIO blocking on init failure
+
+### Performance Improvements
+- ⚡ **Monitor Screen Optimization** - Timer-based UI updates (10Hz) instead of per-sample setState (up to 50Hz)
+- ⚡ **Peak Analyzer Set Lookup** - O(1) peak index lookup replaces O(n) List.contains
+- ⚡ **Floating-Point Drift Prevention** - Periodic sum recalculation every 100 samples
+- ⚡ **USB Enumeration Speed** - Reduced USB wait loop from 500ms to 10ms intervals
+
+### Stability Improvements
+- 🔧 **Widget State Isolation** - GraphDetailPage no longer mutates parent widget properties
+- 🔧 **Session Save Error Handling** - User-facing error feedback on database save failure
+- 🔧 **Graph Note Input Validation** - 500 character limit with trimming on note input
+- 🔧 **Dead Code Removal** - Removed unused gradient computation from PeakAnalyzer
+
+### Platform Fixes
+- 🖥️ **Linux Binary Name** - Changed from `_0_flutter_app` to `divechecker`
+- 🖥️ **Linux Application ID** - Changed from `com.example` to `io.kodenet.divechecker`
+- 🍎 **macOS Bundle ID** - Unified to `io.kodenet.divechecker` (was `com.divechecker.app`)
+- 🍎 **macOS Copyright** - Updated to match project license
+
+### Code Quality & Refactoring
+- 🧹 **SerialProvider Removal** - Eliminated legacy compatibility layer; all code now uses `MidiProvider` directly
+- 🧹 **Legacy Naming Cleanup** - Renamed `serial_device_screen.dart` → `device_selection_screen.dart`, updated class and file references
+- 🧹 **Variable Naming Consistency** - Renamed all `_serialProvider`/`serial` variables to `_midiProvider`/`midi` across 12+ files
+- 🧹 **Dead Parameter Removal** - Removed unused `settingsProvider` parameter from `MeasurementController`
+- 🧹 **Dead Code Removal** - Removed empty condition block in `HomeScreen._openDeviceSelection()`
+- 📝 **Pressure Unit Consistency** - Fixed hardcoded "hPa" in graph note detail view
+- 📝 **Explicit Includes** - Added missing `<string.h>` in USB descriptors
+
+### Firmware v6.0.0 Changes
+- USB serial number correctly set from chip unique ID
+- LED initialization failure no longer causes infinite PIO blocking
+- Memory barriers (`__dmb()`) for cross-core output rate synchronization
+- Strengthened flash CRC verification with magic field check
+- Safe INT32_MIN handling in pressure encoding
+- Faster USB enumeration with 10ms polling intervals
+- Removed unused `g_usb_suspended` variable and `midi_sysex_send_sensor_status()` dead code
+- Removed unused `CMD_SENSOR_STATUS` protocol command
+- Consistent `#if CFG_TUD_CDC` guards on all printf calls (`bmp280_init`, `ecdsa_init`)
+- Fixed `pressure_mpa` parameter naming to `pressure_mhpa` (milli-hPa) to match actual units
+- Removed identity lookup tables in `bmp280_apply_config()`
+- Cleaned up stale comments and replaced unreachable code with `__builtin_unreachable()`
 
 ---
 

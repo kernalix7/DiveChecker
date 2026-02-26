@@ -11,7 +11,7 @@ import '../constants/app_constants.dart';
 import '../l10n/app_localizations.dart';
 import '../models/chart_point.dart';
 import '../models/graph_note.dart';
-import '../providers/serial_provider.dart';
+import '../providers/midi_provider.dart';
 import '../providers/session_repository.dart';
 import '../providers/settings_provider.dart';
 import '../services/unified_database_service.dart';
@@ -39,6 +39,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
   double _maxX = 100;
   final List<GraphNote> _graphNotes = [];
   double _zoomLevel = 1.0;
+  String? _displayTitle;
   final double _minZoom = 0.5;
   final double _maxZoom = 100.0;
 
@@ -63,8 +64,9 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
   @override
   void initState() {
     super.initState();
-    final serial = context.read<SerialProvider>();
-    _isConnected = serial.isConnected;
+    _displayTitle = widget.session['displayTitle'] as String?;
+    final midi = context.read<MidiProvider>();
+    _isConnected = midi.isConnected;
     if (widget.chartData.isNotEmpty) {
       _minX = widget.chartData.first.x;
       _maxX = widget.chartData.last.x;
@@ -657,8 +659,10 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
               decoration: InputDecoration(
                 hintText: l10n.noteHint,
                 border: const OutlineInputBorder(),
+                counterText: '',
               ),
               maxLines: 3,
+              maxLength: 500,
               autofocus: true,
             ),
           ],
@@ -670,12 +674,13 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
           ),
           FilledButton(
             onPressed: () async {
-              if (controller.text.isNotEmpty) {
+              final text = controller.text.trim();
+              if (text.isNotEmpty && text.length <= 500) {
                 final dbService = UnifiedDatabaseService();
                 final noteId = await dbService.saveGraphNote(
                   widget.session['id'],
                   actualX,
-                  controller.text,
+                  text,
                 );
 
                 setState(() {
@@ -702,16 +707,15 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
   }
 
   String _getSessionTitle(AppLocalizations l10n) {
-    final displayTitle = widget.session['displayTitle'] as String?;
-    if (displayTitle != null && displayTitle.isNotEmpty) {
-      return displayTitle;
+    if (_displayTitle != null && _displayTitle!.isNotEmpty) {
+      return _displayTitle!;
     }
     final id = widget.session['id'];
     return '${l10n.measurement} #$id';
   }
 
   void _showEditTitleDialog(BuildContext context, AppLocalizations l10n) {
-    final currentTitle = widget.session['displayTitle'] as String? ?? '';
+    final currentTitle = _displayTitle ?? '';
     final controller = TextEditingController(text: currentTitle);
 
     showDialog(
@@ -744,9 +748,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                 );
 
                 setState(() {
-                  widget.session['displayTitle'] = newTitle.isEmpty
-                      ? null
-                      : newTitle;
+                  _displayTitle = newTitle.isEmpty ? null : newTitle;
                 });
               }
 
@@ -768,7 +770,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
     final maxWidth = Responsive.maxContentWidth(context);
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.background,
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
         title: GestureDetector(
           onTap: () => _showEditTitleDialog(context, l10n),
@@ -1548,15 +1550,18 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                                       ),
                                       Spacing.verticalMd,
                                       if (pressureAtNote != null)
-                                        InfoRow(
-                                          icon: Icons.speed,
-                                          label: AppLocalizations.of(
-                                            context,
-                                          )!.currentPressure,
-                                          value:
-                                              '${pressureAtNote.toStringAsFixed(1)} hPa',
-                                          color: ScoreColors.poor,
-                                        ),
+                                        Builder(builder: (context) {
+                                          final settings = context.read<SettingsProvider>();
+                                          return InfoRow(
+                                            icon: Icons.speed,
+                                            label: AppLocalizations.of(
+                                              context,
+                                            )!.currentPressure,
+                                            value:
+                                                '${settings.convertPressure(pressureAtNote!).toStringAsFixed(1)} ${settings.pressureUnitSymbol}',
+                                            color: ScoreColors.poor,
+                                          );
+                                        }),
                                       Spacing.verticalLg,
                                       const Divider(),
                                       Spacing.verticalSm,

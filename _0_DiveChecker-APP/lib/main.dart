@@ -20,7 +20,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
-        ChangeNotifierProvider(create: (_) => SerialProvider()),
+        ChangeNotifierProvider(create: (_) => MidiProvider()),
         ChangeNotifierProvider(create: (_) => SessionRepository()..loadSessions()),
       ],
       child: const DiveCheckerApp(),
@@ -36,7 +36,7 @@ class DiveCheckerApp extends StatefulWidget {
 }
 
 class _DiveCheckerAppState extends State<DiveCheckerApp> with WidgetsBindingObserver {
-  SerialProvider? _serialProvider;
+  MidiProvider? _midiProvider;
 
   @override
   void initState() {
@@ -47,7 +47,7 @@ class _DiveCheckerAppState extends State<DiveCheckerApp> with WidgetsBindingObse
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _serialProvider = context.read<SerialProvider>();
+    _midiProvider = context.read<MidiProvider>();
   }
 
   @override
@@ -59,7 +59,7 @@ class _DiveCheckerAppState extends State<DiveCheckerApp> with WidgetsBindingObse
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.detached) {
-      _serialProvider?.disconnect();
+      _midiProvider?.disconnect();
     }
   }
 

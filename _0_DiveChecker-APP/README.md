@@ -69,19 +69,21 @@ lib/
 ├── models/                      # Data models
 ├── providers/                   # State management (Provider)
 │   ├── midi_provider.dart       # USB MIDI connection
-│   ├── serial_provider.dart     # Alias for midi_provider
 │   ├── measurement_controller.dart # Measurement logic
 │   ├── session_repository.dart  # Session cache
 │   ├── settings_provider.dart   # App settings
 │   └── locale_provider.dart     # Language settings
 ├── screens/                     # Screens
 │   ├── home_screen.dart         # Home (connection status)
+│   ├── monitor_screen.dart      # Real-time streaming chart
 │   ├── measurement_screen.dart  # Real-time measurement
 │   ├── history_screen.dart      # Session history
 │   ├── graph_detail_page.dart   # Detailed graph
 │   ├── peak_analysis_page.dart  # Peak analysis
 │   ├── settings_screen.dart     # Settings
-│   └── serial_device_screen.dart # Device selection
+│   ├── device_selection_screen.dart # Device selection
+│   ├── device_settings_screen.dart  # Device configuration
+│   └── firmware_update_screen.dart  # OTA firmware update
 ├── services/                    # Services
 │   ├── unified_database_service.dart # DB integration
 │   └── backup_service.dart      # Backup/restore
@@ -107,7 +109,7 @@ lib/
 - Configurable output rate (4-50 Hz)
 
 ### 📊 Real-time Pressure Monitoring
-- 100Hz internal sampling, configurable output (default 8Hz)
+- 100Hz internal sampling, configurable output (4-50Hz, default 8Hz)
 - Real-time line chart (fl_chart) with smooth bezier curves
 - Dynamic Y-axis auto-scaling on measurement & monitor charts
 - Pinch zoom / drag pan gestures
@@ -152,7 +154,7 @@ flutter test integration_test/
 
 ## License
 
-Copyright (C) 2025 Kim DaeHyun (kernalix7@kodenet.io)
+Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 
 import '../constants/app_constants.dart';
 import '../l10n/app_localizations.dart';
-import '../providers/serial_provider.dart';
+import '../providers/midi_provider.dart';
 import '../utils/ui_helpers.dart';
 import '../widgets/common/styled_container.dart';
 import '../widgets/section_header.dart';
@@ -58,8 +58,8 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
     super.dispose();
   }
 
-  DeviceProductInfo _getDeviceInfo(SerialProvider provider) {
-    // Parse device info from SerialProvider
+  DeviceProductInfo _getDeviceInfo(MidiProvider provider) {
+    // Parse device info from MidiProvider
     final serial = provider.deviceSerial;
     final isAuth = provider.isDeviceAuthenticated;
     
@@ -80,7 +80,7 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
     );
   }
 
-  Future<void> _showChangePinDialog(BuildContext context, AppLocalizations l10n, SerialProvider provider) async {
+  Future<void> _showChangePinDialog(BuildContext context, AppLocalizations l10n, MidiProvider provider) async {
     final currentPinController = TextEditingController();
     final newPinController = TextEditingController();
     final confirmPinController = TextEditingController();
@@ -165,7 +165,7 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
     );
   }
 
-  Future<void> _showChangeNameDialog(BuildContext context, AppLocalizations l10n, SerialProvider provider) async {
+  Future<void> _showChangeNameDialog(BuildContext context, AppLocalizations l10n, MidiProvider provider) async {
     _nameController.text = provider.deviceName ?? 'DiveChecker';
     _pinController.clear();
 
@@ -234,9 +234,9 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     
-    return Consumer<SerialProvider>(
-      builder: (context, serialProvider, _) {
-        if (!serialProvider.isConnected) {
+    return Consumer<MidiProvider>(
+      builder: (context, midiProvider, _) {
+        if (!midiProvider.isConnected) {
           // Device disconnected - go back (guard against duplicate pops)
           if (!_hasPopped) {
             _hasPopped = true;
@@ -247,7 +247,7 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
           return const Scaffold(body: Center(child: CircularProgressIndicator()));
         }
         
-        final deviceInfo = _getDeviceInfo(serialProvider);
+        final deviceInfo = _getDeviceInfo(midiProvider);
         final shortSerial = deviceInfo.serialNumber != null && deviceInfo.serialNumber!.length >= 4
             ? deviceInfo.serialNumber!.substring(deviceInfo.serialNumber!.length - 4)
             : '';
@@ -285,7 +285,7 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              serialProvider.deviceName ?? deviceInfo.productName,
+                              midiProvider.deviceName ?? deviceInfo.productName,
                               style: const TextStyle(
                                 fontSize: FontSizes.titleSm,
                                 fontWeight: FontWeight.bold,
@@ -345,9 +345,9 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
                         l10n.deviceName,
                         style: AppTextStyles.semiBold,
                       ),
-                      subtitle: Text('${serialProvider.deviceName ?? AppConfig.appName}${shortSerial.isNotEmpty ? '-$shortSerial' : ''}'),
+                      subtitle: Text('${midiProvider.deviceName ?? AppConfig.appName}${shortSerial.isNotEmpty ? '-$shortSerial' : ''}'),
                       trailing: const Icon(Icons.chevron_right),
-                      onTap: () => _showChangeNameDialog(context, l10n, serialProvider),
+                      onTap: () => _showChangeNameDialog(context, l10n, midiProvider),
                     ),
                     const AppDivider(),
                     ListTile(
@@ -361,7 +361,7 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
                       ),
                       subtitle: Text(l10n.changeDevicePin),
                       trailing: const Icon(Icons.chevron_right),
-                      onTap: () => _showChangePinDialog(context, l10n, serialProvider),
+                      onTap: () => _showChangePinDialog(context, l10n, midiProvider),
                     ),
                   ],
                 ),
@@ -427,7 +427,7 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
                       ),
                       subtitle: Text(l10n.rebootDeviceDescription),
                       trailing: const Icon(Icons.chevron_right),
-                      onTap: () => _confirmReboot(context, l10n, serialProvider),
+                      onTap: () => _confirmReboot(context, l10n, midiProvider),
                     ),
                     const AppDivider(),
                     ListTile(
@@ -441,7 +441,7 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
                       ),
                       subtitle: Text(l10n.bootselModeDescription),
                       trailing: const Icon(Icons.chevron_right),
-                      onTap: () => _confirmBootsel(context, l10n, serialProvider),
+                      onTap: () => _confirmBootsel(context, l10n, midiProvider),
                     ),
                   ],
                 ),
@@ -455,7 +455,7 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
     );
   }
   
-  Future<void> _confirmReboot(BuildContext context, AppLocalizations l10n, SerialProvider provider) async {
+  Future<void> _confirmReboot(BuildContext context, AppLocalizations l10n, MidiProvider provider) async {
     if (_isProcessing) return;
     final pinController = TextEditingController();
     
@@ -520,7 +520,7 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
     }
   }
 
-  Future<void> _confirmBootsel(BuildContext context, AppLocalizations l10n, SerialProvider provider) async {
+  Future<void> _confirmBootsel(BuildContext context, AppLocalizations l10n, MidiProvider provider) async {
     if (_isProcessing) return;
     final pinController = TextEditingController();
 

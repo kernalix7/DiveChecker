@@ -4,7 +4,7 @@
 /// HomeScreen - Device Connection & Status Overview
 ///
 /// Displays USB MIDI connection status and current pressure reading.
-/// Uses SerialProvider for state management.
+/// Uses MidiProvider for state management.
 library;
 
 import 'package:flutter/material.dart';
@@ -12,9 +12,9 @@ import 'package:provider/provider.dart';
 
 import '../l10n/app_localizations.dart';
 import '../constants/app_constants.dart';
-import '../providers/serial_provider.dart';
+import '../providers/midi_provider.dart';
 import '../widgets/home/home_widgets.dart';
-import 'serial_device_screen.dart';
+import 'device_selection_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _authProgressShown = false; // Track if auth progress snackbar was shown
   bool _calibProgressShown = false; // Track if calibration progress snackbar was shown
   bool _connectionCompleteShown = false; // Track if final success snackbar was shown
-  SerialProvider? _serialProvider; // Cache provider reference for safe dispose
+  MidiProvider? _midiProvider; // Cache provider reference for safe dispose
 
   @override
   void initState() {
@@ -37,44 +37,44 @@ class _HomeScreenState extends State<HomeScreen> {
     // Listen for sensor status changes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      _serialProvider = context.read<SerialProvider>();
-      _serialProvider?.addListener(_checkDeviceStatus);
+      _midiProvider = context.read<MidiProvider>();
+      _midiProvider?.addListener(_checkDeviceStatus);
     });
   }
 
   @override
   void dispose() {
     // Safely remove listener using cached reference
-    _serialProvider?.removeListener(_checkDeviceStatus);
-    _serialProvider = null;
+    _midiProvider?.removeListener(_checkDeviceStatus);
+    _midiProvider = null;
     super.dispose();
   }
 
   void _checkDeviceStatus() {
     if (!mounted) return;
-    final serial = _serialProvider;
-    if (serial == null) return;
+    final midi = _midiProvider;
+    if (midi == null) return;
 
     // Connection progress SnackBars (sequential)
-    if (serial.isConnected) {
+    if (midi.isConnected) {
       final l10n = AppLocalizations.of(context)!;
 
       // Step 1: Show "Verifying device..." when connected but auth not complete
-      if (!serial.isAuthenticationComplete && !_authProgressShown) {
+      if (!midi.isAuthenticationComplete && !_authProgressShown) {
         _authProgressShown = true;
         _showProgressSnackBar(l10n.verifyingDevice, Icons.verified_user_outlined);
       }
 
       // Step 2: Show "Calibrating atmospheric pressure..." when auth done + calibrating
-      if (serial.isAuthenticationComplete && serial.isCalibrating && !_calibProgressShown) {
+      if (midi.isAuthenticationComplete && midi.isCalibrating && !_calibProgressShown) {
         _calibProgressShown = true;
         _showProgressSnackBar(l10n.atmosphericCalibrating, Icons.compress);
       }
 
       // Step 3: Show feedback when calibration completes
-      if (serial.isAuthenticationComplete && !serial.isCalibrating && _calibProgressShown && !_connectionCompleteShown) {
+      if (midi.isAuthenticationComplete && !midi.isCalibrating && _calibProgressShown && !_connectionCompleteShown) {
         _connectionCompleteShown = true;
-        if (serial.atmosphericPressureOffset == 0.0) {
+        if (midi.atmosphericPressureOffset == 0.0) {
           // Calibration timed out or failed
           _showWarningSnackBar(l10n.calibrationTimedOut);
         } else {
@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     // Show sensor error dialog when connected and sensor is not OK
-    if (serial.isConnected && !serial.isSensorConnected && !_sensorErrorShown) {
+    if (midi.isConnected && !midi.isSensorConnected && !_sensorErrorShown) {
       _sensorErrorShown = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _showSensorErrorDialog();
@@ -93,9 +93,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Show authentication warning when connected but not authenticated
     // Only show AFTER authentication attempt has completed
-    if (serial.isConnected &&
-        serial.isAuthenticationComplete &&
-        !serial.isDeviceAuthenticated &&
+    if (midi.isConnected &&
+        midi.isAuthenticationComplete &&
+        !midi.isDeviceAuthenticated &&
         !_authWarningShown) {
       _authWarningShown = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     // Reset flags when disconnected
-    if (!serial.isConnected) {
+    if (!midi.isConnected) {
       _sensorErrorShown = false;
       _authWarningShown = false;
       _authProgressShown = false;
@@ -261,7 +261,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _toggleConnection(SerialProvider provider) {
+  void _toggleConnection(MidiProvider provider) {
     if (provider.isConnected) {
       _disconnectDevice(provider);
     } else {
@@ -269,20 +269,15 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _disconnectDevice(SerialProvider provider) {
+  void _disconnectDevice(MidiProvider provider) {
     provider.disconnect();
   }
 
   Future<void> _openDeviceSelection() async {
-    final result = await Navigator.push<bool>(
+    await Navigator.push<bool>(
       context,
-      MaterialPageRoute(builder: (context) => const SerialDeviceScreen()),
+      MaterialPageRoute(builder: (context) => const DeviceSelectionScreen()),
     );
-
-    // Connection progress SnackBars are handled by _checkDeviceStatus listener
-    if (result != true && mounted) {
-      // Only show error feedback if connection failed
-    }
   }
 
   @override
@@ -292,8 +287,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
     final isCompact = screenHeight < 700; // Compact mode for small screens
 
-    return Consumer<SerialProvider>(
-      builder: (context, serial, child) {
+    return Consumer<MidiProvider>(
+      builder: (context, midi, child) {
         return Scaffold(
           body: Stack(
             children: [
@@ -308,11 +303,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           // Header
                           HomeHeader(
-                            isConnected: serial.isConnected,
-                            isScanning: serial.isScanning,
-                            isAuthenticated: serial.isDeviceAuthenticated,
+                            isConnected: midi.isConnected,
+                            isScanning: midi.isScanning,
+                            isAuthenticated: midi.isDeviceAuthenticated,
                             isAuthenticationComplete:
-                                serial.isAuthenticationComplete,
+                                midi.isAuthenticationComplete,
                           ),
 
                           SizedBox(height: isCompact ? Spacing.md : Spacing.section + Spacing.sm),
@@ -333,24 +328,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                         children: [
                                           // Connection Status Panel
                                           ConnectionStatusPanel(
-                                            isConnected: serial.isConnected,
-                                            isScanning: serial.isScanning,
+                                            isConnected: midi.isConnected,
+                                            isScanning: midi.isScanning,
                                             isCompact: isCompact,
                                           ),
 
                                           // Authentication Warning Banner (only after auth complete and failed)
-                                          if (serial.isConnected &&
-                                              serial.isAuthenticationComplete &&
-                                              !serial.isDeviceAuthenticated) ...[
+                                          if (midi.isConnected &&
+                                              midi.isAuthenticationComplete &&
+                                              !midi.isDeviceAuthenticated) ...[
                                             SizedBox(height: isCompact ? Spacing.sm : Spacing.md),
                                             const AuthenticationWarningBanner(),
                                           ],
 
                                           // Pressure Display (when connected)
-                                          if (serial.isConnected) ...[
+                                          if (midi.isConnected) ...[
                                             SizedBox(height: isCompact ? Spacing.lg : Spacing.xxl),
                                             CurrentPressurePanel(
-                                              pressure: serial.currentPressure,
+                                              pressure: midi.currentPressure,
                                               isCompact: isCompact,
                                             ),
                                             SizedBox(height: isCompact ? Spacing.md : Spacing.xl),
@@ -366,14 +361,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                           // Connection Button
                                           ConnectionButton(
-                                            isConnected: serial.isConnected,
-                                            isScanning: serial.isScanning,
-                                            onPressed: () => _toggleConnection(serial),
+                                            isConnected: midi.isConnected,
+                                            isScanning: midi.isScanning,
+                                            onPressed: () => _toggleConnection(midi),
                                           ),
 
                                           // Help Text
-                                          if (!serial.isConnected &&
-                                              !serial.isScanning) ...[
+                                          if (!midi.isConnected &&
+                                              !midi.isScanning) ...[
                                             SizedBox(height: isCompact ? Spacing.md : Spacing.lg),
                                             const ConnectionHelpText(),
                                           ],
@@ -396,10 +391,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
 
               // Calibration overlay
-              if (serial.isCalibrating)
+              if (midi.isCalibrating)
                 AtmosphericCalibrationOverlay(
-                  progress: serial.calibrationProgress,
-                  onCancel: () => serial.cancelCalibration(),
+                  progress: midi.calibrationProgress,
+                  onCancel: () => midi.cancelCalibration(),
                 ),
             ],
           ),

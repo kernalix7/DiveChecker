@@ -14,7 +14,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../constants/app_constants.dart';
 import '../l10n/app_localizations.dart';
-import '../providers/serial_provider.dart';
+import '../providers/midi_provider.dart';
 import '../security/firmware_verifier.dart';
 import '../utils/ui_helpers.dart';
 
@@ -134,8 +134,8 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
 
   Future<void> _rebootToBootsel() async {
     if (_isProcessing) return;
-    final serial = context.read<SerialProvider>();
-    if (!serial.isConnected) {
+    final midi = context.read<MidiProvider>();
+    if (!midi.isConnected) {
       final l10nErr = AppLocalizations.of(context)!;
       context.showSnackBar(l10nErr.deviceNotConnectedError);
       return;
@@ -193,7 +193,7 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
     if (confirmed == true) {
       setState(() => _isProcessing = true);
       try {
-        final result = await serial.enterBootloader(pinController.text);
+        final result = await midi.enterBootloader(pinController.text);
         if (!mounted) return;
         if (result == 0) {
           context.showSnackBar(l10n.bootselRebootSent);
@@ -483,7 +483,7 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
 
   Widget _buildActionBar(ThemeData theme, AppLocalizations l10n) {
     final package = _selectedPackage!;
-    final serial = context.watch<SerialProvider>();
+    final midi = context.watch<MidiProvider>();
 
     return Container(
       padding: const EdgeInsets.all(Spacing.lg),
@@ -518,7 +518,7 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
             ),
             const SizedBox(width: Spacing.md),
             FilledButton.icon(
-              onPressed: package.isValid && serial.isConnected
+              onPressed: package.isValid && midi.isConnected
                   ? _rebootToBootsel
                   : null,
               icon: const Icon(Icons.system_update),

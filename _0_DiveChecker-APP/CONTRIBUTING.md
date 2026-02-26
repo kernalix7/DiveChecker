@@ -122,9 +122,19 @@ flutter run
 ```
 lib/
 ├── main.dart              # Entry point
+├── constants/             # Theme, colors, app config
+├── core/                  # DB interface (SQLite / IndexedDB)
+├── l10n/                  # Localization (EN/KO)
 ├── models/                # Data models
+├── providers/             # State management (Provider)
+│   ├── midi_provider.dart           # USB MIDI connection
+│   ├── measurement_controller.dart  # Measurement logic
+│   └── session_repository.dart      # Session cache
 ├── screens/               # UI screens
-└── services/              # Business logic
+├── services/              # DB integration, backup
+├── security/              # ECDSA device authentication
+├── utils/                 # Peak analysis algorithms
+└── widgets/               # Reusable UI components
 ```
 
 ## 🎯 Priority Areas

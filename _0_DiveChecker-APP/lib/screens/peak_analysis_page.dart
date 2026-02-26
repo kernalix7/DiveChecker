@@ -597,7 +597,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
           itemBuilder: (context, index) {
             final peak = allPeaks[index];
             final isSelected = _peakSelections[index] ?? true;
-            final timeInSeconds = peak.x * 0.25;
+            final timeInSeconds = peak.x / 1000.0;
 
             PeakDetail? detail;
             if (index < originalDetails.length) {

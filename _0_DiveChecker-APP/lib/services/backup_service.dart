@@ -26,7 +26,7 @@ class BackupData {
   });
 
   Map<String, dynamic> toJson() {
-    return {
+    final data = <String, dynamic>{
       'version': version,
       'exportDate': exportDate.toIso8601String(),
       'appName': appName,
@@ -41,6 +41,14 @@ class BackupData {
         (sessionId, notes) => MapEntry(sessionId.toString(), notes),
       ),
     };
+    final payload = const JsonEncoder().convert(data);
+    final bytes = utf8.encode(payload);
+    int checksum = 0;
+    for (final b in bytes) {
+      checksum = (checksum + b) & 0xFFFFFFFF;
+    }
+    data['checksum'] = checksum;
+    return data;
   }
 
   factory BackupData.fromJson(Map<String, dynamic> json) {
@@ -158,6 +166,22 @@ class BackupService {
   BackupData? parseBackup(String jsonString) {
     try {
       final json = jsonDecode(jsonString) as Map<String, dynamic>;
+      
+      if (json.containsKey('checksum')) {
+        final savedChecksum = json['checksum'] as int;
+        final jsonWithoutChecksum = Map<String, dynamic>.from(json)..remove('checksum');
+        final payload = const JsonEncoder().convert(jsonWithoutChecksum);
+        final bytes = utf8.encode(payload);
+        int computed = 0;
+        for (final b in bytes) {
+          computed = (computed + b) & 0xFFFFFFFF;
+        }
+        if (computed != savedChecksum) {
+          if (kDebugMode) debugPrint('Backup checksum mismatch: expected $savedChecksum, got $computed');
+          return null;
+        }
+      }
+      
       return BackupData.fromJson(json);
     } catch (e, stackTrace) {
       if (kDebugMode) debugPrint('Failed to parse backup: $e\n$stackTrace');

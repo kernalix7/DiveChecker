@@ -185,7 +185,7 @@ class SqliteDatabaseService implements IDatabaseService {
   }
 
   @override
-  Future<List<GraphNote>> getGraphNotesBySession(int sessionId) async {
+  Future<List<DbGraphNote>> getGraphNotesBySession(int sessionId) async {
     final db = await database;
     final maps = await db.query(
       'graph_notes',
@@ -193,7 +193,7 @@ class SqliteDatabaseService implements IDatabaseService {
       whereArgs: [sessionId],
       orderBy: 'time_point ASC',
     );
-    return maps.map((m) => GraphNote.fromMap(m)).toList();
+    return maps.map((m) => DbGraphNote.fromMap(m)).toList();
   }
 
   @override

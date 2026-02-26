@@ -29,7 +29,7 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
   bool _isShowingDisconnectDialog = false;
 
   // Store reference for dispose cleanup
-  SerialProvider? _serialProvider;
+  MidiProvider? _midiProvider;
 
   @override
   void initState() {
@@ -41,16 +41,14 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
 
   void _initController() {
     if (_isInitialized) return;
-    _serialProvider = context.read<SerialProvider>();
-    final settings = context.read<SettingsProvider>();
+    _midiProvider = context.read<MidiProvider>();
     _controller = MeasurementController(
-      serialProvider: _serialProvider!,
-      settingsProvider: settings,
+      midiProvider: _midiProvider!,
     );
-    _wasConnected = _serialProvider!.isConnected;
+    _wasConnected = _midiProvider!.isConnected;
     
     // Listen for connection changes
-    _serialProvider!.addListener(_onConnectionChanged);
+    _midiProvider!.addListener(_onConnectionChanged);
     
     _isInitialized = true;
     setState(() {});
@@ -58,9 +56,9 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
 
   void _onConnectionChanged() {
     if (!mounted) return;
-    final serial = _serialProvider;
-    if (serial == null) return;
-    final isConnected = serial.isConnected;
+    final midi = _midiProvider;
+    if (midi == null) return;
+    final isConnected = midi.isConnected;
     final controller = _controller;
     
     // Detect disconnection during measurement
@@ -171,8 +169,8 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
   @override
   void dispose() {
     // Remove listener using stored reference (safe in dispose)
-    if (_isInitialized && _serialProvider != null) {
-      _serialProvider!.removeListener(_onConnectionChanged);
+    if (_isInitialized && _midiProvider != null) {
+      _midiProvider!.removeListener(_onConnectionChanged);
     }
     _controller?.dispose();
     super.dispose();
@@ -286,10 +284,10 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
     final controller = _controller;
     if (controller == null) return null;
 
-    // Get device info from SerialProvider
-    final serialProvider = _serialProvider;
-    final deviceSerial = serialProvider?.deviceSerial;
-    final deviceName = serialProvider?.deviceName;
+    // Get device info from MidiProvider
+    final midiProvider = _midiProvider;
+    final deviceSerial = midiProvider?.deviceSerial;
+    final deviceName = midiProvider?.deviceName;
 
     final sessionId = await controller.saveSession(
       notes,
@@ -320,34 +318,40 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
     final controller = _controller;
     if (controller == null) return;
 
-    // Get device info from SerialProvider
-    final serialProvider = _serialProvider;
-    final deviceSerial = serialProvider?.deviceSerial;
-    final deviceName = serialProvider?.deviceName;
+    try {
+      final midiProvider = _midiProvider;
+      final deviceSerial = midiProvider?.deviceSerial;
+      final deviceName = midiProvider?.deviceName;
 
-    final sessionId = await controller.saveSession(
-      notes,
-      deviceSerial: deviceSerial,
-      deviceName: deviceName,
-    );
+      final sessionId = await controller.saveSession(
+        notes,
+        deviceSerial: deviceSerial,
+        deviceName: deviceName,
+      );
 
-    // Add to SessionRepository cache
-    final state = controller.state;
-    final newSession = SessionData(
-      id: sessionId,
-      date: state.sessionStartTime ?? DateTime.now(),
-      maxPressure: state.maxPressure,
-      avgPressure: state.avgPressure,
-      duration: controller.actualDurationSeconds,  // Use actual data duration
-      notes: notes,
-      deviceSerial: deviceSerial,
-      deviceName: deviceName,
-      chartData: List<ChartPoint>.from(state.pressureData),
-      graphNotes: [],
-    );
+      final state = controller.state;
+      final newSession = SessionData(
+        id: sessionId,
+        date: state.sessionStartTime ?? DateTime.now(),
+        maxPressure: state.maxPressure,
+        avgPressure: state.avgPressure,
+        duration: controller.actualDurationSeconds,
+        notes: notes,
+        deviceSerial: deviceSerial,
+        deviceName: deviceName,
+        chartData: List<ChartPoint>.from(state.pressureData),
+        graphNotes: [],
+      );
 
-    if (mounted) {
-      context.read<SessionRepository>().addSession(newSession);
+      if (mounted) {
+        context.read<SessionRepository>().addSession(newSession);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save session: $e')),
+        );
+      }
     }
   }
 
@@ -372,13 +376,13 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
       );
     }
 
-    return Consumer<SerialProvider>(
-      builder: (context, serial, _) {
+    return Consumer<MidiProvider>(
+      builder: (context, midi, _) {
         return ListenableBuilder(
           listenable: controller,
           builder: (context, _) {
             final state = controller.state;
-            final isConnected = serial.isConnected;
+            final isConnected = midi.isConnected;
             final screenPadding = Responsive.padding(context);
             final maxWidth = Responsive.maxContentWidth(context);
 

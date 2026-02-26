@@ -32,13 +32,19 @@ class MonitorScreen extends StatefulWidget {
 class _MonitorScreenState extends State<MonitorScreen> {
   final Queue<ChartPoint> _dataBuffer = Queue<ChartPoint>();
   StreamSubscription<double>? _pressureSubscription;
-  double _currentPressure = 0.0;
+  double _smoothedPressure = 0.0;
   int _sampleIndex = 0;
+  int _lastSetStateMs = 0;
   
   // Buffer settings
   static const int _maxBufferSize = 240; // 30 seconds at 8Hz
   static const double _sampleIntervalMs = 125.0; // 8Hz
   static const double _windowMs = 30000.0; // 30 second window
+  
+  // EMA smoothing factor (0.0 = full smooth, 1.0 = no smooth)
+  static const double _emaAlpha = 0.6;
+  // Minimum interval between setState calls (ms)
+  static const int _minFrameIntervalMs = 100;
   
   @override
   void initState() {
@@ -47,32 +53,39 @@ class _MonitorScreenState extends State<MonitorScreen> {
   }
 
   void _startMonitoring() {
-    final serial = context.read<SerialProvider>();
-    _pressureSubscription = serial.pressureStream.listen(_onPressureReceived);
+    final midi = context.read<MidiProvider>();
+    _pressureSubscription = midi.pressureStream.listen(_onPressureReceived);
   }
 
   void _onPressureReceived(double pressure) {
     if (!mounted) return;
     
-    setState(() {
-      _currentPressure = pressure;
-      
-      // Add new data point
-      final xMs = _sampleIndex * _sampleIntervalMs;
-      _dataBuffer.add(ChartPoint(xMs, pressure));
-      _sampleIndex++;
-      
-      // Keep buffer size limited (Queue.removeFirst is O(1))
-      while (_dataBuffer.length > _maxBufferSize) {
-        _dataBuffer.removeFirst();
-      }
-    });
+    // EMA smoothing to reduce noise spikes
+    if (_sampleIndex == 0) {
+      _smoothedPressure = pressure;
+    } else {
+      _smoothedPressure = _emaAlpha * pressure + (1.0 - _emaAlpha) * _smoothedPressure;
+    }
+    
+    final xMs = _sampleIndex * _sampleIntervalMs;
+    _dataBuffer.add(ChartPoint(xMs, _smoothedPressure));
+    _sampleIndex++;
+    
+    while (_dataBuffer.length > _maxBufferSize) {
+      _dataBuffer.removeFirst();
+    }
+    
+    // Data-driven UI update with throttle
+    final nowMs = DateTime.now().millisecondsSinceEpoch;
+    if (nowMs - _lastSetStateMs >= _minFrameIntervalMs) {
+      _lastSetStateMs = nowMs;
+      setState(() {});
+    }
   }
 
   @override
   void dispose() {
     _pressureSubscription?.cancel();
-    // Ensure orientations are unlocked when leaving screen
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     super.dispose();
   }
@@ -81,6 +94,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
     setState(() {
       _dataBuffer.clear();
       _sampleIndex = 0;
+      _smoothedPressure = 0.0;
     });
   }
 
@@ -96,9 +110,9 @@ class _MonitorScreenState extends State<MonitorScreen> {
         
         return Scaffold(
           appBar: isLandscape ? null : _buildAppBar(l10n),
-          body: Consumer<SerialProvider>(
-            builder: (context, serial, _) {
-              final isConnected = serial.isConnected;
+          body: Consumer<MidiProvider>(
+            builder: (context, midi, _) {
+              final isConnected = midi.isConnected;
               
               if (!isConnected) {
                 return _buildNotConnectedView(l10n, theme);
@@ -146,10 +160,10 @@ class _MonitorScreenState extends State<MonitorScreen> {
         ),
       ),
       actions: [
-        Consumer<SerialProvider>(
-          builder: (context, serial, _) => Padding(
+        Consumer<MidiProvider>(
+          builder: (context, midi, _) => Padding(
             padding: const EdgeInsets.only(right: Spacing.lg),
-            child: StatusBadge(isConnected: serial.isConnected),
+            child: StatusBadge(isConnected: midi.isConnected),
           ),
         ),
       ],
@@ -257,7 +271,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
               ),
               Spacing.verticalMd,
               Text(
-                formatPressure(settings.convertPressure(_currentPressure)),
+                formatPressure(settings.convertPressure(_smoothedPressure)),
                 style: TextStyle(
                   fontSize: FontSizes.display,
                   fontWeight: FontWeight.bold,
@@ -331,7 +345,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
                   textBaseline: TextBaseline.alphabetic,
                   children: [
                     Text(
-                      formatPressure(settings.convertPressure(_currentPressure)),
+                      formatPressure(settings.convertPressure(_smoothedPressure)),
                       style: TextStyle(
                         fontSize: FontSizes.displayLg,
                         fontWeight: FontWeight.bold,

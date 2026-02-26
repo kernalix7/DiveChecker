@@ -5,21 +5,21 @@ library;
 
 import '../../models/pressure_data.dart';
 
-class GraphNote {
+class DbGraphNote {
   final int? id;
   final int sessionId;
   final double timePoint;
   final String note;
 
-  GraphNote({
+  DbGraphNote({
     this.id,
     required this.sessionId,
     required this.timePoint,
     required this.note,
   });
 
-  factory GraphNote.fromMap(Map<String, dynamic> map) {
-    return GraphNote(
+  factory DbGraphNote.fromMap(Map<String, dynamic> map) {
+    return DbGraphNote(
       id: map['id'] as int?,
       sessionId: map['session_id'] as int,
       timePoint: (map['time_point'] as num).toDouble(),
@@ -57,7 +57,7 @@ abstract class IDatabaseService {
   
   Future<int> saveGraphNote(int sessionId, double timePoint, String note);
   
-  Future<List<GraphNote>> getGraphNotesBySession(int sessionId);
+  Future<List<DbGraphNote>> getGraphNotesBySession(int sessionId);
   
   Future<void> deleteGraphNote(int noteId);
   

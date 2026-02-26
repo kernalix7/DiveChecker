@@ -209,14 +209,6 @@ class PeakAnalyzer {
 
     int lastPeakIndex = -minPeakDistance;
 
-    // 1단계: 데이터 스무딩 (3-point moving average)
-    final smoothed = _smoothData(data, windowSize: 3);
-    
-    // 2단계: 기울기 계산 (피크 검증에 사용)
-    final gradients = _calculateGradients(smoothed);
-    // ignore: unused_local_variable
-    final _ = gradients; // 향후 고급 피크 검증에 사용 예정
-
     // 3단계: 첫 번째 피크 감지 (시작 부분)
     if (data[0].y > threshold && data[0].y > data[1].y) {
       bool isDescending = true;
@@ -256,9 +248,11 @@ class PeakAnalyzer {
       }
     }
 
+    final peakIndexSet = peakIndices.toSet();
+
     // 5단계: 메인 피크 감지 (개선된 알고리즘)
     for (int i = 2; i < data.length - 2; i++) {
-      if (peakIndices.contains(i)) continue;
+      if (peakIndexSet.contains(i)) continue;
       
       final curr = data[i].y;
       
@@ -340,44 +334,6 @@ class PeakAnalyzer {
     return peakIndices;
   }
   
-  /// 데이터 스무딩 (이동 평균)
-  List<ChartPoint> _smoothData(List<ChartPoint> data, {int windowSize = 3}) {
-    if (data.length < windowSize) return data;
-    
-    final smoothed = <ChartPoint>[];
-    final halfWindow = windowSize ~/ 2;
-    
-    for (int i = 0; i < data.length; i++) {
-      double sum = 0;
-      int count = 0;
-      
-      for (int j = max(0, i - halfWindow); j <= min(data.length - 1, i + halfWindow); j++) {
-        sum += data[j].y;
-        count++;
-      }
-      
-      smoothed.add(ChartPoint(data[i].x, sum / count));
-    }
-    
-    return smoothed;
-  }
-  
-  /// 기울기 계산
-  List<double> _calculateGradients(List<ChartPoint> data) {
-    if (data.length < 2) return [];
-    
-    final gradients = <double>[];
-    
-    for (int i = 0; i < data.length - 1; i++) {
-      final dx = data[i + 1].x - data[i].x;
-      final dy = data[i + 1].y - data[i].y;
-      gradients.add(dx > 0 ? dy / dx * 1000 : 0.0);  // per second
-    }
-    
-    gradients.add(0.0);  // 마지막 포인트
-    return gradients;
-  }
-
   List<PeakDetail> _calculatePeakDetails(List<ChartPoint> data, List<int> peakIndices, double baseline) {
     final details = <PeakDetail>[];
     

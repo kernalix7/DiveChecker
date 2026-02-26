@@ -65,6 +65,7 @@ class SessionData {
     'maxPressure': maxPressure,
     'avgPressure': avgPressure,
     'duration': duration,
+    'sample_rate': sampleRate,
     'notes': notes,
     'displayTitle': displayTitle,
     'deviceSerial': deviceSerial,

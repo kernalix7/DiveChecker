@@ -66,19 +66,21 @@ lib/
 ├── models/                      # 데이터 모델
 ├── providers/                   # 상태 관리 (Provider)
 │   ├── midi_provider.dart       # USB MIDI 연결
-│   ├── serial_provider.dart     # midi_provider 별칭
 │   ├── measurement_controller.dart # 측정 로직
 │   ├── session_repository.dart  # 세션 캐시
 │   ├── settings_provider.dart   # 앱 설정
 │   └── locale_provider.dart     # 언어 설정
 ├── screens/                     # 화면
 │   ├── home_screen.dart         # 홈 (연결 상태)
+│   ├── monitor_screen.dart      # 실시간 스트리밍 차트
 │   ├── measurement_screen.dart  # 실시간 측정
 │   ├── history_screen.dart      # 세션 기록
 │   ├── graph_detail_page.dart   # 상세 그래프
 │   ├── peak_analysis_page.dart  # 피크 분석
 │   ├── settings_screen.dart     # 설정
-│   └── serial_device_screen.dart # 장치 선택
+│   ├── device_selection_screen.dart # 장치 선택
+│   ├── device_settings_screen.dart  # 장치 설정
+│   └── firmware_update_screen.dart  # OTA 펌웨어 업데이트
 ├── services/                    # 서비스
 │   ├── unified_database_service.dart # DB 통합
 │   └── backup_service.dart      # 백업/복원
@@ -104,7 +106,7 @@ lib/
 - 출력 속도 설정 가능 (4-50 Hz)
 
 ### 📊 실시간 압력 모니터링
-- 100Hz 내부 샘플링, 8Hz 출력
+- 100Hz 내부 샘플링, 설정 가능 출력 (4-50Hz, 기본 8Hz)
 - 실시간 라인 차트 (fl_chart) 부드러운 베지어 곡선
 - 측정/모니터 차트 동적 Y축 자동 스케일링
 - 핀치 줌 / 드래그 팬 제스처
@@ -149,7 +151,7 @@ flutter test integration_test/
 
 ## 라이선스
 
-Copyright (C) 2025 Kim DaeHyun (kernalix7@kodenet.io)
+Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
 
 Apache License 2.0에 따라 라이선스가 부여됩니다.
 

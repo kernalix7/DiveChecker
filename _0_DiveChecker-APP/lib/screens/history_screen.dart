@@ -189,11 +189,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final listPadding = Responsive.padding(context);
     final maxWidth = Responsive.maxContentWidth(context);
 
-    return Consumer2<SessionRepository, SerialProvider>(
-      builder: (context, sessionRepo, serial, _) {
+    return Consumer2<SessionRepository, MidiProvider>(
+      builder: (context, sessionRepo, midi, _) {
         final sessions = sessionRepo.sessions;
         final isLoading = sessionRepo.isLoading;
-        final isConnected = serial.isConnected;
+        final isConnected = midi.isConnected;
 
         return Scaffold(
           appBar: AppBar(

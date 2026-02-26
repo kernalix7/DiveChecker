@@ -12,7 +12,7 @@ import '../widgets/icon_container.dart';
 import '../widgets/settings/license_page.dart';
 import '../providers/locale_provider.dart';
 import '../providers/settings_provider.dart';
-import '../providers/serial_provider.dart';
+import '../providers/midi_provider.dart';
 import '../services/backup_service.dart';
 import '../utils/file_helper.dart';
 import 'device_settings_screen.dart';
@@ -130,9 +130,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SectionSpacing(),
           SectionHeader(l10n.myDevices),
           Spacing.verticalSm,
-          Consumer<SerialProvider>(
-            builder: (context, serialProvider, _) {
-              if (!serialProvider.isConnected) {
+          Consumer<MidiProvider>(
+            builder: (context, midiProvider, _) {
+              if (!midiProvider.isConnected) {
                 // No device connected
                 return Card(
                   child: ListTile(
@@ -149,12 +149,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 );
               }
               
-              final deviceName = serialProvider.deviceName ?? AppConfig.appName;
-              final shortSerial = serialProvider.deviceSerial != null && 
-                  serialProvider.deviceSerial!.length >= 4
-                  ? serialProvider.deviceSerial!.substring(serialProvider.deviceSerial!.length - 4)
+              final deviceName = midiProvider.deviceName ?? AppConfig.appName;
+              final shortSerial = midiProvider.deviceSerial != null && 
+                  midiProvider.deviceSerial!.length >= 4
+                  ? midiProvider.deviceSerial!.substring(midiProvider.deviceSerial!.length - 4)
                   : '';
-              final isAuth = serialProvider.isDeviceAuthenticated;
+              final isAuth = midiProvider.isDeviceAuthenticated;
               
               return Card(
                 child: ListTile(

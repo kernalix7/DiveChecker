@@ -12,8 +12,8 @@ import '../models/chart_point.dart';
 import '../models/pressure_data.dart';
 import '../services/unified_database_service.dart';
 import '../constants/app_constants.dart';
-import 'serial_provider.dart';
-import 'settings_provider.dart';
+import 'midi_provider.dart';
+
 
 class MeasurementState {
   final bool isMeasuring;
@@ -68,7 +68,7 @@ class MeasurementState {
 }
 
 class MeasurementController extends ChangeNotifier {
-  final SerialProvider _serialProvider;
+  final MidiProvider _midiProvider;
   final UnifiedDatabaseService _dbService = UnifiedDatabaseService();
   
   MeasurementState _state = const MeasurementState();
@@ -85,10 +85,9 @@ class MeasurementController extends ChangeNotifier {
   double _maxPressureValue = 0.0;
   
   MeasurementController({
-    required SerialProvider serialProvider,
-    SettingsProvider? settingsProvider,  // Keep for backward compatibility but unused
-  })  : _serialProvider = serialProvider {
-    _pressureSubscription = _serialProvider.pressureStream.listen(_onPressureReceived);
+    required MidiProvider midiProvider,
+  })  : _midiProvider = midiProvider {
+    _pressureSubscription = _midiProvider.pressureStream.listen(_onPressureReceived);
   }
   
   void _onPressureReceived(double pressure) {
@@ -97,12 +96,9 @@ class MeasurementController extends ChangeNotifier {
     _state = _state.copyWith(currentPressure: pressure);
     
     if (_state.isMeasuring && !_state.isPaused && _state.sessionStartTime != null) {
-      // X value based on sample index and Hz (not real clock time)
-      // This ensures data aligns perfectly with grid
-      final sampleIntervalMs = 1000.0 / outputRate;  // e.g., 125ms for 8Hz
+      final sampleIntervalMs = 1000.0 / outputRate;
       final xMs = _dataList.length * sampleIntervalMs;
       
-      // Store data and update incremental statistics
       _dataList.add(ChartPoint(xMs, pressure));
       _sumPressure += pressure;
       if (pressure > _maxPressureValue) {
@@ -110,24 +106,29 @@ class MeasurementController extends ChangeNotifier {
       }
       
       if (_dataList.length > MeasurementConfig.maxDataPoints) {
-        // Subtract removed value from sum
         final removed = _dataList.removeAt(0);
         _sumPressure -= removed.y;
-        // Recalculate max only if we removed the max value
         if (removed.y >= _maxPressureValue) {
           _maxPressureValue = _dataList.isEmpty ? 0.0 : _dataList.map((e) => e.y).reduce(max);
         }
+        if (_dataList.length % 100 == 0) {
+          _sumPressure = _dataList.fold<double>(0.0, (sum, p) => sum + p.y);
+        }
       }
-      // Don't call notifyListeners() here - timer handles UI updates during measurement
-      // This prevents excessive rebuilds (8Hz data = 8 rebuilds/sec avoided)
+      
+      // Data-driven UI update with throttle
+      final nowMs = DateTime.now().millisecondsSinceEpoch;
+      if (nowMs - _lastNotifyMs >= _minNotifyIntervalMs) {
+        _lastNotifyMs = nowMs;
+        _updateMeasurementState();
+      }
     } else {
-      // Not measuring - update UI for live pressure display
       notifyListeners();
     }
   }
   
   /// Current firmware output rate (Hz)
-  int get outputRate => _serialProvider.outputRate;
+  int get outputRate => _midiProvider.outputRate;
   
   /// Actual duration in seconds: sample count / Hz
   int get actualDurationSeconds {
@@ -135,9 +136,9 @@ class MeasurementController extends ChangeNotifier {
     return (_dataList.length / outputRate).round();
   }
   
-  bool get isConnected => _serialProvider.isConnected;
+  bool get isConnected => _midiProvider.isConnected;
   
-  double get currentPressure => _serialProvider.currentPressure;
+  double get currentPressure => _midiProvider.currentPressure;
   
   void startMeasurement() {
     if (!isConnected) return;
@@ -149,7 +150,7 @@ class MeasurementController extends ChangeNotifier {
     _state = MeasurementState(
       isMeasuring: true,
       isPaused: false,
-      currentPressure: _serialProvider.currentPressure,
+      currentPressure: _midiProvider.currentPressure,
       pressureData: [],
       maxPressure: 0.0,
       avgPressure: 0.0,
@@ -163,40 +164,37 @@ class MeasurementController extends ChangeNotifier {
     _startMeasurementTimer();
   }
   
+  int _lastNotifyMs = 0;
+  static const int _minNotifyIntervalMs = 100;
+
   void _startMeasurementTimer() {
-    // Cancel any existing timer first
     _measurementTimer?.cancel();
+    _lastNotifyMs = 0;
+  }
+
+  void _updateMeasurementState() {
+    if (_state.sessionStartTime == null) return;
     
-    const updateIntervalMs = 100;
+    final elapsedMs = DateTime.now().difference(_state.sessionStartTime!).inMilliseconds;
     
-    _measurementTimer = Timer.periodic(
-      const Duration(milliseconds: updateIntervalMs),
-      (timer) {
-        if (_state.sessionStartTime == null || _state.isPaused) return;
-        
-        final elapsedMs = DateTime.now().difference(_state.sessionStartTime!).inMilliseconds;
-        
-        double minX = _state.minX;
-        double maxX = _state.maxX;
-        if (elapsedMs > maxX) {
-          minX = elapsedMs - 30000;
-          maxX = elapsedMs.toDouble();
-        }
-        
-        // Use pre-calculated incremental statistics
-        final avgPressure = _dataList.isEmpty ? 0.0 : _sumPressure / _dataList.length;
-        
-        _state = _state.copyWith(
-          pressureData: List.unmodifiable(_dataList),
-          maxPressure: _maxPressureValue,
-          avgPressure: avgPressure,
-          minX: minX,
-          maxX: maxX,
-          elapsedTime: Duration(milliseconds: elapsedMs),
-        );
-        notifyListeners();
-      },
+    double minX = _state.minX;
+    double maxX = _state.maxX;
+    if (elapsedMs > maxX) {
+      minX = elapsedMs - 30000;
+      maxX = elapsedMs.toDouble();
+    }
+    
+    final avgPressure = _dataList.isEmpty ? 0.0 : _sumPressure / _dataList.length;
+    
+    _state = _state.copyWith(
+      pressureData: List.unmodifiable(_dataList),
+      maxPressure: _maxPressureValue,
+      avgPressure: avgPressure,
+      minX: minX,
+      maxX: maxX,
+      elapsedTime: Duration(milliseconds: elapsedMs),
     );
+    notifyListeners();
   }
   
   void stopMeasurement() {

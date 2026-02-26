@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 
 import '../l10n/app_localizations.dart';
 import '../constants/app_constants.dart';
-import '../providers/serial_provider.dart';
+import '../providers/midi_provider.dart';
 import '../widgets/common/disclaimer_dialog.dart';
 import 'home_screen.dart';
 import 'monitor_screen.dart';
@@ -76,11 +76,11 @@ class _MainScreenState extends State<MainScreen> {
 
   void _listenOverrange() {
     if (_overrangeSubscription != null) return;
-    final serial = context.read<SerialProvider>();
-    _overrangeSubscription = serial.overrangeStream.listen((_) {
+    final midi = context.read<MidiProvider>();
+    _overrangeSubscription = midi.overrangeStream.listen((_) {
       if (mounted) _showOverrangeWarning();
     });
-    _disconnectSubscription ??= serial.disconnectStream.listen((_) {
+    _disconnectSubscription ??= midi.disconnectStream.listen((_) {
       if (mounted) _showDisconnectNotification();
     });
   }

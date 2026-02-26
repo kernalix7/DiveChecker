@@ -1,7 +1,7 @@
 // Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
-/// Serial Device Selection Screen
+/// Device Selection Screen
 /// 
 /// Scans for USB MIDI devices and allows user to select one for connection.
 /// Uses flutter_midi_command for cross-platform support.
@@ -12,18 +12,18 @@ import 'package:provider/provider.dart';
 
 import '../l10n/app_localizations.dart';
 import '../constants/app_constants.dart';
-import '../providers/serial_provider.dart';
+import '../providers/midi_provider.dart';
 import '../widgets/icon_container.dart';
 
-class SerialDeviceScreen extends StatefulWidget {
-  const SerialDeviceScreen({super.key});
+class DeviceSelectionScreen extends StatefulWidget {
+  const DeviceSelectionScreen({super.key});
 
   @override
-  State<SerialDeviceScreen> createState() => _SerialDeviceScreenState();
+  State<DeviceSelectionScreen> createState() => _DeviceSelectionScreenState();
 }
 
-class _SerialDeviceScreenState extends State<SerialDeviceScreen> {
-  List<SerialDeviceInfo> _devices = [];
+class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
+  List<MidiDeviceInfo> _devices = [];
   bool _isScanning = false;
   String? _connectingDeviceId;
   String? _errorMessage;
@@ -35,7 +35,7 @@ class _SerialDeviceScreenState extends State<SerialDeviceScreen> {
   }
 
   Future<void> _scanDevices() async {
-    final serial = context.read<SerialProvider>();
+    final midi = context.read<MidiProvider>();
     
     setState(() {
       _isScanning = true;
@@ -44,7 +44,7 @@ class _SerialDeviceScreenState extends State<SerialDeviceScreen> {
     });
 
     try {
-      final devices = await serial.scanDevices();
+      final devices = await midi.scanDevices();
       
       if (mounted) {
         setState(() {
@@ -62,7 +62,7 @@ class _SerialDeviceScreenState extends State<SerialDeviceScreen> {
     }
   }
 
-  Future<void> _connectToDevice(SerialDeviceInfo device) async {
+  Future<void> _connectToDevice(MidiDeviceInfo device) async {
     // Block connection to non-DiveChecker devices
     if (!device.isDiveChecker) {
       if (!mounted) return;
@@ -88,7 +88,7 @@ class _SerialDeviceScreenState extends State<SerialDeviceScreen> {
       return;
     }
     
-    final serial = context.read<SerialProvider>();
+    final midi = context.read<MidiProvider>();
     
     setState(() {
       _connectingDeviceId = device.portName;
@@ -96,14 +96,14 @@ class _SerialDeviceScreenState extends State<SerialDeviceScreen> {
     });
 
     try {
-      final success = await serial.connect(device);
+      final success = await midi.connect(device);
       
       if (mounted) {
         if (success) {
           Navigator.pop(context, true);
         } else {
           setState(() {
-            _errorMessage = serial.errorMessage ?? 'Connection failed';
+            _errorMessage = midi.errorMessage ?? 'Connection failed';
             _connectingDeviceId = null;
           });
         }
@@ -282,7 +282,7 @@ class _SerialDeviceScreenState extends State<SerialDeviceScreen> {
 }
 
 class _DeviceTile extends StatelessWidget {
-  final SerialDeviceInfo device;
+  final MidiDeviceInfo device;
   final bool isConnecting;
   final VoidCallback? onTap;
 
