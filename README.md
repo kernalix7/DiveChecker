@@ -24,7 +24,7 @@ DiveChecker is a professional monitoring system that helps freedivers effectivel
 
 Using a pressure sensor connected to a mouthpiece, it precisely measures subtle pressure changes (-10 to +200 hPa) when blowing or sucking through the mouth with **100Hz internal sampling + configurable output rate (4-50Hz)**, and visualizes them in real-time graphs.
 
-### Architecture (v5.1.0)
+### Architecture (v6.0.0)
 
 **Smart MCU + Intelligent App**
 
@@ -180,8 +180,8 @@ Detailed equalization quality analysis after measurement:
 | Screen | Description |
 |--------|-------------|
 | 🏠 **Home** | Device connection, real-time pressure display, calibration |
-| � **Monitor** | Real-time streaming chart with dynamic Y-axis |
-| �📈 **Measurement** | Live graph, Start/Stop/Pause, session recording |
+|| 📺 **Monitor** | Real-time streaming chart with dynamic Y-axis |
+|| 📈 **Measurement** | Live graph, Start/Stop/Pause, session recording |
 | 📋 **History** | Session list → Graph detail → Peak analysis |
 | ⚙️ **Settings** | Language, backup/restore, device settings, firmware update |
 
@@ -245,13 +245,15 @@ cmake .. && make
 │   │   │   ├── measurement_controller.dart # Measurement logic
 │   │   │   └── session_repository.dart   # Session cache
 │   │   ├── screens/
-│   │   │   ├── home_screen.dart          # Connection & status
-│   │   │   ├── measurement_screen.dart   # Real-time measurement
-│   │   │   ├── history_screen.dart       # Session list
-│   │   │   ├── graph_detail_page.dart    # Detailed graph + cursor
-│   │   │   ├── peak_analysis_page.dart   # Peak analysis
-│   │   │   ├── device_settings_screen.dart   # Device config
-│   │   │   └── firmware_update_screen.dart   # OTA update
+│   │   │   ├── home_screen.dart            # Connection & status
+│   │   │   ├── monitor_screen.dart         # Real-time streaming
+│   │   │   ├── measurement_screen.dart     # Real-time measurement
+│   │   │   ├── history_screen.dart         # Session list
+│   │   │   ├── graph_detail_page.dart      # Detailed graph + cursor
+│   │   │   ├── peak_analysis_page.dart     # Peak analysis
+│   │   │   ├── device_selection_screen.dart # Device selection
+│   │   │   ├── device_settings_screen.dart # Device config
+│   │   │   └── firmware_update_screen.dart # OTA update
 │   │   ├── services/
 │   │   │   ├── unified_database_service.dart  # DB integration
 │   │   │   └── backup_service.dart            # Backup/restore

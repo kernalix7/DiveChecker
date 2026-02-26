@@ -28,7 +28,7 @@
 
 ## 라이선스
 
-Copyright (C) 2025 Kim DaeHyun (kernalix7@kodenet.io)
+Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
 
 이 하드웨어 설계는 [CERN-OHL-S v2](https://ohwr.org/cern_ohl_s_v2.txt) 라이선스로 제공됩니다.
 

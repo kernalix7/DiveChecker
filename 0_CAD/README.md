@@ -30,7 +30,7 @@ Hardware design files for freediving equalization pressure monitor.
 
 ## License
 
-Copyright (C) 2025 Kim DaeHyun (kernalix7@kodenet.io)
+Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
 
 These hardware designs are licensed under [CERN-OHL-S v2](https://ohwr.org/cern_ohl_s_v2.txt).
 
