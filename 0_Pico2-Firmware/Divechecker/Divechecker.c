@@ -1,6 +1,6 @@
 /**
  * @file Divechecker.c
- * @brief DiveChecker RP2350 (Pico 2) Firmware v5.1.0
+ * @brief DiveChecker RP2350 (Pico 2) Firmware v6.0.0
  * 
  * @details
  * Dual-core architecture for high-precision pressure monitoring:
@@ -86,10 +86,10 @@
  * ========================================================================== */
 
 // Firmware version
-#define FW_VERSION_MAJOR    5
-#define FW_VERSION_MINOR    1
+#define FW_VERSION_MAJOR    6
+#define FW_VERSION_MINOR    0
 #define FW_VERSION_PATCH    0
-#define FW_VERSION_STRING   "5.1.0"
+#define FW_VERSION_STRING   "6.0.0"
 
 // I2C Configuration
 #define I2C_PORT            i2c0
@@ -111,7 +111,7 @@
 #define SAMPLE_INTERVAL_US       (1000000 / INTERNAL_SAMPLE_RATE_HZ)  // 10ms
 
 // Connection Timeout
-#define CONNECTION_TIMEOUT_MS   3000
+#define CONNECTION_TIMEOUT_MS   10000
 
 // WS2812 LED (RP2350 Zero SuperMini)
 #define WS2812_PIN          16
@@ -212,10 +212,7 @@ typedef enum {
 // Over-range recovery: discard initial samples after sensor reset
 // to let IIR filter stabilize with clean values
 #define OVERRANGE_RECOVERY_SAMPLES  30   // ~300ms at 100Hz
-#define OVERRANGE_CONSEC_THRESHOLD  3    // consecutive bad readings before reset
-
-// Removed adaptive baseline - send absolute pressure values
-// App will handle baseline and filtering
+#define OVERRANGE_CONSEC_THRESHOLD  10   // consecutive bad readings before reset
 
 /* ============================================================================
  * Global State
@@ -250,9 +247,16 @@ static queue_t g_pressure_queue;
 // LED
 static PIO g_ws2812_pio = pio0;
 static uint g_ws2812_sm = 0;
+static bool g_led_initialized = false;
 
 // Over-range alert flag (set by Core 1, consumed by Core 0)
 static volatile bool g_overrange_alert = false;
+
+// I2C grace period after multicore lockout (flash save).
+// Core 1's I2C transaction may be interrupted by lockout, causing transient
+// NaN readings on resume. These should not count toward over-range detection.
+static volatile uint8_t g_lockout_grace = 0;
+#define LOCKOUT_GRACE_SAMPLES  5  // ~50ms at 100Hz internal rate
 
 // Runtime-configurable parameters (via SysEx) — Core 0 only
 static uint8_t g_led_brightness = LED_BRIGHTNESS;    // 0-100
@@ -318,6 +322,7 @@ static inline uint32_t rgb_to_grb(uint8_t r, uint8_t g, uint8_t b) {
 }
 
 static inline void led_set_color(uint8_t r, uint8_t g, uint8_t b) {
+    if (!g_led_initialized) return;
     pio_sm_put_blocking(g_ws2812_pio, g_ws2812_sm, rgb_to_grb(r, g, b) << 8u);
 }
 
@@ -340,6 +345,7 @@ static void led_init(void) {
     // EMC: Reduce drive strength and slew rate for LED data pin
     gpio_set_drive_strength(WS2812_PIN, GPIO_DRIVE_STRENGTH_2MA);
     gpio_set_slew_rate(WS2812_PIN, GPIO_SLEW_RATE_SLOW);
+    g_led_initialized = true;
 }
 
 static void led_set_state(led_state_t state) {
@@ -370,10 +376,11 @@ static const device_settings_t* flash_get_settings_ptr(void) {
     return (const device_settings_t*)(XIP_BASE + FLASH_SETTINGS_OFFSET);
 }
 
-/// Verify CRC32 of settings (legacy 0xFFFFFFFF accepted for migration)
+/// Verify CRC32 of settings (legacy 0xFFFFFFFF accepted only if magic matches)
 static bool flash_verify_crc(const device_settings_t *settings) {
-    // Legacy settings have erased CRC field (0xFFFFFFFF)
-    if (settings->crc32 == 0xFFFFFFFF) return true;
+    if (settings->crc32 == 0xFFFFFFFF) {
+        return settings->magic == SETTINGS_MAGIC;
+    }
     uint32_t computed = crc32_compute((const uint8_t*)settings, 
                                        sizeof(device_settings_t) - sizeof(uint32_t));
     return computed == settings->crc32;
@@ -390,6 +397,26 @@ static int flash_find_active_slot(void) {
         }
     }
     return active;
+}
+
+/// Build settings struct from current global state (for flash storage)
+static device_settings_t flash_build_settings(void) {
+    device_settings_t s = { .magic = SETTINGS_MAGIC };
+    strncpy(s.pin, g_device_pin, DEVICE_PIN_LEN);
+    s.pin[DEVICE_PIN_LEN] = '\0';
+    strncpy(s.name, g_device_name, DEVICE_NAME_MAX_LEN);
+    s.name[DEVICE_NAME_MAX_LEN] = '\0';
+    s.led_brightness = g_led_brightness;
+    s.noise_floor = g_noise_floor;
+    s.oversampling_ctrl = g_oversampling_ctrl;
+    s.iir_config = g_iir_config;
+    s.output_rate = g_output_rate;
+    s.pin_fail_count = (g_pin_fail_count <= 20) ? g_pin_fail_count : 20;
+    memset(s._config_reserved, 0xFF, sizeof(s._config_reserved));
+    memset(s._reserved, 0xFF, sizeof(s._reserved));
+    s.crc32 = crc32_compute((const uint8_t*)&s,
+                             sizeof(device_settings_t) - sizeof(uint32_t));
+    return s;
 }
 
 static void flash_load_settings(void) {
@@ -430,32 +457,31 @@ static void flash_load_settings(void) {
         strcpy(g_device_name, "DiveChecker");
         strcpy(g_device_pin, "0000");
     }
+    
+    // Boot-time sector compaction: if the next save would require a sector
+    // erase (~100-400ms blocking both cores), do it NOW before Core 1 starts.
+    // At this point no sensor data is flowing, so the erase cost is invisible.
+    // This guarantees all runtime saves are write-only (~1ms, no data gaps).
+    if (g_wear_slot == WEAR_LEVEL_SLOTS - 1) {
+        device_settings_t compact = flash_build_settings();
+        uint32_t irq = save_and_disable_interrupts();
+        flash_range_erase(FLASH_SETTINGS_OFFSET, FLASH_SECTOR_SIZE);
+        flash_range_program(FLASH_SETTINGS_OFFSET,
+                            (const uint8_t*)&compact, FLASH_PAGE_SIZE);
+        restore_interrupts(irq);
+        g_wear_slot = 0;
+    }
 }
 
 static void flash_save_settings(void) {
-    device_settings_t new_settings = { .magic = SETTINGS_MAGIC };
-    strncpy(new_settings.pin, g_device_pin, DEVICE_PIN_LEN);
-    new_settings.pin[DEVICE_PIN_LEN] = '\0';
-    strncpy(new_settings.name, g_device_name, DEVICE_NAME_MAX_LEN);
-    new_settings.name[DEVICE_NAME_MAX_LEN] = '\0';
-    // Save runtime config
-    new_settings.led_brightness = g_led_brightness;
-    new_settings.noise_floor = g_noise_floor;
-    new_settings.oversampling_ctrl = g_oversampling_ctrl;
-    new_settings.iir_config = g_iir_config;
-    new_settings.output_rate = g_output_rate;
-    new_settings.pin_fail_count = (g_pin_fail_count <= 20) ? g_pin_fail_count : 20;
-    memset(new_settings._config_reserved, 0xFF, sizeof(new_settings._config_reserved));
-    memset(new_settings._reserved, 0xFF, sizeof(new_settings._reserved));
-    // Compute CRC32 over all bytes except the crc32 field itself
-    new_settings.crc32 = crc32_compute((const uint8_t*)&new_settings,
-                                        sizeof(device_settings_t) - sizeof(uint32_t));
+    device_settings_t new_settings = flash_build_settings();
     
-    // Wear leveling: advance to next slot
     int next_slot = (g_wear_slot + 1) % WEAR_LEVEL_SLOTS;
-    bool need_erase = (next_slot == 0);  // Full wrap — must erase sector
+    bool need_erase = (next_slot == 0);
     
-    // CRITICAL: Core 1 executes from flash (XIP). Must pause it during flash ops.
+    // Core 1 executes from flash (XIP) — must pause it during flash ops.
+    // Thanks to boot-time compaction, need_erase is false for the first
+    // 15 saves per boot cycle, keeping lockout to ~1ms (write-only).
     multicore_lockout_start_blocking();
     uint32_t irq_state = save_and_disable_interrupts();
     if (need_erase) {
@@ -466,6 +492,7 @@ static void flash_save_settings(void) {
     restore_interrupts(irq_state);
     multicore_lockout_end_blocking();
     
+    g_lockout_grace = LOCKOUT_GRACE_SAMPLES;
     g_wear_slot = next_slot;
 }
 
@@ -574,15 +601,21 @@ static bool ecdsa_init(void) {
     // Load keys from OTP (production mode)
     if (!g_otp_keys_loaded) {
         if (!otp_keys_programmed()) {
+            #if CFG_TUD_CDC
             printf("WARN:OTP keys not programmed\n");
+            #endif
             return false;
         }
         if (!otp_init_keys(ECDSA_PRIVATE_KEY, ECDSA_PUBLIC_KEY)) {
+            #if CFG_TUD_CDC
             printf("ERR:Failed to load OTP keys\n");
+            #endif
             return false;
         }
         g_otp_keys_loaded = true;
+        #if CFG_TUD_CDC
         printf("INFO:Keys loaded from OTP\n");
+        #endif
     }
 #endif
     
@@ -595,7 +628,9 @@ static bool ecdsa_init(void) {
         }
     }
     if (key_is_zero) {
+        #if CFG_TUD_CDC
         printf("WARN:ECDSA keys not configured\n");
+        #endif
         return false;
     }
     
@@ -612,7 +647,9 @@ static bool ecdsa_init(void) {
     int ret = mbedtls_ctr_drbg_seed(&g_ctr_drbg, rp2350_entropy_func, NULL,
                                      (const unsigned char *)pers, strlen(pers));
     if (ret != 0) {
+        #if CFG_TUD_CDC
         printf("ERR:DRBG seed failed: %d\n", ret);
+        #endif
         return false;
     }
     
@@ -620,7 +657,9 @@ static bool ecdsa_init(void) {
     ret = mbedtls_ecp_read_key(MBEDTLS_ECP_DP_SECP256R1, &g_ecdsa_ctx,
                                 ECDSA_PRIVATE_KEY, 32);
     if (ret != 0) {
+        #if CFG_TUD_CDC
         printf("ERR:Private key load failed: %d\n", ret);
+        #endif
         return false;
     }
     
@@ -628,7 +667,9 @@ static bool ecdsa_init(void) {
     ret = mbedtls_ecp_keypair_calc_public(&g_ecdsa_ctx,
                                            mbedtls_ctr_drbg_random, &g_ctr_drbg);
     if (ret != 0) {
+        #if CFG_TUD_CDC
         printf("ERR:Public key compute failed: %d\n", ret);
+        #endif
         return false;
     }
     
@@ -733,10 +774,13 @@ static bool i2c_read_registers(uint8_t start_reg, uint8_t *buffer, size_t len) {
 static bool bmp280_init(void) {
     uint8_t chip_id;
     if (!i2c_read_registers(BMP280_REG_ID, &chip_id, 1)) {
+        #if CFG_TUD_CDC
         printf("ERR:I2C read chip ID failed\n");
+        #endif
         return false;
     }
     
+    #if CFG_TUD_CDC
     printf("INFO:ChipID=0x%02X", chip_id);
     if (chip_id == BMP280_CHIP_ID) {
         printf(" (BMP280)\n");
@@ -744,6 +788,9 @@ static bool bmp280_init(void) {
         printf(" (BME280)\n");
     } else {
         printf(" (Unknown)\n");
+    }
+    #endif
+    if (chip_id != BMP280_CHIP_ID && chip_id != BME280_CHIP_ID) {
         return false;
     }
     
@@ -756,7 +803,9 @@ static bool bmp280_init(void) {
     // Read calibration data
     uint8_t calib_raw[BMP280_CALIB_LEN];
     if (!i2c_read_registers(BMP280_REG_CALIB_START, calib_raw, BMP280_CALIB_LEN)) {
+        #if CFG_TUD_CDC
         printf("ERR:Failed to read calibration data\n");
+        #endif
         return false;
     }
     
@@ -792,7 +841,9 @@ static bool bmp280_init(void) {
     uint8_t ctrl_meas_read = 0, config_read = 0;
     i2c_read_registers(BMP280_REG_CTRL_MEAS, &ctrl_meas_read, 1);
     i2c_read_registers(BMP280_REG_CONFIG, &config_read, 1);
+    #if CFG_TUD_CDC
     printf("INFO:CTRL_MEAS=0x%02X CONFIG=0x%02X (X16+IIR2)\n", ctrl_meas_read, config_read);
+    #endif
     
     return true;
 }
@@ -845,17 +896,10 @@ static bool bmp280_reinit_config(void) {
 static bool bmp280_apply_config(void) {
     set_sensor_reconfiguring(true);  // Signal Core 1 to skip reads
     
-    // Oversampling control value mapping: 0=skip, 1=x1, 2=x2, 3=x4, 4=x8, 5=x16
-    static const uint8_t osrs_map[] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 };
-    // IIR filter coefficient mapping: 0=off, 1=x2, 2=x4, 3=x8, 4=x16
-    static const uint8_t iir_map[] = { 0x00, 0x01, 0x02, 0x03, 0x04 };
-    
-    uint8_t osrs_idx = g_oversampling_ctrl;
-    uint8_t iir_idx = g_iir_config;
-    if (osrs_idx > 5) osrs_idx = 5;  // Defensive bounds check
-    if (iir_idx > 4) iir_idx = 4;
-    uint8_t osrs = osrs_map[osrs_idx];
-    uint8_t iir = iir_map[iir_idx];
+    uint8_t osrs = g_oversampling_ctrl;
+    uint8_t iir = g_iir_config;
+    if (osrs > 5) osrs = 5;
+    if (iir > 4) iir = 4;
     
     // ctrl_meas: osrs_t[7:5]=x2(0b010), osrs_p[4:2]=variable, mode[1:0]=normal(0b11)
     uint8_t ctrl_meas = (0x02 << 5) | (osrs << 2) | 0x03;
@@ -958,7 +1002,8 @@ static void midi_process_sysex(sysex_message_t* msg) {
             g_last_ping_ms = now_ms;
             if (!g_app_connected) {
                 g_app_connected = true;
-                g_baseline_set = false;
+                // Baseline persists across reconnections — set once per power cycle.
+                // Use CMD_RESET_BASELINE for explicit reset from the app.
                 led_set_state(LED_STATE_APP_CONNECTED);
             }
             midi_sysex_send_pong();
@@ -977,13 +1022,14 @@ static void midi_process_sysex(sysex_message_t* msg) {
             if (msg->data_len >= 1) {
                 int rate = msg->data[0];
                 if (rate >= MIN_OUTPUT_RATE_HZ && rate <= MAX_OUTPUT_RATE_HZ) {
-                    // Calculate all values before updating (minimize cross-core inconsistency)
                     int new_interval = 1000 / rate;
                     int new_samples = INTERNAL_SAMPLE_RATE_HZ / rate;
-                    g_samples_per_output = new_samples;
-                    g_output_interval_ms = new_interval;
                     g_output_rate = rate;
-                    flash_save_settings();  // Persist output rate (immediate for user feedback)
+                    __dmb();
+                    g_output_interval_ms = new_interval;
+                    g_samples_per_output = new_samples;
+                    __dmb();
+                    flash_save_settings();
                 }
                 midi_sysex_send_config(g_output_rate);
             }
@@ -1232,9 +1278,8 @@ static void midi_process_sysex(sysex_message_t* msg) {
                     watchdog_disable();
                     multicore_lockout_start_blocking();
                     uint32_t irq_state = save_and_disable_interrupts();
-                    reset_usb_boot(0, 0);  // Enter BOOTSEL mode
-                    // Never returns
-                    restore_interrupts(irq_state);  // Unreachable, for safety
+                    reset_usb_boot(0, 0);
+                    __builtin_unreachable();
                 } else {
                     pin_record_failure();
                     midi_sysex_send_ack(CMD_ENTER_BOOTLOADER, 0x02);
@@ -1366,7 +1411,7 @@ static void midi_task(void) {
                     }
                     break;
                 default:
-                    // Other MIDI messages - ignore for now
+                    // Other MIDI messages — ignored
                     break;
             }
         }
@@ -1437,35 +1482,56 @@ static void core1_sensor_task(void) {
     int recovery_remaining = 0;      // Samples to discard before trusting data
     
     // Main sampling loop
+    // ARCHITECTURE: Sensor runs ALWAYS regardless of app connection state.
+    // This keeps the BMP280 IIR filter warm, averaging buffer fresh, and
+    // timing stable. Only the queue-to-Core0 step checks g_app_connected.
+    // Result: reconnection is seamless — no data gaps, no value spikes.
     while (true) {
-        // Feed watchdog from Core 1 as well
         watchdog_update();
         
-        if (g_sensor_ready && g_app_connected) {
-            uint64_t now_us = time_us_64();
-            uint64_t now_ms = now_us / 1000;
+        if (!g_sensor_ready) {
+            // Sensor not ready — auto-retry every 5 seconds
+            static uint64_t last_sensor_retry_ms = 0;
+            uint64_t now_retry = time_us_64() / 1000;
+            if (now_retry - last_sensor_retry_ms > 5000) {
+                last_sensor_retry_ms = now_retry;
+                g_sensor_ready = bmp280_init();
+                if (g_sensor_ready) {
+                    bmp280_apply_config();
+                    #if CFG_TUD_CDC
+                    printf("INFO:Sensor auto-recovered\n");
+                    #endif
+                }
+            }
+            sleep_us(100);
+            continue;
+        }
+        
+        uint64_t now_us = time_us_64();
+        uint64_t now_ms = now_us / 1000;
+        
+        // 100Hz internal sampling — runs continuously
+        if (now_us - last_sample_us >= SAMPLE_INTERVAL_US) {
+            last_sample_us = now_us;
             
-            // 100Hz internal sampling
-            if (now_us - last_sample_us >= SAMPLE_INTERVAL_US) {
-                last_sample_us = now_us;
-                
-                float reading;
-                if (g_sensor_reconfiguring) {
-                    reading = NAN;  // Skip reads during sensor reconfiguration
+            float reading;
+            if (g_sensor_reconfiguring) {
+                reading = NAN;
+            } else {
+                reading = bmp280_read_pressure();
+            }
+            
+            if (isnan(reading)) {
+                if (g_lockout_grace > 0) {
+                    g_lockout_grace--;
                 } else {
-                    reading = bmp280_read_pressure();
+                    overrange_consec++;
                 }
                 
-                if (isnan(reading)) {
-                    // Invalid reading: I2C failure, ADC saturation, or out-of-range
-                    overrange_consec++;
-                    
-                    if (overrange_consec >= OVERRANGE_CONSEC_THRESHOLD && !in_recovery) {
-                        // Skip if Core 0 is already reconfiguring the sensor
-                        if (g_sensor_reconfiguring) {
-                            overrange_consec = 0;
-                        } else {
-                        // Sensor exceeded range — soft reset to clear IIR filter
+                if (overrange_consec >= OVERRANGE_CONSEC_THRESHOLD && !in_recovery) {
+                    if (g_sensor_reconfiguring) {
+                        overrange_consec = 0;
+                    } else {
                         #if CFG_TUD_CDC
                         printf("WARN:Sensor over-range, resetting...\n");
                         #endif
@@ -1474,104 +1540,72 @@ static void core1_sensor_task(void) {
                         if (bmp280_reinit_config()) {
                             in_recovery = true;
                             recovery_remaining = OVERRANGE_RECOVERY_SAMPLES;
-                            sample_count = 0;  // Clear averaging buffer
+                            sample_count = 0;
                             overrange_consec = 0;
-                            g_overrange_alert = true;  // Notify Core 0 -> App
+                            g_overrange_alert = true;
                             
                             #if CFG_TUD_CDC
-                            printf("INFO:Sensor reset OK, stabilizing (%d samples)\n", 
+                            printf("INFO:Sensor reset OK, stabilizing (%d samples)\n",
                                    OVERRANGE_RECOVERY_SAMPLES);
                             #endif
                         } else {
-                            // Reset failed — try full reinit next time
                             g_sensor_ready = bmp280_init();
                             sat_inc_u16(&g_sensor_error_count);
                             overrange_consec = 0;
                         }
-                        } // end if (!g_sensor_reconfiguring)
-                    }
-                } else {
-                    // Valid reading
-                    overrange_consec = 0;
-                    
-                    if (in_recovery) {
-                        // Discard samples during recovery stabilization
-                        recovery_remaining--;
-                        if (recovery_remaining <= 0) {
-                            in_recovery = false;
-                            #if CFG_TUD_CDC
-                            printf("INFO:Sensor recovered, resuming normal operation\n");
-                            #endif
-                        }
-                        // Don't add to sample buffer during recovery
-                    } else if (sample_count < g_samples_per_output) {
-                        sample_buffer[sample_count++] = reading;
                     }
                 }
-            }
-            
-            // Dynamic output rate (configurable via F command)
-            if (now_ms - last_output_ms >= (uint64_t)g_output_interval_ms) {
-                last_output_ms = now_ms;
+            } else {
+                overrange_consec = 0;
                 
-                if (sample_count > 0) {
-                    // Calculate average
-                    float sum = 0;
-                    for (int i = 0; i < sample_count; i++) {
-                        sum += sample_buffer[i];
+                if (in_recovery) {
+                    recovery_remaining--;
+                    if (recovery_remaining <= 0) {
+                        in_recovery = false;
+                        #if CFG_TUD_CDC
+                        printf("INFO:Sensor recovered, resuming normal operation\n");
+                        #endif
                     }
-                    float avg_pressure = sum / sample_count;
-                    sample_count = 0;
-                    
-                    // Set baseline on first valid reading
-                    if (!g_baseline_set) {
-                        g_baseline_pressure = avg_pressure;
-                        g_baseline_set = true;
-                    }
-                    
-                    // Calculate delta (hPa * 1000 for precision)
-                    float delta = avg_pressure - g_baseline_pressure;
-                    int32_t delta_x1000 = (int32_t)(delta * 1000.0f);
-                    
-                    // Noise floor (configurable via CMD_SET_NOISE_FLOOR)
-                    int32_t nf = (int32_t)g_noise_floor;
-                    if (delta_x1000 > -nf && delta_x1000 < nf) {
-                        delta_x1000 = 0;
-                    }
-                    
-                    // Send to Core 0
+                } else if (sample_count < g_samples_per_output) {
+                    sample_buffer[sample_count++] = reading;
+                }
+            }
+        }
+        
+        // Output at configured rate — averaging runs continuously
+        if (now_ms - last_output_ms >= (uint64_t)g_output_interval_ms) {
+            last_output_ms = now_ms;
+            
+            if (sample_count > 0) {
+                float sum = 0;
+                for (int i = 0; i < sample_count; i++) {
+                    sum += sample_buffer[i];
+                }
+                float avg_pressure = sum / sample_count;
+                sample_count = 0;
+                
+                if (!g_baseline_set) {
+                    g_baseline_pressure = avg_pressure;
+                    g_baseline_set = true;
+                }
+                
+                float delta = avg_pressure - g_baseline_pressure;
+                int32_t delta_x1000 = (int32_t)(delta * 1000.0f);
+                
+                int32_t nf = (int32_t)g_noise_floor;
+                if (delta_x1000 > -nf && delta_x1000 < nf) {
+                    delta_x1000 = 0;
+                }
+                
+                // Only forward to Core 0 when app is connected
+                if (g_app_connected) {
                     pressure_packet_t packet = {
                         .delta_x1000 = delta_x1000
                     };
                     if (!queue_try_add(&g_pressure_queue, &packet)) {
-                        // Queue full - drop oldest and retry
                         pressure_packet_t discard;
                         queue_try_remove(&g_pressure_queue, &discard);
-                        if (!queue_try_add(&g_pressure_queue, &packet)) {
-                            // Still full — extremely rare, skip this sample
-                        }
-                    }
-                }
-            }
-        } else {
-            // Not connected or sensor not ready - idle
-            sample_count = 0;
-            overrange_consec = 0;
-            in_recovery = false;
-            recovery_remaining = 0;
-            
-            // Self-recovery: auto-retry sensor init every 5 seconds if sensor failed
-            if (!g_sensor_ready) {
-                static uint64_t last_sensor_retry_ms = 0;
-                uint64_t now_retry = time_us_64() / 1000;
-                if (now_retry - last_sensor_retry_ms > 5000) {
-                    last_sensor_retry_ms = now_retry;
-                    g_sensor_ready = bmp280_init();
-                    if (g_sensor_ready) {
-                        bmp280_apply_config();
-                        #if CFG_TUD_CDC
-                        printf("INFO:Sensor auto-recovered\n");
-                        #endif
+                        queue_try_add(&g_pressure_queue, &packet);
                     }
                 }
             }
@@ -1618,23 +1652,13 @@ static void print_startup_banner(void) {
  * TinyUSB Callbacks for Power Management (EMC)
  * ========================================================================== */
 
-// USB suspend state flag
-static volatile bool g_usb_suspended = false;
-
 /**
  * @brief Called when USB bus is suspended
  * @details Reduce power consumption to minimize EMI during suspend
  */
 void tud_suspend_cb(bool remote_wakeup_en) {
     (void) remote_wakeup_en;
-    g_usb_suspended = true;
-    
-    // Turn off LED to save power
     led_set_state(LED_STATE_OFF);
-    
-    // Optionally: Could slow down system clock here for more power savings
-    // But this requires careful handling of peripherals
-    
     #if CFG_TUD_CDC
     printf("USB: Suspended\n");
     #endif
@@ -1644,11 +1668,7 @@ void tud_suspend_cb(bool remote_wakeup_en) {
  * @brief Called when USB bus is resumed
  */
 void tud_resume_cb(void) {
-    g_usb_suspended = false;
-    
-    // Restore LED state
     led_set_state(g_app_connected ? LED_STATE_APP_CONNECTED : LED_STATE_USB_READY);
-    
     #if CFG_TUD_CDC
     printf("USB: Resumed\n");
     #endif
@@ -1675,11 +1695,10 @@ int main(void) {
         }
     }
     
-    // Initialize device identity
     init_serial_number();
     flash_load_settings();
     
-    // Initialize TinyUSB
+    usb_set_serial_number(g_serial_number);
     tusb_init();
     
     // Initialize MIDI SysEx handler
@@ -1705,13 +1724,18 @@ int main(void) {
     // Wait for USB connection with blinking LED
     // Enable watchdog early for self-recovery if USB init hangs
     watchdog_enable(8000, true);  // 8s generous timeout during boot
+    uint64_t last_blink_us = 0;
     bool blink = false;
     while (!tud_connected()) {
-        tud_task();  // TinyUSB device task
+        tud_task();
         watchdog_update();
-        blink = !blink;
-        led_set_state(blink ? LED_STATE_USB_WAIT : LED_STATE_OFF);
-        sleep_ms(500);
+        uint64_t now_us = time_us_64();
+        if (now_us - last_blink_us > 500000) {
+            last_blink_us = now_us;
+            blink = !blink;
+            led_set_state(blink ? LED_STATE_USB_WAIT : LED_STATE_OFF);
+        }
+        sleep_ms(10);
     }
     led_set_state(LED_STATE_USB_READY);
     sleep_ms(500);

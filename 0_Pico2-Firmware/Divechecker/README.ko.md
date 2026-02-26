@@ -10,6 +10,7 @@ Raspberry Pi Pico 2 (RP2350)용 압력 모니터링 펌웨어입니다.
 - 확장 측정 범위: 300-1250 hPa
 - 안정적인 성능을 위한 듀얼코어 아키텍처
 - 부드러운 데이터를 위한 IIR + 평균화 필터
+- 연결 상태와 분리된 센서 파이프라인 (샘플링 상시 동작)
 - 안전한 BOOTSEL 진입 (멀티코어 락아웃 + 인터럽트 비활성화)
 - 크로스플랫폼 호환성을 위한 USB MIDI SysEx 프로토콜
 - ECDSA 기기 인증
@@ -72,7 +73,6 @@ SysEx 형식: `F0 7D 01 [cmd] [data...] F7`
 | Device Info | 0x02 | 시리얼, 이름, FW 버전, 센서 상태 |
 | Config | 0x03 | 출력 속도 응답 |
 | Auth Response | 0x04 | ECDSA 서명 (니블 인코딩) |
-| Sensor Status | 0x05 | 센서 연결 상태 |
 | Over-range Alert | 0x06 | 센서 측정 범위 초과 |
 | Temperature | 0x07 | BMP280 온도 (int16×100) |
 | Diagnostics | 0x08 | 가동시간, 에러 카운트, I2C 복구 |
@@ -136,6 +136,10 @@ ECDSA 기기 인증용:
 | **Flash CRC32** | 로드 시 데이터 무결성 검증 |
 | **마모 평준화** | 4KB 섹터 내 16슬롯 로테이션 |
 | **Flash 쓰기 디바운스** | 빠른 쓰기 방지를 위한 3초 지연 |
+| **부팅 시 Flash 컴팩션** | 랩어라운드 구간의 erase 부담을 부팅 시점으로 이동 |
+| **락아웃 후 I2C 유예 구간** | flash lockout 직후 일시적 NaN 샘플 무시 |
+| **연속 센서 파이프라인** | 앱 연결 해제 중에도 Core 1 샘플링/필터링 지속 |
+| **연결 타임아웃 여유** | UI 지연 허용을 위해 keepalive 타임아웃 10초로 확대 |
 | **SysEx 타임아웃** | 500ms 파서 리셋 (모든 상태) |
 | **PIO 폴백** | PIO0 사용 불가 시 PIO1로 자동 전환 |
 
@@ -168,6 +172,6 @@ Flash (총 4MB)
 
 ## 라이선스
 
-Copyright (C) 2025 Kim DaeHyun (kernalix7@kodenet.io)
+Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
 
 Apache License 2.0 (소프트웨어) 및 CERN-OHL-S v2 (하드웨어)에 따라 라이선스됩니다.

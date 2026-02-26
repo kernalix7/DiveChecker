@@ -7,6 +7,7 @@
 
 #include "tusb.h"
 #include "pico/unique_id.h"
+#include <string.h>
 
 //--------------------------------------------------------------------
 // Device Descriptors

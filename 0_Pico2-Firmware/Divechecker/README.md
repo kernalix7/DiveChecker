@@ -10,6 +10,7 @@ Pressure monitoring firmware for Raspberry Pi Pico 2 (RP2350).
 - Extended measurement range: 300-1250 hPa
 - Dual-core architecture for stable performance
 - IIR + Averaging filter for smooth data
+- Connection-decoupled sensor pipeline (sampling always on)
 - Safe BOOTSEL entry (multicore lockout + interrupt disable)
 - USB MIDI SysEx protocol for cross-platform compatibility
 - ECDSA device authentication
@@ -72,7 +73,6 @@ SysEx format: `F0 7D 01 [cmd] [data...] F7`
 | Device Info | 0x02 | Serial, name, FW version, sensor status |
 | Config | 0x03 | Output rate response |
 | Auth Response | 0x04 | ECDSA signature (nibble-encoded) |
-| Sensor Status | 0x05 | Sensor connection status |
 | Over-range Alert | 0x06 | Sensor exceeded measurement range |
 | Temperature | 0x07 | BMP280 temperature (int16×100) |
 | Diagnostics | 0x08 | Uptime, error counts, I2C recovery |
@@ -136,6 +136,10 @@ See [PRODUCTION_GUIDE.md](PRODUCTION_GUIDE.md) for production deployment.
 | **Flash CRC32** | Data integrity verification on load |
 | **Wear Leveling** | 16-slot rotation in 4KB sector |
 | **Flash Write Debounce** | 3-second delay prevents rapid writes |
+| **Boot-Time Flash Compaction** | Erase-heavy wrap-around writes are moved to boot |
+| **Lockout I2C Grace Window** | Transient NaN samples after flash lockout are ignored |
+| **Continuous Sensor Pipeline** | Core 1 sampling/filtering runs even when app disconnects |
+| **Connection Timeout Margin** | Keepalive timeout increased to 10s to tolerate UI jitter |
 | **SysEx Timeout** | 500ms parser reset (all states) |
 | **PIO Fallback** | Auto-switch to PIO1 if PIO0 unavailable |
 
@@ -168,6 +172,6 @@ Flash (4MB total)
 
 ## License
 
-Copyright (C) 2025 Kim DaeHyun (kernalix7@kodenet.io)
+Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
 
 Licensed under Apache License 2.0 (Software) and CERN-OHL-S v2 (Hardware).

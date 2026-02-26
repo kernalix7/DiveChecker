@@ -22,9 +22,8 @@
 // Command bytes (Device -> App)
 #define CMD_PRESSURE            0x01    // Pressure data (5 bytes: 7-bit encoded int32)
 #define CMD_DEVICE_INFO         0x02    // Device info response
-#define CMD_CONFIG              0x03    // Config response (legacy: output rate only)
+#define CMD_CONFIG              0x03    // Config response (output rate only)
 #define CMD_AUTH_RESPONSE       0x04    // Auth response
-#define CMD_SENSOR_STATUS       0x05    // Sensor status
 #define CMD_OVERRANGE_ALERT     0x06    // Sensor over-range warning
 #define CMD_TEMPERATURE         0x07    // Temperature data (int16 x100)
 #define CMD_DIAGNOSTICS         0x08    // Runtime diagnostics
@@ -87,9 +86,9 @@ sysex_message_t* midi_sysex_get_message(void);
 
 /**
  * @brief Send pressure data via SysEx
- * @param pressure_mpa Pressure in milli-Pascal (int32)
+ * @param pressure_mhpa Pressure delta in milli-hPa (hPa * 1000)
  */
-void midi_sysex_send_pressure(int32_t pressure_mpa);
+void midi_sysex_send_pressure(int32_t pressure_mhpa);
 
 /**
  * @brief Send device info via SysEx
@@ -113,12 +112,6 @@ void midi_sysex_send_config(uint8_t output_rate);
  * @param sig_len Signature length
  */
 void midi_sysex_send_auth_response(const uint8_t* signature, uint8_t sig_len);
-
-/**
- * @brief Send sensor status via SysEx
- * @param connected true if sensor is connected
- */
-void midi_sysex_send_sensor_status(bool connected);
 
 /**
  * @brief Send over-range alert via SysEx

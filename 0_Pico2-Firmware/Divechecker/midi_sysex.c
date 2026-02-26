@@ -187,13 +187,13 @@ static void midi_sysex_send_raw(uint8_t command, const uint8_t* data, uint16_t l
     midi_sysex_flush_and_unlock();
 }
 
-void midi_sysex_send_pressure(int32_t pressure_mpa) {
+void midi_sysex_send_pressure(int32_t pressure_mhpa) {
     // Encode as 5 bytes of 7-bit data (35 bits, enough for int32)
     // Big-endian, 7 bits per byte
     // Use absolute value + sign bit for proper encoding
     uint8_t data[5];
-    bool negative = pressure_mpa < 0;
-    uint32_t val = negative ? (uint32_t)(-pressure_mpa) : (uint32_t)pressure_mpa;
+    bool negative = (pressure_mhpa < 0);
+    uint32_t val = negative ? (~(uint32_t)pressure_mhpa + 1u) : (uint32_t)pressure_mhpa;
     
     data[0] = (val >> 28) & 0x0F;  // Top 4 bits
     if (negative) {
@@ -262,11 +262,6 @@ void midi_sysex_send_auth_response(const uint8_t* signature, uint8_t sig_len) {
     
     // midi_sysex_send_raw already handles locking and flushing
     midi_sysex_send_raw(CMD_AUTH_RESPONSE, encoded, idx);
-}
-
-void midi_sysex_send_sensor_status(bool connected) {
-    uint8_t data[1] = { connected ? 0x01 : 0x00 };
-    midi_sysex_send_raw(CMD_SENSOR_STATUS, data, 1);
 }
 
 void midi_sysex_send_overrange_alert(void) {
