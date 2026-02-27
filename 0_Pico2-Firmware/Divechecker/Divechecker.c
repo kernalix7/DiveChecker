@@ -492,6 +492,7 @@ static void flash_save_settings(void) {
     restore_interrupts(irq_state);
     multicore_lockout_end_blocking();
     
+    __dmb();  // Ensure Core 1 sees the grace counter before processing resumes
     g_lockout_grace = LOCKOUT_GRACE_SAMPLES;
     g_wear_slot = next_slot;
 }
@@ -1016,6 +1017,7 @@ static void midi_process_sysex(sysex_message_t* msg) {
             
         case CMD_RESET_BASELINE:
             g_baseline_set = false;
+            __dmb();  // Ensure Core 1 sees the reset before resuming
             break;
             
         case CMD_SET_OUTPUT_RATE:
@@ -1586,6 +1588,7 @@ static void core1_sensor_task(void) {
                 
                 if (!g_baseline_set) {
                     g_baseline_pressure = avg_pressure;
+                    __dmb();  // Ensure pressure is visible before setting flag
                     g_baseline_set = true;
                 }
                 

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 🔧 **Reconnect Baseline Preservation** - Removed implicit baseline reset on transient reconnect to prevent sudden 0.0-style pressure re-zero events.
 - 🔧 **Flash Lockout Recovery Guard** - Added post-lockout I2C grace window and raised over-range trigger threshold to avoid false sensor reset loops after settings writes.
 - 🔧 **Keepalive Resilience** - Increased firmware/app timeout margins and made MIDI stream errors tolerant to transient bursts before forcing disconnect.
+- 🔧 **Cross-Core Memory Ordering (Firmware)** - Added missing `__dmb()` barriers for baseline flag write ordering (Core 1) and baseline reset visibility (Core 0 → Core 1); added pre-write barrier for lockout grace counter to guarantee Core 1 sees the updated value immediately after flash lockout ends.
 
 ### Planned Features (Next Release)
 - ⏸️ Monitor tab pause button
