@@ -163,7 +163,24 @@ jobs:
         with:
           name: ios-ipa
           path: ${{ env.APP_DIR }}/build/ios/ipa/*.ipa
-      
+
+      - name: Upload to App Store Connect
+        if: startsWith(github.ref, 'refs/tags/v') && steps.check-certs.outputs.has_certs == 'true'
+        env:
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
+          APPLE_API_KEY_P8: ${{ secrets.APPLE_API_KEY_P8 }}
+        run: |
+          mkdir -p ~/.private_keys
+          echo "$APPLE_API_KEY_P8" > ~/.private_keys/AuthKey_${APPLE_API_KEY_ID}.p8
+          xcrun altool --upload-app \
+            --type ios \
+            --file build/ios/ipa/*.ipa \
+            --apiKey "$APPLE_API_KEY_ID" \
+            --apiIssuer "$APPLE_API_ISSUER_ID" \
+            --verbose
+          rm -f ~/.private_keys/AuthKey_${APPLE_API_KEY_ID}.p8
+
       - name: Cleanup Keychain
         if: always()
         run: |

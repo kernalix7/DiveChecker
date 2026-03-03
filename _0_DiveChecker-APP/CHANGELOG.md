@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [6.0.0] - 2026-03-03 (RTM 6.0)
+
 ### Fixed
 - 🔧 **Root Cause Stabilization (Sensor Pipeline)** - Firmware Core 1 sampling/filtering no longer depends on app connection state; reconnection no longer cold-starts sensor averaging/IIR pipeline.
 - 🔧 **Reconnect Baseline Preservation** - Removed implicit baseline reset on transient reconnect to prevent sudden 0.0-style pressure re-zero events.
