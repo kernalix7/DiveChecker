@@ -36,6 +36,7 @@
 #include "hardware/sync.h"
 #include "hardware/watchdog.h"
 #include "hardware/clocks.h"
+#include "hardware/structs/usb.h"  // Direct USB SIE register access
 #include "pico/mutex.h"
 
 // TinyUSB for USB MIDI
@@ -111,7 +112,7 @@
 #define SAMPLE_INTERVAL_US       (1000000 / INTERNAL_SAMPLE_RATE_HZ)  // 10ms
 
 // Connection Timeout
-#define CONNECTION_TIMEOUT_MS   10000
+#define CONNECTION_TIMEOUT_MS   30000
 
 // WS2812 LED (RP2350 Zero SuperMini)
 #define WS2812_PIN          16
@@ -251,6 +252,21 @@ static bool g_led_initialized = false;
 
 // Over-range alert flag (set by Core 1, consumed by Core 0)
 static volatile bool g_overrange_alert = false;
+
+// USB suspend state — set by tud_suspend_cb (if called)
+static volatile bool g_usb_suspended = false;
+
+/**
+ * @brief Check USB bus suspended state via hardware register
+ * @details tud_suspend_cb() may not fire reliably on all configurations.
+ *          Reading SIE_STATUS.SUSPENDED directly from the USB controller
+ *          provides a hardware-level ground truth that works regardless
+ *          of whether the TinyUSB callback was invoked.
+ */
+static inline bool usb_is_suspended(void) {
+    return g_usb_suspended ||
+           ((usb_hw->sie_status & USB_SIE_STATUS_SUSPENDED_BITS) != 0);
+}
 
 // I2C grace period after multicore lockout (flash save).
 // Core 1's I2C transaction may be interrupted by lockout, causing transient
@@ -1600,8 +1616,9 @@ static void core1_sensor_task(void) {
                     delta_x1000 = 0;
                 }
                 
-                // Only forward to Core 0 when app is connected
-                if (g_app_connected) {
+                // Always forward to Core 0 — data flow is decoupled from
+                // ping/pong connection state.  Core 0 gates on tud_midi_mounted().
+                {
                     pressure_packet_t packet = {
                         .delta_x1000 = delta_x1000
                     };
@@ -1656,12 +1673,27 @@ static void print_startup_banner(void) {
  * ========================================================================== */
 
 /**
- * @brief Called when USB bus is suspended
- * @details Reduce power consumption to minimize EMI during suspend
+ * @brief Called when USB bus is suspended by host
+ * @details All OS platforms periodically suspend USB devices for power
+ *          saving (Selective Suspend).  During suspend the host stops
+ *          sending SOF packets and no endpoint transfers occur, so MIDI
+ *          pings cannot be received.  We must:
+ *          1. Mark suspended so the connection timeout is paused
+ *          2. Signal Remote Wakeup if the host enabled it, to shorten
+ *             the suspend period and avoid data gaps
  */
 void tud_suspend_cb(bool remote_wakeup_en) {
-    (void) remote_wakeup_en;
+    g_usb_suspended = true;
     led_set_state(LED_STATE_OFF);
+
+    // Immediately request the host to resume if we have an active
+    // app connection — keeps pressure data flowing with minimal gap.
+    if (remote_wakeup_en && g_app_connected) {
+        // USB spec requires ≥5 ms in suspend before signaling wakeup
+        sleep_ms(10);
+        tud_remote_wakeup();
+    }
+
     #if CFG_TUD_CDC
     printf("USB: Suspended\n");
     #endif
@@ -1671,6 +1703,14 @@ void tud_suspend_cb(bool remote_wakeup_en) {
  * @brief Called when USB bus is resumed
  */
 void tud_resume_cb(void) {
+    g_usb_suspended = false;
+
+    // Reset ping timer so the connection timeout doesn't fire
+    // immediately after resume (pings couldn't arrive while suspended).
+    if (g_app_connected) {
+        g_last_ping_ms = time_us_64() / 1000;
+    }
+
     led_set_state(g_app_connected ? LED_STATE_APP_CONNECTED : LED_STATE_USB_READY);
     #if CFG_TUD_CDC
     printf("USB: Resumed\n");
@@ -1769,20 +1809,30 @@ int main(void) {
         // Process incoming MIDI messages
         midi_task();
         
-        // Check for connection timeout
-        if (g_app_connected && (now_ms - g_last_ping_ms > CONNECTION_TIMEOUT_MS)) {
-            g_app_connected = false;
-            g_baseline_printed = false;  // Reset for next connection
-            led_set_state(LED_STATE_USB_READY);
-            #if CFG_TUD_CDC
-            printf("MIDI: App disconnected (timeout)\n");
-            #endif
+        // Check for connection timeout.
+        // While USB is suspended (detected via hardware register OR
+        // TinyUSB callback), pings cannot arrive — advance the ping
+        // timestamp so the timeout stays paused.
+        if (g_app_connected) {
+            if (usb_is_suspended()) {
+                g_last_ping_ms = now_ms;
+            } else if (now_ms - g_last_ping_ms > CONNECTION_TIMEOUT_MS) {
+                g_app_connected = false;
+                g_baseline_printed = false;  // Reset for next connection
+                led_set_state(LED_STATE_USB_READY);
+                #if CFG_TUD_CDC
+                printf("MIDI: App disconnected (timeout)\n");
+                #endif
+            }
         }
-        
-        // Forward pressure data from Core 1 via MIDI SysEx
-        pressure_packet_t packet;
-        while (queue_try_remove(&g_pressure_queue, &packet)) {
-            if (g_app_connected) {
+
+        // Forward pressure data from Core 1 via MIDI SysEx.
+        // Data flow is decoupled from ping/pong — we send whenever
+        // the USB MIDI interface is mounted.  midi_sysex_send_raw()
+        // already checks tud_midi_mounted() internally.
+        {
+            pressure_packet_t packet;
+            while (queue_try_remove(&g_pressure_queue, &packet)) {
                 // Send baseline info once
                 if (!g_baseline_printed && g_baseline_set) {
                     #if CFG_TUD_CDC
@@ -1793,12 +1843,12 @@ int main(void) {
                 // Send pressure via MIDI SysEx
                 midi_sysex_send_pressure(packet.delta_x1000);
             }
-        }
-        
-        // Send over-range alert to app (set by Core 1)
-        if (g_overrange_alert && g_app_connected) {
-            g_overrange_alert = false;
-            midi_sysex_send_overrange_alert();
+
+            // Send over-range alert to app (set by Core 1)
+            if (g_overrange_alert) {
+                g_overrange_alert = false;
+                midi_sysex_send_overrange_alert();
+            }
         }
         
         // Debounced flash save: write settings 3s after last change
