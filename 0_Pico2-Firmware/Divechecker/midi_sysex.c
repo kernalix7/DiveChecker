@@ -121,70 +121,45 @@ sysex_message_t* midi_sysex_get_message(void) {
     return NULL;
 }
 
-// SysEx send lock to prevent interleaving
-static volatile bool g_sysex_sending = false;
-
-// Wait for USB send to complete and release lock
-// Optimized: only wait until buffer is actually flushed, not a fixed 10ms
-static void midi_sysex_flush_and_unlock(void) {
-    // Quick flush: just run a few tud_task cycles to push data out
-    for (int i = 0; i < 5; i++) {
-        tud_task();
-    }
-    g_sysex_sending = false;
-}
-
-// Acquire send lock (non-blocking timeout)
-static bool midi_sysex_lock(void) {
-    int timeout = 100;  // ~5ms max wait
-    while (g_sysex_sending && timeout-- > 0) {
-        tud_task();
-        sleep_us(50);
-    }
-    if (g_sysex_sending) {
-        return false;  // Lock timeout - skip this send
-    }
-    g_sysex_sending = true;
-    return true;
-}
-
-// Send raw SysEx with retry for full transmission
+// Send raw SysEx — single-threaded (Core 0 only), no lock needed.
+// Retries aggressively to avoid silent data loss.
 static void midi_sysex_send_raw(uint8_t command, const uint8_t* data, uint16_t len) {
-    if (!midi_sysex_lock()) {
-        return;  // Skip if locked (another send in progress)
-    }
-    
+    if (!tud_midi_mounted()) return;
+
     uint8_t buffer[SYSEX_MAX_SIZE];
     uint16_t idx = 0;
-    
+
     buffer[idx++] = SYSEX_START;
     buffer[idx++] = SYSEX_MANUFACTURER_ID;
     buffer[idx++] = SYSEX_DEVICE_ID;
     buffer[idx++] = command;
-    
+
     for (uint16_t i = 0; i < len && idx < SYSEX_MAX_SIZE - 1; i++) {
         buffer[idx++] = data[i] & 0x7F;  // Mask to 7-bit (MIDI spec compliance)
     }
-    
+
     buffer[idx++] = SYSEX_END;
-    
-    // Send with retry to handle buffer full conditions
+
+    // Send with generous retry to survive transient USB host delays.
+    // USB Full-Speed bulk transfers can stall for several ms during
+    // host-side scheduling.  200 × 100us = 20ms max wait — enough to
+    // span multiple USB frames (1ms each) without dropping data.
     uint16_t sent = 0;
     int retry_count = 0;
-    while (sent < idx && retry_count < 50) {
+    while (sent < idx && retry_count < 200) {
         uint32_t written = tud_midi_stream_write(0, buffer + sent, idx - sent);
         if (written > 0) {
             sent += written;
-            retry_count = 0;  // Reset retry on successful write
+            retry_count = 0;  // Reset on progress
         } else {
-            // Buffer full, process USB and retry
-            tud_task();
-            sleep_us(50);
+            tud_task();       // Process USB to free buffer space
+            sleep_us(100);    // Wait ~1/10 USB frame for host to poll
             retry_count++;
         }
     }
-    
-    midi_sysex_flush_and_unlock();
+
+    // Flush: ensure data reaches the USB endpoint
+    tud_task();
 }
 
 void midi_sysex_send_pressure(int32_t pressure_mhpa) {

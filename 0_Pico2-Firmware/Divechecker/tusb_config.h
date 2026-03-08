@@ -44,12 +44,20 @@ extern "C" {
 // MIDI Class
 #define CFG_TUD_MIDI                1
 #define CFG_TUD_MIDI_RX_BUFSIZE     64
-#define CFG_TUD_MIDI_TX_BUFSIZE     256
+#define CFG_TUD_MIDI_TX_BUFSIZE     512
 
-// CDC Class (for debug output, optional)
+// CDC Class (debug output) - disabled by default for clean USB MIDI.
+// Enable with: target_compile_definitions(... PRIVATE DEBUG_CDC=1)
+// When enabled, adds a CDC serial port for printf debug output.
+// WARNING: Leaving CDC active in production causes periodic ~0.5s data
+// dropouts due to Linux cdc-acm driver polling and USB bandwidth contention.
+#ifdef DEBUG_CDC
 #define CFG_TUD_CDC                 1
 #define CFG_TUD_CDC_RX_BUFSIZE      256
 #define CFG_TUD_CDC_TX_BUFSIZE      256
+#else
+#define CFG_TUD_CDC                 0
+#endif
 
 // Disable unused classes
 #define CFG_TUD_MSC                 0
