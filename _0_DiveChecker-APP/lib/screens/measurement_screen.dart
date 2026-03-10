@@ -14,6 +14,7 @@ import '../utils/formatters.dart';
 import '../utils/ui_helpers.dart';
 import '../widgets/status_badge.dart';
 import '../widgets/measurement/measurement_widgets.dart';
+import 'fullscreen_measurement_chart.dart';
 
 class MeasurementScreen extends StatefulWidget {
   const MeasurementScreen({super.key});
@@ -174,6 +175,17 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
     }
     _controller?.dispose();
     super.dispose();
+  }
+
+  void _openFullscreenChart() {
+    final controller = _controller;
+    if (controller == null) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => FullscreenMeasurementChart(controller: controller),
+      ),
+    );
   }
 
   void _toggleMeasurement() {
@@ -417,6 +429,7 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
                             minX: state.minX,
                             maxX: state.maxX,
                             sampleRate: controller.outputRate,
+                            onFullscreen: () => _openFullscreenChart(),
                           ),
                         ),
 

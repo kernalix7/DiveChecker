@@ -252,6 +252,7 @@ class PressureChart extends StatelessWidget {
   final double minX;
   final double maxX;
   final int sampleRate;
+  final VoidCallback? onFullscreen;
 
   const PressureChart({
     super.key,
@@ -259,6 +260,7 @@ class PressureChart extends StatelessWidget {
     required this.minX,
     required this.maxX,
     this.sampleRate = 8,
+    this.onFullscreen,
   });
 
   /// Filter data to visible range only
@@ -324,7 +326,7 @@ class PressureChart extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _ChartHeader(),
+          _ChartHeader(onFullscreen: onFullscreen),
           Spacing.verticalSm,
           Expanded(
             child: Container(
@@ -498,7 +500,9 @@ class PressureChart extends StatelessWidget {
 }
 
 class _ChartHeader extends StatelessWidget {
-  const _ChartHeader();
+  final VoidCallback? onFullscreen;
+
+  const _ChartHeader({this.onFullscreen});
 
   @override
   Widget build(BuildContext context) {
@@ -522,7 +526,17 @@ class _ChartHeader extends StatelessWidget {
             letterSpacing: LetterSpacings.widest,
           ),
         ),
-
+        const Spacer(),
+        if (onFullscreen != null)
+          IconButton(
+            onPressed: onFullscreen,
+            icon: const Icon(Icons.fullscreen),
+            iconSize: IconSizes.md,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            tooltip: l10n.fullscreen,
+            color: theme.colorScheme.onSurface.withOpacity(Opacities.high),
+          ),
       ],
     );
   }
