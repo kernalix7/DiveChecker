@@ -110,6 +110,49 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return spots;
   }
 
+  Future<void> _deleteSession(SessionData session) async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        icon: Icon(
+          Icons.delete_outline,
+          color: Theme.of(ctx).colorScheme.error,
+          size: IconSizes.xl,
+        ),
+        title: Text(l10n.deleteSession),
+        content: Text(l10n.deleteSessionConfirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(ctx).colorScheme.error,
+            ),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l10n.delete),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    try {
+      await context.read<SessionRepository>().deleteSession(session.id!);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.sessionDeleted)),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete session: $e')),
+      );
+    }
+  }
+
   Future<void> _showSessionDetail(SessionData session) async {
     // Show subtle loading indicator
     showDialog(
@@ -262,6 +305,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           return SessionCard(
                             session: session,
                             onTap: () => _showSessionDetail(session),
+                            onDelete: () => _deleteSession(session),
                             onAnalyze: () async {
                               final l10nLocal = AppLocalizations.of(context)!;
                               final proceed = await showDialog<bool>(

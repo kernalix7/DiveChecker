@@ -12,6 +12,7 @@ class SessionCard extends StatelessWidget {
   final SessionData session;
   final VoidCallback onTap;
   final VoidCallback onAnalyze;
+  final VoidCallback onDelete;
   final String Function(DateTime) formatDate;
   final String Function(int) formatDuration;
 
@@ -20,6 +21,7 @@ class SessionCard extends StatelessWidget {
     required this.session,
     required this.onTap,
     required this.onAnalyze,
+    required this.onDelete,
     required this.formatDate,
     required this.formatDuration,
   });
@@ -86,6 +88,17 @@ class SessionCard extends StatelessWidget {
               ),
               tooltip: l10n.peakAnalysis,
               onPressed: onAnalyze,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: WidgetSizes.minSizeButton, minHeight: WidgetSizes.minSizeButton),
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.delete_outline,
+                color: theme.colorScheme.error,
+                size: IconSizes.lg,
+              ),
+              tooltip: l10n.deleteSession,
+              onPressed: onDelete,
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(minWidth: WidgetSizes.minSizeButton, minHeight: WidgetSizes.minSizeButton),
             ),
