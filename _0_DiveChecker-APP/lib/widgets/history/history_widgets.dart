@@ -13,6 +13,7 @@ class SessionCard extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onAnalyze;
   final VoidCallback onDelete;
+  final VoidCallback onRename;
   final String Function(DateTime) formatDate;
   final String Function(int) formatDuration;
 
@@ -22,6 +23,7 @@ class SessionCard extends StatelessWidget {
     required this.onTap,
     required this.onAnalyze,
     required this.onDelete,
+    required this.onRename,
     required this.formatDate,
     required this.formatDuration,
   });
@@ -80,6 +82,17 @@ class SessionCard extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            IconButton(
+              icon: Icon(
+                Icons.edit_outlined,
+                color: theme.colorScheme.tertiary,
+                size: IconSizes.lg,
+              ),
+              tooltip: l10n.editTitle,
+              onPressed: onRename,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: WidgetSizes.minSizeButton, minHeight: WidgetSizes.minSizeButton),
+            ),
             IconButton(
               icon: Icon(
                 Icons.analytics_outlined,

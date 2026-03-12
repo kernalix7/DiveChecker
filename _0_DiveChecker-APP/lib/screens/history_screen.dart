@@ -110,6 +110,44 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return spots;
   }
 
+  Future<void> _renameSession(SessionData session) async {
+    final l10n = AppLocalizations.of(context)!;
+    final controller = TextEditingController(text: session.displayTitle ?? '');
+
+    final newTitle = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.editTitle),
+        content: TextField(
+          controller: controller,
+          decoration: InputDecoration(
+            hintText: l10n.measurementNumber(session.id ?? 0),
+            border: const OutlineInputBorder(),
+          ),
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+            child: Text(l10n.save),
+          ),
+        ],
+      ),
+    );
+
+    if (newTitle == null || !mounted) return;
+
+    final repo = context.read<SessionRepository>();
+    await repo.updateDisplayTitle(
+      session.id!,
+      newTitle.isEmpty ? null : newTitle,
+    );
+  }
+
   Future<void> _deleteSession(SessionData session) async {
     final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
@@ -306,6 +344,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             session: session,
                             onTap: () => _showSessionDetail(session),
                             onDelete: () => _deleteSession(session),
+                            onRename: () => _renameSession(session),
                             onAnalyze: () async {
                               final l10nLocal = AppLocalizations.of(context)!;
                               final proceed = await showDialog<bool>(

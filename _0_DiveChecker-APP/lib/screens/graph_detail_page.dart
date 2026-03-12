@@ -796,9 +796,9 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
               ),
               Spacing.horizontalXs,
               Icon(
-                Icons.edit,
-                size: FontSizes.body,
-                color: theme.colorScheme.outline,
+                Icons.edit_outlined,
+                size: IconSizes.sm,
+                color: theme.colorScheme.tertiary,
               ),
             ],
           ),
