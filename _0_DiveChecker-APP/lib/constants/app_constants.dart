@@ -12,8 +12,8 @@ import 'package:flutter/material.dart';
 /// App Configuration
 class AppConfig {
   static const String appName = 'DiveChecker';
-  static const String version = '7.0.4';
-  static const String build = '1';
+  static const String version = '7.1.1';
+  static const String build = '2';
   static const String versionDisplay = '$version (Build $build)';
   
   /// Device product info
