@@ -9,6 +9,18 @@
 
 ## [Unreleased]
 
+## [8.0.0] — 2026-03-18 (RTM 8.0)
+
+### 추가됨
+- GitHub 표준 파일: SECURITY, CONTRIBUTING, CODE_OF_CONDUCT, CHANGELOG (영어+한국어)
+- GitHub 템플릿: PR 템플릿, 버그 리포트, 기능 요청 이슈 템플릿
+- 이중언어 문서 구조 (docs/ 디렉토리 한국어 번역)
+- AI 멀티툴 프로젝트 설정 (.priv-storage/)
+
+### 수정됨
+- 샘플링 레이트 문서 100Hz → 160Hz 전체 README 수정
+- 루트 README의 CONTRIBUTING.md 링크 수정
+
 ## [7.2.0] — 2026-03-12 (RTM 7.2)
 
 ### 추가됨

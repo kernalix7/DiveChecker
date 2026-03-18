@@ -9,6 +9,18 @@ and this project aims to follow [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [8.0.0] — 2026-03-18 (RTM 8.0)
+
+### Added
+- GitHub standard files: SECURITY, CONTRIBUTING, CODE_OF_CONDUCT, CHANGELOG (en+ko)
+- GitHub templates: PR template, bug report, feature request issue templates
+- Bilingual documentation structure (docs/ directory with Korean translations)
+- AI multi-tool project configuration (.priv-storage/)
+
+### Fixed
+- Sampling rate documentation corrected from 100Hz to 160Hz across all READMEs
+- CONTRIBUTING.md link in root README now points to correct location
+
 ## [7.2.0] — 2026-03-12 (RTM 7.2)
 
 ### Added

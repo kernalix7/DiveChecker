@@ -24,7 +24,7 @@ DiveChecker is a professional monitoring system that helps freedivers effectivel
 
 Using a pressure sensor connected to a mouthpiece, it precisely measures subtle pressure changes (-10 to +200 hPa) when blowing or sucking through the mouth with **160Hz internal sampling + configurable output rate (4-50Hz)**, and visualizes them in real-time graphs.
 
-### Architecture (v7.2.0)
+### Architecture (v8.0.0)
 
 **Smart MCU + Intelligent App**
 
