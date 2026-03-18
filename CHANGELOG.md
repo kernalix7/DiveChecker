@@ -9,59 +9,117 @@ and this project aims to follow [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [7.2.0] — 2026-03-12 (RTM 7.2)
+
+### Added
+- Multi-language support: Japanese (ja), Simplified Chinese (zh), Traditional Chinese (zh_TW)
+- Locale provider enhancement with country code support and SharedPreferences persistence
+
+### Fixed
+- Graph note pressure display: fixed timestamp used as array index, now uses nearest-point lookup
+- Statistics duration calculation: fixed 10x incorrect value
+- Division by zero guards for skewness/kurtosis, trend graph slope, and change rate
+- Peak analyzer RangeError when `checkStart` exceeds `lastIdx`
+- GraphNote type safety with explicit casts in `fromMap()` factory
+- SessionRepository dispose guard to prevent `notifyListeners()` after dispose
+
+### Security
+- Firmware `strcpy` → `strncpy`: replaced 3 unsafe calls with bounded copies
+- ECDSA error counter increment on signature failure for diagnostics
+
+### Changed
+- Replaced remaining hardcoded strings with l10n in measurement, history, and settings screens
+- Updated web branding (index.html, manifest.json)
+
+## [7.1.1] — 2026-03-11
+
+### Fixed
+- Minor stability improvements and bug fixes
+
+## [7.1.0] — 2026-03-10
+
 ### Added
 - Session delete button in history screen
 - Fullscreen chart view for real-time measurement
-- Code quality improvements for release readiness
+
+## [6.0.0] — 2026-03-03 (RTM 6.0)
 
 ### Fixed
-- Decoupled pressure data flow from ping/pong connection state
-- Cross-core memory ordering with `__dmb()` barriers in firmware
+- Root cause stabilization: firmware Core 1 sampling no longer depends on app connection state
+- Reconnect baseline preservation: removed implicit baseline reset on transient reconnect
+- Flash lockout recovery guard with I2C grace window
+- Keepalive resilience: increased timeout margins, tolerant to transient MIDI stream errors
+- Cross-core memory ordering: added `__dmb()` barriers for baseline and lockout flags
 
-## [6.0.0] — RTM
+## [4.0.0] — 2026-02-26 (RTM 4.0)
 
-### Added
-- USB MIDI SysEx protocol for cross-platform device communication
-- Dual-core firmware architecture (Core0: USB/commands, Core1: 160Hz sensor sampling)
-- ECDSA P-256 device authentication with OTP key storage support
-- Configurable sensor output rate (4-50Hz)
-- IIR 2-stage + averaging filter pipeline in firmware
-- PIN-protected device configuration
-- WS2812 RGB LED status indication
-- Multi-language support (English, Korean, Japanese, Chinese)
+### Security
+- Backup integrity verification with checksum validation
+- Enhanced flash CRC validation with magic field check
+- INT32_MIN safe encoding in MIDI SysEx pressure encoding
+- Memory barriers (`__dmb()`) for cross-core output rate changes
+
+### Fixed
+- Peak analysis time calculation (was using `*0.25` instead of `/1000.0`)
+- GraphNote class collision between models and database layer
+- USB serial number correctly set from chip unique ID
+- LED initialization guard to prevent infinite PIO blocking
 
 ### Changed
-- Migrated app stack to MIDI-first communication flow
-- Improved runtime stability and reconnect behavior
+- Monitor screen: timer-based UI updates (10Hz) instead of per-sample setState
+- Peak analyzer: O(1) set lookup replaces O(n) List.contains
+- USB enumeration: reduced wait loop from 500ms to 10ms intervals
+- SerialProvider removed; all code uses MidiProvider directly
+- Linux binary/app ID unified to `io.kodenet.divechecker`
+- macOS bundle ID unified to `io.kodenet.divechecker`
 
-## [5.0.0]
+## [3.0.0] — 2026-02-19 (RTM 3.0)
 
-### Added
-- Multi-platform build metadata and release documentation
-- Stabilized firmware sampling behavior
-
-## [4.0.0] — RTM
-
-### Added
-- Initial MIDI-based communication architecture
-- Cross-platform Flutter app (Android, iOS, Linux, Windows, macOS, Web)
-- BMP280 pressure sensor integration with RP2350
-
-## [3.0.0] — RTM
+### Security
+- Soft reboot PIN protection
+- Persistent PIN lockout surviving device reboot
+- Flash CRC32 validation on settings load
+- Crypto buffer zeroing after authentication
+- Constant-time hex validation against timing attacks
 
 ### Added
-- Core measurement and visualization features
-- Session recording and history
+- Auto-reconnect with exponential backoff (2/4/6s, max 3 attempts)
+- Sensor auto-recovery: 5-second periodic retry on BMP280 I2C failure
+- Early watchdog: 8s boot timeout, 2s operation timeout
+- SysEx timeout parser reset from any state after 500ms
+- Dynamic Y-axis auto-scaling for measurement and monitor charts
+- Extended measurement range: BMP280 max raised to 1250 hPa
 
-## [2.0.0]
+### Fixed
+- FIFO handshake bug causing stale status reads
+- Concurrent sensor reinit race condition
+- mbedTLS context leak before re-initialization
+- Measurement disconnect crash during save dialog
+- BOOTSEL ALSA crash with safe shutdown sequence
+
+## [1.2.0] — 2026-01
+
+### Changed
+- Mobile chart performance: reduced LOD points, added RepaintBoundary, disabled animations
+- LOD system simplified: consolidated to single `_lodData`
+- Removed ESP32 firmware; project now Pico RP2350 only
+
+## [1.1.0] — 2026-01-08
 
 ### Added
-- Peak detection sensitivity and accuracy improvements
-- Old firmware backward compatibility support
+- USB MIDI SysEx communication protocol
+- ECDSA P-256 device authentication
+- Viewport-based chart rendering with LTTB-like downsampling
+- Pinch-to-zoom and pan gestures
+- Incremental statistics (O(1) per update)
 
-## [1.1.0]
+## [1.0.0] — 2025-12-17
 
 ### Added
-- Initial public release
-- Basic pressure monitoring and real-time charting
-- GitHub Actions CI/CD pipeline for all platforms
+- Initial release of DiveChecker
+- Real-time pressure monitoring with 100Hz internal sampling
+- Interactive pressure graphs with zoom and pan
+- SQLite database for local data persistence
+- USB MIDI device connection support
+- Session history with analytics
+- Cross-platform support (Android, iOS, Linux, Windows, macOS)
