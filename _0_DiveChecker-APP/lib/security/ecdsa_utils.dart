@@ -53,9 +53,27 @@ ECSignature? parseDerSignature(Uint8List derSig) {
     pos++;
     if (pos + sLen > derSig.length) return null;
     final sBytes = derSig.sublist(pos, pos + sLen);
+    pos += sLen;
+
+    // Check for trailing data after the signature
+    if (pos != derSig.length) {
+      if (kDebugMode) {
+        debugPrint('DER trailing data: ${derSig.length - pos} extra bytes');
+      }
+      return null;
+    }
 
     final r = bytesToBigInt(rBytes);
     final s = bytesToBigInt(sBytes);
+
+    // Validate r and s are in range (0 < r < n, 0 < s < n)
+    final n = ecdsaP256Params.n;
+    if (r <= BigInt.zero || r >= n || s <= BigInt.zero || s >= n) {
+      if (kDebugMode) {
+        debugPrint('DER signature r or s out of valid range');
+      }
+      return null;
+    }
 
     return ECSignature(r, s);
   } catch (e) {
@@ -74,6 +92,25 @@ ECPublicKey? loadEcPublicKey(Uint8List publicKeyBytes) {
   final y = bytesToBigInt(publicKeyBytes.sublist(33, 65));
 
   final Q = ecdsaP256Params.curve.createPoint(x, y);
+
+  // Validate that the point lies on the P-256 curve
+  // Check: point is not at infinity and satisfies y^2 = x^3 + ax + b (mod p)
+  if (Q.isInfinity) {
+    if (kDebugMode) debugPrint('EC public key is the point at infinity');
+    return null;
+  }
+  // Validate using ECFieldElement arithmetic (handles modular math internally)
+  final curve = ecdsaP256Params.curve;
+  final xFe = curve.fromBigInteger(x);
+  final yFe = curve.fromBigInteger(y);
+  // y^2 = x^3 + ax + b (mod p)
+  final lhs = yFe.square();
+  final rhs = ((xFe.square() * xFe) + (curve.a! * xFe)) + curve.b!;
+  if (lhs.toBigInteger() != rhs.toBigInteger()) {
+    if (kDebugMode) debugPrint('EC public key does not lie on P-256 curve');
+    return null;
+  }
+
   return ECPublicKey(Q, ecdsaP256Params);
 }
 

@@ -765,5 +765,24 @@
       "filename": {"type": "String"}
     }
   },
-  "calibrationTimedOut": "Calibration timed out - not enough sensor data received"
+  "calibrationTimedOut": "Calibration timed out - not enough sensor data received",
+  "loading": "Loading...",
+  "failedToSaveSession": "Failed to save session: {error}",
+  "@failedToSaveSession": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "failedToDeleteSession": "Failed to delete session: {error}",
+  "@failedToDeleteSession": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "failedToLoadSessionData": "Failed to load session data: {error}",
+  "@failedToLoadSessionData": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  }
 }

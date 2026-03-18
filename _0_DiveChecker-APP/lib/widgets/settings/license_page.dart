@@ -108,12 +108,12 @@ class _LicenseHeader extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(Spacing.lg),
                   decoration: BoxDecoration(
-                    color: OverlayColors.whiteContent.withOpacity(Opacities.mediumLow),
+                    color: OverlayColors.whiteContent.withValues(alpha: Opacities.mediumLow),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
-                    Icons.water_drop,
-                    size: IconSizes.display,
+                  child: Image.asset(
+                    'assets/logo.png',
+                    height: IconSizes.display,
                     color: OverlayColors.whiteContent,
                   ),
                 ),
@@ -131,7 +131,7 @@ class _LicenseHeader extends StatelessWidget {
                   'Version ${AppConfig.version}',
                   style: TextStyle(
                     fontSize: FontSizes.body,
-                    color: OverlayColors.whiteContent.withOpacity(Opacities.almostFull),
+                    color: OverlayColors.whiteContent.withValues(alpha: Opacities.almostFull),
                   ),
                 ),
               ],
@@ -166,10 +166,10 @@ class _InfoCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(Spacing.lg),
       decoration: BoxDecoration(
-        color: color.withOpacity(Opacities.veryLow),
+        color: color.withValues(alpha: Opacities.veryLow),
         borderRadius: BorderRadii.lgAll,
         border: Border.all(
-          color: color.withOpacity(Opacities.mediumLow),
+          color: color.withValues(alpha: Opacities.mediumLow),
           width: Dimensions.dividerHeight,
         ),
       ),
@@ -179,7 +179,7 @@ class _InfoCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(Spacing.md),
             decoration: BoxDecoration(
-              color: color.withOpacity(Opacities.low),
+              color: color.withValues(alpha: Opacities.low),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: color, size: IconSizes.md),
@@ -202,7 +202,7 @@ class _InfoCard extends StatelessWidget {
                   content,
                   style: TextStyle(
                     fontSize: FontSizes.bodySm,
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(Opacities.high),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: Opacities.high),
                     height: LineHeights.normal,
                   ),
                 ),
@@ -240,10 +240,10 @@ class _TappableInfoCard extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(Spacing.lg),
         decoration: BoxDecoration(
-          color: color.withOpacity(Opacities.veryLow),
+          color: color.withValues(alpha: Opacities.veryLow),
           borderRadius: BorderRadii.lgAll,
           border: Border.all(
-            color: color.withOpacity(Opacities.mediumLow),
+            color: color.withValues(alpha: Opacities.mediumLow),
             width: 1,
           ),
         ),
@@ -253,7 +253,7 @@ class _TappableInfoCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(Spacing.md),
               decoration: BoxDecoration(
-                color: color.withOpacity(Opacities.low),
+                color: color.withValues(alpha: Opacities.low),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color, size: IconSizes.md),
@@ -276,7 +276,7 @@ class _TappableInfoCard extends StatelessWidget {
                     content,
                     style: TextStyle(
                       fontSize: FontSizes.bodySm,
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(Opacities.high),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: Opacities.high),
                       height: LineHeights.normal,
                     ),
                   ),
@@ -285,7 +285,7 @@ class _TappableInfoCard extends StatelessWidget {
                     l10n.tapToViewFullLicense,
                     style: TextStyle(
                       fontSize: FontSizes.tiny,
-                      color: color.withOpacity(Opacities.almostFull),
+                      color: color.withValues(alpha: Opacities.almostFull),
                       fontStyle: FontStyle.italic,
                     ),
                   ),
@@ -294,7 +294,7 @@ class _TappableInfoCard extends StatelessWidget {
             ),
             Icon(
               Icons.chevron_right,
-              color: color.withOpacity(Opacities.mediumHigh),
+              color: color.withValues(alpha: Opacities.mediumHigh),
               size: IconSizes.sm,
             ),
           ],
@@ -359,7 +359,7 @@ class _LicenseItem extends StatelessWidget {
           color: theme.colorScheme.surface,
           borderRadius: BorderRadii.mdAll,
           border: Border.all(
-            color: theme.colorScheme.outline.withOpacity(Opacities.mediumLow),
+            color: theme.colorScheme.outline.withValues(alpha: Opacities.mediumLow),
           ),
         ),
         child: Row(
@@ -368,7 +368,7 @@ class _LicenseItem extends StatelessWidget {
               width: WidgetSizes.containerHuge,
               height: WidgetSizes.containerHuge,
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(Opacities.veryLow),
+                color: theme.colorScheme.primary.withValues(alpha: Opacities.veryLow),
                 borderRadius: BorderRadii.smAll,
               ),
               child: Center(
@@ -408,7 +408,7 @@ class _LicenseItem extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: Spacing.sm, vertical: Spacing.xs),
               decoration: BoxDecoration(
-                color: theme.colorScheme.secondary.withOpacity(Opacities.veryLow),
+                color: theme.colorScheme.secondary.withValues(alpha: Opacities.veryLow),
                 borderRadius: BorderRadii.smAll,
               ),
               child: Text(
@@ -470,7 +470,7 @@ class _LicenseFooter extends StatelessWidget {
         children: [
           Icon(
             Icons.favorite,
-            color: ScoreColors.poor.withOpacity(Opacities.mediumHigh),
+            color: ScoreColors.poor.withValues(alpha: Opacities.mediumHigh),
             size: IconSizes.sm,
           ),
           Spacing.verticalSm,
@@ -535,7 +535,7 @@ For the complete license text, see: https://www.apache.org/licenses/LICENSE-2.0
             Container(
               padding: const EdgeInsets.all(Spacing.xl),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(Opacities.veryLow),
+                color: theme.colorScheme.primary.withValues(alpha: Opacities.veryLow),
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(BorderRadii.lg)),
               ),
               child: Row(
@@ -563,7 +563,7 @@ For the complete license text, see: https://www.apache.org/licenses/LICENSE-2.0
                           '© 2025 Kim DaeHyun (kernalix7@kodenet.io)',
                           style: TextStyle(
                             fontSize: FontSizes.bodySm,
-                            color: theme.colorScheme.onSurface.withOpacity(Opacities.medium),
+                            color: theme.colorScheme.onSurface.withValues(alpha: Opacities.medium),
                           ),
                         ),
                       ],
@@ -583,7 +583,7 @@ For the complete license text, see: https://www.apache.org/licenses/LICENSE-2.0
                   _apacheLicenseText,
                   style: TextStyle(
                     fontSize: FontSizes.bodySm,
-                    color: theme.colorScheme.onSurface.withOpacity(Opacities.almostFull),
+                    color: theme.colorScheme.onSurface.withValues(alpha: Opacities.almostFull),
                     height: LineHeights.relaxed,
                     fontFamily: 'monospace',
                   ),
@@ -595,7 +595,7 @@ For the complete license text, see: https://www.apache.org/licenses/LICENSE-2.0
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color: theme.colorScheme.outline.withOpacity(Opacities.mediumLow),
+                    color: theme.colorScheme.outline.withValues(alpha: Opacities.mediumLow),
                   ),
                 ),
               ),

@@ -30,7 +30,7 @@ class StatInfo extends StatelessWidget {
           style: TextStyle(
             fontSize: FontSizes.xs,
             fontWeight: FontWeight.bold,
-            color: color.withOpacity(Opacities.almostFull),
+            color: color.withValues(alpha: Opacities.almostFull),
             letterSpacing: LetterSpacings.wider,
           ),
         ),
@@ -55,7 +55,7 @@ class StatInfo extends StatelessWidget {
               style: TextStyle(
                 fontSize: FontSizes.sm,
                 fontWeight: FontWeight.w600,
-                color: color.withOpacity(Opacities.veryHigh),
+                color: color.withValues(alpha: Opacities.veryHigh),
               ),
             ),
           ],
@@ -89,7 +89,7 @@ class InfoRow extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(Spacing.sm),
           decoration: BoxDecoration(
-            color: color.withOpacity(Opacities.low),
+            color: color.withValues(alpha: Opacities.low),
             borderRadius: BorderRadii.smAll,
           ),
           child: Icon(

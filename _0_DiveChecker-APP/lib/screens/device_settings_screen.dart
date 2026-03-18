@@ -269,8 +269,8 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
                         padding: const EdgeInsets.all(Spacing.lg),
                         decoration: BoxDecoration(
                           color: deviceInfo.isAuthenticated
-                              ? StatusColors.connected.withOpacity(Opacities.low)
-                              : StatusColors.warning.withOpacity(Opacities.low),
+                              ? StatusColors.connected.withValues(alpha: Opacities.low)
+                              : StatusColors.warning.withValues(alpha: Opacities.low),
                           borderRadius: BorderRadii.lgAll,
                         ),
                         child: Icon(
@@ -413,7 +413,7 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
               SectionHeader(l10n.dangerZone),
               Spacing.verticalSm,
               Card(
-                color: ScoreColors.poor.withOpacity(Opacities.veryLow),
+                color: ScoreColors.poor.withValues(alpha: Opacities.veryLow),
                 child: Column(
                   children: [
                     ListTile(

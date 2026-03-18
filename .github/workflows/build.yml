@@ -15,9 +15,30 @@ env:
 
 jobs:
   # ─────────────────────────────────────────────
+  # Analyze & Test
+  # ─────────────────────────────────────────────
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.APP_DIR }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - run: flutter pub get
+      - run: flutter gen-l10n
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
+      - name: Test
+        run: flutter test
+
+  # ─────────────────────────────────────────────
   # Android Build
   # ─────────────────────────────────────────────
   build-android:
+    needs: test
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -38,7 +59,10 @@ jobs:
       
       - name: Get dependencies
         run: flutter pub get
-      
+
+      - name: Generate localizations
+        run: flutter gen-l10n
+
       - name: Decode Keystore
         if: github.event_name != 'pull_request'
         run: |
@@ -81,6 +105,7 @@ jobs:
   # iOS Build
   # ─────────────────────────────────────────────
   build-ios:
+    needs: test
     runs-on: macos-latest
     defaults:
       run:
@@ -104,7 +129,10 @@ jobs:
       
       - name: Get dependencies
         run: flutter pub get
-      
+
+      - name: Generate localizations
+        run: flutter gen-l10n
+
       - name: Install CocoaPods
         run: |
           cd ios
@@ -190,6 +218,7 @@ jobs:
   # Linux Build
   # ─────────────────────────────────────────────
   build-linux:
+    needs: test
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -209,7 +238,10 @@ jobs:
       
       - name: Get dependencies
         run: flutter pub get
-      
+
+      - name: Generate localizations
+        run: flutter gen-l10n
+
       - name: Build Linux
         run: flutter build linux --release
       
@@ -223,6 +255,7 @@ jobs:
   # Windows Build
   # ─────────────────────────────────────────────
   build-windows:
+    needs: test
     runs-on: windows-latest
     defaults:
       run:
@@ -237,7 +270,10 @@ jobs:
       
       - name: Get dependencies
         run: flutter pub get
-      
+
+      - name: Generate localizations
+        run: flutter gen-l10n
+
       - name: Build Windows
         run: flutter build windows --release
       
@@ -251,6 +287,7 @@ jobs:
   # macOS Build
   # ─────────────────────────────────────────────
   build-macos:
+    needs: test
     runs-on: macos-latest
     defaults:
       run:
@@ -265,7 +302,10 @@ jobs:
       
       - name: Get dependencies
         run: flutter pub get
-      
+
+      - name: Generate localizations
+        run: flutter gen-l10n
+
       - name: Build macOS
         run: flutter build macos --release
       
@@ -276,11 +316,43 @@ jobs:
           path: ${{ env.APP_DIR }}/build/macos/Build/Products/Release/*.app
 
   # ─────────────────────────────────────────────
+  # Web Build
+  # ─────────────────────────────────────────────
+  build-web:
+    needs: test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.APP_DIR }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Generate localizations
+        run: flutter gen-l10n
+
+      - name: Build Web
+        run: flutter build web --release
+
+      - name: Upload Web Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: ${{ env.APP_DIR }}/build/web
+
+  # ─────────────────────────────────────────────
   # Create GitHub Release (tag push only)
   # ─────────────────────────────────────────────
   release:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [build-android, build-ios, build-linux, build-windows, build-macos]
+    needs: [build-android, build-ios, build-linux, build-windows, build-macos, build-web]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -310,6 +382,12 @@ jobs:
           zip -r ../../DiveChecker-macos.zip .
           cd ../..
 
+      - name: Package Web
+        run: |
+          cd artifacts/web-build
+          zip -r ../../DiveChecker-web.zip .
+          cd ../..
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
@@ -321,3 +399,4 @@ jobs:
             DiveChecker-linux-x64.tar.gz
             DiveChecker-windows-x64.zip
             DiveChecker-macos.zip
+            DiveChecker-web.zip

@@ -194,7 +194,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
             l10n.tapToConnect,
             style: TextStyle(
               fontSize: FontSizes.body,
-              color: theme.colorScheme.outline.withOpacity(Opacities.high),
+              color: theme.colorScheme.outline.withValues(alpha: Opacities.high),
             ),
           ),
         ],
@@ -257,7 +257,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
             color: theme.colorScheme.surface,
             border: Border(
               right: BorderSide(
-                color: theme.colorScheme.outline.withOpacity(Opacities.low),
+                color: theme.colorScheme.outline.withValues(alpha: Opacities.low),
               ),
             ),
           ),
@@ -283,7 +283,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
                 settings.pressureUnitSymbol,
                 style: TextStyle(
                   fontSize: FontSizes.body,
-                  color: theme.colorScheme.onSurface.withOpacity(Opacities.high),
+                  color: theme.colorScheme.onSurface.withValues(alpha: Opacities.high),
                 ),
               ),
               const Spacer(),
@@ -315,7 +315,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadii.xlAll,
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(Opacities.mediumHigh),
+          color: theme.colorScheme.outline.withValues(alpha: Opacities.mediumHigh),
         ),
       ),
       child: Row(
@@ -334,7 +334,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
                   l10n.liveSensorData,
                   style: TextStyle(
                     fontSize: FontSizes.bodySm,
-                    color: theme.colorScheme.onSurface.withOpacity(Opacities.high),
+                    color: theme.colorScheme.onSurface.withValues(alpha: Opacities.high),
                     fontWeight: FontWeight.bold,
                     letterSpacing: LetterSpacings.widest,
                   ),
@@ -358,7 +358,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
                       settings.pressureUnitSymbol,
                       style: TextStyle(
                         fontSize: FontSizes.bodyLg,
-                        color: theme.colorScheme.onSurface.withOpacity(Opacities.high),
+                        color: theme.colorScheme.onSurface.withValues(alpha: Opacities.high),
                       ),
                     ),
                   ],
@@ -383,7 +383,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
                 l10n.samples,
                 style: TextStyle(
                   fontSize: FontSizes.xxs,
-                  color: theme.colorScheme.onSurface.withOpacity(Opacities.medium),
+                  color: theme.colorScheme.onSurface.withValues(alpha: Opacities.medium),
                 ),
               ),
             ],
@@ -399,7 +399,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadii.lgAll,
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(Opacities.mediumHigh),
+          color: theme.colorScheme.outline.withValues(alpha: Opacities.mediumHigh),
         ),
       ),
       child: ClipRRect(
@@ -419,7 +419,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
           Icon(
             Icons.show_chart,
             size: UIConstants.xlIconSize,
-            color: theme.colorScheme.outline.withOpacity(Opacities.medium),
+            color: theme.colorScheme.outline.withValues(alpha: Opacities.medium),
           ),
           Spacing.verticalMd,
           Text(
@@ -568,7 +568,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
               dotData: const FlDotData(show: false),
               belowBarData: BarAreaData(
                 show: true,
-                color: theme.colorScheme.primary.withOpacity(0.1),
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
               ),
             ),
           ],

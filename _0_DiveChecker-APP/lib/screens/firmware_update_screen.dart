@@ -365,8 +365,8 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
           // Verification result card
           Card(
             color: package.isValid
-                ? ScoreColors.excellent.withOpacity(Opacities.low)
-                : ScoreColors.poor.withOpacity(Opacities.low),
+                ? ScoreColors.excellent.withValues(alpha: Opacities.low)
+                : ScoreColors.poor.withValues(alpha: Opacities.low),
             child: Padding(
               padding: const EdgeInsets.all(Spacing.xl),
               child: Row(
@@ -375,8 +375,8 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
                     padding: const EdgeInsets.all(Spacing.lg),
                     decoration: BoxDecoration(
                       color: package.isValid
-                          ? ScoreColors.excellent.withOpacity(Opacities.medium)
-                          : ScoreColors.poor.withOpacity(Opacities.medium),
+                          ? ScoreColors.excellent.withValues(alpha: Opacities.medium)
+                          : ScoreColors.poor.withValues(alpha: Opacities.medium),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -431,9 +431,9 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
             Container(
               padding: const EdgeInsets.all(Spacing.lg),
               decoration: BoxDecoration(
-                color: ScoreColors.warning.withOpacity(Opacities.low),
+                color: ScoreColors.warning.withValues(alpha: Opacities.low),
                 borderRadius: BorderRadii.mdAll,
-                border: Border.all(color: ScoreColors.warning.withOpacity(Opacities.high)),
+                border: Border.all(color: ScoreColors.warning.withValues(alpha: Opacities.high)),
               ),
               child: Row(
                 children: [
@@ -490,7 +490,7 @@ class _FirmwareUpdateScreenState extends State<FirmwareUpdateScreen> {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         border: Border(
-          top: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.medium)),
+          top: BorderSide(color: theme.colorScheme.outline.withValues(alpha: Opacities.medium)),
         ),
       ),
       child: SafeArea(

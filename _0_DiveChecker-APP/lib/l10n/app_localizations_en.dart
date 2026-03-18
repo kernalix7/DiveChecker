@@ -1707,4 +1707,22 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get calibrationTimedOut =>
       'Calibration timed out - not enough sensor data received';
+
+  @override
+  String get loading => 'Loading...';
+
+  @override
+  String failedToSaveSession(String error) {
+    return 'Failed to save session: $error';
+  }
+
+  @override
+  String failedToDeleteSession(String error) {
+    return 'Failed to delete session: $error';
+  }
+
+  @override
+  String failedToLoadSessionData(String error) {
+    return 'Failed to load session data: $error';
+  }
 }

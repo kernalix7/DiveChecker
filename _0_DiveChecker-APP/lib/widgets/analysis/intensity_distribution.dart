@@ -31,7 +31,7 @@ class IntensityDistribution extends StatelessWidget {
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.mdAll,
-        side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.low)),
+        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: Opacities.low)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.lg),

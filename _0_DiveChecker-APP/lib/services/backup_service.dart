@@ -137,6 +137,7 @@ class BackupService {
     
     for (var i = 0; i < sessions.length; i++) {
       final session = sessions[i];
+      if (session.id == null) continue;
       final sessionId = session.id!;
       
       final progress = (i + 1) / sessions.length;
@@ -235,9 +236,31 @@ class BackupService {
 
       if (mode == RestoreMode.replace) {
         onProgress?.call(0.05, 'Clearing existing data...');
-        final existingSessions = await _db.getAllSessions();
-        for (var session in existingSessions) {
-          await _db.deleteSession(session.id!);
+
+        // Create temporary backup of existing data for rollback
+        BackupData? rollbackBackup;
+        try {
+          rollbackBackup = await createBackup();
+        } catch (_) {
+          // If backup fails, proceed without rollback capability
+        }
+
+        try {
+          final existingSessions = await _db.getAllSessions();
+          for (var session in existingSessions) {
+            if (session.id == null) continue;
+            await _db.deleteSession(session.id!);
+          }
+        } catch (e) {
+          // Restore failed - attempt rollback
+          if (rollbackBackup != null) {
+            try {
+              await _restoreSessionsFromBackup(rollbackBackup);
+            } catch (_) {
+              // Rollback also failed - data may be in inconsistent state
+            }
+          }
+          rethrow;
         }
       }
 
@@ -282,7 +305,9 @@ class BackupService {
           continue;
         }
 
-        final progress = 0.4 + (processedSessions / totalSessions) * 0.4;
+        final progress = totalSessions > 0
+            ? 0.4 + (processedSessions / totalSessions) * 0.4
+            : 0.4;
         onProgress?.call(progress, 'Restoring pressure data...');
 
         try {
@@ -311,7 +336,9 @@ class BackupService {
         
         if (newSessionId == null) continue;
 
-        final progress = 0.8 + (processedSessions / totalNoteSessions) * 0.2;
+        final progress = totalNoteSessions > 0
+            ? 0.8 + (processedSessions / totalNoteSessions) * 0.2
+            : 0.8;
         onProgress?.call(progress, 'Restoring notes...');
 
         for (var note in notes) {
@@ -343,6 +370,50 @@ class BackupService {
       notesRestored: notesRestored,
       errors: errors,
     );
+  }
+
+  /// Restore sessions from a backup (used for rollback on failed replace-mode restore)
+  Future<void> _restoreSessionsFromBackup(BackupData backup) async {
+    for (var session in backup.sessions) {
+      try {
+        final newSession = MeasurementSession(
+          startTime: session.startTime,
+          endTime: session.endTime,
+          maxPressure: session.maxPressure,
+          avgPressure: session.avgPressure,
+          sampleRate: session.sampleRate,
+          notes: session.notes,
+          displayTitle: session.displayTitle,
+          deviceSerial: session.deviceSerial,
+          deviceName: session.deviceName,
+        );
+        final newId = await _db.createSession(newSession);
+
+        // Restore pressure data for this session
+        final oldId = session.id;
+        if (oldId != null && backup.pressureData.containsKey(oldId)) {
+          final dataList = backup.pressureData[oldId]!.map((d) => PressureData(
+            pressure: d.pressure,
+            timestamp: d.timestamp,
+            sessionId: newId,
+          )).toList();
+          await _db.savePressureDataBatch(dataList);
+        }
+
+        // Restore graph notes for this session
+        if (oldId != null && backup.graphNotes.containsKey(oldId)) {
+          for (var note in backup.graphNotes[oldId]!) {
+            await _db.saveGraphNote(
+              newId,
+              (note['time_point'] as num).toDouble(),
+              note['note'] as String,
+            );
+          }
+        }
+      } catch (_) {
+        // Best-effort rollback — continue with remaining sessions
+      }
+    }
   }
 
   String generateBackupFilename() {

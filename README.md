@@ -114,7 +114,10 @@ Detailed equalization quality analysis after measurement:
 ### 🌐 Multi-language Support
 
 - 🇺🇸 English
-- 🇰🇷 Korean
+- 🇰🇷 Korean (한국어)
+- 🇯🇵 Japanese (日本語)
+- 🇨🇳 Simplified Chinese (简体中文)
+- 🇹🇼 Traditional Chinese (繁體中文)
 
 ### ⚙️ Calibration & Configuration
 
@@ -238,7 +241,7 @@ cmake .. && make
 │   │   ├── main.dart               # App entry point
 │   │   ├── constants/              # Theme, colors, app config
 │   │   ├── core/                   # DB interface
-│   │   ├── l10n/                   # Localization (EN/KO)
+│   │   ├── l10n/                   # Localization (EN/KO/JA/ZH/ZH_TW)
 │   │   ├── models/                 # PressureData, GraphNote
 │   │   ├── providers/              # State management (Provider)
 │   │   │   ├── midi_provider.dart        # USB MIDI connection
@@ -341,7 +344,7 @@ GP16         ────── WS2812 LED
 - [x] 🎯 **Real-time pressure monitoring** - 100Hz internal + configurable output
 - [x] 📊 **Peak analysis** - Rhythm, pressure, technique scores
 - [x] 💾 **Session management** - Record, review, notes
-- [x] 🌐 **Multi-language** - English, Korean
+- [x] 🌐 **Multi-language** - English, Korean, Japanese, Chinese (Simplified/Traditional)
 - [x] 🔧 **Device settings** - Output rate, oversampling control
 - [x] 🔄 **Firmware update** - OTA update support
 - [x] 🔐 **Authentication** - ECDSA device authentication

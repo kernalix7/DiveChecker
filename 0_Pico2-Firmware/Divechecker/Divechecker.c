@@ -447,7 +447,8 @@ static void flash_load_settings(void) {
         g_device_pin[DEVICE_PIN_LEN] = '\0';
         // Guard against corrupted PIN in flash
         if (!pin_is_valid_format(g_device_pin)) {
-            strcpy(g_device_pin, "0000");
+            strncpy(g_device_pin, "0000", DEVICE_PIN_LEN);
+            g_device_pin[DEVICE_PIN_LEN] = '\0';
         }
         // Load runtime config (validate each field)
         g_led_brightness = (settings->led_brightness <= 100) ? settings->led_brightness : LED_BRIGHTNESS;
@@ -470,8 +471,10 @@ static void flash_load_settings(void) {
             g_pin_lockout_until = make_timeout_time_ms(delay_sec * 1000);
         }
     } else {
-        strcpy(g_device_name, "DiveChecker");
-        strcpy(g_device_pin, "0000");
+        strncpy(g_device_name, "DiveChecker", DEVICE_NAME_MAX_LEN);
+        g_device_name[DEVICE_NAME_MAX_LEN] = '\0';
+        strncpy(g_device_pin, "0000", DEVICE_PIN_LEN);
+        g_device_pin[DEVICE_PIN_LEN] = '\0';
     }
     
     // Boot-time sector compaction: if the next save would require a sector
@@ -1166,6 +1169,7 @@ static void midi_process_sysex(sysex_message_t* msg) {
                     if (ret == 0) {
                         midi_sysex_send_auth_response(sig, sig_len);
                     } else {
+                        sat_inc_u16(&g_sensor_error_count);  // Track crypto failures
                         midi_sysex_send_ack(CMD_AUTH_CHALLENGE, 0x03);  // Signing failed
                     }
                     // Zero sensitive cryptographic material after use

@@ -302,10 +302,10 @@ class _PatternScoreCard extends StatelessWidget {
 
     return Card(
       elevation: Elevations.none,
-      color: color.withOpacity(Opacities.low),
+      color: color.withValues(alpha: Opacities.low),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.xlAll,
-        side: BorderSide(color: color.withOpacity(Opacities.mediumHigh)),
+        side: BorderSide(color: color.withValues(alpha: Opacities.mediumHigh)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.xl),
@@ -327,7 +327,7 @@ class _PatternScoreCard extends StatelessWidget {
                           value: score / 100,
                           strokeWidth: ChartDimensions.strokeBold,
                           backgroundColor:
-                              theme.colorScheme.outline.withOpacity(Opacities.medium),
+                              theme.colorScheme.outline.withValues(alpha: Opacities.medium),
                           valueColor: AlwaysStoppedAnimation<Color>(color),
                         ),
                       ),
@@ -417,7 +417,7 @@ class _ScoreBar extends StatelessWidget {
             borderRadius: BorderRadii.xsAll,
             child: LinearProgressIndicator(
               value: score / 100,
-              backgroundColor: theme.colorScheme.outline.withOpacity(Opacities.medium),
+              backgroundColor: theme.colorScheme.outline.withValues(alpha: Opacities.medium),
               valueColor: AlwaysStoppedAnimation<Color>(color),
               minHeight: Dimensions.progressBarMedium,
             ),
@@ -487,7 +487,7 @@ class _TrainingPhaseCard extends StatelessWidget {
     return Card(
       elevation: Elevations.medium,
       shape: RoundedRectangleBorder(borderRadius: BorderRadii.xlAll),
-      color: phaseColor.withOpacity(Opacities.low),
+      color: phaseColor.withValues(alpha: Opacities.low),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.lg),
         child: Column(
@@ -520,7 +520,7 @@ class _TrainingPhaseCard extends StatelessWidget {
                         phaseDescription,
                         style: TextStyle(
                           fontSize: FontSizes.body,
-                          color: theme.colorScheme.onSurface.withOpacity(Opacities.veryHigh),
+                          color: theme.colorScheme.onSurface.withValues(alpha: Opacities.veryHigh),
                         ),
                       ),
                     ],
@@ -534,7 +534,7 @@ class _TrainingPhaseCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: FontSizes.body,
                 fontWeight: FontWeight.w600,
-                color: theme.colorScheme.onSurface.withOpacity(Opacities.veryHigh),
+                color: theme.colorScheme.onSurface.withValues(alpha: Opacities.veryHigh),
               ),
             ),
             Spacing.verticalSm,
@@ -549,9 +549,9 @@ class _TrainingPhaseCard extends StatelessWidget {
                         vertical: Spacing.sm,
                       ),
                       decoration: BoxDecoration(
-                        color: phaseColor.withOpacity(Opacities.medium),
+                        color: phaseColor.withValues(alpha: Opacities.medium),
                         borderRadius: BorderRadii.circularAll,
-                        border: Border.all(color: phaseColor.withOpacity(Opacities.mediumHigh)),
+                        border: Border.all(color: phaseColor.withValues(alpha: Opacities.mediumHigh)),
                       ),
                       child: Text(
                         focus.trim(),
@@ -611,7 +611,7 @@ class _ConsecutiveAnalysisCard extends StatelessWidget {
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.lgAll,
-        side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.medium)),
+        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: Opacities.medium)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.lg),
@@ -642,7 +642,7 @@ class _ConsecutiveAnalysisCard extends StatelessWidget {
                 Container(
                   width: Dimensions.dividerHeight,
                   height: WidgetSizes.boxplotHeight,
-                  color: theme.colorScheme.outline.withOpacity(Opacities.medium),
+                  color: theme.colorScheme.outline.withValues(alpha: Opacities.medium),
                 ),
                 Expanded(
                   child: Column(
@@ -667,7 +667,7 @@ class _ConsecutiveAnalysisCard extends StatelessWidget {
                 Container(
                   width: Dimensions.dividerHeight,
                   height: WidgetSizes.boxplotHeight,
-                  color: theme.colorScheme.outline.withOpacity(Opacities.medium),
+                  color: theme.colorScheme.outline.withValues(alpha: Opacities.medium),
                 ),
                 Expanded(
                   child: Column(
@@ -695,7 +695,7 @@ class _ConsecutiveAnalysisCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(Spacing.smPlus),
               decoration: BoxDecoration(
-                color: streakColor.withOpacity(Opacities.low),
+                color: streakColor.withValues(alpha: Opacities.low),
                 borderRadius: BorderRadii.mdAll,
               ),
               child: Row(
@@ -757,7 +757,7 @@ class _PatternComparisonChart extends StatelessWidget {
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.lgAll,
-        side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.medium)),
+        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: Opacities.medium)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.lg),
@@ -772,7 +772,7 @@ class _PatternComparisonChart extends StatelessWidget {
                 ),
                 Spacing.horizontalLg,
                 ChartLegendItem(
-                  color: ScoreColors.excellent.withOpacity(Opacities.high),
+                  color: ScoreColors.excellent.withValues(alpha: Opacities.high),
                   label: l10n.idealPattern,
                 ),
               ],
@@ -793,7 +793,7 @@ class _PatternComparisonChart extends StatelessWidget {
                           show: true,
                           drawVerticalLine: false,
                           getDrawingHorizontalLine: (value) => FlLine(
-                            color: theme.colorScheme.outline.withOpacity(Opacities.low),
+                            color: theme.colorScheme.outline.withValues(alpha: Opacities.low),
                             strokeWidth: ChartDimensions.strokeNormal,
                           ),
                         ),
@@ -840,13 +840,13 @@ class _PatternComparisonChart extends StatelessWidget {
                             isCurved: true,
                             curveSmoothness: 0.3,
                             preventCurveOverShooting: true,
-                            color: ScoreColors.excellent.withOpacity(Opacities.high),
+                            color: ScoreColors.excellent.withValues(alpha: Opacities.high),
                             barWidth: ChartDimensions.barWidthMedium,
                             dotData: const FlDotData(show: false),
                             dashArray: ChartDimensions.dashLong,
                             belowBarData: BarAreaData(
                               show: true,
-                              color: ScoreColors.excellent.withOpacity(Opacities.low),
+                              color: ScoreColors.excellent.withValues(alpha: Opacities.low),
                             ),
                           ),
                           // 현재 패턴
@@ -917,7 +917,7 @@ class _PeakQualityHeatmap extends StatelessWidget {
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.lgAll,
-        side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.medium)),
+        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: Opacities.medium)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.lg),
@@ -1036,7 +1036,7 @@ class _PatternCharacteristics extends StatelessWidget {
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.lgAll,
-        side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.medium)),
+        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: Opacities.medium)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.lg),
@@ -1103,7 +1103,7 @@ class _CharacteristicRow extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: Spacing.smPlus, vertical: Spacing.xs),
             decoration: BoxDecoration(
-              color: color.withOpacity(Opacities.low),
+              color: color.withValues(alpha: Opacities.low),
               borderRadius: BorderRadii.lgAll,
             ),
             child: Text(
@@ -1135,7 +1135,7 @@ class _SuggestionCard extends StatelessWidget {
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.lgAll,
-        side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.medium)),
+        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: Opacities.medium)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.md),
@@ -1212,9 +1212,9 @@ class _TrainingTipsCard extends StatelessWidget {
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.lgAll,
-        side: BorderSide(color: ScoreColors.intermediate.withOpacity(Opacities.mediumHigh)),
+        side: BorderSide(color: ScoreColors.intermediate.withValues(alpha: Opacities.mediumHigh)),
       ),
-      color: ScoreColors.intermediate.withOpacity(Opacities.veryLow),
+      color: ScoreColors.intermediate.withValues(alpha: Opacities.veryLow),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.lg),
         child: Column(

@@ -24,9 +24,9 @@ class GraphNote {
   
   factory GraphNote.fromMap(Map<String, dynamic> map) {
     return GraphNote(
-      id: map['id'],
-      x: map['time_point'],
-      note: map['note'],
+      id: map['id'] as int?,
+      x: (map['time_point'] as num).toDouble(),
+      note: map['note'] as String,
     );
   }
   

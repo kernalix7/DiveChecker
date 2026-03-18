@@ -600,5 +600,9 @@
   "signatureInvalid": "서명 확인 실패 ✗",
   "firmwareUntrustedWarning": "이 펌웨어는 유효한 키로 서명되지 않았습니다. 손상되었거나 신뢰할 수 없는 소스에서 만든 것일 수 있습니다.",
   "verifiedFirmwareSaved": "검증된 펌웨어 저장됨: {filename}",
-  "calibrationTimedOut": "보정 시간 초과 - 센서 데이터가 충분하지 않습니다"
+  "calibrationTimedOut": "보정 시간 초과 - 센서 데이터가 충분하지 않습니다",
+  "loading": "로딩 중...",
+  "failedToSaveSession": "세션 저장 실패: {error}",
+  "failedToDeleteSession": "세션 삭제 실패: {error}",
+  "failedToLoadSessionData": "세션 데이터 로딩 실패: {error}"
 }

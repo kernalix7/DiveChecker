@@ -176,6 +176,10 @@ class MidiProvider extends ChangeNotifier {
   final _overrangeController = StreamController<void>.broadcast();
   static const int _overrangeDisplayMs = 5000;  // Show warning for 5 seconds
   Timer? _overrangeTimer;
+  int _overrangeAlertCount = 0;          // Consecutive alerts within window
+  Timer? _overrangeWindowTimer;
+  static const int _overrangeAlertThreshold = 3;   // Show warning after N alerts
+  static const int _overrangeWindowMs = 10000;      // Reset counter after 10s of silence
 
   // ECDSA authentication
   static const bool _authenticationEnabled = true; // ECDSA verification enabled
@@ -670,11 +674,24 @@ class MidiProvider extends ChangeNotifier {
   }
 
   void _handleOverrangeAlert() {
+    _overrangeAlertCount++;
+
+    // Reset counter after window of silence
+    _overrangeWindowTimer?.cancel();
+    _overrangeWindowTimer = Timer(Duration(milliseconds: _overrangeWindowMs), () {
+      _overrangeAlertCount = 0;
+    });
+
+    if (kDebugMode) debugPrint('WARN: Sensor over-range detected! ($_overrangeAlertCount/$_overrangeAlertThreshold)');
+
+    // Only show warning after N consecutive alerts within the time window
+    if (_overrangeAlertCount < _overrangeAlertThreshold) return;
+
     _isOverrange = true;
     _overrangeController.add(null);
+    _overrangeAlertCount = 0;
     notifyListeners();
-    
-    // Cancel previous timer and start a new one
+
     _overrangeTimer?.cancel();
     _overrangeTimer = Timer(Duration(milliseconds: _overrangeDisplayMs), () {
       if (_isDisposed) return;
@@ -682,8 +699,6 @@ class MidiProvider extends ChangeNotifier {
       _overrangeTimer = null;
       notifyListeners();
     });
-    
-    if (kDebugMode) debugPrint('WARN: Sensor over-range detected!');
   }
 
   void _handleTemperature(Uint8List payload) {
@@ -769,7 +784,8 @@ class MidiProvider extends ChangeNotifier {
     if (!_deviceInfoRequested) {
       _deviceInfoRequested = true;
       _requestDeviceInfo();
-      
+      setOutputRate(8);  // Force default output rate on connection
+
       // Skip authentication if disabled
       if (!_authenticationEnabled) {
         _isAuthenticated = true;
@@ -1330,6 +1346,9 @@ class MidiProvider extends ChangeNotifier {
 
     _overrangeTimer?.cancel();
     _overrangeTimer = null;
+    _overrangeWindowTimer?.cancel();
+    _overrangeWindowTimer = null;
+    _overrangeAlertCount = 0;
     _isOverrange = false;
 
     _softRebootTimer?.cancel();
@@ -1447,13 +1466,25 @@ class MidiProvider extends ChangeNotifier {
     }
   }
 
-  bool _isDisposed = false;
+  bool _isShutDown = false;
+
+  /// Alias for backwards compatibility — guards against use-after-dispose.
+  bool get _isDisposed => _isShutDown;
 
   @override
   // ignore: must_call_super
   void dispose() {
-    if (_isDisposed) return;
-    _isDisposed = true;
+    // No-op for singleton: dispose() may be called by the framework when a
+    // ChangeNotifierProvider is removed from the widget tree, but the singleton
+    // must remain usable if it is re-provided later.  Use shutdown() for
+    // permanent teardown at app exit.
+  }
+
+  /// Permanently release all resources.  Call only once at app exit.
+  /// After this the singleton is no longer usable.
+  void shutdown() {
+    if (_isShutDown) return;
+    _isShutDown = true;
 
     _pingTimer?.cancel();
     _pingTimer = null;
@@ -1494,22 +1525,20 @@ class MidiProvider extends ChangeNotifier {
 
     _overrangeTimer?.cancel();
     _overrangeTimer = null;
+    _overrangeWindowTimer?.cancel();
+    _overrangeWindowTimer = null;
 
-    // NOTE: Do NOT close stream controllers in singleton dispose().
+    // NOTE: Do NOT close stream controllers in singleton shutdown().
     // They cannot be recreated, and the singleton may be re-provided.
     // The streams will be garbage collected when the app exits.
-    
+
     // Dispose native MIDI handler
     _midiHandler.dispose();
-
-    // Do NOT call super.dispose() on singleton — would permanently
-    // invalidate the ChangeNotifier, making it unusable if re-provided.
-    // super.dispose();
   }
 
   @override
   void notifyListeners() {
-    if (!_isDisposed) {
+    if (!_isShutDown) {
       super.notifyListeners();
     }
   }

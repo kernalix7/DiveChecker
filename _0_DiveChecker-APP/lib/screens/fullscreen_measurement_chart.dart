@@ -93,7 +93,7 @@ class _FullscreenMeasurementChartState
                     icon: const Icon(Icons.fullscreen_exit),
                     style: IconButton.styleFrom(
                       backgroundColor:
-                          theme.colorScheme.surface.withOpacity(Opacities.high),
+                          theme.colorScheme.surface.withValues(alpha: Opacities.high),
                       foregroundColor: theme.colorScheme.onSurface,
                     ),
                     iconSize: IconSizes.lg,
@@ -113,11 +113,11 @@ class _FullscreenMeasurementChartState
                           vertical: Spacing.xs,
                         ),
                         decoration: BoxDecoration(
-                          color: ScoreColors.poor.withOpacity(Opacities.low),
+                          color: ScoreColors.poor.withValues(alpha: Opacities.low),
                           borderRadius: BorderRadii.smAll,
                           border: Border.all(
                             color:
-                                ScoreColors.poor.withOpacity(Opacities.medium),
+                                ScoreColors.poor.withValues(alpha: Opacities.medium),
                           ),
                         ),
                         child: Row(
@@ -165,10 +165,10 @@ class _FullscreenMeasurementChartState
         vertical: Spacing.sm,
       ),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withOpacity(Opacities.veryHigh),
+        color: theme.colorScheme.surface.withValues(alpha: Opacities.veryHigh),
         borderRadius: BorderRadii.mdAll,
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(Opacities.low),
+          color: theme.colorScheme.outline.withValues(alpha: Opacities.low),
         ),
       ),
       child: Row(
@@ -194,7 +194,7 @@ class _FullscreenMeasurementChartState
             'hPa',
             style: TextStyle(
               fontSize: FontSizes.bodySm,
-              color: theme.colorScheme.onSurface.withOpacity(Opacities.high),
+              color: theme.colorScheme.onSurface.withValues(alpha: Opacities.high),
             ),
           ),
           if (state.isMeasuring && state.pressureData.isNotEmpty) ...[
@@ -216,7 +216,7 @@ class _FullscreenMeasurementChartState
       child: Container(
         width: 1,
         height: 20,
-        color: theme.colorScheme.outline.withOpacity(Opacities.medium),
+        color: theme.colorScheme.outline.withValues(alpha: Opacities.medium),
       ),
     );
   }
@@ -229,7 +229,7 @@ class _FullscreenMeasurementChartState
           '$label ',
           style: TextStyle(
             fontSize: FontSizes.xs,
-            color: color.withOpacity(Opacities.high),
+            color: color.withValues(alpha: Opacities.high),
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -254,7 +254,7 @@ class _FullscreenMeasurementChartState
           Icon(
             Icons.show_chart_rounded,
             size: IconSizes.xHuge,
-            color: theme.colorScheme.outline.withOpacity(Opacities.high),
+            color: theme.colorScheme.outline.withValues(alpha: Opacities.high),
           ),
           Spacing.verticalMd,
           Text(
@@ -300,14 +300,14 @@ class _FullscreenMeasurementChartState
           verticalInterval: xInterval,
           getDrawingHorizontalLine: (value) => FlLine(
             color: isDark
-                ? theme.colorScheme.outline.withOpacity(Opacities.high)
-                : theme.colorScheme.outline.withOpacity(Opacities.veryHigh),
+                ? theme.colorScheme.outline.withValues(alpha: Opacities.high)
+                : theme.colorScheme.outline.withValues(alpha: Opacities.veryHigh),
             strokeWidth: ChartDimensions.strokeThin,
           ),
           getDrawingVerticalLine: (value) => FlLine(
             color: isDark
-                ? theme.colorScheme.outline.withOpacity(Opacities.moderate)
-                : theme.colorScheme.outline.withOpacity(Opacities.strong),
+                ? theme.colorScheme.outline.withValues(alpha: Opacities.moderate)
+                : theme.colorScheme.outline.withValues(alpha: Opacities.strong),
             strokeWidth: ChartDimensions.strokeThin,
           ),
         ),
@@ -364,8 +364,8 @@ class _FullscreenMeasurementChartState
           show: true,
           border: Border.all(
             color: isDark
-                ? theme.colorScheme.outline.withOpacity(Opacities.mediumHigh)
-                : theme.colorScheme.outline.withOpacity(Opacities.high),
+                ? theme.colorScheme.outline.withValues(alpha: Opacities.mediumHigh)
+                : theme.colorScheme.outline.withValues(alpha: Opacities.high),
             width: ChartDimensions.strokeSmMedium,
           ),
         ),
@@ -385,7 +385,7 @@ class _FullscreenMeasurementChartState
           horizontalLines: [
             HorizontalLine(
               y: 0,
-              color: ScoreColors.poor.withOpacity(Opacities.high),
+              color: ScoreColors.poor.withValues(alpha: Opacities.high),
               strokeWidth: ChartDimensions.strokeSmMedium,
               dashArray: ChartDimensions.dashShort,
             ),
@@ -403,7 +403,7 @@ class _FullscreenMeasurementChartState
             tooltipRoundedRadius: BorderRadii.xs,
             getTooltipColor: (spot) => theme
                 .colorScheme.surfaceContainerHighest
-                .withOpacity(Opacities.veryHigh),
+                .withValues(alpha: Opacities.veryHigh),
             getTooltipItems: (touchedSpots) {
               return touchedSpots.map((spot) {
                 final seconds = (spot.x / 1000.0).toStringAsFixed(1);

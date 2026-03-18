@@ -1,11 +1,11 @@
 {
-    "name": "_0_flutter_app",
-    "short_name": "_0_flutter_app",
+    "name": "DiveChecker",
+    "short_name": "DiveChecker",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Real-time pressure monitoring system for freediving equalization training.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

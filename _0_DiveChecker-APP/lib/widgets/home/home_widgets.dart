@@ -9,7 +9,6 @@ import '../../constants/app_constants.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/settings_provider.dart';
 import '../../utils/formatters.dart';
-import '../icon_container.dart';
 import '../status_badge.dart';
 
 class HomeHeader extends StatelessWidget {
@@ -35,11 +34,22 @@ class HomeHeader extends StatelessWidget {
     
     return Row(
       children: [
-        const IconContainer(
-          icon: Icons.water_drop,
-          size: IconSizes.xl,
-          padding: Spacing.md,
-          useGradient: true,
+        Container(
+          padding: const EdgeInsets.all(Spacing.md),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.secondary,
+              ],
+            ),
+            borderRadius: BorderRadius.circular(BorderRadii.md),
+          ),
+          child: Image.asset(
+            'assets/logo.png',
+            height: IconSizes.xl,
+            color: OverlayColors.whiteContent,
+          ),
         ),
         Spacing.horizontalLg,
         Expanded(
@@ -99,8 +109,8 @@ class ConnectionStatusPanel extends StatelessWidget {
         borderRadius: BorderRadii.xxlAll,
         border: Border.all(
           color: isConnected 
-              ? theme.colorScheme.primary.withOpacity(Opacities.moderate)
-              : theme.colorScheme.outline.withOpacity(Opacities.mediumHigh),
+              ? theme.colorScheme.primary.withValues(alpha: Opacities.moderate)
+              : theme.colorScheme.outline.withValues(alpha: Opacities.mediumHigh),
           width: ChartDimensions.lineWidthSmall,
         ),
         boxShadow: [
@@ -108,7 +118,7 @@ class ConnectionStatusPanel extends StatelessWidget {
             color: (isConnected
                     ? theme.colorScheme.primary
                     : theme.colorScheme.outline)
-                .withOpacity(Opacities.mediumLow),
+                .withValues(alpha: Opacities.mediumLow),
             blurRadius: Shadows.blurXl,
             offset: const Offset(0, Spacing.sm),
           ),
@@ -161,13 +171,13 @@ class _ConnectionIcon extends StatelessWidget {
       padding: EdgeInsets.all(iconPadding),
       decoration: BoxDecoration(
         color: isConnected
-            ? theme.colorScheme.primary.withOpacity(Opacities.veryLow)
-            : theme.colorScheme.outline.withOpacity(Opacities.veryLow),
+            ? theme.colorScheme.primary.withValues(alpha: Opacities.veryLow)
+            : theme.colorScheme.outline.withValues(alpha: Opacities.veryLow),
         shape: BoxShape.circle,
         border: Border.all(
           color: isConnected
-              ? theme.colorScheme.primary.withOpacity(Opacities.mediumHigh)
-              : theme.colorScheme.outline.withOpacity(Opacities.low),
+              ? theme.colorScheme.primary.withValues(alpha: Opacities.mediumHigh)
+              : theme.colorScheme.outline.withValues(alpha: Opacities.low),
           width: ChartDimensions.lineWidthSmall,
         ),
       ),
@@ -213,7 +223,7 @@ class _ConnectionStatusText extends StatelessWidget {
             fontSize: FontSizes.bodyLg,
             fontWeight: FontWeight.bold,
             letterSpacing: LetterSpacings.widest,
-            color: theme.colorScheme.onSurface.withOpacity(Opacities.almostFull),
+            color: theme.colorScheme.onSurface.withValues(alpha: Opacities.almostFull),
           ),
         ),
         Spacing.verticalSm,
@@ -226,7 +236,7 @@ class _ConnectionStatusText extends StatelessWidget {
           style: TextStyle(
             fontSize: FontSizes.bodyLg,
             color: isConnected
-                ? OverlayColors.whiteContent.withOpacity(Opacities.nearFull)
+                ? OverlayColors.whiteContent.withValues(alpha: Opacities.nearFull)
                 : StatusColors.tertiaryText,
           ),
         ),
@@ -264,7 +274,7 @@ class CurrentPressurePanel extends StatelessWidget {
         color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadii.xlAll,
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(Opacities.low),
+          color: theme.colorScheme.outline.withValues(alpha: Opacities.low),
         ),
       ),
       child: Column(
@@ -342,7 +352,7 @@ class LiveMonitoringIndicator extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: ScoreColors.excellent.withOpacity(Opacities.high),
+                color: ScoreColors.excellent.withValues(alpha: Opacities.high),
                 blurRadius: Shadows.blurMedium,
                 spreadRadius: Shadows.spreadSmall,
               ),
@@ -400,8 +410,8 @@ class RecalibrateAtmosphericButton extends StatelessWidget {
         foregroundColor: theme.colorScheme.primary,
         side: BorderSide(
           color: onPressed != null 
-              ? theme.colorScheme.primary.withOpacity(Opacities.high)
-              : StatusColors.disabled.withOpacity(Opacities.mediumHigh),
+              ? theme.colorScheme.primary.withValues(alpha: Opacities.high)
+              : StatusColors.disabled.withValues(alpha: Opacities.mediumHigh),
         ),
         padding: const EdgeInsets.symmetric(horizontal: Spacing.xl, vertical: Spacing.md),
         shape: RoundedRectangleBorder(
@@ -429,7 +439,7 @@ class AtmosphericCalibrationOverlay extends StatelessWidget {
     final remainingSeconds = ((1.0 - progress) * 3).ceil();
     
     return Container(
-      color: OverlayColors.darkOverlay.withOpacity(Opacities.veryHigh),
+      color: OverlayColors.darkOverlay.withValues(alpha: Opacities.veryHigh),
       child: Center(
         child: Container(
           margin: const EdgeInsets.all(Spacing.section),
@@ -439,7 +449,7 @@ class AtmosphericCalibrationOverlay extends StatelessWidget {
             borderRadius: BorderRadii.xxlAll,
             boxShadow: [
               BoxShadow(
-                color: theme.colorScheme.primary.withOpacity(Opacities.low),
+                color: theme.colorScheme.primary.withValues(alpha: Opacities.low),
                 blurRadius: Shadows.blurLarge,
                 offset: const Offset(0, Spacing.smPlus),
               ),
@@ -451,7 +461,7 @@ class AtmosphericCalibrationOverlay extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(Spacing.lg),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withOpacity(Opacities.veryLow),
+                  color: theme.colorScheme.primary.withValues(alpha: Opacities.veryLow),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -476,7 +486,7 @@ class AtmosphericCalibrationOverlay extends StatelessWidget {
                 l10n.atmosphericKeepSensorStill,
                 style: TextStyle(
                   fontSize: FontSizes.bodyLg,
-                  color: theme.colorScheme.onSurface.withOpacity(Opacities.veryHigh),
+                  color: theme.colorScheme.onSurface.withValues(alpha: Opacities.veryHigh),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -491,7 +501,7 @@ class AtmosphericCalibrationOverlay extends StatelessWidget {
                       child: LinearProgressIndicator(
                         value: progress,
                         minHeight: Dimensions.progressBarLarge,
-                        backgroundColor: theme.colorScheme.primary.withOpacity(Opacities.low),
+                        backgroundColor: theme.colorScheme.primary.withValues(alpha: Opacities.low),
                         valueColor: AlwaysStoppedAnimation<Color>(
                           theme.colorScheme.primary,
                         ),
@@ -517,7 +527,7 @@ class AtmosphericCalibrationOverlay extends StatelessWidget {
                   child: Text(
                     l10n.cancel,
                     style: TextStyle(
-                      color: theme.colorScheme.onSurface.withOpacity(Opacities.high),
+                      color: theme.colorScheme.onSurface.withValues(alpha: Opacities.high),
                     ),
                   ),
                 ),
@@ -555,8 +565,8 @@ class _StatusIndicatorWithL10n extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: Spacing.md, vertical: Spacing.xsPlus),
       decoration: BoxDecoration(
         color: isConnected
-            ? color.withOpacity(Opacities.mediumLow)
-            : theme.colorScheme.outline.withOpacity(Opacities.veryLow),
+            ? color.withValues(alpha: Opacities.mediumLow)
+            : theme.colorScheme.outline.withValues(alpha: Opacities.veryLow),
         borderRadius: BorderRadii.smAll,
       ),
       child: Row(
@@ -634,7 +644,7 @@ class ConnectionButton extends StatelessWidget {
               : theme.colorScheme.primary,
           foregroundColor: OverlayColors.whiteContent,
           elevation: isConnected ? Elevations.none : Elevations.low,
-          shadowColor: theme.colorScheme.primary.withOpacity(Opacities.high),
+          shadowColor: theme.colorScheme.primary.withValues(alpha: Opacities.high),
         ),
       ),
     );
@@ -678,7 +688,7 @@ class SensorErrorBanner extends StatelessWidget {
         color: theme.colorScheme.errorContainer,
         borderRadius: BorderRadii.lgAll,
         border: Border.all(
-          color: theme.colorScheme.error.withOpacity(Opacities.moderate),
+          color: theme.colorScheme.error.withValues(alpha: Opacities.moderate),
           width: 1.5,
         ),
       ),
@@ -707,7 +717,7 @@ class SensorErrorBanner extends StatelessWidget {
                   l10n.sensorErrorDescription,
                   style: TextStyle(
                     fontSize: FontSizes.body,
-                    color: theme.colorScheme.onErrorContainer.withOpacity(Opacities.high),
+                    color: theme.colorScheme.onErrorContainer.withValues(alpha: Opacities.high),
                   ),
                 ),
               ],
@@ -733,10 +743,10 @@ class AuthenticationWarningBanner extends StatelessWidget {
         vertical: Spacing.md,
       ),
       decoration: BoxDecoration(
-        color: ScoreColors.warning.withOpacity(Opacities.mediumLow),
+        color: ScoreColors.warning.withValues(alpha: Opacities.mediumLow),
         borderRadius: BorderRadii.lgAll,
         border: Border.all(
-          color: ScoreColors.warning.withOpacity(Opacities.high),
+          color: ScoreColors.warning.withValues(alpha: Opacities.high),
           width: ChartDimensions.lineWidthSmall,
         ),
       ),
@@ -745,7 +755,7 @@ class AuthenticationWarningBanner extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(Spacing.sm),
             decoration: BoxDecoration(
-              color: ScoreColors.warning.withOpacity(Opacities.medium),
+              color: ScoreColors.warning.withValues(alpha: Opacities.medium),
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -772,7 +782,7 @@ class AuthenticationWarningBanner extends StatelessWidget {
                   l10n.deviceNotAuthenticated,
                   style: TextStyle(
                     fontSize: FontSizes.bodySm,
-                    color: theme.colorScheme.onSurface.withOpacity(Opacities.high),
+                    color: theme.colorScheme.onSurface.withValues(alpha: Opacities.high),
                   ),
                 ),
               ],

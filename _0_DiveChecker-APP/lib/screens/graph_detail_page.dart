@@ -524,7 +524,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
       result.add(
         VerticalLine(
           x: note.x,
-          color: ScoreColors.excellent.withOpacity(Opacities.high),
+          color: ScoreColors.excellent.withValues(alpha: Opacities.high),
           strokeWidth: ChartDimensions.strokeSmMedium,
           dashArray: ChartDimensions.dashMedium,
           label: VerticalLineLabel(
@@ -649,7 +649,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
               style: TextStyle(
                 color: Theme.of(
                   context,
-                ).colorScheme.onSurface.withOpacity(Opacities.medium),
+                ).colorScheme.onSurface.withValues(alpha: Opacities.medium),
                 fontSize: FontSizes.body,
               ),
             ),
@@ -813,13 +813,13 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
               ),
               decoration: BoxDecoration(
                 color: _isConnected
-                    ? ScoreColors.excellent.withOpacity(Opacities.low)
-                    : StatusColors.disabled.withOpacity(Opacities.low),
+                    ? ScoreColors.excellent.withValues(alpha: Opacities.low)
+                    : StatusColors.disabled.withValues(alpha: Opacities.low),
                 borderRadius: BorderRadii.smAll,
                 border: Border.all(
                   color: _isConnected
-                      ? ScoreColors.excellent.withOpacity(Opacities.mediumHigh)
-                      : StatusColors.disabled.withOpacity(Opacities.mediumHigh),
+                      ? ScoreColors.excellent.withValues(alpha: Opacities.mediumHigh)
+                      : StatusColors.disabled.withValues(alpha: Opacities.mediumHigh),
                   width: ChartDimensions.strokeSmMedium,
                 ),
               ),
@@ -931,8 +931,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                               Container(
                                 width: Dimensions.dividerHeight,
                                 height: ChartDimensions.reservedSizeLarge,
-                                color: theme.colorScheme.outline.withOpacity(
-                                  Opacities.mediumHigh,
+                                color: theme.colorScheme.outline.withValues(alpha: Opacities.mediumHigh,
                                 ),
                               ),
                               StatInfo(
@@ -944,8 +943,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                               Container(
                                 width: Dimensions.dividerHeight,
                                 height: ChartDimensions.reservedSizeLarge,
-                                color: theme.colorScheme.outline.withOpacity(
-                                  Opacities.mediumHigh,
+                                color: theme.colorScheme.outline.withValues(alpha: Opacities.mediumHigh,
                                 ),
                               ),
                               StatInfo(
@@ -966,7 +964,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                               ),
                               decoration: BoxDecoration(
                                 color: theme.colorScheme.primaryContainer
-                                    .withOpacity(Opacities.low),
+                                    .withValues(alpha: Opacities.low),
                                 borderRadius: BorderRadii.smAll,
                               ),
                               child: Row(
@@ -1043,9 +1041,8 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                               borderRadius: BorderRadii.lgAll,
                               border: Border.all(
                                 color: theme.brightness == Brightness.dark
-                                    ? theme.colorScheme.outline.withOpacity(Opacities.mediumHigh)
-                                    : theme.colorScheme.outline.withOpacity(
-                                        Opacities.high,
+                                    ? theme.colorScheme.outline.withValues(alpha: Opacities.mediumHigh)
+                                    : theme.colorScheme.outline.withValues(alpha: Opacities.high,
                                       ),
                                 width: ChartDimensions.strokeSmMedium,
                               ),
@@ -1087,9 +1084,9 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                                             return FlLine(
                                               color: isDark
                                                   ? theme.colorScheme.outline
-                                                        .withOpacity(Opacities.high)
+                                                        .withValues(alpha: Opacities.high)
                                                   : theme.colorScheme.outline
-                                                        .withOpacity(Opacities.veryHigh),
+                                                        .withValues(alpha: Opacities.veryHigh),
                                               strokeWidth:
                                                   ChartDimensions.strokeThin,
                                             );
@@ -1101,9 +1098,9 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                                             return FlLine(
                                               color: isDark
                                                   ? theme.colorScheme.outline
-                                                        .withOpacity(Opacities.moderate)
+                                                        .withValues(alpha: Opacities.moderate)
                                                   : theme.colorScheme.outline
-                                                        .withOpacity(Opacities.strong),
+                                                        .withValues(alpha: Opacities.strong),
                                               strokeWidth:
                                                   ChartDimensions.strokeThin,
                                             );
@@ -1211,9 +1208,9 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                                                 theme.brightness ==
                                                     Brightness.dark
                                                 ? theme.colorScheme.outline
-                                                      .withOpacity(Opacities.mediumHigh)
+                                                      .withValues(alpha: Opacities.mediumHigh)
                                                 : theme.colorScheme.outline
-                                                      .withOpacity(Opacities.high),
+                                                      .withValues(alpha: Opacities.high),
                                             width:
                                                 ChartDimensions.strokeSmMedium,
                                           ),
@@ -1240,7 +1237,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                                             HorizontalLine(
                                               y: 0,
                                               color: ScoreColors.poor
-                                                  .withOpacity(Opacities.high),
+                                                  .withValues(alpha: Opacities.high),
                                               strokeWidth: ChartDimensions
                                                   .strokeSmMedium,
                                               dashArray:
@@ -1312,8 +1309,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                             style: IconButton.styleFrom(
                               backgroundColor: theme.colorScheme.surface,
                               side: BorderSide(
-                                color: theme.colorScheme.outline.withOpacity(
-                                  borderOpacity,
+                                color: theme.colorScheme.outline.withValues(alpha: borderOpacity,
                                 ),
                               ),
                             ),
@@ -1326,8 +1322,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                             style: IconButton.styleFrom(
                               backgroundColor: theme.colorScheme.surface,
                               side: BorderSide(
-                                color: theme.colorScheme.outline.withOpacity(
-                                  borderOpacity,
+                                color: theme.colorScheme.outline.withValues(alpha: borderOpacity,
                                 ),
                               ),
                             ),
@@ -1339,10 +1334,9 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                             tooltip: l10n.resetZoom,
                             style: IconButton.styleFrom(
                               backgroundColor: theme.colorScheme.primary
-                                  .withOpacity(Opacities.veryLow),
+                                  .withValues(alpha: Opacities.veryLow),
                               side: BorderSide(
-                                color: theme.colorScheme.primary.withOpacity(
-                                  borderOpacity,
+                                color: theme.colorScheme.primary.withValues(alpha: borderOpacity,
                                 ),
                               ),
                             ),
@@ -1355,8 +1349,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                             style: IconButton.styleFrom(
                               backgroundColor: theme.colorScheme.surface,
                               side: BorderSide(
-                                color: theme.colorScheme.outline.withOpacity(
-                                  borderOpacity,
+                                color: theme.colorScheme.outline.withValues(alpha: borderOpacity,
                                 ),
                               ),
                             ),
@@ -1369,8 +1362,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                             style: IconButton.styleFrom(
                               backgroundColor: theme.colorScheme.surface,
                               side: BorderSide(
-                                color: theme.colorScheme.outline.withOpacity(
-                                  borderOpacity,
+                                color: theme.colorScheme.outline.withValues(alpha: borderOpacity,
                                 ),
                               ),
                             ),
@@ -1418,13 +1410,11 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                               width: double.infinity,
                               padding: const EdgeInsets.all(Spacing.lg),
                               decoration: BoxDecoration(
-                                color: theme.colorScheme.primary.withOpacity(
-                                  isDark ? 0.05 : 0.08,
+                                color: theme.colorScheme.primary.withValues(alpha: isDark ? 0.05 : 0.08,
                                 ),
                                 borderRadius: BorderRadii.mdAll,
                                 border: Border.all(
-                                  color: theme.colorScheme.primary.withOpacity(
-                                    isDark ? 0.3 : 0.5,
+                                  color: theme.colorScheme.primary.withValues(alpha: isDark ? 0.3 : 0.5,
                                   ),
                                 ),
                               ),
@@ -1461,11 +1451,9 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                           final timeInSeconds = _xToSeconds(
                             note.x,
                           ).toStringAsFixed(2);
-                          double? pressureAtNote;
-                          if (note.x.toInt() >= 0 &&
-                              note.x.toInt() < widget.chartData.length) {
-                            pressureAtNote = widget.chartData[note.x.toInt()].y;
-                          }
+                          final pressureAtNote = widget.chartData.isNotEmpty
+                              ? _findNearestPoint(note.x).y
+                              : null;
 
                           return GestureDetector(
                             onTap: () {
@@ -1558,7 +1546,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                                               context,
                                             )!.currentPressure,
                                             value:
-                                                '${settings.convertPressure(pressureAtNote!).toStringAsFixed(1)} ${settings.pressureUnitSymbol}',
+                                                '${settings.convertPressure(pressureAtNote).toStringAsFixed(1)} ${settings.pressureUnitSymbol}',
                                             color: ScoreColors.poor,
                                           );
                                         }),
@@ -1570,7 +1558,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                                         style: TextStyle(
                                           fontSize: FontSizes.bodySm,
                                           color: theme.colorScheme.onSurface
-                                              .withOpacity(Opacities.medium),
+                                              .withValues(alpha: Opacities.medium),
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -1620,13 +1608,12 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                               padding: const EdgeInsets.all(Spacing.lg),
                               margin: const EdgeInsets.only(bottom: Spacing.sm),
                               decoration: BoxDecoration(
-                                color: theme.colorScheme.secondary.withOpacity(
-                                  Opacities.low,
+                                color: theme.colorScheme.secondary.withValues(alpha: Opacities.low,
                                 ),
                                 borderRadius: BorderRadii.mdAll,
                                 border: Border.all(
                                   color: theme.colorScheme.secondary
-                                      .withOpacity(Opacities.mediumHigh),
+                                      .withValues(alpha: Opacities.mediumHigh),
                                 ),
                               ),
                               child: Row(
@@ -1690,7 +1677,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                                     Icons.center_focus_strong,
                                     size: IconSizes.md,
                                     color: theme.colorScheme.secondary
-                                        .withOpacity(Opacities.high),
+                                        .withValues(alpha: Opacities.high),
                                   ),
                                   Spacing.horizontalSm,
                                   IconButton(
@@ -1732,8 +1719,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                             color: theme.colorScheme.surface,
                             borderRadius: BorderRadii.mdAll,
                             border: Border.all(
-                              color: theme.colorScheme.outline.withOpacity(
-                                Opacities.mediumHigh,
+                              color: theme.colorScheme.outline.withValues(alpha: Opacities.mediumHigh,
                               ),
                             ),
                           ),
@@ -1742,8 +1728,7 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
                               Icon(
                                 Icons.note_add_outlined,
                                 size: IconSizes.huge,
-                                color: theme.colorScheme.outline.withOpacity(
-                                  Opacities.high,
+                                color: theme.colorScheme.outline.withValues(alpha: Opacities.high,
                                 ),
                               ),
                               Spacing.verticalSm,

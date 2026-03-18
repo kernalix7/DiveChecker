@@ -124,7 +124,7 @@ lib/
 ├── main.dart              # Entry point
 ├── constants/             # Theme, colors, app config
 ├── core/                  # DB interface (SQLite / IndexedDB)
-├── l10n/                  # Localization (EN/KO)
+├── l10n/                  # Localization (EN/KO/JA/ZH/ZH_TW)
 ├── models/                # Data models
 ├── providers/             # State management (Provider)
 │   ├── midi_provider.dart           # USB MIDI connection
@@ -152,7 +152,7 @@ lib/
 - UI/UX refinements
 
 ### Low Priority
-- Multi-language support
+- Additional language support
 - Theme customization
 - Additional chart types
 - Social features

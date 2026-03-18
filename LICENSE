@@ -207,7 +207,7 @@
    CERN Open Hardware Licence Version 2 - Strongly Reciprocal (CERN-OHL-S v2)
 
    This license applies to all hardware designs, schematics, PCB layouts,
-   CAD files, and related documentation in the 0_CAD/ and 0_MCU_Firmware/
+   CAD files, and related documentation in the 0_CAD/ and 0_Pico2-Firmware/
    directories of this project.
 
    Preamble
@@ -241,7 +241,7 @@
 
    Hardware Components Covered:
    - Pressure sensor enclosure designs (0_CAD/)
-   - MCU circuit designs and firmware (0_MCU_Firmware/)
+   - MCU circuit designs and firmware (0_Pico2-Firmware/)
    - Related mechanical drawings and specifications
 
 ================================================================================
@@ -256,11 +256,11 @@
    
    SOFTWARE COMPONENTS (Apache License 2.0):
    - _0_DiveChecker-APP/ : Flutter mobile application
-   - 0_MCU_Firmware/     : Microcontroller firmware (also CERN-OHL-S v2)
-   
+   - 0_Pico2-Firmware/   : Microcontroller firmware (also CERN-OHL-S v2)
+
    HARDWARE COMPONENTS (CERN-OHL-S v2):
    - 0_CAD/              : 3D models and mechanical designs
-   - 0_MCU_Firmware/     : Circuit designs and hardware interfaces
+   - 0_Pico2-Firmware/   : Circuit designs and hardware interfaces
    
    DISCLAIMER:
    

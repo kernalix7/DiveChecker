@@ -1669,4 +1669,22 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get calibrationTimedOut => '보정 시간 초과 - 센서 데이터가 충분하지 않습니다';
+
+  @override
+  String get loading => '로딩 중...';
+
+  @override
+  String failedToSaveSession(String error) {
+    return '세션 저장 실패: $error';
+  }
+
+  @override
+  String failedToDeleteSession(String error) {
+    return '세션 삭제 실패: $error';
+  }
+
+  @override
+  String failedToLoadSessionData(String error) {
+    return '세션 데이터 로딩 실패: $error';
+  }
 }

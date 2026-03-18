@@ -30,7 +30,7 @@ class IconContainer extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
-        color: useGradient ? null : iconColor.withOpacity(Opacities.veryLow),
+        color: useGradient ? null : iconColor.withValues(alpha: Opacities.veryLow),
         gradient: useGradient
             ? LinearGradient(
                 colors: [

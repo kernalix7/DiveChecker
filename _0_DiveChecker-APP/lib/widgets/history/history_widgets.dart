@@ -150,7 +150,7 @@ class SessionCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: Spacing.sm, vertical: Spacing.xs),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer.withOpacity(Opacities.medium),
+        color: theme.colorScheme.primaryContainer.withValues(alpha: Opacities.medium),
         borderRadius: BorderRadii.smAll,
       ),
       child: Text(
@@ -214,9 +214,9 @@ class DetailCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(Spacing.lg),
       decoration: BoxDecoration(
-        color: color.withOpacity(Opacities.light),
+        color: color.withValues(alpha: Opacities.light),
         borderRadius: BorderRadii.mdAll,
-        border: Border.all(color: color.withOpacity(Opacities.mediumHigh)),
+        border: Border.all(color: color.withValues(alpha: Opacities.mediumHigh)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -224,7 +224,7 @@ class DetailCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(Spacing.xsPlus),
             decoration: BoxDecoration(
-              color: color.withOpacity(Opacities.mediumLow),
+              color: color.withValues(alpha: Opacities.mediumLow),
               borderRadius: BorderRadii.mdAll,
             ),
             child: Icon(icon, color: color, size: IconSizes.md),
@@ -234,7 +234,7 @@ class DetailCard extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: FontSizes.bodySm,
-              color: color.withOpacity(Opacities.nearFull),
+              color: color.withValues(alpha: Opacities.nearFull),
               fontWeight: FontWeight.w600,
               letterSpacing: LetterSpacings.normal,
             ),

@@ -161,7 +161,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   leading: Container(
                     padding: const EdgeInsets.all(Spacing.sm),
                     decoration: BoxDecoration(
-                      color: isAuth ? StatusColors.connected.withOpacity(Opacities.low) : StatusColors.warning.withOpacity(Opacities.low),
+                      color: isAuth ? StatusColors.connected.withValues(alpha: Opacities.low) : StatusColors.warning.withValues(alpha: Opacities.low),
                       borderRadius: BorderRadii.mdAll,
                     ),
                     child: Icon(
@@ -352,7 +352,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context),
-                            child: const Text('OK'),
+                            child: Text(AppLocalizations.of(context)!.ok),
                           ),
                         ],
                       ),
@@ -381,11 +381,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Center(
             child: Column(
               children: [
-                IconContainer(
-                  icon: Icons.water_drop,
-                  size: IconSizes.xl,
-                  padding: Spacing.lg,
-                  useGradient: true,
+                Container(
+                  padding: const EdgeInsets.all(Spacing.lg),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Theme.of(context).colorScheme.primary,
+                        Theme.of(context).colorScheme.secondary,
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(BorderRadii.md),
+                  ),
+                  child: Image.asset(
+                    'assets/logo.png',
+                    height: IconSizes.xl,
+                    color: OverlayColors.whiteContent,
+                  ),
                 ),
                 Spacing.verticalLg,
                 Text(
@@ -417,7 +428,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   'kernalix7@kodenet.io',
                   style: TextStyle(
                     fontSize: FontSizes.xs,
-                    color: StatusColors.disabled.withOpacity(Opacities.veryHigh),
+                    color: StatusColors.disabled.withValues(alpha: Opacities.veryHigh),
                   ),
                 ),
                 Spacing.verticalXxl,

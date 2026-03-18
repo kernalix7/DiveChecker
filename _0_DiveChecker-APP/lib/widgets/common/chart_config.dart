@@ -100,11 +100,11 @@ class ChartGridConfig {
       horizontalInterval: horizontalInterval,
       verticalInterval: verticalInterval,
       getDrawingHorizontalLine: (value) => FlLine(
-        color: gridColor.withOpacity(Opacities.high),
+        color: gridColor.withValues(alpha: Opacities.high),
         strokeWidth: ChartConstants.gridStrokeWidth,
       ),
       getDrawingVerticalLine: (value) => FlLine(
-        color: gridColor.withOpacity(Opacities.moderate),
+        color: gridColor.withValues(alpha: Opacities.moderate),
         strokeWidth: ChartConstants.gridStrokeWidth,
       ),
     );
@@ -288,8 +288,8 @@ class PressureLineConfig {
               show: true,
               gradient: LinearGradient(
                 colors: [
-                  color.withOpacity(Opacities.medium),
-                  color.withOpacity(Opacities.subtle),
+                  color.withValues(alpha: Opacities.medium),
+                  color.withValues(alpha: Opacities.subtle),
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,

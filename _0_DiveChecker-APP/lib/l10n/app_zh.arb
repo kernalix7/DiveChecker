@@ -1,0 +1,746 @@
+{
+  "@@locale": "zh",
+
+  "appTitle": "DiveChecker",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+
+  "disclaimerTitle": "重要提示",
+  "disclaimerContent": "DiveChecker 仅用于自由潜水均压训练参考。\n\n⚠️ 本应用不是医疗设备，不可用于医疗诊断或治疗目的。\n\n⚠️ 潜水时请始终将安全放在首位。请勿仅依赖此应用做出潜水决策。\n\n⚠️ 开发者对使用本应用过程中可能发生的事故、伤害或损失不承担任何责任。\n\n使用本应用即视为同意以上条款。",
+  "disclaimerAgree": "我已理解并同意",
+  "disclaimerDoNotShowAgain": "不再显示",
+
+  "home": "首页",
+  "monitor": "监测",
+  "measurement": "测量",
+  "history": "记录",
+
+  "deviceConnected": "设备已连接",
+  "deviceNotConnected": "未连接",
+  "deviceDiscovery": "搜索设备",
+  "searchingDevice": "正在搜索 DiveChecker 设备...",
+  "measurementReady": "测量准备就绪",
+  "tapToConnect": "请点击连接按钮开始",
+  "connectDevice": "连接",
+  "disconnect": "断开连接",
+  "searching": "搜索中...",
+  "makeSureDevicePowered": "请确认 DiveChecker 设备已开机",
+
+  "sensorError": "传感器连接错误",
+  "sensorErrorDescription": "未检测到测量传感器。请检查连接状态。",
+
+  "connectionRequired": "需要连接",
+  "connectionRequiredMessage": "要开始测量，请先连接 DiveChecker 设备。\n\n您可以在首页标签页中连接设备。",
+  "goToHome": "前往首页",
+  "cancel": "取消",
+  "confirm": "确认",
+  "ok": "确定",
+  "close": "关闭",
+  "add": "添加",
+  "peakAnalysisDisclaimer": "此分析仅供参考，并非完全准确。请谨慎解读结果。",
+
+  "connectedSuccess": "DiveChecker 设备连接成功！",
+  "disconnected": "DiveChecker 设备已断开",
+  "unsupportedDevice": "不支持的设备",
+  "onlyDiveCheckerSupported": "仅支持 DiveChecker 设备。此设备无法在本应用中使用。",
+
+  "startMeasurement": "开始测量",
+  "stopMeasurement": "结束测量",
+  "pauseMeasurement": "暂停",
+  "resumeMeasurement": "继续",
+  "measurementStarted": "测量已开始",
+  "measurementPaused": "测量已暂停",
+  "measurementResumed": "测量已继续",
+  "measurementComplete": "测量完成",
+  "measurementSaved": "测量已保存",
+  "measurementSettings": "测量设置",
+  "measurementNumber": "测量 #{number}",
+  "@measurementNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+
+  "currentPressure": "当前",
+  "maxPressure": "最大",
+  "avgPressure": "平均",
+  "elapsedTime": "时间",
+  "pressureUnit": "压力单位",
+  "sampleRate": "采样率",
+  "msInterval": "ms 间隔",
+  "maxPressureLabel": "最大压力",
+  "avgPressureLabel": "平均压力",
+  "durationLabel": "测量时长",
+  "pressureAnalysis": "压力分析",
+
+  "saveSession": "保存会话",
+  "saveSessionQuestion": "是否保存此测量会话？",
+  "save": "保存",
+  "discard": "删除",
+  "sessionSaved": "会话已保存",
+  "sessionDiscarded": "会话已删除",
+
+  "noData": "暂无数据",
+  "awaitingData": "等待测量数据",
+  "noMeasurements": "暂无测量记录",
+  "startMeasuringHint": "请在测量标签页开始首次测量",
+
+  "sessionHistory": "会话记录",
+  "noSessions": "暂无会话",
+  "startMeasuringToSee": "开始测量后，记录将在此显示",
+  "deleteSession": "删除会话",
+  "deleteSessionConfirm": "确定要删除此会话吗？",
+  "delete": "删除",
+  "sessionDeleted": "会话已删除",
+  "deleteRecord": "删除记录",
+  "deleteRecordConfirm": "确定要删除此测量记录吗？",
+  "recordDeleted": "记录已删除",
+
+  "graphDetails": "图表详情",
+  "zoomIn": "放大",
+  "zoomOut": "缩小",
+  "resetZoom": "重置",
+  "panLeft": "向左",
+  "panRight": "向右",
+
+  "addNote": "添加备注",
+  "editNote": "编辑备注",
+  "noteOptional": "备注（可选）",
+  "noteHint": "请输入此会话的备注",
+  "noteContent": "备注内容",
+  "noteAdded": "备注已添加",
+  "noteUpdated": "备注已更新",
+  "notes": "备注",
+  "noteInfo": "备注信息",
+  "noNotes": "暂无备注",
+  "tapGraphToAddNote": "点击图表以添加备注",
+  "timePoint": "{seconds}秒处",
+  "@timePoint": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+
+  "statistics": "统计",
+  "duration": "测量时长",
+  "dataPoints": "数据点",
+
+  "settings": "设置",
+  "language": "语言",
+  "english": "英语",
+  "korean": "韩语",
+
+  "appearance": "外观",
+  "theme": "主题",
+  "themeSystem": "跟随系统",
+  "themeLight": "浅色",
+  "themeDark": "深色",
+  "themeDescription": "请选择您偏好的主题",
+
+  "notifications": "通知",
+  "enableNotifications": "启用通知",
+  "getAlertsForMeasurements": "接收测量通知",
+  "hapticFeedback": "触觉反馈",
+  "vibrateOnKeyActions": "关键操作时振动",
+
+  "editTitle": "编辑标题",
+  "sessionTitle": "会话标题",
+
+  "about": "关于",
+  "appVersion": "应用版本",
+  "helpAndSupport": "帮助与支持",
+  "licenses": "许可证",
+
+  "liveMonitoring": "实时监测",
+  "currentPressureLabel": "当前压力",
+
+  "today": "今天",
+  "yesterday": "昨天",
+  "minutesSeconds": "{minutes}分{seconds}秒",
+  "@minutesSeconds": {
+    "placeholders": {
+      "minutes": {"type": "int"},
+      "seconds": {"type": "int"}
+    }
+  },
+  "secondsOnly": "{seconds}秒",
+  "@secondsOnly": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+
+  "tapToExpand": "点击展开",
+
+  "measurementHistory": "测量记录",
+  "filterByDevice": "按设备筛选",
+  "selectDevice": "选择设备",
+  "allDevices": "全部设备",
+  "sessionsCount": "{count}条记录",
+  "@sessionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "deviceSettings": "设备设置",
+  "deviceName": "设备名称",
+  "changeDeviceName": "更改设备名称",
+  "enterNewDeviceName": "输入新设备名称",
+  "devicePin": "设备 PIN",
+  "changeDevicePin": "更改 PIN",
+  "enterCurrentPin": "输入当前 PIN",
+  "enterNewPin": "输入新 PIN（4位数字）",
+  "confirmNewPin": "确认新 PIN",
+  "wrongPin": "PIN 不正确",
+  "pinChanged": "PIN 已更改",
+  "nameChanged": "设备名称已更改",
+  "pinMustBe4Digits": "PIN 必须为4位数字",
+  "pinsMustMatch": "两次输入的 PIN 不一致",
+  "nameTooLong": "名称过长（最多中文8个字，英文24个字符）",
+
+  "pause": "暂停",
+  "resume": "继续",
+  "stop": "结束",
+
+  "liveSensorData": "实时传感器数据",
+  "recording": "录制中",
+  "openSourceLicenses": "开源许可证",
+  "appDescription": "自由潜水均压训练工具",
+
+  "samples": "采样",
+  "points": "分",
+  "analyticsComingSoon": "高级分析功能即将推出",
+  "analytics": "分析",
+
+  "pressureWaveform": "压力波形",
+  "peak": "最大",
+  "average": "平均",
+  "sec": "秒",
+  "deviceConnectedReady": "设备已连接 - 测量准备就绪",
+  "deviceNotConnectedShort": "设备未连接",
+  "tapToBeginMonitoring": "点击开始压力监测",
+  "sampleCount": "{count}个采样",
+  "@sampleCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "noNotesYetTapEdit": "暂无备注。点击编辑按钮或在图表中添加备注。",
+  "madeWithFlutter": "使用 Flutter 构建",
+  "mitLicense": "Apache License 2.0",
+  "mitLicenseContent": "可在包含许可证和 NOTICE 的前提下使用、修改和分发，所有软件均按「原样 (AS IS)」提供，不作任何保证。",
+  "midiCommunication": "USB MIDI 通信",
+  "chartVisualization": "图表可视化",
+  "sqliteDatabase": "SQLite 数据库",
+  "stateManagement": "状态管理",
+  "localStorage": "本地存储",
+  "internationalization": "多语言支持",
+  "copyright": "版权",
+  "allRightsReserved": "保留所有权利",
+  "tapToViewFullLicense": "点击查看完整许可证",
+
+  "analysis": "分析",
+  "advancedAnalysis": "高级分析",
+  "peakAnalysis": "峰值分析",
+  "peakAnalysisDesc": "峰值检测与均压模式分析",
+  "statisticsDashboard": "统计面板",
+  "statisticsDashboardDesc": "查看每日/每周/每月统计",
+  "segmentAnalysis": "区间分析",
+  "segmentAnalysisDesc": "特定时间区间分析与比较",
+  "trendGraph": "趋势图",
+  "trendGraphDesc": "追踪随时间的进步情况",
+  "patternRecognition": "模式识别",
+  "patternRecognitionDesc": "与理想 Frenzel 模式对比",
+  "comingSoon": "即将推出",
+  "featureInDevelopment": "此功能正在开发中。",
+  "noSessionsForAnalysis": "没有可分析的会话",
+  "selectSession": "选择会话",
+  "backToMenu": "返回菜单",
+  "keyMetrics": "关键指标",
+  "totalPeaks": "总峰值数",
+  "peaksUnit": "次",
+  "peakFrequency": "频率",
+  "perMinute": "次/分钟",
+  "avgPeakInterval": "平均间隔",
+  "avgPeakPressure": "平均峰值",
+  "performanceScores": "性能评分",
+  "consistencyScore": "一致性评分",
+  "fatigueIndex": "疲劳指数",
+  "consistencyExcellent": "非常出色！均压技术非常稳定一致。",
+  "consistencyGood": "很好。压力和节奏有轻微波动。",
+  "consistencyFair": "一般。一致性方面还有提升空间。",
+  "consistencyNeedsWork": "需要改进。请多加练习以提高技术稳定性。",
+  "fatigueMinimal": "几乎没有疲劳感。出色的耐力！",
+  "fatigueLow": "轻微疲劳。整体表现维持良好。",
+  "fatigueModerate": "中等疲劳。建议考虑缩短训练时长。",
+  "fatigueHigh": "高度疲劳。压力明显下降。",
+  "detailedStats": "详细统计",
+  "maxPeakPressure": "最大峰值压力",
+  "minPeakPressure": "最小峰值压力",
+  "pressureRange": "压力范围",
+  "peakVisualization": "峰值可视化",
+  "detectedPeaks": "检测到的峰值",
+
+  "dataManagement": "数据管理",
+  "backupData": "数据备份",
+  "backupDataDescription": "将所有数据导出为 JSON 文件",
+  "restoreData": "数据恢复",
+  "restoreDataDescription": "从备份文件导入数据",
+  "backupSuccess": "备份已完成",
+  "backupFailed": "备份失败",
+  "restoreSuccess": "恢复已完成",
+  "restoreFailed": "恢复失败",
+  "restoreConfirm": "确认恢复",
+  "restoreConfirmMessage": "所有现有数据将被替换。是否继续？",
+  "restore": "恢复",
+  "invalidBackupFile": "无效的备份文件",
+  "dataPointsCount": "{count}个数据点",
+  "@dataPointsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "appName": "DiveChecker",
+  "appSubtitle": "均压压力监测仪",
+  "appTitleFull": "DiveChecker Pro",
+  "statusOnline": "已连接",
+  "statusOffline": "未连接",
+  "statusScanning": "搜索中...",
+  "statusRecording": "录制中",
+  "measurementScreenTitle": "压力测量",
+  "historyScreenTitle": "测量记录",
+  "settingsScreenTitle": "设置",
+
+  "segmentAvgPressureComparison": "各区间平均压力比较",
+  "segmentDetailedAnalysis": "各区间详细分析",
+  "segmentChangeAnalysis": "区间变化分析",
+  "segmentNumber": "区间 {number}",
+  "@segmentNumber": {
+    "placeholders": {
+      "number": {"type": "int"}
+    }
+  },
+  "segmentTooltip": "区间 {index}\\n平均: {avgPressure} hPa\\n峰值: {peakCount}次",
+  "@segmentTooltip": {
+    "placeholders": {
+      "index": {"type": "int"},
+      "avgPressure": {"type": "String"},
+      "peakCount": {"type": "int"}
+    }
+  },
+  "avgLabel": "平均",
+  "maxLabel": "最大",
+  "peakLabel": "峰值",
+  "countUnit": "次",
+  "variabilityLabel": "波动性",
+  "notEnoughSegments": "区间数量不足",
+  "stablePressureAnalysis": "压力保持稳定！从始至终展现了一致的表现。",
+  "pressureIncreaseAnalysis": "后半段压力上升了 {percent}%。可能是热身效果显现或均压力度增加。",
+  "@pressureIncreaseAnalysis": {
+    "placeholders": {
+      "percent": {"type": "String"}
+    }
+  },
+  "pressureDecreaseAnalysis": "后半段压力下降了 {percent}%。可能是疲劳累积，建议适当休息。",
+  "@pressureDecreaseAnalysis": {
+    "placeholders": {
+      "percent": {"type": "String"}
+    }
+  },
+  "trendStable": "稳定",
+  "trendRising": "上升趋势",
+  "trendFalling": "下降趋势",
+  "firstToLast": "首段 → 末段",
+  "peakCountChange": "峰值数变化",
+  "trendRising2": "上升",
+  "trendFalling2": "下降",
+  "trendMaintained": "保持",
+  "overallTrend": "整体趋势：{trend}",
+  "@overallTrend": {
+    "placeholders": {
+      "trend": {"type": "String"}
+    }
+  },
+  "slopeLabel": "斜率：{slope} hPa/秒",
+  "@slopeLabel": {
+    "placeholders": {
+      "slope": {"type": "String"}
+    }
+  },
+  "pressureTrendGraph": "压力趋势图",
+  "originalData": "原始数据",
+  "movingAverage": "移动平均",
+  "trendLine": "趋势线",
+  "trendAnalysis": "趋势分析",
+  "startPressureTrend": "起始压力（趋势）",
+  "endPressureTrend": "结束压力（趋势）",
+  "changeAmount": "变化量",
+  "changeRate": "变化率",
+  "strongRisingTrend": "强烈上升趋势",
+  "strongRisingDesc": "压力随时间显著增加。可能是肌肉热身后均压能力增强，或正在逐渐加大力度。",
+  "moderateRisingTrend": "缓慢上升趋势",
+  "moderateRisingDesc": "压力在缓慢上升。这是良好的热身模式。",
+  "stableMaintained": "稳定保持",
+  "stableMaintainedDesc": "压力保持恒定。展现了出色的耐力和一致性！",
+  "moderateFallingTrend": "缓慢下降趋势",
+  "moderateFallingDesc": "压力在缓慢下降。可能有轻微疲劳累积，建议适当休息。",
+  "strongFallingTrend": "明显下降趋势",
+  "strongFallingDesc": "压力显著下降。疲劳已经累积，需要充分休息。",
+  "continuousPerformanceAnalysis": "持续表现分析",
+  "patternComparison": "模式对比",
+  "peakQualityHeatmap": "峰值质量热力图",
+  "patternCharacteristics": "模式特征",
+  "customTrainingSuggestions": "个性化训练建议",
+  "maxConsecutive": "最大连续",
+  "avgConsecutive": "平均连续",
+  "qualityPeaks": "优质峰值",
+  "excellentConsistency": "出色！长时间保持了一致的质量。请继续保持！",
+  "goodConsistency": "很好！连续性不错。尝试保持更长的连续记录。",
+  "moderateConsistency": "中等水平。请集中注意力，提高连续优质峰值数量。",
+  "needsImprovementConsistency": "连续性需要提升。请更专注于每次均压动作。",
+  "masterPhase": "大师阶段",
+  "masterPhaseDesc": "高级技术精进与特殊情况应对",
+  "masterFocuses": "动态均压,高压情境模拟,持续时间延长",
+  "advancedPhase": "进阶阶段",
+  "advancedPhaseDesc": "提升一致性与掌握高级技术",
+  "advancedFocuses": "压力一致性强化,节奏优化,抗疲劳训练",
+  "intermediatePhase": "中级阶段",
+  "intermediatePhaseDesc": "基本功巩固与质量提升",
+  "intermediateFocuses": "精准控制节奏,寻找适当压力,反复练习",
+  "basicPhase": "基础阶段",
+  "basicPhaseDesc": "基本动作学习与感觉培养",
+  "basicFocuses": "基本姿势,呼吸控制,低压练习",
+  "currentFocusAreas": "当前需要关注的领域：",
+  "peakScore": "峰值 {index}：{score}分",
+  "@peakScore": {
+    "placeholders": {
+      "index": {"type": "int"},
+      "score": {"type": "String"}
+    }
+  },
+  "rhythmImprovementTraining": "节奏改善训练",
+  "rhythmTip1": "使用节拍器应用，按照固定节拍进行练习",
+  "rhythmTip2": "数数练习：按 1-2-3-4 的节奏进行均压",
+  "rhythmTip3": "从慢速开始，逐渐提高速度",
+  "pressureConsistencyTraining": "压力一致性训练",
+  "pressureTip1": "以相同力度连续完成10次均压为目标",
+  "pressureTip2": "对着镜子保持面颊和舌头动作的一致性",
+  "pressureTip3": "不要过于用力，找到舒适的压力",
+  "frequencyOptimizationTraining": "频率优化训练",
+  "frequencyTip1": "理想频率为每分钟20-40次",
+  "frequencyTip2": "确保每次均压都充分到位",
+  "frequencyTip3": "避免不必要的快速均压",
+  "enduranceTraining": "耐力提升训练",
+  "enduranceTip1": "逐步延长练习时间",
+  "enduranceTip2": "合理分配休息和训练时间",
+  "enduranceTip3": "规律练习是提升耐力的关键",
+  "irregularIntervalSuggestion": "均压间隔不规律。请尝试以稳定的节奏进行练习。",
+  "irregularPressureSuggestion": "峰值压力不规律。需要练习以一致的力度进行均压。",
+  "lowFrequencySuggestion": "均压频率偏低。请尝试更频繁地进行均压练习。",
+  "highFrequencySuggestion": "均压过于频繁。请更专注于每次均压的质量。",
+  "fatigueDetectedSuggestion": "后半段压力逐渐下降。耐力训练可能会有帮助。",
+  "excellentPattern": "优秀",
+  "excellentPatternDesc": "非常接近理想的 Frenzel 模式！",
+  "minPressureLabel": "最小压力",
+  "goodPattern": "良好",
+  "goodPatternDesc": "具备良好的基本功。有一些可以改进的地方。",
+  "averagePattern": "一般",
+  "averagePatternDesc": "基本模式已形成，但仍需改进。",
+  "needsPractice": "需要练习",
+  "needsPracticeDesc": "需要更多练习。请参考以下建议。",
+  "excellentPatternKeepUp": "当前模式非常好！请继续保持。",
+  "patternGrade": "模式等级：{grade}",
+  "@patternGrade": {
+    "placeholders": {
+      "grade": {"type": "String"}
+    }
+  },
+  "rhythmLabel": "节奏",
+  "pressureLabel": "压力",
+  "frequencyLabel": "频率",
+  "enduranceLabel": "耐力",
+  "currentPattern": "当前模式",
+  "idealPattern": "理想模式",
+  "peakNumber": "峰值编号",
+  "rhythmConsistency": "节奏一致性",
+  "pressureConsistency": "压力一致性",
+  "frequencyAdequacy": "频率适当性",
+  "veryGood": "非常好",
+  "good": "好",
+  "needsImprovement": "需要改进",
+  "needsMorePractice": "需要大量练习",
+  "noPeaksDetected": "未检测到峰值",
+  "selectAll": "全选",
+  "deselectAll": "取消",
+  "avgRiseTime": "平均上升时间",
+  "avgFallTime": "平均下降时间",
+  "avgPeakWidth": "平均峰值宽度",
+  "outliers": "异常值",
+  "peakIntensityDistribution": "峰值强度分布",
+  "rhythmScore": "节奏评分",
+  "pressureScoreTitle": "压力评分",
+  "techniqueScore": "技术评分",
+  "fatigueResistance": "抗疲劳性",
+  "strongPeaks": "强峰值",
+  "moderatePeaks": "中等峰值",
+  "weakPeaks": "弱峰值",
+  "countWithPercent": "{count}个（{percent}%）",
+  "@countWithPercent": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "percent": {"type": "String"}
+    }
+  },
+  "overallGrade": "综合等级",
+  "excellentFrenzel": "卓越的 Frenzel 技术！",
+  "veryGoodTechnique": "非常好的技术",
+  "satisfactoryLevel": "良好水平",
+  "roomForImprovement": "还有提升空间",
+  "moreTrainingNeeded": "需要更多练习",
+  "startFromBasics": "请从基础开始练习",
+  "weak": "弱",
+  "moderate": "中等",
+  "strong": "强",
+  "weakIntensity": "弱（<50hPa）",
+  "moderateIntensity": "中等（50-100）",
+  "strongIntensity": "强（>100）",
+  "stabilityImproving": "稳定性提升中",
+  "stabilityDecreasing": "稳定性下降中",
+  "stabilityMaintained": "稳定保持",
+  "stabilityTrend": "稳定性趋势",
+  "pressureDistribution": "压力分布",
+  "basicStats": "基本统计",
+  "dataPointsLabel": "数据点",
+  "countUnitItems": "个",
+  "measurementTime": "测量时间",
+  "standardDeviation": "标准差",
+  "advancedStats": "高级统计",
+  "coefficientOfVariation": "变异系数",
+  "skewness": "偏度",
+  "kurtosis": "峰度",
+  "interquartileRange": "四分位距",
+  "dataDispersionIndicator": "数据离散度指标",
+  "pressureRangeLabel": "压力范围",
+  "rangeLabel": "范围",
+  "outlierCount": "{count}个（{percent}%）",
+  "@outlierCount": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "percent": {"type": "String"}
+    }
+  },
+  "percentiles": "百分位数",
+  "median50": "中位数（50%）",
+  "peakSummary": "峰值摘要",
+  "strongPeakRatio": "强峰值比例",
+  "dataQuality": "数据质量",
+  "outliersLabel": "异常值",
+  "samplingLabel": "采样",
+  "dataLabel": "数据",
+  "veryConsistent": "非常一致",
+  "consistent": "一致",
+  "averageVariation": "一般",
+  "highVariation": "波动较大",
+  "leftSkewed": "左偏分布",
+  "rightSkewed": "右偏分布",
+  "normalDistribution": "正态分布",
+  "excellent": "优秀",
+  "satisfactory": "良好",
+  "caution": "注意",
+  "symmetricDistribution": "对称分布",
+  "flatDistribution": "平坦分布",
+  "peakedDistribution": "尖峰分布",
+  "normalPressureInterpretation": "压力分布正常。Frenzel 动作执行一致。",
+  "highPressureInterpretation": "高压力值出现频繁。峰值时可能需要控制力度。",
+  "lowPressureInterpretation": "低压力值较多。需要练习施加更大的压力。",
+  "concentratedInterpretation": "集中在特定压力区间。展现了良好的一致性。",
+  "dispersedInterpretation": "压力分布较为分散。需要提高一致性。",
+  "medianLabel": "中位数：{value} hPa",
+  "@medianLabel": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "selected": "已选择",
+  "excluded": "已排除",
+  "keyMetricsWithPeaks": "{metrics}（基于 {count} 个峰值）",
+  "@keyMetricsWithPeaks": {
+    "placeholders": {
+      "metrics": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+  "scorePoints": "{score}分",
+  "@scorePoints": {
+    "placeholders": {
+      "score": {"type": "String"}
+    }
+  },
+  "secondsValue": "{value}秒",
+  "@secondsValue": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "histogramTooltip": "{rangeStart}-{rangeEnd} hPa\n{count}个",
+  "@histogramTooltip": {
+    "placeholders": {
+      "rangeStart": {"type": "String"},
+      "rangeEnd": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+
+  "selectUsbDevice": "选择 USB 设备",
+  "rescan": "重新搜索",
+  "availableDevices": "可用设备",
+  "noDevicesFound": "未找到 USB MIDI 设备",
+  "connecting": "连接中...",
+  "connectionError": "连接错误",
+
+  "scanningForDevices": "正在搜索 USB 设备...",
+  "scanAgain": "重新搜索",
+  "deviceConnectedSuccessfully": "设备连接成功！",
+  "clearData": "清除数据",
+  "deleteAllMeasurementData": "删除所有测量数据",
+  "exportDbToFile": "导出数据库文件",
+  "exportDatabaseForDebugging": "导出数据库用于调试",
+
+  "deviceAuthenticated": "已通过正品认证",
+  "deviceNotAuthenticated": "认证失败",
+  "counterfeitWarning": "无法验证正品",
+  "counterfeitWarningTitle": "正品认证失败",
+  "counterfeitWarningMessage": "连接的设备未通过 DiveChecker 正品认证。\n\n使用仿制品可能导致测量值不准确，技术支持也将受到限制。",
+  "continueAnyway": "继续使用",
+  "verifyingDevice": "正在验证设备...",
+
+  "firmwareUpdate": "固件更新",
+  "firmwareUpdateDescription": "检查并更新设备固件",
+  "firmwareVerificationSuccess": "签名验证成功",
+  "firmwareVerificationFailed": "签名验证失败",
+  "firmwareInstall": "安装",
+  "firmwareRebootToBootsel": "重启至 BOOTSEL 模式",
+  "firmwareRebootDescription": "设备将重启至 BOOTSEL 模式。\n\n重启后：\n1. 将出现 \"RPI-RP2\" 驱动器\n2. 请将 .uf2 固件文件复制到该驱动器\n3. 设备将自动重启",
+
+  "currentFirmware": "当前固件",
+  "dangerZone": "危险区域",
+  "rebootDevice": "重启设备",
+  "rebootDeviceDescription": "重启设备",
+  "rebootConfirmMessage": "确定要重启设备吗？连接将断开。",
+  "reboot": "重启",
+  "bootselMode": "BOOTSEL 模式",
+  "bootselModeDescription": "手动固件更新模式",
+  "bootselRebootSent": "已发送 BOOTSEL 重启命令",
+  "deviceDisconnected": "设备已断开连接",
+  "pleaseReconnectDevice": "请重新连接设备。",
+  "connectionLostDuringMeasurement": "测量过程中连接已断开。是否保存已记录的数据？",
+  "pinMismatch": "PIN 不一致",
+  "pinChangeRequested": "已请求更改 PIN",
+  "nameChangeRequested": "已请求更改名称",
+  "currentPin": "当前 PIN",
+  "newPin": "新 PIN",
+  "confirmPin": "确认 PIN",
+  "newDeviceName": "新设备名称",
+  "pinRequiredForChange": "更改设置需要输入 PIN",
+  "change": "更改",
+  "myDevices": "我的设备",
+  "connectedDevices": "已连接的设备",
+  "noDeviceConnected": "暂无连接的设备",
+
+  "displayResolution": "画面刷新率",
+  "displayResolutionDescription": "图表画面刷新速度",
+  "outputRate": "输出频率",
+  "outputRateDescription": "传感器输出频率",
+  "tapToChange": "点击更改",
+  "connectDeviceFirst": "请先连接设备",
+  "outputRateChanged": "输出频率已更改为 {rate} Hz",
+  "noiseFilter": "噪声滤波器",
+  "noiseFilterDescription": "用于降噪的软件滤波器",
+  "filterStrength": "滤波强度",
+  "filterStrengthDescription": "数值越高显示越平滑",
+
+  "atmosphericCalibrating": "正在测量大气压...",
+  "atmosphericRecalibrate": "重新测量大气压",
+  "atmosphericKeepSensorStill": "请将传感器静置于空气中",
+  "secondsRemaining": "剩余 {seconds} 秒",
+  "@secondsRemaining": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "selectFile": "选择文件",
+  "backToFileList": "返回文件列表",
+  "readyToInstall": "准备安装",
+  "verificationFailed": "验证失败",
+
+  "reset": "重置",
+  "fullscreen": "全屏",
+  "waitingForData": "等待数据中...",
+
+  "overrangeWarningTitle": "超出测量范围！",
+  "overrangeWarningMessage": "已超出传感器测量范围。请不要过度吹气或吸气！传感器正在恢复中...",
+
+  "usbMidiDevicesTitle": "USB MIDI 设备",
+  "connectViaCable": "请使用 USB 数据线连接压力传感器",
+  "noUsbDevicesFound": "未找到 USB 设备",
+  "connectDeviceViaCable": "请使用 USB 数据线连接设备",
+  "diveCheckerCompatible": "DiveChecker 兼容",
+  "scanFailedError": "搜索失败：{error}",
+  "@scanFailedError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "connectionErrorWithMessage": "连接错误：{error}",
+  "@connectionErrorWithMessage": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "noFirmwareFilesFound": "未找到固件文件",
+  "lookingForFirmwareFiles": "正在查找 *.bin 或 *_signed.bin 文件",
+  "deviceNotConnectedError": "设备未连接",
+  "signatureValid": "签名已验证 ✓",
+  "signatureInvalid": "签名验证失败 ✗",
+  "firmwareUntrustedWarning": "此固件未使用有效密钥签名。可能已损坏或来自不可信来源。",
+  "verifiedFirmwareSaved": "已保存已验证的固件：{filename}",
+  "@verifiedFirmwareSaved": {
+    "placeholders": {
+      "filename": {"type": "String"}
+    }
+  },
+  "calibrationTimedOut": "校准超时 - 传感器数据不足",
+  "loading": "加载中...",
+  "failedToSaveSession": "会话保存失败：{error}",
+  "@failedToSaveSession": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "failedToDeleteSession": "会话删除失败：{error}",
+  "@failedToDeleteSession": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "failedToLoadSessionData": "会话数据加载失败：{error}",
+  "@failedToLoadSessionData": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  }
+}

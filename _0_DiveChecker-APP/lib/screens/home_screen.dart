@@ -232,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
         icon: Container(
           padding: const EdgeInsets.all(Spacing.lg),
           decoration: BoxDecoration(
-            color: ScoreColors.warning.withOpacity(Opacities.medium),
+            color: ScoreColors.warning.withValues(alpha: Opacities.medium),
             shape: BoxShape.circle,
           ),
           child: Icon(

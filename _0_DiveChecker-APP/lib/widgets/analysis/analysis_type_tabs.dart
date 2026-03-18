@@ -120,11 +120,11 @@ class _AnalysisTab extends StatelessWidget {
               ? theme.colorScheme.primary
               : enabled
                   ? theme.colorScheme.surfaceContainerHighest
-                  : theme.colorScheme.surfaceContainerHighest.withOpacity(Opacities.high),
+                  : theme.colorScheme.surfaceContainerHighest.withValues(alpha: Opacities.high),
           borderRadius: BorderRadii.xxlAll,
           border: isSelected
               ? null
-              : Border.all(color: theme.colorScheme.outline.withOpacity(Opacities.low)),
+              : Border.all(color: theme.colorScheme.outline.withValues(alpha: Opacities.low)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

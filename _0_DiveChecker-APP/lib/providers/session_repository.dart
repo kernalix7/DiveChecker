@@ -105,7 +105,8 @@ class SessionData {
 
 class SessionRepository extends ChangeNotifier {
   final UnifiedDatabaseService _dbService;
-  
+  bool _isDisposed = false;
+
   List<SessionData> _sessions = [];
   bool _isLoading = false;
   String? _error;
@@ -113,6 +114,17 @@ class SessionRepository extends ChangeNotifier {
 
   SessionRepository({UnifiedDatabaseService? dbService})
       : _dbService = dbService ?? UnifiedDatabaseService();
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_isDisposed) super.notifyListeners();
+  }
 
   List<SessionData> get sessions => List.unmodifiable(_sessions);
   bool get isLoading => _isLoading;

@@ -1,0 +1,747 @@
+{
+  "@@locale": "zh_TW",
+
+  "appTitle": "DiveChecker",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+
+  "disclaimerTitle": "重要提醒",
+  "disclaimerContent": "DiveChecker 僅供自由潛水均壓訓練參考使用。\n\n⚠️ 本應用程式並非醫療器材，不可用於醫療診斷或治療目的。\n\n⚠️ 潛水時請始終將安全放在第一位。請勿僅依賴本應用程式做出潛水決策。\n\n⚠️ 開發者對使用本應用程式期間可能發生的任何事故、傷害或損失概不負責。\n\n使用本應用程式即視為同意上述條款。",
+  "disclaimerAgree": "我已了解並同意",
+  "disclaimerDoNotShowAgain": "不再顯示",
+
+  "home": "首頁",
+  "monitor": "監測",
+  "measurement": "量測",
+  "history": "紀錄",
+
+  "deviceConnected": "主機已連線",
+  "deviceNotConnected": "未連線",
+  "deviceDiscovery": "裝置搜尋",
+  "searchingDevice": "正在搜尋 Divechecker 主機...",
+  "measurementReady": "量測準備就緒",
+  "tapToConnect": "請點擊連線按鈕開始",
+  "connectDevice": "連線",
+  "disconnect": "中斷連線",
+  "searching": "搜尋中...",
+  "makeSureDevicePowered": "請確認 Divechecker 主機已開啟",
+
+  "sensorError": "感測器連線錯誤",
+  "sensorErrorDescription": "未偵測到量測感測器，請檢查連線狀態。",
+
+  "connectionRequired": "需要連線",
+  "connectionRequiredMessage": "請先連接 Divechecker 主機才能開始量測。\n\n您可以在首頁分頁連接裝置。",
+  "goToHome": "前往首頁",
+  "cancel": "取消",
+  "confirm": "確認",
+  "ok": "確定",
+  "close": "關閉",
+  "add": "新增",
+  "peakAnalysisDisclaimer": "本分析僅供參考，並非完全精確。請謹慎解讀結果。",
+
+  "connectedSuccess": "Divechecker 主機連線成功！",
+  "disconnected": "Divechecker 主機已中斷連線",
+  "unsupportedDevice": "不支援的裝置",
+  "onlyDiveCheckerSupported": "僅支援 DiveChecker 裝置。此裝置無法在本應用程式中使用。",
+
+  "startMeasurement": "開始量測",
+  "stopMeasurement": "結束量測",
+  "pauseMeasurement": "暫停",
+  "resumeMeasurement": "繼續",
+  "measurementStarted": "量測已開始",
+  "measurementPaused": "量測已暫停",
+  "measurementResumed": "量測已繼續",
+  "measurementComplete": "量測完成",
+  "measurementSaved": "量測已儲存",
+  "measurementSettings": "量測設定",
+  "measurementNumber": "量測 #{number}",
+  "@measurementNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+
+  "currentPressure": "目前",
+  "maxPressure": "最大",
+  "avgPressure": "平均",
+  "elapsedTime": "時間",
+  "pressureUnit": "壓力單位",
+  "sampleRate": "取樣率",
+  "msInterval": "ms 間隔",
+  "maxPressureLabel": "最大壓力",
+  "avgPressureLabel": "平均壓力",
+  "durationLabel": "量測時間",
+  "pressureAnalysis": "壓力分析",
+
+  "saveSession": "儲存紀錄",
+  "saveSessionQuestion": "是否儲存此量測紀錄？",
+  "save": "儲存",
+  "discard": "捨棄",
+  "sessionSaved": "紀錄已儲存",
+  "sessionDiscarded": "紀錄已捨棄",
+
+  "noData": "無資料",
+  "awaitingData": "等待量測資料中",
+  "noMeasurements": "尚無量測紀錄",
+  "startMeasuringHint": "請至量測分頁開始第一次量測",
+
+  "sessionHistory": "歷史紀錄",
+  "noSessions": "尚無紀錄",
+  "startMeasuringToSee": "開始量測後，紀錄將顯示在此處",
+  "deleteSession": "刪除紀錄",
+  "deleteSessionConfirm": "是否刪除此紀錄？",
+  "delete": "刪除",
+  "sessionDeleted": "紀錄已刪除",
+  "deleteRecord": "刪除記錄",
+  "deleteRecordConfirm": "是否刪除此量測記錄？",
+  "recordDeleted": "記錄已刪除",
+
+  "graphDetails": "圖表詳情",
+  "zoomIn": "放大",
+  "zoomOut": "縮小",
+  "resetZoom": "重設",
+  "panLeft": "向左",
+  "panRight": "向右",
+
+  "addNote": "新增備註",
+  "editNote": "編輯備註",
+  "noteOptional": "備註（選填）",
+  "noteHint": "請輸入此紀錄的備註",
+  "noteContent": "備註內容",
+  "noteAdded": "備註已新增",
+  "noteUpdated": "備註已更新",
+  "notes": "備註",
+  "noteInfo": "備註資訊",
+  "noNotes": "無備註",
+  "tapGraphToAddNote": "點擊圖表以新增備註",
+  "timePoint": "{seconds}秒處",
+  "@timePoint": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+
+  "statistics": "統計",
+  "duration": "量測時間",
+  "dataPoints": "資料點",
+
+  "settings": "設定",
+  "language": "語言",
+  "english": "英文",
+  "korean": "韓文",
+
+  "appearance": "外觀",
+  "theme": "主題",
+  "themeSystem": "系統設定",
+  "themeLight": "淺色",
+  "themeDark": "深色",
+  "themeDescription": "請選擇您偏好的主題",
+
+  "notifications": "通知",
+  "enableNotifications": "啟用通知",
+  "getAlertsForMeasurements": "接收量測通知",
+  "hapticFeedback": "觸覺回饋",
+  "vibrateOnKeyActions": "重要操作時震動",
+
+  "editTitle": "編輯標題",
+  "sessionTitle": "紀錄標題",
+
+  "about": "關於",
+  "appVersion": "應用程式版本",
+  "helpAndSupport": "說明與支援",
+  "licenses": "授權條款",
+
+  "liveMonitoring": "即時監測",
+  "currentPressureLabel": "目前壓力",
+
+  "today": "今天",
+  "yesterday": "昨天",
+  "minutesSeconds": "{minutes}分 {seconds}秒",
+  "@minutesSeconds": {
+    "placeholders": {
+      "minutes": {"type": "int"},
+      "seconds": {"type": "int"}
+    }
+  },
+  "secondsOnly": "{seconds}秒",
+  "@secondsOnly": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+
+  "tapToExpand": "點擊以放大",
+
+  "measurementHistory": "量測紀錄",
+  "filterByDevice": "依裝置篩選",
+  "selectDevice": "選擇裝置",
+  "allDevices": "所有裝置",
+  "sessionsCount": "{count} 筆紀錄",
+  "@sessionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "deviceSettings": "裝置設定",
+  "deviceName": "裝置名稱",
+  "changeDeviceName": "變更裝置名稱",
+  "enterNewDeviceName": "輸入新裝置名稱",
+  "devicePin": "裝置 PIN",
+  "changeDevicePin": "變更 PIN",
+  "enterCurrentPin": "輸入目前 PIN",
+  "enterNewPin": "輸入新 PIN（4 位數）",
+  "confirmNewPin": "確認新 PIN",
+  "wrongPin": "PIN 錯誤",
+  "pinChanged": "PIN 已變更",
+  "nameChanged": "裝置名稱已變更",
+  "pinMustBe4Digits": "PIN 須為 4 位數字",
+  "pinsMustMatch": "PIN 不一致",
+  "nameTooLong": "名稱過長（最多中文 8 字、英文 24 字）",
+
+  "pause": "暫停",
+  "resume": "繼續",
+  "stop": "結束",
+
+  "liveSensorData": "即時感測器資料",
+  "recording": "錄製中",
+  "openSourceLicenses": "開源授權條款",
+  "appDescription": "自由潛水均壓工具",
+
+  "samples": "樣本",
+  "points": "分",
+  "analyticsComingSoon": "進階分析功能即將推出",
+  "analytics": "分析",
+
+  "pressureWaveform": "壓力波形",
+  "peak": "最大",
+  "average": "平均",
+  "sec": "秒",
+  "deviceConnectedReady": "裝置已連線 - 量測準備就緒",
+  "deviceNotConnectedShort": "裝置未連線",
+  "tapToBeginMonitoring": "點擊以開始壓力監測",
+  "sampleCount": "{count} 個樣本",
+  "@sampleCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "noNotesYetTapEdit": "尚無備註。請點擊編輯按鈕或在圖表上新增備註。",
+  "madeWithFlutter": "以 Flutter 打造",
+  "mitLicense": "Apache 授權條款 2.0",
+  "mitLicenseContent": "可在包含授權條款與 NOTICE 的情況下使用、修改及散布，所有軟體均以「現狀（AS IS）」提供，不附帶任何擔保。",
+  "midiCommunication": "USB MIDI 通訊",
+  "chartVisualization": "圖表視覺化",
+  "sqliteDatabase": "SQLite 資料庫",
+  "stateManagement": "狀態管理",
+  "localStorage": "本機儲存",
+  "internationalization": "多語系支援",
+  "copyright": "版權",
+  "allRightsReserved": "保留所有權利",
+  "tapToViewFullLicense": "點擊以檢視完整授權條款",
+
+  "analysis": "分析",
+  "advancedAnalysis": "進階分析",
+  "peakAnalysis": "峰值分析",
+  "peakAnalysisDesc": "峰值偵測與均壓模式分析",
+  "statisticsDashboard": "統計儀表板",
+  "statisticsDashboardDesc": "檢視每日/每週/每月統計",
+  "segmentAnalysis": "區段分析",
+  "segmentAnalysisDesc": "特定時間區段分析與比較",
+  "trendGraph": "趨勢圖表",
+  "trendGraphDesc": "追蹤隨時間的進步狀況",
+  "patternRecognition": "模式辨識",
+  "patternRecognitionDesc": "與理想 Frenzel 模式比較",
+  "comingSoon": "即將推出",
+  "featureInDevelopment": "此功能目前正在開發中。",
+  "noSessionsForAnalysis": "無可分析的紀錄",
+  "selectSession": "選擇紀錄",
+  "backToMenu": "返回選單",
+  "keyMetrics": "關鍵指標",
+  "totalPeaks": "總峰值數",
+  "peaksUnit": "次",
+  "peakFrequency": "頻率",
+  "perMinute": "次/分",
+  "avgPeakInterval": "平均間隔",
+  "avgPeakPressure": "平均峰值",
+  "performanceScores": "表現評分",
+  "consistencyScore": "一致性評分",
+  "fatigueIndex": "疲勞指數",
+  "consistencyExcellent": "非常出色！展現極為一致的均壓技巧。",
+  "consistencyGood": "表現良好。壓力和節奏有些微變動。",
+  "consistencyFair": "表現普通。一致性仍有提升空間。",
+  "consistencyNeedsWork": "需要改進。請多加練習以獲得更一致的技巧。",
+  "fatigueMinimal": "幾乎沒有疲勞。出色的耐力！",
+  "fatigueLow": "低度疲勞。表現維持良好。",
+  "fatigueModerate": "中度疲勞。建議考慮縮短練習時間。",
+  "fatigueHigh": "高度疲勞。壓力明顯下降。",
+  "detailedStats": "詳細統計",
+  "maxPeakPressure": "最大峰值壓力",
+  "minPeakPressure": "最小峰值壓力",
+  "pressureRange": "壓力範圍",
+  "peakVisualization": "峰值視覺化",
+  "detectedPeaks": "偵測到的峰值",
+
+  "dataManagement": "資料管理",
+  "backupData": "備份資料",
+  "backupDataDescription": "將所有資料匯出為 JSON 檔案",
+  "restoreData": "還原資料",
+  "restoreDataDescription": "從備份檔案匯入資料",
+  "backupSuccess": "備份已完成",
+  "backupFailed": "備份失敗",
+  "restoreSuccess": "還原已完成",
+  "restoreFailed": "還原失敗",
+  "restoreConfirm": "確認還原",
+  "restoreConfirmMessage": "所有現有資料將被取代。是否繼續？",
+  "restore": "還原",
+  "invalidBackupFile": "無效的備份檔案",
+  "dataPointsCount": "{count} 個資料點",
+  "@dataPointsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "appName": "DiveChecker",
+  "appSubtitle": "均壓壓力監測器",
+  "appTitleFull": "DiveChecker Pro",
+  "statusOnline": "已連線",
+  "statusOffline": "未連線",
+  "statusScanning": "搜尋中...",
+  "statusRecording": "錄製中",
+  "measurementScreenTitle": "壓力量測",
+  "historyScreenTitle": "量測紀錄",
+  "settingsScreenTitle": "設定",
+
+  "segmentAvgPressureComparison": "各區段平均壓力比較",
+  "segmentDetailedAnalysis": "各區段詳細分析",
+  "segmentChangeAnalysis": "區段變化分析",
+  "segmentNumber": "區段 {number}",
+  "@segmentNumber": {
+    "placeholders": {
+      "number": {"type": "int"}
+    }
+  },
+  "segmentTooltip": "區段 {index}\\n平均：{avgPressure} hPa\\n峰值：{peakCount}次",
+  "@segmentTooltip": {
+    "placeholders": {
+      "index": {"type": "int"},
+      "avgPressure": {"type": "String"},
+      "peakCount": {"type": "int"}
+    }
+  },
+  "avgLabel": "平均",
+  "maxLabel": "最大",
+  "peakLabel": "峰值",
+  "countUnit": "次",
+  "variabilityLabel": "變異性",
+  "notEnoughSegments": "區段數不足",
+  "stablePressureAnalysis": "壓力維持穩定！從頭到尾展現一致的表現。",
+  "pressureIncreaseAnalysis": "後半段壓力增加了 {percent}%。可能是暖身效果顯現，或是施加了更大力量進行均壓。",
+  "@pressureIncreaseAnalysis": {
+    "placeholders": {
+      "percent": {"type": "String"}
+    }
+  },
+  "pressureDecreaseAnalysis": "後半段壓力下降了 {percent}%。可能出現疲勞累積，建議考慮休息。",
+  "@pressureDecreaseAnalysis": {
+    "placeholders": {
+      "percent": {"type": "String"}
+    }
+  },
+  "trendStable": "穩定",
+  "trendRising": "上升趨勢",
+  "trendFalling": "下降趨勢",
+  "firstToLast": "起始 → 結束",
+  "peakCountChange": "峰值數變化",
+  "trendRising2": "上升",
+  "trendFalling2": "下降",
+  "trendMaintained": "維持",
+  "overallTrend": "整體趨勢：{trend}",
+  "@overallTrend": {
+    "placeholders": {
+      "trend": {"type": "String"}
+    }
+  },
+  "slopeLabel": "斜率：{slope} hPa/秒",
+  "@slopeLabel": {
+    "placeholders": {
+      "slope": {"type": "String"}
+    }
+  },
+  "pressureTrendGraph": "壓力趨勢圖表",
+  "originalData": "原始資料",
+  "movingAverage": "移動平均",
+  "trendLine": "趨勢線",
+  "trendAnalysis": "趨勢分析",
+  "startPressureTrend": "起始壓力（趨勢）",
+  "endPressureTrend": "結束壓力（趨勢）",
+  "changeAmount": "變化量",
+  "changeRate": "變化率",
+  "strongRisingTrend": "強烈上升趨勢",
+  "strongRisingDesc": "壓力隨時間明顯增加。可能是肌肉已暖身而能進行更強的均壓，或者正逐漸加大力量。",
+  "moderateRisingTrend": "緩和上升趨勢",
+  "moderateRisingDesc": "壓力正緩慢上升。這是良好的暖身模式。",
+  "stableMaintained": "穩定維持",
+  "stableMaintainedDesc": "壓力維持穩定。展現出色的耐力與一致性！",
+  "moderateFallingTrend": "緩和下降趨勢",
+  "moderateFallingDesc": "壓力正緩慢下降。可能有些許疲勞累積，建議考慮休息。",
+  "strongFallingTrend": "強烈下降趨勢",
+  "strongFallingDesc": "壓力明顯下降。疲勞已經累積，需要充分休息。",
+  "continuousPerformanceAnalysis": "連續表現分析",
+  "patternComparison": "模式比較",
+  "peakQualityHeatmap": "峰值品質熱圖",
+  "patternCharacteristics": "模式特徵",
+  "customTrainingSuggestions": "客製化訓練建議",
+  "maxConsecutive": "最大連續",
+  "avgConsecutive": "平均連續",
+  "qualityPeaks": "優質峰值",
+  "excellentConsistency": "卓越！長時間維持一致的品質。請保持目前的水準。",
+  "goodConsistency": "良好！連續性佳。試著以更長的連續維持為目標。",
+  "moderateConsistency": "中等水準。保持專注以增加連續優質峰值。",
+  "needsImprovementConsistency": "連續性需要提升。請在每次均壓時更加專注。",
+  "masterPhase": "大師階段",
+  "masterPhaseDesc": "精進高階技巧與特殊情境應對",
+  "masterFocuses": "動態均壓,高壓情境模擬,持續時間延長",
+  "advancedPhase": "進階階段",
+  "advancedPhaseDesc": "提升一致性與習得進階技巧",
+  "advancedFocuses": "壓力一致性強化,節奏最佳化,抗疲勞訓練",
+  "intermediatePhase": "中級階段",
+  "intermediatePhaseDesc": "穩固基本功與提升品質",
+  "intermediateFocuses": "精準計時,找到適當壓力,反覆練習",
+  "basicPhase": "基礎階段",
+  "basicPhaseDesc": "學習基本動作與開發感覺",
+  "basicFocuses": "基本姿勢,呼吸控制,低壓力練習",
+  "currentFocusAreas": "目前應專注的領域：",
+  "peakScore": "峰值 {index}：{score}分",
+  "@peakScore": {
+    "placeholders": {
+      "index": {"type": "int"},
+      "score": {"type": "String"}
+    }
+  },
+  "rhythmImprovementTraining": "節奏改善訓練",
+  "rhythmTip1": "使用節拍器應用程式，配合固定節拍練習",
+  "rhythmTip2": "數數計時：以 1-2-3-4 的節奏進行均壓",
+  "rhythmTip3": "從慢速開始，逐漸加快速度",
+  "pressureConsistencyTraining": "壓力一致性訓練",
+  "pressureTip1": "以相同力道連續進行 10 次均壓為目標",
+  "pressureTip2": "對著鏡子練習，保持臉頰和舌頭動作一致",
+  "pressureTip3": "不要用力過猛，找到舒適的壓力",
+  "frequencyOptimizationTraining": "頻率最佳化訓練",
+  "frequencyTip1": "理想頻率為每分鐘 20-40 次",
+  "frequencyTip2": "每次都進行充分的均壓",
+  "frequencyTip3": "避免不必要的過快均壓",
+  "enduranceTraining": "耐力提升訓練",
+  "enduranceTip1": "逐步增加練習時間",
+  "enduranceTip2": "均衡分配休息與訓練",
+  "enduranceTip3": "規律練習是提升耐力的關鍵",
+  "irregularIntervalSuggestion": "均壓的間隔不規律。請嘗試以固定節奏練習。",
+  "irregularPressureSuggestion": "峰值壓力不規律。需要練習以穩定的力道進行均壓。",
+  "lowFrequencySuggestion": "均壓頻率偏低。請嘗試更頻繁地進行均壓。",
+  "highFrequencySuggestion": "均壓過於頻繁。請更專注於每次均壓。",
+  "fatigueDetectedSuggestion": "後半段壓力呈下降趨勢。耐力提升訓練可能會有幫助。",
+  "excellentPattern": "優秀",
+  "excellentPatternDesc": "接近理想的 Frenzel 模式！",
+  "minPressureLabel": "最小壓力",
+  "goodPattern": "良好",
+  "goodPatternDesc": "具備良好的基本功。有幾點可以改進。",
+  "averagePattern": "普通",
+  "averagePatternDesc": "基本模式已形成，但仍需改善。",
+  "needsPractice": "需要練習",
+  "needsPracticeDesc": "需要更多練習。請參考以下建議。",
+  "excellentPatternKeepUp": "目前的模式非常好！請持續保持。",
+  "patternGrade": "模式等級：{grade}",
+  "@patternGrade": {
+    "placeholders": {
+      "grade": {"type": "String"}
+    }
+  },
+  "rhythmLabel": "節奏",
+  "pressureLabel": "壓力",
+  "frequencyLabel": "頻率",
+  "enduranceLabel": "耐力",
+  "currentPattern": "目前模式",
+  "idealPattern": "理想模式",
+  "peakNumber": "峰值編號",
+  "rhythmConsistency": "節奏一致性",
+  "pressureConsistency": "壓力一致性",
+  "frequencyAdequacy": "頻率適當性",
+  "veryGood": "非常好",
+  "good": "好",
+  "average": "普通",
+  "needsImprovement": "需要改進",
+  "needsMorePractice": "需要更多練習",
+  "noPeaksDetected": "未偵測到峰值",
+  "selectAll": "全選",
+  "deselectAll": "取消全選",
+  "avgRiseTime": "平均上升時間",
+  "avgFallTime": "平均下降時間",
+  "avgPeakWidth": "平均峰值寬度",
+  "outliers": "離群值",
+  "peakIntensityDistribution": "峰值強度分布",
+  "rhythmScore": "節奏評分",
+  "pressureScoreTitle": "壓力評分",
+  "techniqueScore": "技巧評分",
+  "fatigueResistance": "抗疲勞性",
+  "strongPeaks": "強峰值",
+  "moderatePeaks": "中等峰值",
+  "weakPeaks": "弱峰值",
+  "countWithPercent": "{count} 個（{percent}%）",
+  "@countWithPercent": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "percent": {"type": "String"}
+    }
+  },
+  "overallGrade": "綜合等級",
+  "excellentFrenzel": "卓越的 Frenzel 技巧！",
+  "veryGoodTechnique": "非常好的技巧",
+  "satisfactoryLevel": "表現良好",
+  "roomForImprovement": "仍有改善空間",
+  "moreTrainingNeeded": "需要更多練習",
+  "startFromBasics": "請從基礎開始練習",
+  "weak": "弱",
+  "moderate": "中等",
+  "strong": "強",
+  "weakIntensity": "弱（<50hPa）",
+  "moderateIntensity": "中等（50-100）",
+  "strongIntensity": "強（>100）",
+  "stabilityImproving": "穩定性提升中",
+  "stabilityDecreasing": "穩定性下降中",
+  "stabilityMaintained": "穩定維持",
+  "stabilityTrend": "穩定性趨勢",
+  "pressureDistribution": "壓力分布",
+  "basicStats": "基本統計",
+  "dataPointsLabel": "資料點",
+  "countUnitItems": "個",
+  "measurementTime": "量測時間",
+  "standardDeviation": "標準差",
+  "advancedStats": "進階統計",
+  "coefficientOfVariation": "變異係數",
+  "skewness": "偏度",
+  "kurtosis": "峰度",
+  "interquartileRange": "四分位距",
+  "dataDispersionIndicator": "資料離散指標",
+  "pressureRangeLabel": "壓力範圍",
+  "rangeLabel": "範圍",
+  "outlierCount": "{count} 個（{percent}%）",
+  "@outlierCount": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "percent": {"type": "String"}
+    }
+  },
+  "percentiles": "百分位數",
+  "median50": "中位數（50%）",
+  "peakSummary": "峰值摘要",
+  "strongPeakRatio": "強峰值比例",
+  "dataQuality": "資料品質",
+  "outliersLabel": "離群值",
+  "samplingLabel": "取樣",
+  "dataLabel": "資料",
+  "veryConsistent": "非常一致",
+  "consistent": "一致",
+  "averageVariation": "普通",
+  "highVariation": "變動大",
+  "leftSkewed": "左偏分布",
+  "rightSkewed": "右偏分布",
+  "normalDistribution": "常態分布",
+  "excellent": "優秀",
+  "satisfactory": "良好",
+  "caution": "注意",
+  "symmetricDistribution": "對稱分布",
+  "flatDistribution": "平坦分布",
+  "peakedDistribution": "尖峰分布",
+  "normalPressureInterpretation": "壓力分布正常。正在進行一致的 Frenzel 動作。",
+  "highPressureInterpretation": "高壓力值頻繁出現。峰值時可能需要控制力道。",
+  "lowPressureInterpretation": "低壓力值偏多。需要練習施加更大壓力。",
+  "concentratedInterpretation": "集中在特定壓力區間。展現良好的一致性。",
+  "dispersedInterpretation": "壓力分布範圍較廣。需要提升一致性。",
+  "medianLabel": "中位數：{value} hPa",
+  "@medianLabel": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "selected": "已選取",
+  "excluded": "已排除",
+  "keyMetricsWithPeaks": "{metrics}（依據 {count} 個峰值）",
+  "@keyMetricsWithPeaks": {
+    "placeholders": {
+      "metrics": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+  "scorePoints": "{score}分",
+  "@scorePoints": {
+    "placeholders": {
+      "score": {"type": "String"}
+    }
+  },
+  "secondsValue": "{value}秒",
+  "@secondsValue": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "histogramTooltip": "{rangeStart}-{rangeEnd} hPa\n{count}個",
+  "@histogramTooltip": {
+    "placeholders": {
+      "rangeStart": {"type": "String"},
+      "rangeEnd": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+
+  "selectUsbDevice": "選擇 USB 裝置",
+  "rescan": "重新搜尋",
+  "availableDevices": "可用裝置",
+  "noDevicesFound": "找不到 USB MIDI 裝置",
+  "connecting": "連線中...",
+  "connectionError": "連線錯誤",
+
+  "scanningForDevices": "正在搜尋 USB 裝置...",
+  "scanAgain": "重新搜尋",
+  "deviceConnectedSuccessfully": "裝置已成功連線！",
+  "clearData": "清除資料",
+  "deleteAllMeasurementData": "刪除所有量測資料",
+  "exportDbToFile": "匯出 DB 檔案",
+  "exportDatabaseForDebugging": "匯出資料庫供除錯使用",
+
+  "deviceAuthenticated": "正品已驗證",
+  "deviceNotAuthenticated": "驗證失敗",
+  "counterfeitWarning": "無法確認正品",
+  "counterfeitWarningTitle": "正品驗證失敗",
+  "counterfeitWarningMessage": "已連線的裝置未通過 DiveChecker 正品驗證。\n\n使用仿冒品可能導致量測數值不準確，且技術支援將受到限制。",
+  "continueAnyway": "仍要繼續",
+  "verifyingDevice": "正在驗證裝置...",
+
+  "firmwareUpdate": "韌體更新",
+  "firmwareUpdateDescription": "檢查與更新裝置韌體",
+  "firmwareVerificationSuccess": "簽章驗證成功",
+  "firmwareVerificationFailed": "簽章驗證失敗",
+  "firmwareInstall": "安裝",
+  "firmwareRebootToBootsel": "重新啟動至 BOOTSEL 模式",
+  "firmwareRebootDescription": "裝置將重新啟動至 BOOTSEL 模式。\n\n重新啟動後：\n1. 「RPI-RP2」磁碟機將會出現\n2. 請複製 .uf2 韌體檔案\n3. 裝置將自動重新啟動",
+
+  "currentFirmware": "目前韌體",
+  "dangerZone": "危險區域",
+  "rebootDevice": "重新啟動裝置",
+  "rebootDeviceDescription": "重新啟動裝置",
+  "rebootConfirmMessage": "是否重新啟動裝置？連線將會中斷。",
+  "reboot": "重新啟動",
+  "bootselMode": "BOOTSEL 模式",
+  "bootselModeDescription": "手動韌體更新模式",
+  "bootselRebootSent": "已傳送 BOOTSEL 重新啟動指令",
+  "deviceDisconnected": "裝置已中斷連線",
+  "pleaseReconnectDevice": "請重新連接裝置。",
+  "connectionLostDuringMeasurement": "量測期間連線中斷。是否儲存已記錄的資料？",
+  "pinMismatch": "PIN 不一致",
+  "pinChangeRequested": "已提交 PIN 變更請求",
+  "nameChangeRequested": "已提交名稱變更請求",
+  "currentPin": "目前 PIN",
+  "newPin": "新 PIN",
+  "confirmPin": "確認 PIN",
+  "newDeviceName": "新裝置名稱",
+  "pinRequiredForChange": "變更設定需要 PIN",
+  "change": "變更",
+  "myDevices": "我的裝置",
+  "connectedDevices": "已連線裝置",
+  "noDeviceConnected": "無已連線裝置",
+
+  "displayResolution": "畫面更新率",
+  "displayResolutionDescription": "圖表畫面更新速度",
+  "outputRate": "輸出頻率",
+  "outputRateDescription": "感測器輸出頻率",
+  "tapToChange": "點擊以變更",
+  "connectDeviceFirst": "請先連接裝置",
+  "outputRateChanged": "輸出頻率已變更為 {rate} Hz",
+  "noiseFilter": "雜訊濾波器",
+  "noiseFilterDescription": "降低雜訊的軟體濾波器",
+  "filterStrength": "濾波強度",
+  "filterStrengthDescription": "數值越高顯示越平滑",
+
+  "atmosphericCalibrating": "正在量測大氣壓力...",
+  "atmosphericRecalibrate": "重新量測大氣壓力",
+  "atmosphericKeepSensorStill": "請將感測器靜置於空氣中",
+  "secondsRemaining": "剩餘 {seconds} 秒",
+  "@secondsRemaining": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "selectFile": "選擇檔案",
+  "backToFileList": "返回檔案清單",
+  "readyToInstall": "準備安裝",
+  "verificationFailed": "驗證失敗",
+
+  "reset": "重設",
+  "fullscreen": "全螢幕",
+  "waitingForData": "等待資料中...",
+
+  "overrangeWarningTitle": "超出量測範圍！",
+  "overrangeWarningMessage": "已超出感測器的量測範圍。請勿過度用力吹氣或吸氣！感測器正在恢復中...",
+
+  "usbMidiDevicesTitle": "USB MIDI 裝置",
+  "connectViaCable": "請使用 USB 傳輸線連接壓力感測器",
+  "noUsbDevicesFound": "找不到 USB 裝置",
+  "connectDeviceViaCable": "請使用 USB 傳輸線連接裝置",
+  "diveCheckerCompatible": "DiveChecker 相容",
+  "scanFailedError": "搜尋失敗：{error}",
+  "@scanFailedError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "connectionErrorWithMessage": "連線錯誤：{error}",
+  "@connectionErrorWithMessage": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "noFirmwareFilesFound": "找不到韌體檔案",
+  "lookingForFirmwareFiles": "正在尋找 *.bin 或 *_signed.bin 檔案",
+  "deviceNotConnectedError": "裝置未連線",
+  "signatureValid": "簽章已驗證 ✓",
+  "signatureInvalid": "簽章驗證失敗 ✗",
+  "firmwareUntrustedWarning": "此韌體未以有效金鑰簽署。可能已損毀或來自不可信的來源。",
+  "verifiedFirmwareSaved": "已儲存驗證通過的韌體：{filename}",
+  "@verifiedFirmwareSaved": {
+    "placeholders": {
+      "filename": {"type": "String"}
+    }
+  },
+  "calibrationTimedOut": "校正逾時 - 感測器資料不足",
+  "loading": "載入中...",
+  "failedToSaveSession": "紀錄儲存失敗：{error}",
+  "@failedToSaveSession": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "failedToDeleteSession": "紀錄刪除失敗：{error}",
+  "@failedToDeleteSession": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "failedToLoadSessionData": "紀錄資料載入失敗：{error}",
+  "@failedToLoadSessionData": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  }
+}

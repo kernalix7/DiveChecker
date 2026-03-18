@@ -179,7 +179,7 @@ class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
                         l10n.connectViaCable,
                         style: TextStyle(
                           fontSize: FontSizes.bodySm,
-                          color: theme.colorScheme.onSurface.withOpacity(Opacities.high),
+                          color: theme.colorScheme.onSurface.withValues(alpha: Opacities.high),
                         ),
                       ),
                     ],
@@ -321,8 +321,8 @@ class _DeviceTile extends StatelessWidget {
         height: IconSizes.display,
         decoration: BoxDecoration(
           color: device.isDiveChecker 
-              ? theme.colorScheme.primary.withOpacity(Opacities.veryLow)
-              : Colors.grey.withOpacity(Opacities.veryLow),
+              ? theme.colorScheme.primary.withValues(alpha: Opacities.veryLow)
+              : Colors.grey.withValues(alpha: Opacities.veryLow),
           borderRadius: BorderRadii.mdAll,
         ),
         child: Icon(
@@ -344,7 +344,7 @@ class _DeviceTile extends StatelessWidget {
             device.name,
             style: TextStyle(
               fontSize: FontSizes.bodySm,
-              color: theme.colorScheme.onSurface.withOpacity(Opacities.mediumHigh),
+              color: theme.colorScheme.onSurface.withValues(alpha: Opacities.mediumHigh),
             ),
           ),
           // Show device ID in a platform-normalized way
@@ -353,7 +353,7 @@ class _DeviceTile extends StatelessWidget {
             style: TextStyle(
               fontSize: FontSizes.sm,
               fontFamily: 'monospace',
-              color: theme.colorScheme.onSurface.withOpacity(Opacities.medium),
+              color: theme.colorScheme.onSurface.withValues(alpha: Opacities.medium),
             ),
           ),
           if (device.isDiveChecker)
@@ -383,7 +383,7 @@ class _DeviceTile extends StatelessWidget {
             )
           : Icon(
               Icons.chevron_right,
-              color: theme.colorScheme.onSurface.withOpacity(Opacities.mediumHigh),
+              color: theme.colorScheme.onSurface.withValues(alpha: Opacities.mediumHigh),
             ),
       onTap: onTap,
     );

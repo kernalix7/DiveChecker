@@ -186,7 +186,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to delete session: $e')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.failedToDeleteSession(e.toString()))),
       );
     }
   }
@@ -205,22 +205,22 @@ class _HistoryScreenState extends State<HistoryScreen> {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.15),
+                color: Colors.black.withValues(alpha: 0.15),
                 blurRadius: 20,
                 spreadRadius: 2,
               ),
             ],
           ),
-          child: const Column(
+          child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 36,
                 height: 36,
                 child: CircularProgressIndicator(strokeWidth: 3),
               ),
-              SizedBox(height: 16),
-              Text('Loading...', style: TextStyle(fontSize: 14)),
+              const SizedBox(height: 16),
+              Text(AppLocalizations.of(context)!.loading, style: const TextStyle(fontSize: 14)),
             ],
           ),
         ),
@@ -259,7 +259,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       Navigator.pop(context); // Close loading dialog
       
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load session data: $e')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.failedToLoadSessionData(e.toString()))),
       );
     }
   }
@@ -313,7 +313,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       Icon(
                         Icons.history,
                         size: IconSizes.display * 1.67,
-                        color: StatusColors.disabled.withOpacity(Opacities.mediumHigh),
+                        color: StatusColors.disabled.withValues(alpha: Opacities.mediumHigh),
                       ),
                       const SizedBox(height: Spacing.lg),
                       Text(
@@ -431,7 +431,7 @@ class _DeviceFilterSheet extends StatelessWidget {
             width: WidgetSizes.containerHuge,
             height: Dimensions.progressBarThin,
             decoration: BoxDecoration(
-              color: StatusColors.disabled.withOpacity(Opacities.mediumHigh),
+              color: StatusColors.disabled.withValues(alpha: Opacities.mediumHigh),
               borderRadius: BorderRadii.xsAll,
             ),
           ),

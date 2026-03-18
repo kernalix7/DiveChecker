@@ -6,7 +6,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
+import 'app_localizations_ja.dart';
 import 'app_localizations_ko.dart';
+import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -95,7 +97,10 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
+    Locale('ja'),
     Locale('ko'),
+    Locale('zh'),
+    Locale('zh', 'TW'),
   ];
 
   /// The title of the application
@@ -3265,6 +3270,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Calibration timed out - not enough sensor data received'**
   String get calibrationTimedOut;
+
+  /// No description provided for @loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get loading;
+
+  /// No description provided for @failedToSaveSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save session: {error}'**
+  String failedToSaveSession(String error);
+
+  /// No description provided for @failedToDeleteSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete session: {error}'**
+  String failedToDeleteSession(String error);
+
+  /// No description provided for @failedToLoadSessionData.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load session data: {error}'**
+  String failedToLoadSessionData(String error);
 }
 
 class _AppLocalizationsDelegate
@@ -3278,19 +3307,35 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en', 'ko'].contains(locale.languageCode);
+      <String>['en', 'ja', 'ko', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+  // Lookup logic when language+country codes are specified.
+  switch (locale.languageCode) {
+    case 'zh':
+      {
+        switch (locale.countryCode) {
+          case 'TW':
+            return AppLocalizationsZhTw();
+        }
+        break;
+      }
+  }
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
     case 'en':
       return AppLocalizationsEn();
+    case 'ja':
+      return AppLocalizationsJa();
     case 'ko':
       return AppLocalizationsKo();
+    case 'zh':
+      return AppLocalizationsZh();
   }
 
   throw FlutterError(

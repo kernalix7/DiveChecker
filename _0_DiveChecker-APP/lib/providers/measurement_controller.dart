@@ -80,6 +80,9 @@ class MeasurementController extends ChangeNotifier {
   // Single data list - firmware output rate = display rate = storage rate
   final List<ChartPoint> _dataList = [];
   
+  // Running sample counter - must not reset on buffer overflow
+  int _sampleCount = 0;
+
   // Incremental statistics - avoid recalculating from entire list
   double _sumPressure = 0.0;
   double _maxPressureValue = 0.0;
@@ -97,7 +100,8 @@ class MeasurementController extends ChangeNotifier {
     
     if (_state.isMeasuring && !_state.isPaused && _state.sessionStartTime != null) {
       final sampleIntervalMs = 1000.0 / outputRate;
-      final xMs = _dataList.length * sampleIntervalMs;
+      final xMs = _sampleCount * sampleIntervalMs;
+      _sampleCount++;
       
       _dataList.add(ChartPoint(xMs, pressure));
       _sumPressure += pressure;
@@ -111,7 +115,7 @@ class MeasurementController extends ChangeNotifier {
         if (removed.y >= _maxPressureValue) {
           _maxPressureValue = _dataList.isEmpty ? 0.0 : _dataList.map((e) => e.y).reduce(max);
         }
-        if (_dataList.length % 100 == 0) {
+        if (_sampleCount % 100 == 0) {
           _sumPressure = _dataList.fold<double>(0.0, (sum, p) => sum + p.y);
         }
       }
@@ -130,10 +134,10 @@ class MeasurementController extends ChangeNotifier {
   /// Current firmware output rate (Hz)
   int get outputRate => _midiProvider.outputRate;
   
-  /// Actual duration in seconds: sample count / Hz
+  /// Actual duration in seconds: total sample count / Hz
   int get actualDurationSeconds {
-    if (_dataList.isEmpty) return 0;
-    return (_dataList.length / outputRate).round();
+    if (_sampleCount == 0) return 0;
+    return (_sampleCount / outputRate).round();
   }
   
   bool get isConnected => _midiProvider.isConnected;
@@ -144,9 +148,10 @@ class MeasurementController extends ChangeNotifier {
     if (!isConnected) return;
     
     _dataList.clear();
+    _sampleCount = 0;
     _sumPressure = 0.0;
     _maxPressureValue = 0.0;
-    
+
     _state = MeasurementState(
       isMeasuring: true,
       isPaused: false,
@@ -221,8 +226,8 @@ class MeasurementController extends ChangeNotifier {
   Future<int> saveSession(String notes, {String? deviceSerial, String? deviceName}) async {
     try {
       final startTime = _state.sessionStartTime ?? DateTime.now();
-      // Calculate endTime based on actual data: startTime + (samples / Hz) seconds
-      final actualDurationMs = _dataList.isEmpty ? 0 : (_dataList.length * 1000 / outputRate).round();
+      // Calculate endTime based on total samples received: startTime + (samples / Hz) seconds
+      final actualDurationMs = _sampleCount == 0 ? 0 : (_sampleCount * 1000 / outputRate).round();
       final endTime = startTime.add(Duration(milliseconds: actualDurationMs));
       
       final session = MeasurementSession(
@@ -259,6 +264,7 @@ class MeasurementController extends ChangeNotifier {
     _measurementTimer?.cancel();
     _measurementTimer = null;
     _dataList.clear();
+    _sampleCount = 0;
     _sumPressure = 0.0;
     _maxPressureValue = 0.0;
     _state = const MeasurementState();

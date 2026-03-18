@@ -141,7 +141,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
             l10n.noPeaksDetected,
             style: TextStyle(
               fontSize: FontSizes.sm,
-              color: theme.colorScheme.outline.withOpacity(Opacities.medium),
+              color: theme.colorScheme.outline.withValues(alpha: Opacities.medium),
             ),
           ),
         ],
@@ -369,7 +369,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.mdAll,
-        side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.low)),
+        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: Opacities.low)),
       ),
       child: Padding(
         padding: Spacing.cardPadding,
@@ -415,7 +415,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.lgAll,
-        side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.low)),
+        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: Opacities.low)),
       ),
       child: Padding(
         padding: Spacing.cardPadding,
@@ -462,7 +462,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
                           drawVerticalLine: false,
                           horizontalInterval: ChartDimensions.intervalMedium,
                           getDrawingHorizontalLine: (value) => FlLine(
-                            color: theme.colorScheme.outline.withOpacity(Opacities.low),
+                            color: theme.colorScheme.outline.withValues(alpha: Opacities.low),
                             strokeWidth: ChartDimensions.strokeNormal,
                           ),
                         ),
@@ -516,8 +516,8 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
                               return VerticalLine(
                                 x: peak.x,
                                 color: isSelected
-                                    ? ScoreColors.excellent.withOpacity(Opacities.medium)
-                                    : Colors.grey.withOpacity(Opacities.mediumHigh),
+                                    ? ScoreColors.excellent.withValues(alpha: Opacities.medium)
+                                    : Colors.grey.withValues(alpha: Opacities.mediumHigh),
                                 strokeWidth: isSelected ? 2 : 1,
                                 dashArray: isSelected ? null : [4, 4],
                                 label: VerticalLineLabel(
@@ -586,7 +586,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.mdAll,
-        side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.low)),
+        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: Opacities.low)),
       ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxHeight: WidgetSizes.maxHeightCard),
@@ -638,11 +638,11 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
       margin: const EdgeInsets.symmetric(horizontal: Spacing.sm, vertical: Spacing.xxs),
       decoration: BoxDecoration(
         color: isOutlier
-            ? ScoreColors.warning.withOpacity(Opacities.low)
-            : (isSelected ? null : theme.colorScheme.outline.withOpacity(Opacities.veryLow)),
+            ? ScoreColors.warning.withValues(alpha: Opacities.low)
+            : (isSelected ? null : theme.colorScheme.outline.withValues(alpha: Opacities.veryLow)),
         borderRadius: BorderRadii.smAll,
         border: isOutlier
-            ? Border.all(color: ScoreColors.warning.withOpacity(Opacities.mediumHigh))
+            ? Border.all(color: ScoreColors.warning.withValues(alpha: Opacities.mediumHigh))
             : null,
       ),
       child: CheckboxListTile(
@@ -718,7 +718,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: Spacing.xsPlus, vertical: Spacing.xxs),
                       decoration: BoxDecoration(
-                        color: ScoreColors.fromScore(detail.qualityScore).withOpacity(Opacities.mediumLow),
+                        color: ScoreColors.fromScore(detail.qualityScore).withValues(alpha: Opacities.mediumLow),
                         borderRadius: BorderRadii.smAll,
                       ),
                       child: Text(
@@ -788,9 +788,9 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.mdAll,
-        side: BorderSide(color: trendColor.withOpacity(Opacities.mediumHigh)),
+        side: BorderSide(color: trendColor.withValues(alpha: Opacities.mediumHigh)),
       ),
-      color: trendColor.withOpacity(Opacities.veryLow),
+      color: trendColor.withValues(alpha: Opacities.veryLow),
       child: Padding(
         padding: Spacing.cardPadding,
         child: Row(
@@ -805,7 +805,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
                     l10n.stabilityTrend,
                     style: TextStyle(
                       fontSize: FontSizes.sm,
-                      color: theme.colorScheme.onSurface.withOpacity(Opacities.medium),
+                      color: theme.colorScheme.onSurface.withValues(alpha: Opacities.medium),
                     ),
                   ),
                   Text(
@@ -822,7 +822,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: Spacing.sm, vertical: Spacing.xsPlus),
               decoration: BoxDecoration(
-                color: trendColor.withOpacity(Opacities.mediumLow),
+                color: trendColor.withValues(alpha: Opacities.mediumLow),
                 borderRadius: BorderRadii.xxlAll,
               ),
               child: Text(
@@ -854,7 +854,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.mdAll,
-        side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.low)),
+        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: Opacities.low)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.sm),
@@ -870,7 +870,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
                     title,
                     style: TextStyle(
                       fontSize: FontSizes.xs,
-                      color: theme.colorScheme.onSurface.withOpacity(Opacities.medium),
+                      color: theme.colorScheme.onSurface.withValues(alpha: Opacities.medium),
                     ),
                   ),
                   Text(
@@ -893,7 +893,7 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
                   CircularProgressIndicator(
                     value: score / 100,
                     strokeWidth: ChartDimensions.strokeThick,
-                    backgroundColor: theme.colorScheme.outline.withOpacity(Opacities.low),
+                    backgroundColor: theme.colorScheme.outline.withValues(alpha: Opacities.low),
                     valueColor: AlwaysStoppedAnimation(color),
                   ),
                   Text(
@@ -930,10 +930,10 @@ class _PeakAnalysisPageState extends State<PeakAnalysisPage> {
         borderRadius: BorderRadii.smAll,
         border: Border.all(
           color: isWarning
-              ? ScoreColors.warning.withOpacity(Opacities.high)
-              : theme.colorScheme.outline.withOpacity(Opacities.low),
+              ? ScoreColors.warning.withValues(alpha: Opacities.high)
+              : theme.colorScheme.outline.withValues(alpha: Opacities.low),
         ),
-        color: isWarning ? ScoreColors.warning.withOpacity(Opacities.veryLow) : null,
+        color: isWarning ? ScoreColors.warning.withValues(alpha: Opacities.veryLow) : null,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

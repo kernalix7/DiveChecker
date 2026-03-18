@@ -46,7 +46,8 @@ class TrendGraphView extends StatelessWidget {
     final sumXY = chartData.map((e) => e.x * e.y).reduce((a, b) => a + b);
     final sumX2 = chartData.map((e) => e.x * e.x).reduce((a, b) => a + b);
 
-    final slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    final denominator = n * sumX2 - sumX * sumX;
+    final slope = denominator != 0 ? (n * sumXY - sumX * sumY) / denominator : 0.0;
     final intercept = (sumY - slope * sumX) / n;
 
     final trendLine = [
@@ -91,7 +92,7 @@ class TrendGraphView extends StatelessWidget {
           Row(
             children: [
               ChartLegendItem(
-                color: theme.colorScheme.primary.withOpacity(Opacities.mediumHigh),
+                color: theme.colorScheme.primary.withValues(alpha: Opacities.mediumHigh),
                 label: l10n.originalData,
               ),
               Spacing.horizontalMd,
@@ -153,10 +154,10 @@ class _TrendSummaryCard extends StatelessWidget {
 
     return Card(
       elevation: Elevations.none,
-      color: trendColor.withOpacity(Opacities.veryLow),
+      color: trendColor.withValues(alpha: Opacities.veryLow),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.mdAll,
-        side: BorderSide(color: trendColor.withOpacity(Opacities.mediumHigh)),
+        side: BorderSide(color: trendColor.withValues(alpha: Opacities.mediumHigh)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.lg),
@@ -230,7 +231,7 @@ class _TrendChart extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.mdAll,
         side: BorderSide(
-          color: theme.colorScheme.outline.withOpacity(Opacities.low),
+          color: theme.colorScheme.outline.withValues(alpha: Opacities.low),
         ),
       ),
       child: Padding(
@@ -252,7 +253,7 @@ class _TrendChart extends StatelessWidget {
                       drawVerticalLine: false,
                       horizontalInterval: ChartDimensions.intervalMedium,
                       getDrawingHorizontalLine: (value) => FlLine(
-                        color: theme.colorScheme.outline.withOpacity(Opacities.low),
+                        color: theme.colorScheme.outline.withValues(alpha: Opacities.low),
                         strokeWidth: ChartDimensions.strokeNormal,
                       ),
                     ),
@@ -298,7 +299,7 @@ class _TrendChart extends StatelessWidget {
                         isCurved: true,
                         curveSmoothness: 0.2,
                         preventCurveOverShooting: true,
-                        color: theme.colorScheme.primary.withOpacity(Opacities.mediumHigh),
+                        color: theme.colorScheme.primary.withValues(alpha: Opacities.mediumHigh),
                         barWidth: ChartDimensions.barWidthThin,
                         dotData: const FlDotData(show: false),
                       ),
@@ -353,7 +354,7 @@ class _TrendStatsCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.mdAll,
         side: BorderSide(
-          color: theme.colorScheme.outline.withOpacity(Opacities.low),
+          color: theme.colorScheme.outline.withValues(alpha: Opacities.low),
         ),
       ),
       child: Padding(
@@ -379,7 +380,7 @@ class _TrendStatsCard extends StatelessWidget {
             StatRow(
               label: l10n.changeRate,
               value:
-                  '${((trendLine.last.y - trendLine.first.y) / trendLine.first.y * 100).toStringAsFixed(1)}%',
+                  '${(trendLine.first.y != 0 ? (trendLine.last.y - trendLine.first.y) / trendLine.first.y * 100 : 0).toStringAsFixed(1)}%',
             ),
           ],
         ),
@@ -433,10 +434,10 @@ class _TrendInterpretation extends StatelessWidget {
 
     return Card(
       elevation: Elevations.none,
-      color: color.withOpacity(Opacities.veryLow),
+      color: color.withValues(alpha: Opacities.veryLow),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.mdAll,
-        side: BorderSide(color: color.withOpacity(Opacities.mediumHigh)),
+        side: BorderSide(color: color.withValues(alpha: Opacities.mediumHigh)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.lg),

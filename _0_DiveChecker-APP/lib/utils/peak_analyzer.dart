@@ -311,8 +311,8 @@ class PeakAnalyzer {
     // 6단계: 마지막 피크 감지 (끝 부분)
     if (data.length > 5) {
       final lastIdx = data.length - 1;
-      final checkStart = max(lastPeakIndex + minPeakDistance, lastIdx - 10);
-      
+      final checkStart = min(max(lastPeakIndex + minPeakDistance, lastIdx - 10), lastIdx);
+
       int endMaxIdx = checkStart;
       double endMax = data[checkStart].y;
       

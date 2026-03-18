@@ -35,10 +35,10 @@ class StatusBadge extends StatelessWidget {
         vertical: Spacing.sm,
       ),
       decoration: BoxDecoration(
-        color: badgeColor.withOpacity(Opacities.low),
+        color: badgeColor.withValues(alpha: Opacities.low),
         borderRadius: BorderRadius.circular(UIConstants.statusBadgeRadius),
         border: Border.all(
-          color: badgeColor.withOpacity(Opacities.mediumHigh),
+          color: badgeColor.withValues(alpha: Opacities.mediumHigh),
           width: UIConstants.thinBorderWidth,
         ),
       ),
@@ -92,7 +92,7 @@ class RecordingBadge extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: ScoreColors.poor.withOpacity(Opacities.high),
+                color: ScoreColors.poor.withValues(alpha: Opacities.high),
                 blurRadius: Shadows.blurMedium,
                 spreadRadius: Shadows.spreadSmall,
               ),
@@ -134,8 +134,8 @@ class StatusIndicator extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: Spacing.md, vertical: Spacing.sm),
       decoration: BoxDecoration(
         color: isActive
-            ? color.withOpacity(Opacities.low)
-            : theme.colorScheme.outline.withOpacity(Opacities.veryLow),
+            ? color.withValues(alpha: Opacities.low)
+            : theme.colorScheme.outline.withValues(alpha: Opacities.veryLow),
         borderRadius: BorderRadii.smAll,
       ),
       child: Row(
@@ -158,7 +158,7 @@ class StatusIndicator extends StatelessWidget {
               letterSpacing: LetterSpacings.wider,
               color: isActive
                   ? color
-                  : theme.colorScheme.onSurface.withOpacity(Opacities.medium),
+                  : theme.colorScheme.onSurface.withValues(alpha: Opacities.medium),
             ),
           ),
         ],

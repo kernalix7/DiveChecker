@@ -16,31 +16,56 @@ class LocaleProvider extends ChangeNotifier {
 
   Future<void> _loadLocale() async {
     final prefs = await SharedPreferences.getInstance();
-    final localeCode = prefs.getString(_localeKey) ?? 'ko';
-    _locale = Locale(localeCode);
+    final localeTag = prefs.getString(_localeKey) ?? 'ko';
+    _locale = _parseLocaleTag(localeTag);
     notifyListeners();
   }
 
   Future<void> setLocale(Locale locale) async {
     if (_locale == locale) return;
-    
+
     _locale = locale;
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_localeKey, locale.languageCode);
+    await prefs.setString(_localeKey, _toLocaleTag(locale));
     notifyListeners();
+  }
+
+  static String _toLocaleTag(Locale locale) {
+    if (locale.countryCode != null && locale.countryCode!.isNotEmpty) {
+      return '${locale.languageCode}_${locale.countryCode}';
+    }
+    return locale.languageCode;
+  }
+
+  static Locale _parseLocaleTag(String tag) {
+    final parts = tag.split('_');
+    if (parts.length >= 2) {
+      return Locale(parts[0], parts[1]);
+    }
+    return Locale(parts[0]);
   }
 
   static const List<Locale> supportedLocales = [
     Locale('en'),
     Locale('ko'),
+    Locale('ja'),
+    Locale('zh'),
+    Locale('zh', 'TW'),
   ];
 
   static String getDisplayName(Locale locale) {
+    if (locale.languageCode == 'zh' && locale.countryCode == 'TW') {
+      return '繁體中文';
+    }
     switch (locale.languageCode) {
       case 'en':
         return 'English';
       case 'ko':
         return '한국어';
+      case 'ja':
+        return '日本語';
+      case 'zh':
+        return '简体中文';
       default:
         return locale.languageCode;
     }

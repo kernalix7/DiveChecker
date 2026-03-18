@@ -9,6 +9,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [7.2.0] - 2026-03-12 (RTM 7.2)
+
+### Added
+- 🌐 **Multi-language Support (5 Languages)** - Added Japanese (ja), Simplified Chinese (zh), Traditional Chinese (zh_TW) alongside existing English and Korean
+- 🌐 **Locale Provider Enhancement** - Country code support for zh_TW locale with proper SharedPreferences persistence
+
+### Fixed
+- 🐛 **Graph Note Pressure Display** - Fixed critical bug where `note.x` (millisecond timestamp) was incorrectly used as array index; now uses nearest-point lookup
+- 🐛 **Statistics Duration Calculation** - Fixed duration showing 10x incorrect value (divided by 100 instead of 1000)
+- 🐛 **Division by Zero Guards** - Added stdDev > 0 checks for skewness/kurtosis calculations in statistics dashboard
+- 🐛 **Trend Graph Slope** - Fixed division by zero when all X values are identical in linear regression
+- 🐛 **Trend Graph Change Rate** - Fixed division by zero when first trend line Y value is zero
+- 🐛 **Peak Analyzer RangeError** - Fixed `checkStart` exceeding `lastIdx` causing RangeError in peak detection
+- 🐛 **GraphNote Type Safety** - Added explicit type casts (`as int?`, `as num`, `as String`) in `fromMap()` factory
+- 🐛 **SessionRepository Dispose Guard** - Added `_isDisposed` flag to prevent `notifyListeners()` after dispose
+
+### Security
+- 🔒 **Firmware strcpy → strncpy** - Replaced 3 unsafe `strcpy()` calls with bounded `strncpy()` in device settings
+- 🔒 **ECDSA Error Counter** - Added error counter increment on signature failure for diagnostics
+
+### Changed
+- 🌐 **Hardcoded Strings → l10n** - Replaced remaining hardcoded strings in measurement, history, and settings screens
+- 📱 **Web Branding** - Updated web/index.html and web/manifest.json with DiveChecker branding
+
+---
+
+## [7.1.1] - 2026-03-11 (RTM 7.1.1)
+
+### Fixed
+- 🔧 Minor stability improvements and bug fixes
+
+---
+
+## [7.1.0] - 2026-03-10 (RTM 7.1.0)
+
+### Added
+- 📊 **Session Delete Button** - Added delete functionality to history screen
+- 📈 **Fullscreen Chart View** - Added fullscreen chart view for real-time measurement
+
+---
+
 ## [6.0.0] - 2026-03-03 (RTM 6.0)
 
 ### Fixed
@@ -144,7 +185,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.2.0] - 2025-01-XX
+## [1.2.0] - 2026-01-XX
 
 ### Performance Improvements
 - 🚀 **Mobile Chart Performance Optimization**
@@ -168,7 +209,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.1.0] - 2025-01-08
+## [1.1.0] - 2026-01-08
 
 ### Added
 - 🔊 **USB MIDI Communication** - Switched from USB Serial to USB MIDI SysEx protocol

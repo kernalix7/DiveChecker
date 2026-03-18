@@ -62,7 +62,7 @@ lib/
 ├── constants/                   # 상수 정의
 ├── core/                        # DB 인터페이스
 │   └── database/
-├── l10n/                        # 다국어 지원 (EN/KO)
+├── l10n/                        # 다국어 지원 (EN/KO/JA/ZH/ZH_TW)
 ├── models/                      # 데이터 모델
 ├── providers/                   # 상태 관리 (Provider)
 │   ├── midi_provider.dart       # USB MIDI 연결
@@ -138,6 +138,9 @@ lib/
 ### 🌐 다국어 지원
 - 🇺🇸 English
 - 🇰🇷 한국어
+- 🇯🇵 日本語
+- 🇨🇳 简体中文
+- 🇹🇼 繁體中文
 
 ## 테스트
 

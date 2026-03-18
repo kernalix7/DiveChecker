@@ -25,7 +25,7 @@ class OverallGradeCard extends StatelessWidget {
     return Card(
       elevation: Elevations.medium,
       shape: RoundedRectangleBorder(borderRadius: BorderRadii.lgAll),
-      color: gradeColor.withOpacity(Opacities.low),
+      color: gradeColor.withValues(alpha: Opacities.low),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.xl),
         child: Row(
@@ -45,7 +45,7 @@ class OverallGradeCard extends StatelessWidget {
                     l10n.overallGrade,
                     style: TextStyle(
                       fontSize: FontSizes.body,
-                      color: theme.colorScheme.onSurface.withOpacity(Opacities.high),
+                      color: theme.colorScheme.onSurface.withValues(alpha: Opacities.high),
                     ),
                   ),
                   Spacing.verticalXs,
@@ -105,7 +105,7 @@ class _GradeCircle extends StatelessWidget {
         color: color,
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(Opacities.medium),
+            color: color.withValues(alpha: Opacities.medium),
             blurRadius: Spacing.md,
             offset: const Offset(0, Spacing.xs),
           ),
@@ -150,7 +150,7 @@ class _MiniScoreBar extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: FontSizes.xxs,
-              color: theme.colorScheme.onSurface.withOpacity(Opacities.medium),
+              color: theme.colorScheme.onSurface.withValues(alpha: Opacities.medium),
             ),
           ),
         ),
@@ -160,7 +160,7 @@ class _MiniScoreBar extends StatelessWidget {
             child: LinearProgressIndicator(
               value: score / 100,
               minHeight: WidgetSizes.minSize,
-              backgroundColor: theme.colorScheme.outline.withOpacity(Opacities.low),
+              backgroundColor: theme.colorScheme.outline.withValues(alpha: Opacities.low),
               valueColor: AlwaysStoppedAnimation(ScoreColors.fromScore(score)),
             ),
           ),
@@ -171,7 +171,7 @@ class _MiniScoreBar extends StatelessWidget {
           style: TextStyle(
             fontSize: FontSizes.xxs,
             fontWeight: FontWeight.w600,
-            color: theme.colorScheme.onSurface.withOpacity(Opacities.high),
+            color: theme.colorScheme.onSurface.withValues(alpha: Opacities.high),
           ),
         ),
       ],

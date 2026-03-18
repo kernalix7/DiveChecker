@@ -1,0 +1,747 @@
+{
+  "@@locale": "ja",
+
+  "appTitle": "ダイブチェッカー",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+
+  "disclaimerTitle": "重要なお知らせ",
+  "disclaimerContent": "DiveCheckerはフリーダイビングのイコライゼーション練習の参考用として設計されています。\n\n⚠️ 本アプリは医療機器ではなく、医療診断や治療目的には使用できません。\n\n⚠️ ダイビング時は常に安全を最優先にしてください。本アプリのみに頼ってダイビングの判断を行わないでください。\n\n⚠️ 開発者は本アプリの使用中に発生した事故、怪我、損害について一切の責任を負いません。\n\n本アプリを使用することにより、上記の条件に同意したものとみなします。",
+  "disclaimerAgree": "理解し、同意します",
+  "disclaimerDoNotShowAgain": "今後表示しない",
+
+  "home": "ホーム",
+  "monitor": "モニター",
+  "measurement": "測定",
+  "history": "履歴",
+
+  "deviceConnected": "本体接続済み",
+  "deviceNotConnected": "未接続",
+  "deviceDiscovery": "デバイス検索",
+  "searchingDevice": "Divechecker本体を検索しています...",
+  "measurementReady": "測定準備完了",
+  "tapToConnect": "接続ボタンを押して開始してください",
+  "connectDevice": "接続",
+  "disconnect": "接続解除",
+  "searching": "検索中...",
+  "makeSureDevicePowered": "Divechecker本体の電源が入っているか確認してください",
+
+  "sensorError": "センサー接続エラー",
+  "sensorErrorDescription": "測定センサーが検出されません。接続状態を確認してください。",
+
+  "connectionRequired": "接続が必要です",
+  "connectionRequiredMessage": "測定を開始するには、まずDivechecker本体に接続してください。\n\nホームタブからデバイスを接続できます。",
+  "goToHome": "ホームへ移動",
+  "cancel": "キャンセル",
+  "confirm": "確認",
+  "ok": "OK",
+  "close": "閉じる",
+  "add": "追加",
+  "peakAnalysisDisclaimer": "この分析は参考値であり、完全ではありません。結果の解釈にはご注意ください。",
+
+  "connectedSuccess": "Divechecker本体の接続に成功しました！",
+  "disconnected": "Divechecker本体の接続が解除されました",
+  "unsupportedDevice": "非対応デバイス",
+  "onlyDiveCheckerSupported": "DiveCheckerデバイスのみ対応しています。このデバイスはアプリで使用できません。",
+
+  "startMeasurement": "測定開始",
+  "stopMeasurement": "測定終了",
+  "pauseMeasurement": "一時停止",
+  "resumeMeasurement": "再開",
+  "measurementStarted": "測定を開始しました",
+  "measurementPaused": "測定を一時停止しました",
+  "measurementResumed": "測定を再開しました",
+  "measurementComplete": "測定完了",
+  "measurementSaved": "測定を保存しました",
+  "measurementSettings": "測定設定",
+  "measurementNumber": "測定 #{number}",
+  "@measurementNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+
+  "currentPressure": "現在",
+  "maxPressure": "最大",
+  "avgPressure": "平均",
+  "elapsedTime": "時間",
+  "pressureUnit": "圧力単位",
+  "sampleRate": "サンプリングレート",
+  "msInterval": "ms間隔",
+  "maxPressureLabel": "最大圧力",
+  "avgPressureLabel": "平均圧力",
+  "durationLabel": "測定時間",
+  "pressureAnalysis": "圧力分析",
+
+  "saveSession": "セッション保存",
+  "saveSessionQuestion": "この測定セッションを保存しますか？",
+  "save": "保存",
+  "discard": "破棄",
+  "sessionSaved": "セッションを保存しました",
+  "sessionDiscarded": "セッションを破棄しました",
+
+  "noData": "データなし",
+  "awaitingData": "測定データ待機中",
+  "noMeasurements": "測定履歴がまだありません",
+  "startMeasuringHint": "測定タブから最初の測定を開始してください",
+
+  "sessionHistory": "セッション履歴",
+  "noSessions": "セッションがまだありません",
+  "startMeasuringToSee": "測定を開始すると、ここに履歴が表示されます",
+  "deleteSession": "セッション削除",
+  "deleteSessionConfirm": "このセッションを削除しますか？",
+  "delete": "削除",
+  "sessionDeleted": "セッションを削除しました",
+  "deleteRecord": "記録削除",
+  "deleteRecordConfirm": "この測定記録を削除しますか？",
+  "recordDeleted": "記録を削除しました",
+
+  "graphDetails": "グラフ詳細",
+  "zoomIn": "拡大",
+  "zoomOut": "縮小",
+  "resetZoom": "リセット",
+  "panLeft": "左へ",
+  "panRight": "右へ",
+
+  "addNote": "メモ追加",
+  "editNote": "メモ編集",
+  "noteOptional": "メモ（任意）",
+  "noteHint": "このセッションに関するメモを入力してください",
+  "noteContent": "メモ内容",
+  "noteAdded": "メモを追加しました",
+  "noteUpdated": "メモを更新しました",
+  "notes": "メモ",
+  "noteInfo": "メモ情報",
+  "noNotes": "メモがありません",
+  "tapGraphToAddNote": "グラフをタップしてメモを追加してください",
+  "timePoint": "{seconds}秒地点",
+  "@timePoint": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+
+  "statistics": "統計",
+  "duration": "測定時間",
+  "dataPoints": "データポイント",
+
+  "settings": "設定",
+  "language": "言語",
+  "english": "英語",
+  "korean": "韓国語",
+
+  "appearance": "外観",
+  "theme": "テーマ",
+  "themeSystem": "システム設定",
+  "themeLight": "ライト",
+  "themeDark": "ダーク",
+  "themeDescription": "お好みのテーマを選択してください",
+
+  "notifications": "通知",
+  "enableNotifications": "通知を有効にする",
+  "getAlertsForMeasurements": "測定通知を受け取る",
+  "hapticFeedback": "触覚フィードバック",
+  "vibrateOnKeyActions": "主要操作時に振動",
+
+  "editTitle": "タイトル編集",
+  "sessionTitle": "セッションタイトル",
+
+  "about": "情報",
+  "appVersion": "アプリバージョン",
+  "helpAndSupport": "ヘルプとサポート",
+  "licenses": "ライセンス",
+
+  "liveMonitoring": "リアルタイムモニタリング",
+  "currentPressureLabel": "現在の圧力",
+
+  "today": "今日",
+  "yesterday": "昨日",
+  "minutesSeconds": "{minutes}分{seconds}秒",
+  "@minutesSeconds": {
+    "placeholders": {
+      "minutes": {"type": "int"},
+      "seconds": {"type": "int"}
+    }
+  },
+  "secondsOnly": "{seconds}秒",
+  "@secondsOnly": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+
+  "tapToExpand": "タップして拡大",
+
+  "measurementHistory": "測定履歴",
+  "filterByDevice": "デバイス別フィルター",
+  "selectDevice": "デバイス選択",
+  "allDevices": "すべてのデバイス",
+  "sessionsCount": "{count}件の記録",
+  "@sessionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "deviceSettings": "デバイス設定",
+  "deviceName": "デバイス名",
+  "changeDeviceName": "デバイス名変更",
+  "enterNewDeviceName": "新しいデバイス名を入力",
+  "devicePin": "デバイスPIN",
+  "changeDevicePin": "PIN変更",
+  "enterCurrentPin": "現在のPINを入力",
+  "enterNewPin": "新しいPINを入力（4桁）",
+  "confirmNewPin": "新しいPINの確認",
+  "wrongPin": "PINが正しくありません",
+  "pinChanged": "PINを変更しました",
+  "nameChanged": "デバイス名を変更しました",
+  "pinMustBe4Digits": "PINは4桁の数字でなければなりません",
+  "pinsMustMatch": "PINが一致しません",
+  "nameTooLong": "名前が長すぎます（最大全角8文字、半角24文字）",
+
+  "pause": "一時停止",
+  "resume": "再開",
+  "stop": "終了",
+
+  "liveSensorData": "リアルタイムセンサーデータ",
+  "recording": "録画",
+  "openSourceLicenses": "オープンソースライセンス",
+  "appDescription": "フリーダイビング イコライジングツール",
+
+  "samples": "サンプル",
+  "points": "点",
+  "analyticsComingSoon": "高度な分析機能を追加予定",
+  "analytics": "分析",
+
+  "pressureWaveform": "圧力波形",
+  "peak": "最大",
+  "average": "平均",
+  "sec": "秒",
+  "deviceConnectedReady": "デバイス接続済み - 測定準備完了",
+  "deviceNotConnectedShort": "デバイス未接続",
+  "tapToBeginMonitoring": "タップして圧力モニタリングを開始",
+  "sampleCount": "{count}個のサンプル",
+  "@sampleCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "noNotesYetTapEdit": "まだメモがありません。編集ボタンをタップするか、グラフからメモを追加してください。",
+  "madeWithFlutter": "Flutterで開発",
+  "mitLicense": "Apache License 2.0",
+  "mitLicenseContent": "ライセンスとNOTICEを含めて使用・修正・配布が可能であり、すべてのソフトウェアは保証なく「現状のまま（AS IS）」で提供されます。",
+  "midiCommunication": "USB MIDI通信",
+  "chartVisualization": "チャート可視化",
+  "sqliteDatabase": "SQLiteデータベース",
+  "stateManagement": "状態管理",
+  "localStorage": "ローカルストレージ",
+  "internationalization": "多言語対応",
+  "copyright": "著作権",
+  "allRightsReserved": "全著作権所有",
+  "tapToViewFullLicense": "タップしてライセンス全文を表示",
+
+  "analysis": "分析",
+  "advancedAnalysis": "高度な分析",
+  "peakAnalysis": "ピーク分析",
+  "peakAnalysisDesc": "ピーク検出およびイコライゼーションパターン分析",
+  "statisticsDashboard": "統計ダッシュボード",
+  "statisticsDashboardDesc": "日別/週別/月別の統計表示",
+  "segmentAnalysis": "区間分析",
+  "segmentAnalysisDesc": "特定の時間区間の分析と比較",
+  "trendGraph": "トレンドグラフ",
+  "trendGraphDesc": "時間の経過に伴う上達の追跡",
+  "patternRecognition": "パターン認識",
+  "patternRecognitionDesc": "理想的なFrenzelパターンとの比較",
+  "comingSoon": "準備中",
+  "featureInDevelopment": "この機能は現在開発中です。",
+  "noSessionsForAnalysis": "分析するセッションがありません",
+  "selectSession": "セッション選択",
+  "backToMenu": "メニューに戻る",
+  "keyMetrics": "主要指標",
+  "totalPeaks": "総ピーク数",
+  "peaksUnit": "回",
+  "peakFrequency": "頻度",
+  "perMinute": "回/分",
+  "avgPeakInterval": "平均間隔",
+  "avgPeakPressure": "平均ピーク",
+  "performanceScores": "パフォーマンススコア",
+  "consistencyScore": "一貫性スコア",
+  "fatigueIndex": "疲労度指数",
+  "consistencyExcellent": "素晴らしい！非常に一貫したイコライゼーション技術です。",
+  "consistencyGood": "良好です。圧力とタイミングにわずかな変動があります。",
+  "consistencyFair": "普通です。一貫性の向上の余地があります。",
+  "consistencyNeedsWork": "改善が必要です。より一貫した技術を目指して練習しましょう。",
+  "fatigueMinimal": "疲労度はほぼありません。素晴らしい持久力です！",
+  "fatigueLow": "低い疲労度。パフォーマンスがよく維持されています。",
+  "fatigueModerate": "中程度の疲労度。より短いセッションを検討してください。",
+  "fatigueHigh": "高い疲労度。圧力が大幅に低下しました。",
+  "detailedStats": "詳細統計",
+  "maxPeakPressure": "最大ピーク圧力",
+  "minPeakPressure": "最小ピーク圧力",
+  "pressureRange": "圧力範囲",
+  "peakVisualization": "ピーク可視化",
+  "detectedPeaks": "検出されたピーク",
+
+  "dataManagement": "データ管理",
+  "backupData": "データバックアップ",
+  "backupDataDescription": "すべてのデータをJSONファイルにエクスポート",
+  "restoreData": "データ復元",
+  "restoreDataDescription": "バックアップファイルからデータをインポート",
+  "backupSuccess": "バックアップが完了しました",
+  "backupFailed": "バックアップ失敗",
+  "restoreSuccess": "復元が完了しました",
+  "restoreFailed": "復元失敗",
+  "restoreConfirm": "復元の確認",
+  "restoreConfirmMessage": "既存のデータがすべて置き換えられます。続行しますか？",
+  "restore": "復元",
+  "invalidBackupFile": "無効なバックアップファイル",
+  "dataPointsCount": "{count}個のデータポイント",
+  "@dataPointsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "appName": "DiveChecker",
+  "appSubtitle": "イコライゼーション圧力モニター",
+  "appTitleFull": "DiveChecker Pro",
+  "statusOnline": "接続済み",
+  "statusOffline": "未接続",
+  "statusScanning": "検索中...",
+  "statusRecording": "録画",
+  "measurementScreenTitle": "圧力測定",
+  "historyScreenTitle": "測定履歴",
+  "settingsScreenTitle": "設定",
+
+  "segmentAvgPressureComparison": "区間別平均圧力比較",
+  "segmentDetailedAnalysis": "区間別詳細分析",
+  "segmentChangeAnalysis": "区間変化分析",
+  "segmentNumber": "区間 {number}",
+  "@segmentNumber": {
+    "placeholders": {
+      "number": {"type": "int"}
+    }
+  },
+  "segmentTooltip": "区間 {index}\\n平均: {avgPressure} hPa\\nピーク: {peakCount}回",
+  "@segmentTooltip": {
+    "placeholders": {
+      "index": {"type": "int"},
+      "avgPressure": {"type": "String"},
+      "peakCount": {"type": "int"}
+    }
+  },
+  "avgLabel": "平均",
+  "maxLabel": "最大",
+  "peakLabel": "ピーク",
+  "countUnit": "回",
+  "variabilityLabel": "変動性",
+  "notEnoughSegments": "区間が十分ではありません",
+  "stablePressureAnalysis": "安定した圧力を維持しています！最初から最後まで一貫したパフォーマンスです。",
+  "pressureIncreaseAnalysis": "後半にかけて圧力が{percent}%増加しました。ウォームアップ効果が現れたか、より強くイコライゼーションしています。",
+  "@pressureIncreaseAnalysis": {
+    "placeholders": {
+      "percent": {"type": "String"}
+    }
+  },
+  "pressureDecreaseAnalysis": "後半にかけて圧力が{percent}%減少しました。疲労が蓄積している可能性があります。休息を検討してください。",
+  "@pressureDecreaseAnalysis": {
+    "placeholders": {
+      "percent": {"type": "String"}
+    }
+  },
+  "trendStable": "安定",
+  "trendRising": "上昇傾向",
+  "trendFalling": "下降傾向",
+  "firstToLast": "最初 → 最後",
+  "peakCountChange": "ピーク数の変化",
+  "trendRising2": "上昇",
+  "trendFalling2": "下降",
+  "trendMaintained": "維持",
+  "overallTrend": "全体の傾向: {trend}",
+  "@overallTrend": {
+    "placeholders": {
+      "trend": {"type": "String"}
+    }
+  },
+  "slopeLabel": "傾き: {slope} hPa/秒",
+  "@slopeLabel": {
+    "placeholders": {
+      "slope": {"type": "String"}
+    }
+  },
+  "pressureTrendGraph": "圧力トレンドグラフ",
+  "originalData": "元データ",
+  "movingAverage": "移動平均",
+  "trendLine": "トレンドライン",
+  "trendAnalysis": "トレンド分析",
+  "startPressureTrend": "開始圧力（トレンド）",
+  "endPressureTrend": "終了圧力（トレンド）",
+  "changeAmount": "変化量",
+  "changeRate": "変化率",
+  "strongRisingTrend": "強い上昇傾向",
+  "strongRisingDesc": "時間の経過とともに圧力が大幅に増加しています。筋肉がウォームアップし、より強いイコライゼーションが可能になったか、徐々に力を入れています。",
+  "moderateRisingTrend": "緩やかな上昇傾向",
+  "moderateRisingDesc": "圧力が徐々に増加しています。良いウォームアップパターンです。",
+  "stableMaintained": "安定した維持",
+  "stableMaintainedDesc": "圧力が一定に維持されています。素晴らしい持久力と一貫性です！",
+  "moderateFallingTrend": "緩やかな下降傾向",
+  "moderateFallingDesc": "圧力が徐々に減少しています。わずかに疲労が蓄積している可能性があります。休息を検討してください。",
+  "strongFallingTrend": "強い下降傾向",
+  "strongFallingDesc": "圧力が大幅に減少しています。疲労が蓄積しました。十分な休息が必要です。",
+  "continuousPerformanceAnalysis": "連続パフォーマンス分析",
+  "patternComparison": "パターン比較",
+  "peakQualityHeatmap": "ピーク品質ヒートマップ",
+  "patternCharacteristics": "パターン特性",
+  "customTrainingSuggestions": "カスタムトレーニング提案",
+  "maxConsecutive": "最大連続",
+  "avgConsecutive": "平均連続",
+  "qualityPeaks": "高品質ピーク",
+  "excellentConsistency": "卓越しています！長時間にわたり一貫した品質を維持しています。現在のレベルを維持しましょう。",
+  "goodConsistency": "良好です！連続性が優れています。より長い連続維持を目指しましょう。",
+  "moderateConsistency": "中程度です。集中力を維持し、連続した高品質ピークを増やしましょう。",
+  "needsImprovementConsistency": "連続性の向上が必要です。各イコライゼーションにもっと集中しましょう。",
+  "masterPhase": "マスター段階",
+  "masterPhaseDesc": "高度なテクニックの磨き上げと特殊状況への備え",
+  "masterFocuses": "ダイナミックイコライゼーション,高圧状況シミュレーション,持続時間の延長",
+  "advancedPhase": "上級段階",
+  "advancedPhaseDesc": "一貫性の向上と高度なテクニックの習得",
+  "advancedFocuses": "圧力の一貫性強化,リズムの最適化,疲労耐性トレーニング",
+  "intermediatePhase": "中級段階",
+  "intermediatePhaseDesc": "基本技術の安定化と品質向上",
+  "intermediateFocuses": "正確なタイミング,適正圧力の把握,反復練習",
+  "basicPhase": "基礎段階",
+  "basicPhaseDesc": "基本動作の習得と感覚の開発",
+  "basicFocuses": "基本姿勢,呼吸コントロール,低圧力での練習",
+  "currentFocusAreas": "現在注力すべき領域:",
+  "peakScore": "ピーク {index}: {score}点",
+  "@peakScore": {
+    "placeholders": {
+      "index": {"type": "int"},
+      "score": {"type": "String"}
+    }
+  },
+  "rhythmImprovementTraining": "リズム改善トレーニング",
+  "rhythmTip1": "メトロノームアプリを使って一定のリズムに合わせて練習しましょう",
+  "rhythmTip2": "カウント法: 1-2-3-4のリズムでイコライゼーションしましょう",
+  "rhythmTip3": "ゆっくり始めて、徐々にスピードを上げましょう",
+  "pressureConsistencyTraining": "圧力一貫性トレーニング",
+  "pressureTip1": "同じ力で10回連続のイコライゼーションを目標にしましょう",
+  "pressureTip2": "鏡を見ながら頬と舌の動きを一定に保ちましょう",
+  "pressureTip3": "強すぎず、快適な圧力を見つけましょう",
+  "frequencyOptimizationTraining": "頻度最適化トレーニング",
+  "frequencyTip1": "理想的な頻度は毎分20〜40回です",
+  "frequencyTip2": "1回ごとに十分なイコライゼーションを行いましょう",
+  "frequencyTip3": "不必要に速いイコライゼーションは避けましょう",
+  "enduranceTraining": "持久力向上トレーニング",
+  "enduranceTip1": "段階的に練習時間を延ばしましょう",
+  "enduranceTip2": "休息とトレーニングをバランスよく配分しましょう",
+  "enduranceTip3": "規則的な練習が持久力向上の鍵です",
+  "irregularIntervalSuggestion": "イコライゼーションの間隔が不規則です。一定のリズムで練習しましょう。",
+  "irregularPressureSuggestion": "ピーク圧力が不規則です。一定の力でイコライゼーションする練習が必要です。",
+  "lowFrequencySuggestion": "イコライゼーションの頻度が低いです。より頻繁にイコライゼーションする練習をしましょう。",
+  "highFrequencySuggestion": "イコライゼーションが頻繁すぎます。各イコライゼーションにもっと集中しましょう。",
+  "fatigueDetectedSuggestion": "後半にかけて圧力が低下しています。持久力向上トレーニングが役立つかもしれません。",
+  "excellentPattern": "優秀",
+  "excellentPatternDesc": "理想的なFrenzelパターンに近いです！",
+  "minPressureLabel": "最小圧力",
+  "goodPattern": "良好",
+  "goodPatternDesc": "良い基礎力を持っています。いくつかの改善点があります。",
+  "averagePattern": "普通",
+  "averagePatternDesc": "基本パターンは形成されていますが、改善が必要です。",
+  "needsPractice": "練習が必要",
+  "needsPracticeDesc": "さらなる練習が必要です。以下の提案を参考にしてください。",
+  "excellentPatternKeepUp": "現在のパターンはとても良いです！引き続き維持しましょう。",
+  "patternGrade": "パターン等級: {grade}",
+  "@patternGrade": {
+    "placeholders": {
+      "grade": {"type": "String"}
+    }
+  },
+  "rhythmLabel": "リズム",
+  "pressureLabel": "圧力",
+  "frequencyLabel": "頻度",
+  "enduranceLabel": "持久力",
+  "currentPattern": "現在のパターン",
+  "idealPattern": "理想的なパターン",
+  "peakNumber": "ピーク番号",
+  "rhythmConsistency": "リズムの一貫性",
+  "pressureConsistency": "圧力の一貫性",
+  "frequencyAdequacy": "頻度の適切さ",
+  "veryGood": "非常に良い",
+  "good": "良い",
+  "average": "普通",
+  "needsImprovement": "改善が必要",
+  "needsMorePractice": "さらなる練習が必要",
+  "noPeaksDetected": "ピークが検出されませんでした",
+  "selectAll": "全選択",
+  "deselectAll": "選択解除",
+  "avgRiseTime": "平均上昇時間",
+  "avgFallTime": "平均下降時間",
+  "avgPeakWidth": "平均ピーク幅",
+  "outliers": "外れ値",
+  "peakIntensityDistribution": "ピーク強度分布",
+  "rhythmScore": "リズムスコア",
+  "pressureScoreTitle": "圧力スコア",
+  "techniqueScore": "テクニックスコア",
+  "fatigueResistance": "疲労耐性",
+  "strongPeaks": "強いピーク",
+  "moderatePeaks": "中程度のピーク",
+  "weakPeaks": "弱いピーク",
+  "countWithPercent": "{count}個 ({percent}%)",
+  "@countWithPercent": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "percent": {"type": "String"}
+    }
+  },
+  "overallGrade": "総合等級",
+  "excellentFrenzel": "卓越したFrenzel技法！",
+  "veryGoodTechnique": "非常に良い技法です",
+  "satisfactoryLevel": "良好なレベルです",
+  "roomForImprovement": "改善の余地があります",
+  "moreTrainingNeeded": "さらなる練習が必要です",
+  "startFromBasics": "基礎から練習しましょう",
+  "weak": "弱い",
+  "moderate": "中程度",
+  "strong": "強い",
+  "weakIntensity": "弱い (<50hPa)",
+  "moderateIntensity": "中程度 (50-100)",
+  "strongIntensity": "強い (>100)",
+  "stabilityImproving": "安定性が向上中",
+  "stabilityDecreasing": "安定性が低下中",
+  "stabilityMaintained": "安定を維持",
+  "stabilityTrend": "安定性の傾向",
+  "pressureDistribution": "圧力分布",
+  "basicStats": "基本統計",
+  "dataPointsLabel": "データポイント",
+  "countUnitItems": "個",
+  "measurementTime": "測定時間",
+  "standardDeviation": "標準偏差",
+  "advancedStats": "高度な統計",
+  "coefficientOfVariation": "変動係数",
+  "skewness": "歪度",
+  "kurtosis": "尖度",
+  "interquartileRange": "四分位範囲",
+  "dataDispersionIndicator": "データ散布指標",
+  "pressureRangeLabel": "圧力範囲",
+  "rangeLabel": "範囲",
+  "outlierCount": "{count}個 ({percent}%)",
+  "@outlierCount": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "percent": {"type": "String"}
+    }
+  },
+  "percentiles": "パーセンタイル",
+  "median50": "中央値 (50%)",
+  "peakSummary": "ピーク要約",
+  "strongPeakRatio": "強いピークの割合",
+  "dataQuality": "データ品質",
+  "outliersLabel": "外れ値",
+  "samplingLabel": "サンプリング",
+  "dataLabel": "データ",
+  "veryConsistent": "非常に一貫的",
+  "consistent": "一貫的",
+  "averageVariation": "普通",
+  "highVariation": "変動が大きい",
+  "leftSkewed": "左に偏った分布",
+  "rightSkewed": "右に偏った分布",
+  "normalDistribution": "正規分布",
+  "excellent": "優秀",
+  "satisfactory": "良好",
+  "caution": "注意",
+  "symmetricDistribution": "対称分布",
+  "flatDistribution": "平坦な分布",
+  "peakedDistribution": "尖った分布",
+  "normalPressureInterpretation": "圧力分布は正常です。一貫したFrenzel動作を行っています。",
+  "highPressureInterpretation": "高い圧力値が頻繁に現れています。ピーク時の力の加減が必要かもしれません。",
+  "lowPressureInterpretation": "低い圧力値が多いです。より強い圧力をかける練習が必要です。",
+  "concentratedInterpretation": "特定の圧力帯に集中しています。良い一貫性を示しています。",
+  "dispersedInterpretation": "圧力が広く分散しています。一貫性の向上が必要です。",
+  "medianLabel": "中央値: {value} hPa",
+  "@medianLabel": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "selected": "選択中",
+  "excluded": "除外",
+  "keyMetricsWithPeaks": "{metrics}（{count}個のピーク基準）",
+  "@keyMetricsWithPeaks": {
+    "placeholders": {
+      "metrics": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+  "scorePoints": "{score}点",
+  "@scorePoints": {
+    "placeholders": {
+      "score": {"type": "String"}
+    }
+  },
+  "secondsValue": "{value}秒",
+  "@secondsValue": {
+    "placeholders": {
+      "value": {"type": "String"}
+    }
+  },
+  "histogramTooltip": "{rangeStart}-{rangeEnd} hPa\n{count}個",
+  "@histogramTooltip": {
+    "placeholders": {
+      "rangeStart": {"type": "String"},
+      "rangeEnd": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+
+  "selectUsbDevice": "USBデバイス選択",
+  "rescan": "再検索",
+  "availableDevices": "利用可能なデバイス",
+  "noDevicesFound": "USB MIDIデバイスが見つかりません",
+  "connecting": "接続中...",
+  "connectionError": "接続エラー",
+
+  "scanningForDevices": "USBデバイスを検索中...",
+  "scanAgain": "再検索",
+  "deviceConnectedSuccessfully": "デバイスの接続に成功しました！",
+  "clearData": "データ削除",
+  "deleteAllMeasurementData": "すべての測定データを削除",
+  "exportDbToFile": "DBファイルのエクスポート",
+  "exportDatabaseForDebugging": "デバッグ用データベースのエクスポート",
+
+  "deviceAuthenticated": "正規品認証済み",
+  "deviceNotAuthenticated": "認証失敗",
+  "counterfeitWarning": "正規品を確認できません",
+  "counterfeitWarningTitle": "正規品認証失敗",
+  "counterfeitWarningMessage": "接続されたデバイスは正規品のDiveCheckerとして認証されませんでした。\n\n模倣品の使用は測定値が不正確になる可能性があり、技術サポートが制限されます。",
+  "continueAnyway": "このまま使用",
+  "verifyingDevice": "デバイス認証中...",
+
+  "firmwareUpdate": "ファームウェアアップデート",
+  "firmwareUpdateDescription": "デバイスのファームウェア確認とアップデート",
+  "firmwareVerificationSuccess": "署名検証成功",
+  "firmwareVerificationFailed": "署名検証失敗",
+  "firmwareInstall": "インストール",
+  "firmwareRebootToBootsel": "BOOTSELモードで再起動",
+  "firmwareRebootDescription": "デバイスがBOOTSELモードで再起動します。\n\n再起動後:\n1. 「RPI-RP2」ドライブが表示されます\n2. .uf2ファームウェアファイルをコピーしてください\n3. デバイスが自動的に再起動します",
+
+  "currentFirmware": "現在のファームウェア",
+  "dangerZone": "危険な操作",
+  "rebootDevice": "デバイス再起動",
+  "rebootDeviceDescription": "デバイスを再起動します",
+  "rebootConfirmMessage": "デバイスを再起動しますか？接続が切断されます。",
+  "reboot": "再起動",
+  "bootselMode": "BOOTSELモード",
+  "bootselModeDescription": "ファームウェア手動アップデートモード",
+  "bootselRebootSent": "BOOTSEL再起動コマンドを送信しました",
+  "deviceDisconnected": "デバイスの接続が解除されました",
+  "pleaseReconnectDevice": "デバイスを再接続してください。",
+  "connectionLostDuringMeasurement": "測定中に接続が切断されました。記録されたデータを保存しますか？",
+  "pinMismatch": "PINが一致しません",
+  "pinChangeRequested": "PIN変更をリクエストしました",
+  "nameChangeRequested": "名前変更をリクエストしました",
+  "currentPin": "現在のPIN",
+  "newPin": "新しいPIN",
+  "confirmPin": "PINの確認",
+  "newDeviceName": "新しいデバイス名",
+  "pinRequiredForChange": "設定変更にはPINが必要です",
+  "change": "変更",
+  "myDevices": "マイデバイス",
+  "connectedDevices": "接続中のデバイス",
+  "noDeviceConnected": "接続中のデバイスなし",
+
+  "displayResolution": "画面更新レート",
+  "displayResolutionDescription": "チャート画面の更新速度",
+  "outputRate": "出力周波数",
+  "outputRateDescription": "センサー出力周波数",
+  "tapToChange": "タップして変更",
+  "connectDeviceFirst": "先にデバイスを接続してください",
+  "outputRateChanged": "出力周波数が{rate} Hzに変更されました",
+  "noiseFilter": "ノイズフィルター",
+  "noiseFilterDescription": "ノイズ低減のためのソフトウェアフィルター",
+  "filterStrength": "フィルター強度",
+  "filterStrengthDescription": "値が大きいほどより滑らかに表示",
+
+  "atmosphericCalibrating": "大気圧測定中...",
+  "atmosphericRecalibrate": "大気圧の再測定",
+  "atmosphericKeepSensorStill": "センサーを大気中に静かに置いてください",
+  "secondsRemaining": "残り{seconds}秒",
+  "@secondsRemaining": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "selectFile": "ファイル選択",
+  "backToFileList": "ファイル一覧へ",
+  "readyToInstall": "インストール準備完了",
+  "verificationFailed": "検証失敗",
+
+  "reset": "リセット",
+  "fullscreen": "全画面",
+  "waitingForData": "データ待機中...",
+
+  "overrangeWarningTitle": "測定範囲超過！",
+  "overrangeWarningMessage": "センサーの測定範囲を超えました。強く吹いたり吸い込んだりしないでください！センサーが回復中です...",
+
+  "usbMidiDevicesTitle": "USB MIDIデバイス",
+  "connectViaCable": "USBケーブルで圧力センサーを接続してください",
+  "noUsbDevicesFound": "USBデバイスが見つかりません",
+  "connectDeviceViaCable": "USBケーブルでデバイスを接続してください",
+  "diveCheckerCompatible": "DiveChecker互換",
+  "scanFailedError": "検索失敗: {error}",
+  "@scanFailedError": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "connectionErrorWithMessage": "接続エラー: {error}",
+  "@connectionErrorWithMessage": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "noFirmwareFilesFound": "ファームウェアファイルが見つかりません",
+  "lookingForFirmwareFiles": "*.bin または *_signed.bin ファイルを探しています",
+  "deviceNotConnectedError": "デバイスが接続されていません",
+  "signatureValid": "署名確認済み ✓",
+  "signatureInvalid": "署名確認失敗 ✗",
+  "firmwareUntrustedWarning": "このファームウェアは有効なキーで署名されていません。破損しているか、信頼できないソースで作成された可能性があります。",
+  "verifiedFirmwareSaved": "検証済みファームウェアを保存: {filename}",
+  "@verifiedFirmwareSaved": {
+    "placeholders": {
+      "filename": {"type": "String"}
+    }
+  },
+  "calibrationTimedOut": "キャリブレーションタイムアウト — センサーデータが不十分です",
+  "loading": "読み込み中...",
+  "failedToSaveSession": "セッションの保存に失敗しました: {error}",
+  "@failedToSaveSession": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "failedToDeleteSession": "セッションの削除に失敗しました: {error}",
+  "@failedToDeleteSession": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  },
+  "failedToLoadSessionData": "セッションデータの読み込みに失敗しました: {error}",
+  "@failedToLoadSessionData": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  }
+}

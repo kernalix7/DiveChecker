@@ -128,7 +128,7 @@ class CompactMetricCard extends StatelessWidget {
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.lgAll,
-        side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.medium)),
+        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: Opacities.medium)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.md),
@@ -137,7 +137,7 @@ class CompactMetricCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(Spacing.sm),
               decoration: BoxDecoration(
-                color: effectiveIconColor.withOpacity(Opacities.low),
+                color: effectiveIconColor.withValues(alpha: Opacities.low),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, size: IconSizes.md, color: effectiveIconColor),
@@ -212,9 +212,9 @@ class MiniScoreCard extends StatelessWidget {
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.lgAll,
-        side: BorderSide(color: scoreColor.withOpacity(Opacities.mediumHigh)),
+        side: BorderSide(color: scoreColor.withValues(alpha: Opacities.mediumHigh)),
       ),
-      color: scoreColor.withOpacity(Opacities.veryLow),
+      color: scoreColor.withValues(alpha: Opacities.veryLow),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.md),
         child: Column(
@@ -250,7 +250,7 @@ class MiniScoreCard extends StatelessWidget {
                   l10n.points,
                   style: TextStyle(
                     fontSize: FontSizes.body,
-                    color: scoreColor.withOpacity(Opacities.almostFull),
+                    color: scoreColor.withValues(alpha: Opacities.almostFull),
                   ),
                 ),
               ],

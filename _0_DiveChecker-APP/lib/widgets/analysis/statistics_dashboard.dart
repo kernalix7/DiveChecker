@@ -53,12 +53,12 @@ class StatisticsDashboard extends StatelessWidget {
     final cv = mean != 0 ? (stdDev / mean * 100) : 0.0;
 
     // 왜도 (Skewness) - 분포의 비대칭성
-    final skewness = count > 2
+    final skewness = count > 2 && stdDev > 0
         ? values.map((v) => pow((v - mean) / stdDev, 3)).reduce((a, b) => a + b) / count
         : 0.0;
 
     // 첨도 (Kurtosis) - 분포의 뾰족함
-    final kurtosis = count > 3
+    final kurtosis = count > 3 && stdDev > 0
         ? (values.map((v) => pow((v - mean) / stdDev, 4)).reduce((a, b) => a + b) / count) - 3
         : 0.0;
 
@@ -80,7 +80,7 @@ class StatisticsDashboard extends StatelessWidget {
 
     // 측정 시간
     final durationSeconds =
-        chartData.isNotEmpty ? (chartData.last.x - chartData.first.x) / 100 : 0.0;
+        chartData.isNotEmpty ? (chartData.last.x - chartData.first.x) / 1000 : 0.0;
 
     // 샘플링 레이트
     final samplingRate = durationSeconds > 0 ? count / durationSeconds : 0.0;
@@ -230,7 +230,7 @@ class StatisticsDashboard extends StatelessWidget {
             elevation: Elevations.none,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadii.mdAll,
-              side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.low)),
+              side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: Opacities.low)),
             ),
             child: Padding(
               padding: const EdgeInsets.all(Spacing.lg),
@@ -275,7 +275,7 @@ class StatisticsDashboard extends StatelessWidget {
             elevation: Elevations.none,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadii.mdAll,
-              side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.low)),
+              side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: Opacities.low)),
             ),
             child: Padding(
               padding: const EdgeInsets.all(Spacing.lg),
@@ -307,7 +307,7 @@ class StatisticsDashboard extends StatelessWidget {
               elevation: Elevations.none,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadii.mdAll,
-                side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.low)),
+                side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: Opacities.low)),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(Spacing.lg),
@@ -433,7 +433,7 @@ class _DataQualityCard extends StatelessWidget {
     return Card(
       elevation: Elevations.low,
       shape: RoundedRectangleBorder(borderRadius: BorderRadii.lgAll),
-      color: color.withOpacity(Opacities.veryLow),
+      color: color.withValues(alpha: Opacities.veryLow),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.lg),
         child: Row(
@@ -470,7 +470,7 @@ class _DataQualityCard extends StatelessWidget {
                     l10n.dataQuality,
                     style: TextStyle(
                       fontSize: FontSizes.bodySm,
-                      color: theme.colorScheme.onSurface.withOpacity(Opacities.high),
+                      color: theme.colorScheme.onSurface.withValues(alpha: Opacities.high),
                     ),
                   ),
                   Spacing.verticalXs,
@@ -569,7 +569,7 @@ class _AdvancedStatCard extends StatelessWidget {
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.mdAll,
-        side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.low)),
+        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: Opacities.low)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.md),
@@ -584,7 +584,7 @@ class _AdvancedStatCard extends StatelessWidget {
                   title,
                   style: TextStyle(
                     fontSize: FontSizes.body,
-                    color: theme.colorScheme.onSurface.withOpacity(Opacities.veryHigh),
+                    color: theme.colorScheme.onSurface.withValues(alpha: Opacities.veryHigh),
                   ),
                 ),
               ],
@@ -658,7 +658,7 @@ class _DistributionChart extends StatelessWidget {
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.mdAll,
-        side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.low)),
+        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: Opacities.low)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.lg),
@@ -720,7 +720,7 @@ class _DistributionChart extends StatelessWidget {
                   barRods: [
                     BarChartRodData(
                       toY: entry.value.toDouble(),
-                      color: theme.colorScheme.primary.withOpacity(Opacities.veryHigh),
+                      color: theme.colorScheme.primary.withValues(alpha: Opacities.veryHigh),
                       width: ChartDimensions.barWidthLarge,
                       borderRadius: BorderRadius.vertical(top: Radius.circular(BorderRadii.xs)),
                     ),
@@ -779,9 +779,9 @@ class _DistributionInterpretation extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(Spacing.md),
       decoration: BoxDecoration(
-        color: color.withOpacity(Opacities.veryLow),
+        color: color.withValues(alpha: Opacities.veryLow),
         borderRadius: BorderRadii.mdAll,
-        border: Border.all(color: color.withOpacity(Opacities.mediumHigh)),
+        border: Border.all(color: color.withValues(alpha: Opacities.mediumHigh)),
       ),
       child: Row(
         children: [
@@ -841,7 +841,7 @@ class _PercentileChart extends StatelessWidget {
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.mdAll,
-        side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.low)),
+        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: Opacities.low)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.lg),
@@ -863,7 +863,7 @@ class _PercentileChart extends StatelessWidget {
                         child: Container(
                           height: Spacing.xs,
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.outline.withOpacity(Opacities.mediumHigh),
+                            color: theme.colorScheme.outline.withValues(alpha: Opacities.mediumHigh),
                             borderRadius: BorderRadii.xsAll,
                           ),
                         ),
@@ -876,7 +876,7 @@ class _PercentileChart extends StatelessWidget {
                         child: Container(
                           height: WidgetSizes.boxplotElementHeight,
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.primary.withOpacity(Opacities.mediumHigh),
+                            color: theme.colorScheme.primary.withValues(alpha: Opacities.mediumHigh),
                             borderRadius: BorderRadii.xsAll,
                             border: Border.all(color: theme.colorScheme.primary),
                           ),
@@ -911,7 +911,7 @@ class _PercentileChart extends StatelessWidget {
                             Container(
                               width: ChartDimensions.lineWidthSmall,
                               height: WidgetSizes.markerHeight,
-                              color: theme.colorScheme.outline.withOpacity(Opacities.high),
+                              color: theme.colorScheme.outline.withValues(alpha: Opacities.high),
                             ),
                           ],
                         ),
@@ -932,7 +932,7 @@ class _PercentileChart extends StatelessWidget {
                             Container(
                               width: ChartDimensions.lineWidthSmall,
                               height: WidgetSizes.markerHeight,
-                              color: theme.colorScheme.outline.withOpacity(Opacities.high),
+                              color: theme.colorScheme.outline.withValues(alpha: Opacities.high),
                             ),
                           ],
                         ),

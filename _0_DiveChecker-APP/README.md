@@ -65,7 +65,7 @@ lib/
 ├── constants/                   # Constants definition
 ├── core/                        # DB interface
 │   └── database/
-├── l10n/                        # Localization (EN/KO)
+├── l10n/                        # Localization (EN/KO/JA/ZH/ZH_TW)
 ├── models/                      # Data models
 ├── providers/                   # State management (Provider)
 │   ├── midi_provider.dart       # USB MIDI connection
@@ -141,6 +141,9 @@ lib/
 ### 🌐 Multi-language Support
 - 🇺🇸 English
 - 🇰🇷 Korean
+- 🇯🇵 Japanese
+- 🇨🇳 Simplified Chinese
+- 🇹🇼 Traditional Chinese
 
 ## Testing
 

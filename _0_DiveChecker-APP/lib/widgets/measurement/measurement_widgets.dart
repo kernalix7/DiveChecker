@@ -33,7 +33,7 @@ class PressureDisplay extends StatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadii.lgAll,
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(Opacities.mediumHigh),
+          color: theme.colorScheme.outline.withValues(alpha: Opacities.mediumHigh),
           width: ChartDimensions.lineWidthSmall,
         ),
       ),
@@ -62,7 +62,7 @@ class PressureDisplay extends StatelessWidget {
             style: TextStyle(
               fontSize: FontSizes.body,
               fontWeight: FontWeight.w600,
-              color: theme.colorScheme.onSurface.withOpacity(Opacities.high),
+              color: theme.colorScheme.onSurface.withValues(alpha: Opacities.high),
             ),
           ),
           const Spacer(),
@@ -82,7 +82,7 @@ class _RecordingBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: Spacing.sm, vertical: Spacing.xs),
       decoration: BoxDecoration(
-        color: theme.colorScheme.error.withOpacity(Opacities.mediumLow),
+        color: theme.colorScheme.error.withValues(alpha: Opacities.mediumLow),
         borderRadius: BorderRadii.xsAll,
       ),
       child: Row(
@@ -136,7 +136,7 @@ class StatCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadii.mdAll,
-        border: Border.all(color: color.withOpacity(Opacities.mediumHigh), width: ChartDimensions.strokeSmMedium),
+        border: Border.all(color: color.withValues(alpha: Opacities.mediumHigh), width: ChartDimensions.strokeSmMedium),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -144,7 +144,7 @@ class StatCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(Spacing.sm),
             decoration: BoxDecoration(
-              color: color.withOpacity(Opacities.veryLow),
+              color: color.withValues(alpha: Opacities.veryLow),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: color, size: IconSizes.md),
@@ -154,7 +154,7 @@ class StatCard extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: FontSizes.xs,
-              color: theme.colorScheme.onSurface.withOpacity(Opacities.high),
+              color: theme.colorScheme.onSurface.withValues(alpha: Opacities.high),
               fontWeight: FontWeight.bold,
               letterSpacing: LetterSpacings.wider,
             ),
@@ -183,7 +183,7 @@ class StatCard extends StatelessWidget {
                 unit,
                 style: TextStyle(
                   fontSize: FontSizes.sm,
-                  color: color.withOpacity(Opacities.veryHigh),
+                  color: color.withValues(alpha: Opacities.veryHigh),
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -319,7 +319,7 @@ class PressureChart extends StatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadii.lgAll,
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(Opacities.mediumHigh),
+          color: theme.colorScheme.outline.withValues(alpha: Opacities.mediumHigh),
           width: ChartDimensions.lineWidthSmall,
         ),
       ),
@@ -337,10 +337,10 @@ class PressureChart extends StatelessWidget {
                 right: Spacing.xl,
               ),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(Opacities.subtle),
+                color: Colors.black.withValues(alpha: Opacities.subtle),
                 borderRadius: BorderRadii.mdAll,
                 border: Border.all(
-                  color: theme.colorScheme.outline.withOpacity(Opacities.low),
+                  color: theme.colorScheme.outline.withValues(alpha: Opacities.low),
                 ),
               ),
               child: data.isEmpty
@@ -376,14 +376,14 @@ class PressureChart extends StatelessWidget {
           verticalInterval: xInterval,
           getDrawingHorizontalLine: (value) => FlLine(
             color: isDark
-                ? theme.colorScheme.outline.withOpacity(Opacities.high)
-                : theme.colorScheme.outline.withOpacity(Opacities.veryHigh),
+                ? theme.colorScheme.outline.withValues(alpha: Opacities.high)
+                : theme.colorScheme.outline.withValues(alpha: Opacities.veryHigh),
             strokeWidth: ChartDimensions.strokeThin,
           ),
           getDrawingVerticalLine: (value) => FlLine(
             color: isDark
-                ? theme.colorScheme.outline.withOpacity(Opacities.moderate)
-                : theme.colorScheme.outline.withOpacity(Opacities.strong),
+                ? theme.colorScheme.outline.withValues(alpha: Opacities.moderate)
+                : theme.colorScheme.outline.withValues(alpha: Opacities.strong),
             strokeWidth: ChartDimensions.strokeThin,
           ),
         ),
@@ -440,8 +440,8 @@ class PressureChart extends StatelessWidget {
           show: true,
           border: Border.all(
             color: isDark
-                ? theme.colorScheme.outline.withOpacity(Opacities.mediumHigh)
-                : theme.colorScheme.outline.withOpacity(Opacities.high),
+                ? theme.colorScheme.outline.withValues(alpha: Opacities.mediumHigh)
+                : theme.colorScheme.outline.withValues(alpha: Opacities.high),
             width: ChartDimensions.strokeSmMedium,
           ),
         ),
@@ -461,7 +461,7 @@ class PressureChart extends StatelessWidget {
           horizontalLines: [
             HorizontalLine(
               y: 0,
-              color: ScoreColors.poor.withOpacity(Opacities.high),
+              color: ScoreColors.poor.withValues(alpha: Opacities.high),
               strokeWidth: ChartDimensions.strokeSmMedium,
               dashArray: ChartDimensions.dashShort,
             ),
@@ -477,7 +477,7 @@ class PressureChart extends StatelessWidget {
               vertical: Spacing.xs,
             ),
             tooltipRoundedRadius: BorderRadii.xs,
-            getTooltipColor: (spot) => theme.colorScheme.surfaceContainerHighest.withOpacity(Opacities.veryHigh),
+            getTooltipColor: (spot) => theme.colorScheme.surfaceContainerHighest.withValues(alpha: Opacities.veryHigh),
             getTooltipItems: (touchedSpots) {
               return touchedSpots.map((spot) {
                 final seconds = (spot.x / 1000.0).toStringAsFixed(1);
@@ -522,7 +522,7 @@ class _ChartHeader extends StatelessWidget {
           style: TextStyle(
             fontSize: FontSizes.bodySm,
             fontWeight: FontWeight.bold,
-            color: theme.colorScheme.onSurface.withOpacity(Opacities.high),
+            color: theme.colorScheme.onSurface.withValues(alpha: Opacities.high),
             letterSpacing: LetterSpacings.widest,
           ),
         ),
@@ -535,7 +535,7 @@ class _ChartHeader extends StatelessWidget {
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
             tooltip: l10n.fullscreen,
-            color: theme.colorScheme.onSurface.withOpacity(Opacities.high),
+            color: theme.colorScheme.onSurface.withValues(alpha: Opacities.high),
           ),
       ],
     );
@@ -555,7 +555,7 @@ class _EmptyChartPlaceholder extends StatelessWidget {
           Icon(
             Icons.show_chart_rounded,
             size: IconSizes.xHuge,
-            color: theme.colorScheme.outline.withOpacity(Opacities.high),
+            color: theme.colorScheme.outline.withValues(alpha: Opacities.high),
           ),
           Spacing.verticalMd,
           Text(
@@ -588,8 +588,8 @@ class ConnectionStatusBanner extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: Spacing.lg, vertical: Spacing.md),
       decoration: BoxDecoration(
         color: isConnected
-            ? theme.colorScheme.secondary.withOpacity(Opacities.veryLow)
-            : theme.colorScheme.error.withOpacity(Opacities.veryLow),
+            ? theme.colorScheme.secondary.withValues(alpha: Opacities.veryLow)
+            : theme.colorScheme.error.withValues(alpha: Opacities.veryLow),
         borderRadius: BorderRadii.mdAll,
         border: Border.all(
           color: isConnected
@@ -738,7 +738,7 @@ class MeasurementControlButtons extends StatelessWidget {
                 backgroundColor: theme.colorScheme.primary,
                 foregroundColor: Colors.white,
                 elevation: Elevations.low,
-                shadowColor: theme.colorScheme.primary.withOpacity(Opacities.high),
+                shadowColor: theme.colorScheme.primary.withValues(alpha: Opacities.high),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadii.mdAll,
                 ),
@@ -749,7 +749,7 @@ class MeasurementControlButtons extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(Spacing.xsPlus),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(Opacities.low),
+                      color: Colors.white.withValues(alpha: Opacities.low),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(Icons.play_arrow_rounded, size: IconSizes.md),

@@ -92,10 +92,10 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
     final noteController = TextEditingController();
     final state = controller.state;
     final settings = context.read<SettingsProvider>();
-    
+
     // Capture references before async gap
     final sessionRepo = context.read<SessionRepository>();
-    
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -164,7 +164,7 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
           ),
         ],
       ),
-    );
+    ).then((_) => noteController.dispose());
   }
 
   @override
@@ -288,7 +288,7 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
           ),
         ],
       ),
-    );
+    ).then((_) => noteController.dispose());
   }
 
   /// Save session with pre-captured SessionRepository (avoids context.read after async gap)
@@ -296,34 +296,44 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
     final controller = _controller;
     if (controller == null) return null;
 
-    // Get device info from MidiProvider
-    final midiProvider = _midiProvider;
-    final deviceSerial = midiProvider?.deviceSerial;
-    final deviceName = midiProvider?.deviceName;
+    try {
+      // Get device info from MidiProvider
+      final midiProvider = _midiProvider;
+      final deviceSerial = midiProvider?.deviceSerial;
+      final deviceName = midiProvider?.deviceName;
 
-    final sessionId = await controller.saveSession(
-      notes,
-      deviceSerial: deviceSerial,
-      deviceName: deviceName,
-    );
+      final sessionId = await controller.saveSession(
+        notes,
+        deviceSerial: deviceSerial,
+        deviceName: deviceName,
+      );
 
-    // Add to SessionRepository cache
-    final state = controller.state;
-    final newSession = SessionData(
-      id: sessionId,
-      date: state.sessionStartTime ?? DateTime.now(),
-      maxPressure: state.maxPressure,
-      avgPressure: state.avgPressure,
-      duration: controller.actualDurationSeconds,
-      notes: notes,
-      deviceSerial: deviceSerial,
-      deviceName: deviceName,
-      chartData: List<ChartPoint>.from(state.pressureData),
-      graphNotes: [],
-    );
+      // Add to SessionRepository cache
+      final state = controller.state;
+      final newSession = SessionData(
+        id: sessionId,
+        date: state.sessionStartTime ?? DateTime.now(),
+        maxPressure: state.maxPressure,
+        avgPressure: state.avgPressure,
+        duration: controller.actualDurationSeconds,
+        notes: notes,
+        deviceSerial: deviceSerial,
+        deviceName: deviceName,
+        chartData: List<ChartPoint>.from(state.pressureData),
+        graphNotes: [],
+      );
 
-    sessionRepo.addSession(newSession);
-    return sessionId;
+      sessionRepo.addSession(newSession);
+      return sessionId;
+    } catch (e) {
+      _isShowingDisconnectDialog = false;
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.failedToSaveSession(e.toString()))),
+        );
+      }
+      return null;
+    }
   }
 
   Future<void> _saveSession(String notes) async {
@@ -361,7 +371,7 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save session: $e')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.failedToSaveSession(e.toString()))),
         );
       }
     }
@@ -503,7 +513,7 @@ class _RecordingIndicator extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: ScoreColors.poor.withOpacity(Opacities.mediumHigh),
+                  color: ScoreColors.poor.withValues(alpha: Opacities.mediumHigh),
                   blurRadius: Shadows.blurMedium,
                   spreadRadius: Shadows.spreadSmall,
                 ),

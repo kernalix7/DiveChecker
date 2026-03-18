@@ -142,7 +142,7 @@ class _SegmentComparisonChart extends StatelessWidget {
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.mdAll,
-        side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.low)),
+        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: Opacities.low)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.lg),
@@ -227,7 +227,7 @@ class _SegmentComparisonChart extends StatelessWidget {
                     show: true,
                     drawVerticalLine: false,
                     getDrawingHorizontalLine: (value) => FlLine(
-                      color: theme.colorScheme.outline.withOpacity(Opacities.low),
+                      color: theme.colorScheme.outline.withValues(alpha: Opacities.low),
                       strokeWidth: ChartDimensions.strokeNormal,
                     ),
                   ),
@@ -297,7 +297,7 @@ class _SegmentCard extends StatelessWidget {
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.lgAll,
-        side: BorderSide(color: color.withOpacity(Opacities.high), width: ChartDimensions.strokeSmMedium),
+        side: BorderSide(color: color.withValues(alpha: Opacities.high), width: ChartDimensions.strokeSmMedium),
       ),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.lg),
@@ -450,7 +450,7 @@ class _SegmentChangeAnalysis extends StatelessWidget {
       elevation: Elevations.none,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadii.lgAll,
-        side: BorderSide(color: theme.colorScheme.outline.withOpacity(Opacities.medium)),
+        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: Opacities.medium)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.lg),
