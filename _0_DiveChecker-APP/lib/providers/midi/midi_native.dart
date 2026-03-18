@@ -65,9 +65,21 @@ class NativeMidiHandler implements MidiHandler {
         (d) => d.id == deviceId,
         orElse: () => throw Exception('Device not found'),
       );
-      
+
+      // Reset the global MIDI data listener to drain any stale OS-level buffers
+      // from the previous device connection
+      _dataSubscription?.cancel();
+
       await _midiCommand.connectToDevice(device);
       _connectedDevice = device;
+
+      // Re-establish the listener on a fresh stream state
+      _dataSubscription = _midiCommand.onMidiDataReceived?.listen((packet) {
+        if (packet.data.isNotEmpty && !_isDisposed) {
+          _dataController.add(Uint8List.fromList(packet.data));
+        }
+      });
+
       return true;
     } catch (e) {
       if (kDebugMode) debugPrint('Native MIDI connect error: $e');
@@ -77,6 +89,10 @@ class NativeMidiHandler implements MidiHandler {
   
   @override
   Future<void> disconnect() async {
+    // Cancel the data listener to stop processing stale buffered data
+    _dataSubscription?.cancel();
+    _dataSubscription = null;
+
     final device = _connectedDevice;
     _connectedDevice = null;  // Clear FIRST to prevent any further writes
     if (device != null) {

@@ -369,11 +369,21 @@ class MidiProvider extends ChangeNotifier {
   /// Connect to a MIDI device
   Future<bool> connect(MidiDeviceInfo device) async {
     _errorMessage = null;
+
+    // Clean up previous connection if switching devices
+    if (_connectedDevice != null) {
+      await disconnect();
+    }
+
     _setState(MidiConnectionState.connecting);
 
     try {
       await _midiHandler.connect(device.device.id);
       _connectedDevice = device;
+
+      // Clear SysEx buffer to prevent cross-device data contamination
+      _sysexBuffer.clear();
+      _inSysex = false;
 
       // Listen to MIDI messages
       _midiSubscription?.cancel();
