@@ -1,4 +1,4 @@
-.proj-private
+.priv-storage/
 # ===== Security Keys - NEVER COMMIT =====
 # ECDSA private keys - multiple layers of protection
 *.pem
@@ -63,7 +63,6 @@ _0_DiveChecker-APP/android/app/*.jks
 0_Android-APP/app/*.iml
 
 # ===== IDE =====
-.vscode/
 .idea/
 *.swp
 *.swo
@@ -76,5 +75,9 @@ Thumbs.db
 0_Package
 website/
 
-# ===== AI Reference =====
-AI_REFERENCE.md
+# ===== AI config (실제 파일은 .priv-storage/, 루트는 심볼릭 링크) =====
+CLAUDE.md
+.cursorrules
+.claude
+.vscode
+WORK_STATUS.md
