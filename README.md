@@ -22,14 +22,14 @@
 
 DiveChecker is a professional monitoring system that helps freedivers effectively practice **equalization (ear pressure equalization)** training.
 
-Using a pressure sensor connected to a mouthpiece, it precisely measures subtle pressure changes (-10 to +200 hPa) when blowing or sucking through the mouth with **100Hz internal sampling + configurable output rate (4-50Hz)**, and visualizes them in real-time graphs.
+Using a pressure sensor connected to a mouthpiece, it precisely measures subtle pressure changes (-10 to +200 hPa) when blowing or sucking through the mouth with **160Hz internal sampling + configurable output rate (4-50Hz)**, and visualizes them in real-time graphs.
 
-### Architecture (v6.0.0)
+### Architecture (v7.2.0)
 
 **Smart MCU + Intelligent App**
 
 ```
-[BMP280] → 100Hz → [MCU] → USB MIDI → [Flutter App]
+[BMP280] → 160Hz → [MCU] → USB MIDI → [Flutter App]
     │                   │                       │
         └── Raw sensor      └── IIR + Averaging    └── All logic:
             data               Firmware filtering      - Display
@@ -67,7 +67,7 @@ Using a pressure sensor connected to a mouthpiece, it precisely measures subtle 
 <td width="50%">
 
 **Sensor Specs**
-- **Sampling**: 100Hz internal → 4-50Hz output (configurable)
+- **Sampling**: 160Hz internal → 4-50Hz output (configurable)
 - **Firmware Filtering**: IIR x2 + Averaging
 - **Latency**: ~10ms (sensor to app)
 - **Pressure Range**: -10 to +200 hPa (negative/positive)
@@ -170,7 +170,7 @@ Detailed equalization quality analysis after measurement:
 
 | Feature | Description |
 |---------|-------------|
-| **Dual-Core Isolation** | Core 0: USB/MIDI, Core 1: Sensor (100Hz) |
+| **Dual-Core Isolation** | Core 0: USB/MIDI, Core 1: Sensor (160Hz) |
 | **I2C Mutex Protection** | Cross-core access serialization |
 | **FIFO Communication** | Lock-free inter-core message passing |
 | **Saturating Counters** | Diagnostics counters never overflow |
@@ -271,7 +271,7 @@ cmake .. && make
 │   └── Divechecker/
 │       ├── Divechecker.c           # Main firmware
 │       ├── CMakeLists.txt
-│       ├── 100Hz internal sampling (BMP280)
+│       ├── 160Hz internal sampling (BMP280)
 │       ├── Dual-core architecture
 │       ├── IIR x2 + Averaging filter
 │       ├── USB MIDI SysEx protocol
@@ -341,7 +341,7 @@ GP16         ────── WS2812 LED
 ## 🔮 Roadmap
 
 ### ✅ v1.0.0 Completed
-- [x] 🎯 **Real-time pressure monitoring** - 100Hz internal + configurable output
+- [x] 🎯 **Real-time pressure monitoring** - 160Hz internal + configurable output
 - [x] 📊 **Peak analysis** - Rhythm, pressure, technique scores
 - [x] 💾 **Session management** - Record, review, notes
 - [x] 🌐 **Multi-language** - English, Korean, Japanese, Chinese (Simplified/Traditional)
@@ -372,7 +372,7 @@ flutter pub get
 flutter run
 ```
 
-See [CONTRIBUTING.md](_0_DiveChecker-APP/CONTRIBUTING.md) for details.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ---
 
