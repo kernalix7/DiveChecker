@@ -29,6 +29,9 @@ ecdsa_private_keys.*
 0_Pico2-Firmware/Divechecker/keys/
 0_Pico2-Firmware/**/keys/
 
+# Device serial registry (sensitive device inventory)
+divechecker_serials.csv
+
 # ===== Build outputs =====
 build/
 *.uf2
