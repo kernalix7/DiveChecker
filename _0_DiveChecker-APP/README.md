@@ -109,7 +109,7 @@ lib/
 - Configurable output rate (4-50 Hz)
 
 ### 📊 Real-time Pressure Monitoring
-- 100Hz internal sampling, configurable output (4-50Hz, default 8Hz)
+- 160Hz internal sampling, configurable output (4-50Hz, default 8Hz)
 - Real-time line chart (fl_chart) with smooth bezier curves
 - Dynamic Y-axis auto-scaling on measurement & monitor charts
 - Pinch zoom / drag pan gestures
