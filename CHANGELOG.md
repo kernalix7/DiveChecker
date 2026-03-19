@@ -9,16 +9,45 @@ and this project aims to follow [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [8.1.0] — 2026-03-19
+
+### Added
+- macOS App Store Connect auto-upload in CI/CD pipeline
+- macOS ExportOptions.plist for signed distribution
+
+### Changed
+- Optimized chart rendering with single-pass min/max calculation
+- Replaced Consumer with Selector in measurement screen
+- Aligned all docs and app constants with firmware source of truth (100Hz, 300-1250 hPa, 30s keepalive, 256-byte SysEx)
+- Protocol table updated to SysEx hex command table
+- Firmware tree updated to actual file names
+- Moved README.ko.md to docs/ per bilingual convention
+
+### Fixed
+- Mounted check and error handling in graph notes loading
+- StreamController cleanup in MidiProvider shutdown
+- Reset MIDI data listener on device switch to prevent staircase graph
+- CAD README: BMP280-5V corrected to BME280-5V
+- App README: Dart SDK 3.0+ corrected to 3.10+, removed nonexistent integration_test/
+- Graph detail page maxY clamp raised from 100 to 200
+
+### Security
+- Hardened .gitignore: added .p12, .p8, .env, provisioning profile rules
+- Removed tmp-igbkp/ from git tracking
+
+## [8.0.1] — 2026-03-19
+
+### Fixed
+- Reset MIDI data listener on device switch to prevent staircase graph
+
 ## [8.0.0] — 2026-03-18 (RTM 8.0)
 
 ### Added
 - GitHub standard files: SECURITY, CONTRIBUTING, CODE_OF_CONDUCT, CHANGELOG (en+ko)
 - GitHub templates: PR template, bug report, feature request issue templates
 - Bilingual documentation structure (docs/ directory with Korean translations)
-- AI multi-tool project configuration (.priv-storage/)
 
 ### Fixed
-- Sampling rate documentation corrected from 100Hz to 160Hz across all READMEs
 - CONTRIBUTING.md link in root README now points to correct location
 
 ## [7.2.0] — 2026-03-12 (RTM 7.2)

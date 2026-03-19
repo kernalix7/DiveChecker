@@ -9,16 +9,45 @@
 
 ## [Unreleased]
 
+## [8.1.0] — 2026-03-19
+
+### 추가됨
+- macOS App Store Connect CI/CD 자동 업로드
+- macOS ExportOptions.plist (서명 배포용)
+
+### 변경됨
+- 차트 렌더링 최적화: 단일 패스 min/max 계산
+- 측정 화면 Consumer → Selector 교체 (불필요한 리빌드 감소)
+- 전체 문서 및 앱 상수를 펌웨어 소스에 맞춤 (100Hz, 300-1250 hPa, 30초 타임아웃, 256바이트 SysEx)
+- 프로토콜 테이블: 레거시 텍스트 → SysEx hex 명령 테이블
+- 펌웨어 트리: 기능 설명 → 실제 파일명
+- README.ko.md를 docs/로 이동 (이중언어 규칙)
+
+### 수정됨
+- 그래프 노트 로딩에 mounted 체크 및 에러 핸들링 추가
+- MidiProvider shutdown 시 StreamController 정리
+- 디바이스 전환 시 MIDI 데이터 리스너 리셋 (계단식 그래프 방지)
+- CAD README: BMP280-5V → BME280-5V 수정
+- 앱 README: Dart SDK 3.0+ → 3.10+, 존재하지 않는 integration_test/ 제거
+- 그래프 상세 페이지 maxY 클램프 100 → 200
+
+### 보안
+- .gitignore 강화: .p12, .p8, .env, 프로비저닝 프로파일 규칙 추가
+- tmp-igbkp/ git 추적 제거
+
+## [8.0.1] — 2026-03-19
+
+### 수정됨
+- 디바이스 전환 시 MIDI 데이터 리스너 리셋 (계단식 그래프 방지)
+
 ## [8.0.0] — 2026-03-18 (RTM 8.0)
 
 ### 추가됨
 - GitHub 표준 파일: SECURITY, CONTRIBUTING, CODE_OF_CONDUCT, CHANGELOG (영어+한국어)
 - GitHub 템플릿: PR 템플릿, 버그 리포트, 기능 요청 이슈 템플릿
 - 이중언어 문서 구조 (docs/ 디렉토리 한국어 번역)
-- AI 멀티툴 프로젝트 설정 (.priv-storage/)
 
 ### 수정됨
-- 샘플링 레이트 문서 100Hz → 160Hz 전체 README 수정
 - 루트 README의 CONTRIBUTING.md 링크 수정
 
 ## [7.2.0] — 2026-03-12 (RTM 7.2)

@@ -12,7 +12,7 @@
 
 [Features](#-features) • [Quick Start](#-quick-start) • [Architecture](#-architecture) • [Hardware](#-hardware) • [Contributing](#-contributing)
 
-[🇰🇷 한국어](README.ko.md)
+[🇰🇷 한국어](docs/README.ko.md)
 
 </div>
 
@@ -22,14 +22,14 @@
 
 DiveChecker is a professional monitoring system that helps freedivers effectively practice **equalization (ear pressure equalization)** training.
 
-Using a pressure sensor connected to a mouthpiece, it precisely measures subtle pressure changes (-10 to +200 hPa) when blowing or sucking through the mouth with **160Hz internal sampling + configurable output rate (4-50Hz)**, and visualizes them in real-time graphs.
+Using a pressure sensor connected to a mouthpiece, it precisely measures subtle pressure changes (300-1250 hPa sensor range) when blowing or sucking through the mouth with **100Hz internal sampling + configurable output rate (4-50Hz)**, and visualizes them in real-time graphs.
 
 ### Architecture (v8.0.0)
 
 **Smart MCU + Intelligent App**
 
 ```
-[BMP280] → 160Hz → [MCU] → USB MIDI → [Flutter App]
+[BMP280] → 100Hz → [MCU] → USB MIDI → [Flutter App]
     │                   │                       │
         └── Raw sensor      └── IIR + Averaging    └── All logic:
             data               Firmware filtering      - Display
@@ -67,11 +67,10 @@ Using a pressure sensor connected to a mouthpiece, it precisely measures subtle 
 <td width="50%">
 
 **Sensor Specs**
-- **Sampling**: 160Hz internal → 4-50Hz output (configurable)
+- **Sampling**: 100Hz internal → 4-50Hz output (configurable)
 - **Firmware Filtering**: IIR x2 + Averaging
 - **Latency**: ~10ms (sensor to app)
-- **Pressure Range**: -10 to +200 hPa (negative/positive)
-- **Sensor Absolute Range**: 300-1250 hPa (extended)
+- **Sensor Range**: 300-1250 hPa (BMP280 extended)
 - **Resolution**: 0.001 hPa (0.0016 hPa sensor resolution)
 
 </td>
@@ -170,7 +169,7 @@ Detailed equalization quality analysis after measurement:
 
 | Feature | Description |
 |---------|-------------|
-| **Dual-Core Isolation** | Core 0: USB/MIDI, Core 1: Sensor (160Hz) |
+| **Dual-Core Isolation** | Core 0: USB/MIDI, Core 1: Sensor (100Hz) |
 | **I2C Mutex Protection** | Cross-core access serialization |
 | **FIFO Communication** | Lock-free inter-core message passing |
 | **Saturating Counters** | Diagnostics counters never overflow |
@@ -269,13 +268,11 @@ cmake .. && make
 │
 ├── 🔧 0_Pico2-Firmware/            # Pico RP2350 project
 │   └── Divechecker/
-│       ├── Divechecker.c           # Main firmware
-│       ├── CMakeLists.txt
-│       ├── 160Hz internal sampling (BMP280)
-│       ├── Dual-core architecture
-│       ├── IIR x2 + Averaging filter
-│       ├── USB MIDI SysEx protocol
-│       └── ECDSA device authentication
+│       ├── Divechecker.c           # Main firmware (dual-core, ~1800 lines)
+│       ├── midi_sysex.c/h          # USB MIDI SysEx protocol
+│       ├── usb_descriptors.c       # TinyUSB device descriptors
+│       ├── ws2812.pio              # WS2812 LED PIO program
+│       └── CMakeLists.txt          # Build config (Pico SDK 2.2.0)
 │
 ├── 📐 0_CAD/                       # Hardware design (FreeCAD)
 │
@@ -284,26 +281,48 @@ cmake .. && make
 
 ### Communication Protocol (USB MIDI SysEx)
 
-```
-MCU → App (USB MIDI SysEx)
-──────────────────────────────────
-SysEx Data   Pressure value (0.001 hPa resolution)
-CFG:os,hz    Config response (oversampling, output rate)
-PONG         Ping response
-AUTH:OK/FAIL Authentication result
-INFO:msg     Info message
-ERR:msg      Error message
+SysEx format: `F0 7D 01 [cmd] [data...] F7`
+- Manufacturer ID: `0x7D` (educational/development)
+- Device ID: `0x01` (DiveChecker)
 
-App → MCU
-──────────────────────────────────
-P          Ping (connection check)
-A:nonce    ECDSA authentication
-R          Baseline reset
-Oxx        Oversampling setting (1/2/4/8/16)
-Fxx        Output rate setting (4-50 Hz)
-C          Config request
-B          BOOTSEL reboot (for firmware update)
-```
+**Device → App**
+
+| Command | Hex | Description |
+|---------|-----|-------------|
+| Pressure | 0x01 | Delta pressure (7-bit encoded int32, hPa×1000) |
+| Device Info | 0x02 | Serial, name, FW version, sensor status |
+| Config | 0x03 | Output rate response |
+| Auth Response | 0x04 | ECDSA signature (nibble-encoded) |
+| Over-range Alert | 0x06 | Sensor exceeded measurement range |
+| Temperature | 0x07 | BMP280 temperature (int16×100) |
+| Diagnostics | 0x08 | Uptime, error counts, I2C recovery |
+| Full Config | 0x09 | All configurable parameters |
+| ACK | 0x0A | Command acknowledgment (cmd + status) |
+| Ping | 0x10 | Keepalive request |
+| Pong | 0x11 | Keepalive response |
+
+**App → Device**
+
+| Command | Hex | Description |
+|---------|-----|-------------|
+| Ping | 0x10 | Connection keepalive |
+| Request Info | 0x20 | Request device info |
+| Set Name | 0x21 | Set device name (PIN required) |
+| Set Output Rate | 0x22 | Set output rate (4-50 Hz) |
+| Reset Baseline | 0x23 | Reset pressure baseline |
+| Get Config | 0x24 | Request full config dump |
+| Set LED | 0x25 | Set LED brightness (0-100) |
+| Reset Sensor | 0x26 | Manual sensor re-init |
+| Factory Reset | 0x27 | Factory reset (PIN required) |
+| Set Noise Floor | 0x28 | Set noise threshold (0-50) |
+| Get Temperature | 0x29 | Request temperature |
+| Enter Bootloader | 0x2A | Enter BOOTSEL mode (PIN required) |
+| Get Diagnostics | 0x2B | Request runtime diagnostics |
+| Set Oversampling | 0x2C | Set pressure oversampling (0-5) |
+| Set IIR Filter | 0x2D | Set IIR filter coefficient (0-4) |
+| Soft Reboot | 0x2E | Soft reboot (PIN required) |
+| Auth Challenge | 0x30 | ECDSA auth (32-byte nonce) |
+| Set PIN | 0x31 | Change PIN (old PIN + new PIN) |
 
 ---
 
@@ -341,7 +360,7 @@ GP16         ────── WS2812 LED
 ## 🔮 Roadmap
 
 ### ✅ v1.0.0 Completed
-- [x] 🎯 **Real-time pressure monitoring** - 160Hz internal + configurable output
+- [x] 🎯 **Real-time pressure monitoring** - 100Hz internal + configurable output
 - [x] 📊 **Peak analysis** - Rhythm, pressure, technique scores
 - [x] 💾 **Session management** - Record, review, notes
 - [x] 🌐 **Multi-language** - English, Korean, Japanese, Chinese (Simplified/Traditional)

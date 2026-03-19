@@ -129,16 +129,22 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
   }
 
   Future<void> _loadGraphNotes() async {
-    final dbService = UnifiedDatabaseService();
-    final notes = await dbService.getGraphNotesBySession(widget.session['id']);
-    setState(() {
-      _graphNotes.clear();
-      _graphNotes.addAll(notes.map((n) => GraphNote.fromMap(n)));
-      // 시간 순서대로 정렬 (X값 기준)
-      _graphNotes.sort((a, b) => a.x.compareTo(b.x));
-      // Invalidate cache since notes changed
-      _invalidateNoteLinesCache();
-    });
+    try {
+      final dbService = UnifiedDatabaseService();
+      final notes = await dbService.getGraphNotesBySession(widget.session['id']);
+      if (!mounted) return;
+      setState(() {
+        _graphNotes.clear();
+        _graphNotes.addAll(notes.map((n) => GraphNote.fromMap(n)));
+        // 시간 순서대로 정렬 (X값 기준)
+        _graphNotes.sort((a, b) => a.x.compareTo(b.x));
+        // Invalidate cache since notes changed
+        _invalidateNoteLinesCache();
+      });
+    } catch (e) {
+      if (!mounted) return;
+      debugPrint('Failed to load graph notes: $e');
+    }
   }
 
   void _zoomIn() {
@@ -310,25 +316,25 @@ class _GraphDetailPageState extends State<GraphDetailPage> {
     });
   }
 
-  double _calculateMinY() {
-    if (widget.chartData.isEmpty) return -5;
-    final visibleData = widget.chartData.where(
-      (s) => s.x >= _minX && s.x <= _maxX,
-    );
-    if (visibleData.isEmpty) return -5;
-    final minVal = visibleData.map((s) => s.y).reduce((a, b) => a < b ? a : b);
-    return (minVal - 2).floorToDouble().clamp(-50, 0);
+  (double, double) _calculateYRange() {
+    if (widget.chartData.isEmpty) return (-5, 10);
+    double minVal = double.infinity;
+    double maxVal = double.negativeInfinity;
+    for (final s in widget.chartData) {
+      if (s.x >= _minX && s.x <= _maxX) {
+        if (s.y < minVal) minVal = s.y;
+        if (s.y > maxVal) maxVal = s.y;
+      }
+    }
+    if (minVal == double.infinity) return (-5, 10);
+    final minY = (minVal - 2).floorToDouble().clamp(-50.0, 0.0);
+    final maxY = (maxVal + 2).ceilToDouble().clamp(5.0, 200.0);
+    return (minY, maxY);
   }
 
-  double _calculateMaxY() {
-    if (widget.chartData.isEmpty) return 10;
-    final visibleData = widget.chartData.where(
-      (s) => s.x >= _minX && s.x <= _maxX,
-    );
-    if (visibleData.isEmpty) return 10;
-    final maxVal = visibleData.map((s) => s.y).reduce((a, b) => a > b ? a : b);
-    return (maxVal + 2).ceilToDouble().clamp(5, 100);
-  }
+  double _calculateMinY() => _calculateYRange().$1;
+
+  double _calculateMaxY() => _calculateYRange().$2;
 
   double _calculateYInterval() {
     final range = _calculateMaxY() - _calculateMinY();

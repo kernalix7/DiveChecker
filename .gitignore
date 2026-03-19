@@ -16,6 +16,16 @@ ecdsa_private_keys.*
 *secret*key*
 *SECRET*KEY*
 
+# Apple signing & credentials
+*.p12
+*.p8
+*.mobileprovision
+*.provisionprofile
+
+# Environment files
+.env
+.env.*
+
 # Backup files that might contain keys
 *.bak
 *.backup

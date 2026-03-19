@@ -18,7 +18,7 @@ Cross-platform pressure monitoring app for freediving equalization training.
 ## Requirements
 
 - Flutter SDK 3.10.4+
-- Dart SDK 3.0+
+- Dart SDK 3.10+
 - DiveChecker V1 device (RP2350 Pico2)
 
 ## Getting Started
@@ -109,7 +109,7 @@ lib/
 - Configurable output rate (4-50 Hz)
 
 ### 📊 Real-time Pressure Monitoring
-- 160Hz internal sampling, configurable output (4-50Hz, default 8Hz)
+- 100Hz internal sampling, configurable output (4-50Hz, default 8Hz)
 - Real-time line chart (fl_chart) with smooth bezier curves
 - Dynamic Y-axis auto-scaling on measurement & monitor charts
 - Pinch zoom / drag pan gestures
@@ -148,11 +148,7 @@ lib/
 ## Testing
 
 ```bash
-# Unit tests
 flutter test
-
-# Integration tests
-flutter test integration_test/
 ```
 
 ## License

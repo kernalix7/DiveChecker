@@ -12,8 +12,8 @@ import 'package:flutter/material.dart';
 /// App Configuration
 class AppConfig {
   static const String appName = 'DiveChecker';
-  static const String version = '7.2.0';
-  static const String build = '3';
+  static const String version = '8.1.0';
+  static const String build = '1';
   static const String versionDisplay = '$version (Build $build)';
   
   /// Device product info
@@ -82,10 +82,10 @@ class MeasurementConfig {
   /// Maximum data points to keep in memory (30 seconds at 100 Hz)
   static const int maxDataPoints = 3000;
   
-  /// Pressure range (hPa - hectopascal, same as mbar)
-  /// Negative pressure for suction, positive for blowing
-  static const double minPressure = -10.0;
-  static const double maxPressure = 25.0;
+  /// BMP280 absolute sensor range (hPa)
+  /// Matches firmware: BMP280_PRESSURE_MIN_HPA / BMP280_PRESSURE_MAX_HPA
+  static const double sensorMinPressure = 300.0;
+  static const double sensorMaxPressure = 1250.0;
 }
 
 /// UI Constants

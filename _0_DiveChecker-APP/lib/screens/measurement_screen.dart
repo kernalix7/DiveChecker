@@ -398,13 +398,13 @@ class _MeasurementScreenState extends State<MeasurementScreen> {
       );
     }
 
-    return Consumer<MidiProvider>(
-      builder: (context, midi, _) {
+    return Selector<MidiProvider, bool>(
+      selector: (_, midi) => midi.isConnected,
+      builder: (context, isConnected, _) {
         return ListenableBuilder(
           listenable: controller,
           builder: (context, _) {
             final state = controller.state;
-            final isConnected = midi.isConnected;
             final screenPadding = Responsive.padding(context);
             final maxWidth = Responsive.maxContentWidth(context);
 

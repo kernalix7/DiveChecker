@@ -6,7 +6,7 @@ Pressure monitoring firmware for Raspberry Pi Pico 2 (RP2350).
 
 ## Features
 
-- 160Hz internal sampling with BMP280 sensor
+- 100Hz internal sampling with BMP280 sensor
 - Extended measurement range: 300-1250 hPa
 - Dual-core architecture for stable performance
 - IIR + Averaging filter for smooth data
@@ -139,7 +139,7 @@ See [PRODUCTION_GUIDE.md](PRODUCTION_GUIDE.md) for production deployment.
 | **Boot-Time Flash Compaction** | Erase-heavy wrap-around writes are moved to boot |
 | **Lockout I2C Grace Window** | Transient NaN samples after flash lockout are ignored |
 | **Continuous Sensor Pipeline** | Core 1 sampling/filtering runs even when app disconnects |
-| **Connection Timeout Margin** | Keepalive timeout increased to 10s to tolerate UI jitter |
+| **Connection Timeout Margin** | Keepalive timeout 30s (CONNECTION_TIMEOUT_MS) to tolerate UI jitter |
 | **SysEx Timeout** | 500ms parser reset (all states) |
 | **PIO Fallback** | Auto-switch to PIO1 if PIO0 unavailable |
 
@@ -147,7 +147,7 @@ See [PRODUCTION_GUIDE.md](PRODUCTION_GUIDE.md) for production deployment.
 
 | Metric | Value |
 |--------|-------|
-| **Internal Sampling** | 160Hz (BMP280) |
+| **Internal Sampling** | 100Hz (BMP280) |
 | **Measurement Range** | 300-1250 hPa (extended beyond 1100 hPa datasheet spec) |
 | **Output Rate** | 4-50Hz (configurable) |
 | **Sensor-to-App Latency** | ~10ms |

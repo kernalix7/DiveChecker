@@ -56,4 +56,4 @@ flutter analyze --no-fatal-infos
 
 ## 보안
 
-보안 이슈는 [SECURITY.ko.md](SECURITY.ko.md)의 제보 절차를 따라 주세요.
+보안 이슈는 [SECURITY.md](../SECURITY.md)의 제보 절차를 따라 주세요.
