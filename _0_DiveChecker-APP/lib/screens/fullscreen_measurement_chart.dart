@@ -278,8 +278,9 @@ class _FullscreenMeasurementChartState
         .map((p) => FlSpot(p.x, p.y))
         .toList();
 
-    final minY = _calcMinY(visibleSpots);
-    final maxY = _calcMaxY(visibleSpots);
+    final yRange = _calcYRange(visibleSpots);
+    final minY = yRange.minY;
+    final maxY = yRange.maxY;
     final yInterval = _calcYInterval(minY, maxY);
     final xInterval = chart_utils.calculateXAxisInterval(
       rangeMs: state.maxX - state.minX,
@@ -424,16 +425,19 @@ class _FullscreenMeasurementChartState
     );
   }
 
-  double _calcMinY(List<FlSpot> spots) {
-    if (spots.isEmpty) return -5;
-    final minVal = spots.map((p) => p.y).reduce((a, b) => a < b ? a : b);
-    return (minVal - 2).floorToDouble().clamp(-50, 0);
-  }
-
-  double _calcMaxY(List<FlSpot> spots) {
-    if (spots.isEmpty) return 10;
-    final maxVal = spots.map((p) => p.y).reduce((a, b) => a > b ? a : b);
-    return (maxVal + 2).ceilToDouble().clamp(5, 200);
+  ({double minY, double maxY}) _calcYRange(List<FlSpot> spots) {
+    if (spots.isEmpty) return (minY: -5, maxY: 10);
+    double minVal = spots[0].y;
+    double maxVal = spots[0].y;
+    for (var i = 1; i < spots.length; i++) {
+      final y = spots[i].y;
+      if (y < minVal) minVal = y;
+      if (y > maxVal) maxVal = y;
+    }
+    return (
+      minY: (minVal - 2).floorToDouble().clamp(-50, 0),
+      maxY: (maxVal + 2).ceilToDouble().clamp(5, 200),
+    );
   }
 
   double _calcYInterval(double minY, double maxY) {

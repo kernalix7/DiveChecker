@@ -16,6 +16,17 @@ ecdsa_private_keys.*
 *secret*key*
 *SECRET*KEY*
 
+# Apple signing certificates & provisioning profiles
+*.p12
+*.pfx
+*.mobileprovision
+*.provisionprofile
+*.p8
+
+# Environment files
+.env
+.env.*
+
 # Backup files that might contain keys
 *.bak
 *.backup
@@ -84,3 +95,6 @@ CLAUDE.md
 .claude
 .vscode
 WORK_STATUS.md
+
+# Temporary backup toolkit
+tmp-igbkp/

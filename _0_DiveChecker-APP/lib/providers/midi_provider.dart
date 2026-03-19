@@ -950,6 +950,7 @@ class MidiProvider extends ChangeNotifier {
       final result = await completer.future.timeout(
         const Duration(seconds: 3),
         onTimeout: () {
+          if (_isDisposed) return false;
           _isAuthenticated = false;
           _authenticationComplete = true;
           _authNonce = null;
@@ -1538,9 +1539,11 @@ class MidiProvider extends ChangeNotifier {
     _overrangeWindowTimer?.cancel();
     _overrangeWindowTimer = null;
 
-    // NOTE: Do NOT close stream controllers in singleton shutdown().
-    // They cannot be recreated, and the singleton may be re-provided.
-    // The streams will be garbage collected when the app exits.
+    // Close stream controllers — shutdown() is final, singleton will not be reused.
+    _pressureController.close();
+    _overrangeController.close();
+    _ackController.close();
+    _disconnectController.close();
 
     // Dispose native MIDI handler
     _midiHandler.dispose();

@@ -9,6 +9,22 @@ and this project aims to follow [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [8.1.0] — 2026-03-19
+
+### Added
+- macOS App Store Connect auto-upload in CI/CD pipeline
+- macOS ExportOptions.plist for App Store distribution
+
+### Fixed
+- Graph detail page: added mounted check and error handling in graph notes loading
+- Chart rendering: single-pass min/max calculation replacing dual-pass in graph detail and fullscreen chart
+- Measurement screen: replaced full Consumer with Selector for reduced rebuild scope
+- MidiProvider: added stream controller cleanup in shutdown and auth timeout guard
+
+### Security
+- `.gitignore`: added rules for `.p12`, `.pfx`, `.p8`, `.mobileprovision`, `.provisionprofile`, `.env` files
+- Removed `tmp-igbkp/` backup toolkit from git tracking
+
 ## [8.0.0] — 2026-03-18 (RTM 8.0)
 
 ### Added

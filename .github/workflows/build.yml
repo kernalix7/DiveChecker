@@ -294,26 +294,124 @@ jobs:
         working-directory: ${{ env.APP_DIR }}
     steps:
       - uses: actions/checkout@v4
-      
+
+      - name: Check macOS Certificates
+        id: check-certs
+        run: |
+          if [ -n "${{ secrets.MACOS_CERTIFICATE_APP_P12 }}" ]; then
+            echo "has_certs=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_certs=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-      
+
       - name: Get dependencies
         run: flutter pub get
 
       - name: Generate localizations
         run: flutter gen-l10n
 
-      - name: Build macOS
+      # ───── macOS Code Signing (Release only) ─────
+      - name: Install Apple Certificates
+        if: github.event_name != 'pull_request' && steps.check-certs.outputs.has_certs == 'true'
+        env:
+          APP_P12_BASE64: ${{ secrets.MACOS_CERTIFICATE_APP_P12 }}
+          APP_P12_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_APP_PASSWORD }}
+          INSTALLER_P12_BASE64: ${{ secrets.MACOS_CERTIFICATE_INSTALLER_P12 }}
+          INSTALLER_P12_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_INSTALLER_PASSWORD }}
+          PROVISION_BASE64: ${{ secrets.MACOS_PROVISIONING_PROFILE }}
+        run: |
+          # 임시 키체인 생성
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          KEYCHAIN_PASSWORD=$(openssl rand -base64 32)
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          # Application 인증서 설치 (3rd Party Mac Developer Application)
+          echo "$APP_P12_BASE64" | base64 --decode > $RUNNER_TEMP/app_certificate.p12
+          security import $RUNNER_TEMP/app_certificate.p12 -P "$APP_P12_PASSWORD" \
+            -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+
+          # Installer 인증서 설치 (3rd Party Mac Developer Installer)
+          echo "$INSTALLER_P12_BASE64" | base64 --decode > $RUNNER_TEMP/installer_certificate.p12
+          security import $RUNNER_TEMP/installer_certificate.p12 -P "$INSTALLER_P12_PASSWORD" \
+            -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+
+          # 프로비저닝 프로파일 설치
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          echo "$PROVISION_BASE64" | base64 --decode > $RUNNER_TEMP/macos_profile.provisionprofile
+
+          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print UUID" /dev/stdin <<< $(/usr/bin/security cms -D -i $RUNNER_TEMP/macos_profile.provisionprofile))
+          cp $RUNNER_TEMP/macos_profile.provisionprofile ~/Library/MobileDevice/Provisioning\ Profiles/$PROFILE_UUID.provisionprofile
+
+      - name: Build macOS (Unsigned for PR)
+        if: github.event_name == 'pull_request' || steps.check-certs.outputs.has_certs != 'true'
         run: flutter build macos --release
-      
-      - name: Upload macOS Build
+
+      - name: Build macOS (Signed Release)
+        if: github.event_name != 'pull_request' && steps.check-certs.outputs.has_certs == 'true'
+        run: |
+          flutter build macos --release
+
+          APP_PATH="build/macos/Build/Products/Release/DiveChecker.app"
+
+          # 앱 코드서명 (deep sign with entitlements)
+          codesign --deep --force --options runtime \
+            --sign "3rd Party Mac Developer Application: KODENET (AWD2F2J9GP)" \
+            --entitlements macos/Runner/Release.entitlements \
+            "$APP_PATH"
+
+          # .pkg 생성 (App Store 업로드용)
+          productbuild --sign "3rd Party Mac Developer Installer: KODENET (AWD2F2J9GP)" \
+            --component "$APP_PATH" /Applications \
+            build/macos/Build/Products/Release/DiveChecker.pkg
+
+      - name: Upload macOS Build (Unsigned)
+        if: github.event_name == 'pull_request' || steps.check-certs.outputs.has_certs != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: macos-build
           path: ${{ env.APP_DIR }}/build/macos/Build/Products/Release/*.app
+
+      - name: Upload macOS Build (Signed)
+        if: github.event_name != 'pull_request' && steps.check-certs.outputs.has_certs == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-build
+          path: |
+            ${{ env.APP_DIR }}/build/macos/Build/Products/Release/*.app
+            ${{ env.APP_DIR }}/build/macos/Build/Products/Release/*.pkg
+
+      - name: Upload to App Store Connect
+        if: startsWith(github.ref, 'refs/tags/v') && steps.check-certs.outputs.has_certs == 'true'
+        env:
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
+          APPLE_API_KEY_P8: ${{ secrets.APPLE_API_KEY_P8 }}
+        run: |
+          mkdir -p ~/.private_keys
+          echo "$APPLE_API_KEY_P8" > ~/.private_keys/AuthKey_${APPLE_API_KEY_ID}.p8
+          xcrun altool --upload-app \
+            --type osx \
+            --file build/macos/Build/Products/Release/DiveChecker.pkg \
+            --apiKey "$APPLE_API_KEY_ID" \
+            --apiIssuer "$APPLE_API_ISSUER_ID" \
+            --verbose
+          rm -f ~/.private_keys/AuthKey_${APPLE_API_KEY_ID}.p8
+
+      - name: Cleanup Keychain
+        if: always()
+        run: |
+          security delete-keychain $RUNNER_TEMP/app-signing.keychain-db 2>/dev/null || true
 
   # ─────────────────────────────────────────────
   # Web Build
@@ -379,7 +477,10 @@ jobs:
       - name: Package macOS
         run: |
           cd artifacts/macos-build
-          zip -r ../../DiveChecker-macos.zip .
+          if [ -f *.pkg ]; then
+            cp *.pkg ../../DiveChecker-macos.pkg
+          fi
+          zip -r ../../DiveChecker-macos.zip *.app
           cd ../..
 
       - name: Package Web
@@ -399,4 +500,5 @@ jobs:
             DiveChecker-linux-x64.tar.gz
             DiveChecker-windows-x64.zip
             DiveChecker-macos.zip
+            DiveChecker-macos.pkg
             DiveChecker-web.zip

@@ -9,6 +9,22 @@
 
 ## [Unreleased]
 
+## [8.1.0] — 2026-03-19
+
+### 추가됨
+- CI/CD 파이프라인에 macOS App Store Connect 자동 업로드 추가
+- macOS ExportOptions.plist (App Store 배포용)
+
+### 수정됨
+- 그래프 상세 페이지: 그래프 노트 로딩에 mounted 체크 및 에러 처리 추가
+- 차트 렌더링: 그래프 상세/전체화면 차트에서 이중 패스 → 단일 패스 min/max 계산으로 최적화
+- 측정 화면: Consumer → Selector로 교체하여 불필요한 리빌드 감소
+- MidiProvider: shutdown 시 StreamController 정리 및 인증 타임아웃 가드 추가
+
+### 보안
+- `.gitignore`: `.p12`, `.pfx`, `.p8`, `.mobileprovision`, `.provisionprofile`, `.env` 패턴 추가
+- `tmp-igbkp/` 백업 툴킷 git 트래킹에서 제거
+
 ## [8.0.0] — 2026-03-18 (RTM 8.0)
 
 ### 추가됨
