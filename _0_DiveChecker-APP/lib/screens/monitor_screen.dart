@@ -32,6 +32,7 @@ class MonitorScreen extends StatefulWidget {
 class _MonitorScreenState extends State<MonitorScreen> {
   final Queue<ChartPoint> _dataBuffer = Queue<ChartPoint>();
   StreamSubscription<double>? _pressureSubscription;
+  MidiProvider? _midiProvider;
   double _smoothedPressure = 0.0;
   int _sampleIndex = 0;
   int _lastSetStateMs = 0;
@@ -56,17 +57,16 @@ class _MonitorScreenState extends State<MonitorScreen> {
   }
 
   void _startMonitoring() {
-    final midi = context.read<MidiProvider>();
-    _lastDeviceId = midi.connectedDevice?.id;
-    midi.addListener(_onConnectionChanged);
-    _pressureSubscription = midi.pressureStream.listen(_onPressureReceived);
+    _midiProvider = context.read<MidiProvider>();
+    _lastDeviceId = _midiProvider!.connectedDevice?.id;
+    _midiProvider!.addListener(_onConnectionChanged);
+    _pressureSubscription = _midiProvider!.pressureStream.listen(_onPressureReceived);
   }
 
   void _onConnectionChanged() {
     if (!mounted) return;
-    final midi = context.read<MidiProvider>();
-    final currentId = midi.connectedDevice?.id;
-    final currentRate = midi.outputRate;
+    final currentId = _midiProvider!.connectedDevice?.id;
+    final currentRate = _midiProvider!.outputRate;
 
     if (currentId != _lastDeviceId || currentRate != _lockedOutputRate) {
       // Device changed or output rate changed — clear stale data
@@ -107,7 +107,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
   @override
   void dispose() {
     _pressureSubscription?.cancel();
-    context.read<MidiProvider>().removeListener(_onConnectionChanged);
+    _midiProvider?.removeListener(_onConnectionChanged);
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     super.dispose();
   }
