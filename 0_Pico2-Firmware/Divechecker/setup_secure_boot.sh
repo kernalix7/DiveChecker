@@ -30,6 +30,7 @@ CYAN='\033[0;36m'
 NC='\033[0m'
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$SCRIPT_DIR/../.."
 
 # Security: Verify we're in the right directory
 if [[ ! "$SCRIPT_DIR" == *"0_Pico2-Firmware/Divechecker"* ]]; then
@@ -37,7 +38,7 @@ if [[ ! "$SCRIPT_DIR" == *"0_Pico2-Firmware/Divechecker"* ]]; then
     exit 1
 fi
 
-KEYS_DIR="$SCRIPT_DIR/keys/secure_boot"
+KEYS_DIR="$PROJECT_ROOT/.certs/secure_boot"
 BOOT_PRIVATE_KEY="$KEYS_DIR/boot_private.pem"
 BOOT_PUBLIC_KEY="$KEYS_DIR/boot_public.pem"
 BUILD_DIR="$SCRIPT_DIR/build"

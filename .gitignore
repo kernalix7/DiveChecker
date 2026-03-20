@@ -21,6 +21,11 @@ ecdsa_private_keys.*
 *.p8
 *.mobileprovision
 *.provisionprofile
+*.cer
+*.csr
+
+# Certificate working directory
+.certs/
 
 # Environment files
 .env
@@ -35,8 +40,8 @@ ecdsa_private_keys.*
 *.h.bak
 *.h.backup
 
-# Firmware keys directory (explicit)
-0_Pico2-Firmware/Divechecker/keys/
+# Firmware keys directory & symlink
+0_Pico2-Firmware/Divechecker/keys
 0_Pico2-Firmware/**/keys/
 
 # Device serial registry (sensitive device inventory)

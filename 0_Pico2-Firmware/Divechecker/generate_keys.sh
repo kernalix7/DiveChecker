@@ -5,7 +5,8 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-KEYS_DIR="$SCRIPT_DIR/keys"
+PROJECT_ROOT="$SCRIPT_DIR/../.."
+KEYS_DIR="$PROJECT_ROOT/.certs/ecdsa"
 
 # Security: Verify we're in the right directory
 if [[ ! "$SCRIPT_DIR" == *"0_Pico2-Firmware/Divechecker"* ]]; then
@@ -14,6 +15,13 @@ if [[ ! "$SCRIPT_DIR" == *"0_Pico2-Firmware/Divechecker"* ]]; then
 fi
 
 mkdir -p "$KEYS_DIR"
+
+# Ensure firmware symlink exists (keys/ → .certs/ecdsa/)
+if [ ! -L "$SCRIPT_DIR/keys" ]; then
+    rm -rf "$SCRIPT_DIR/keys"
+    ln -s ../../.certs/ecdsa "$SCRIPT_DIR/keys"
+    echo "✓ Created symlink: keys/ → .certs/ecdsa/"
+fi
 
 PRIVATE_KEY="$KEYS_DIR/divechecker_private.pem"
 PUBLIC_KEY="$KEYS_DIR/divechecker_public.pem"
@@ -200,77 +208,46 @@ cat >> "$DART_FILE" << 'DART_END'
 DART_END
 
 # ============================================================================
-# Auto-deploy keys to project locations
+# Auto-deploy public key to Flutter app
 # ============================================================================
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-FLUTTER_APP_DIR="$SCRIPT_DIR/../../_0_DiveChecker-APP"
-FIRMWARE_DIR="$SCRIPT_DIR"
-
-FIRMWARE_KEY_FILE="$FIRMWARE_DIR/ecdsa_private_keys.h"
+FLUTTER_APP_DIR="$PROJECT_ROOT/_0_DiveChecker-APP"
 FLUTTER_SECURITY_DIR="$FLUTTER_APP_DIR/lib/security"
 FLUTTER_KEY_FILE="$FLUTTER_SECURITY_DIR/ecdsa_public_key.dart"
 
 echo ""
-echo "🚀 Auto-deploying keys..."
+echo "🚀 Auto-deploying public key to Flutter app..."
 
-# Check for existing files
-EXISTING_FILES=""
-if [ -f "$FIRMWARE_KEY_FILE" ]; then
-    EXISTING_FILES="$EXISTING_FILES\n  - $FIRMWARE_KEY_FILE"
-fi
 if [ -f "$FLUTTER_KEY_FILE" ]; then
-    EXISTING_FILES="$EXISTING_FILES\n  - $FLUTTER_KEY_FILE"
-fi
-
-if [ -n "$EXISTING_FILES" ]; then
-    echo ""
-    echo -e "⚠️  The following files already exist:$EXISTING_FILES"
-    read -p "Overwrite deployed keys? (y/N): " deploy_confirm
+    echo -e "⚠️  File already exists: $FLUTTER_KEY_FILE"
+    read -p "Overwrite? (y/N): " deploy_confirm
     if [ "$deploy_confirm" != "y" ] && [ "$deploy_confirm" != "Y" ]; then
-        echo "Skipping auto-deploy. Keys are in $KEYS_DIR/"
-        echo ""
-        echo "Manual copy commands:"
-        echo "  cp $HEADER_FILE $FIRMWARE_KEY_FILE"
-        echo "  cp $DART_FILE $FLUTTER_KEY_FILE"
+        echo "Skipping. Manual: cp $DART_FILE $FLUTTER_KEY_FILE"
         exit 0
     fi
 fi
 
-# Deploy to firmware (MCU)
-if [ -d "$FIRMWARE_DIR" ]; then
-    cp "$HEADER_FILE" "$FIRMWARE_KEY_FILE"
-    echo "  ✓ Copied to firmware: $FIRMWARE_KEY_FILE"
-else
-    echo "  ⚠️  Firmware dir not found: $FIRMWARE_DIR"
-fi
-
-# Deploy to Flutter app
 if [ -d "$FLUTTER_APP_DIR" ]; then
     mkdir -p "$FLUTTER_SECURITY_DIR"
     cp "$DART_FILE" "$FLUTTER_KEY_FILE"
-    echo "  ✓ Copied to Flutter: $FLUTTER_KEY_FILE"
+    echo "  ✓ Deployed to Flutter: $FLUTTER_KEY_FILE"
 else
     echo "  ⚠️  Flutter app dir not found: $FLUTTER_APP_DIR"
 fi
 
 echo ""
-echo "✅ Keys generated and deployed!"
+echo "✅ Keys generated!"
 echo ""
-echo "Files created:"
-echo "  📁 $KEYS_DIR/"
+echo "Files in .certs/ecdsa/:"
 echo "  🔐 divechecker_private.pem (KEEP SECRET!)"
 echo "  🔓 divechecker_public.pem"
-echo "  📄 ecdsa_private_keys.h (for MCU - contains private key)"
-echo "  📄 ecdsa_public_key.dart (for Flutter app - public key only)"
+echo "  📄 ecdsa_private_keys.h (C header - contains private key)"
+echo "  📄 ecdsa_public_key.dart (Dart - public key only)"
 echo ""
-echo "Auto-deployed to:"
-echo "  📦 Firmware: ./ecdsa_private_keys.h"
-echo "  📱 Flutter:  $FLUTTER_SECURITY_DIR/ecdsa_public_key.dart"
+echo "Firmware access: keys/ → .certs/ecdsa/ (symlink)"
+echo "Flutter deploy:  lib/security/ecdsa_public_key.dart"
 echo ""
-echo "⚠️  CRITICAL SECURITY RULES:"
-echo "  1. NEVER commit keys/ directory to git"
-echo "  2. NEVER commit ecdsa_private_keys.h to git"
-echo "  3. For production: program private key to OTP, then DELETE from filesystem"
+echo "⚠️  SECURITY:"
+echo "  1. .certs/ is git-ignored — NEVER force-add"
+echo "  2. For production: program private key to OTP, then DELETE .certs/ecdsa/"
 echo ""
-echo "🔒 Verify gitignore is working:"
-echo "  git status  # Should NOT show any key files"
+echo "🔒 Verify: git status  # Should NOT show any key files"

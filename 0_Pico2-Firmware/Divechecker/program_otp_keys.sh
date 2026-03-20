@@ -35,7 +35,8 @@ if [ "$1" == "--dry-run" ]; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-KEYS_DIR="$SCRIPT_DIR/keys"
+PROJECT_ROOT="$SCRIPT_DIR/../.."
+KEYS_DIR="$PROJECT_ROOT/.certs/ecdsa"
 HEADER_FILE="$KEYS_DIR/ecdsa_private_keys.h"
 
 # OTP row addresses (must match otp_keys.h)

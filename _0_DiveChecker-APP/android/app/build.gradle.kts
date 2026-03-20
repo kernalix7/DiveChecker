@@ -8,8 +8,10 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// key.properties 파일 로드
-val keystorePropertiesFile = rootProject.file("key.properties")
+// key.properties 파일 로드 (.certs/android/ 우선, CI fallback: android/)
+val certsKeyProps = rootProject.file("../../.certs/android/key.properties")
+val ciKeyProps = rootProject.file("key.properties")
+val keystorePropertiesFile = if (certsKeyProps.exists()) certsKeyProps else ciKeyProps
 val keystoreProperties = Properties()
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
