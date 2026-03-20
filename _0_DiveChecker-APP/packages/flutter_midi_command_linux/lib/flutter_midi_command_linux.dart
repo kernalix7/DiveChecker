@@ -8,6 +8,7 @@ class LinuxMidiDevice extends MidiDevice {
   int cardId;
   int deviceId;
   AlsaMidiDevice _device;
+  StreamSubscription? _dataSubscription;
 
   LinuxMidiDevice(this._device, this.cardId, this.deviceId, String name, String type,
       this._rxStreamCtrl, bool connected)
@@ -29,11 +30,15 @@ class LinuxMidiDevice extends MidiDevice {
   }
 
   Future<bool> connect() async {
+    // Cancel any previous subscription to prevent duplicate data delivery
+    _dataSubscription?.cancel();
+    _dataSubscription = null;
+
     await _device.connect();
     connected = true;
 
     // connect up incoming alsa midi data to our rx stream of MidiPackets
-    _device.receivedMessages.listen((event) {
+    _dataSubscription = _device.receivedMessages.listen((event) {
       _rxStreamCtrl.add(MidiPacket(event.data, event.timestamp, this));
     });
     return true;
@@ -44,6 +49,8 @@ class LinuxMidiDevice extends MidiDevice {
   }
 
   disconnect() {
+    _dataSubscription?.cancel();
+    _dataSubscription = null;
     _device.disconnect();
     connected = false;
   }
@@ -74,9 +81,9 @@ class FlutterMidiCommandLinux extends MidiCommandPlatform {
 
   @override
   Future<List<MidiDevice>> get devices async {
-    if (_allAlsaDevices.isEmpty) {
-      _allAlsaDevices.addAll(AlsaMidiDevice.getDevices());
-    }
+    // Re-enumerate ALSA devices on every call to detect USB hot-plug changes
+    _allAlsaDevices.clear();
+    _allAlsaDevices.addAll(AlsaMidiDevice.getDevices());
     return _allAlsaDevices
         .map(
           (alsMidiDevice) => LinuxMidiDevice(

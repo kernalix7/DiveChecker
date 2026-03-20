@@ -86,11 +86,35 @@ class MeasurementController extends ChangeNotifier {
   // Incremental statistics - avoid recalculating from entire list
   double _sumPressure = 0.0;
   double _maxPressureValue = 0.0;
-  
+
+  // Locked output rate for current measurement session
+  int _lockedOutputRate = 8;
+
+  // Track device to detect switches
+  String? _lastDeviceId;
+
   MeasurementController({
     required MidiProvider midiProvider,
   })  : _midiProvider = midiProvider {
+    _lastDeviceId = _midiProvider.connectedDevice?.id;
+    _midiProvider.addListener(_onDeviceChanged);
     _pressureSubscription = _midiProvider.pressureStream.listen(_onPressureReceived);
+  }
+
+  void _onDeviceChanged() {
+    final currentId = _midiProvider.connectedDevice?.id;
+    if (currentId != _lastDeviceId) {
+      _lastDeviceId = currentId;
+      if (!_state.isMeasuring) {
+        // Not measuring — just reset internal counters
+        _dataList.clear();
+        _sampleCount = 0;
+        _sumPressure = 0.0;
+        _maxPressureValue = 0.0;
+        _state = const MeasurementState();
+        notifyListeners();
+      }
+    }
   }
   
   void _onPressureReceived(double pressure) {
@@ -99,7 +123,7 @@ class MeasurementController extends ChangeNotifier {
     _state = _state.copyWith(currentPressure: pressure);
     
     if (_state.isMeasuring && !_state.isPaused && _state.sessionStartTime != null) {
-      final sampleIntervalMs = 1000.0 / outputRate;
+      final sampleIntervalMs = 1000.0 / _lockedOutputRate;
       final xMs = _sampleCount * sampleIntervalMs;
       _sampleCount++;
       
@@ -131,13 +155,13 @@ class MeasurementController extends ChangeNotifier {
     }
   }
   
-  /// Current firmware output rate (Hz)
-  int get outputRate => _midiProvider.outputRate;
-  
+  /// Current firmware output rate (Hz) — locked during measurement
+  int get outputRate => _state.isMeasuring ? _lockedOutputRate : _midiProvider.outputRate;
+
   /// Actual duration in seconds: total sample count / Hz
   int get actualDurationSeconds {
     if (_sampleCount == 0) return 0;
-    return (_sampleCount / outputRate).round();
+    return (_sampleCount / _lockedOutputRate).round();
   }
   
   bool get isConnected => _midiProvider.isConnected;
@@ -146,7 +170,11 @@ class MeasurementController extends ChangeNotifier {
   
   void startMeasurement() {
     if (!isConnected) return;
-    
+
+    // Lock output rate at measurement start — prevents X-axis jumps
+    // if device config response arrives mid-measurement
+    _lockedOutputRate = _midiProvider.outputRate;
+
     _dataList.clear();
     _sampleCount = 0;
     _sumPressure = 0.0;
@@ -282,6 +310,7 @@ class MeasurementController extends ChangeNotifier {
     _measurementTimer = null;
     _pressureSubscription?.cancel();
     _pressureSubscription = null;
+    _midiProvider.removeListener(_onDeviceChanged);
     _dataList.clear();
     super.dispose();
   }

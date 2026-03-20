@@ -35,17 +35,20 @@ class _MonitorScreenState extends State<MonitorScreen> {
   double _smoothedPressure = 0.0;
   int _sampleIndex = 0;
   int _lastSetStateMs = 0;
-  
+  String? _lastDeviceId;
+  int _lockedOutputRate = 8;
+
   // Buffer settings
-  static const int _maxBufferSize = 240; // 30 seconds at 8Hz
-  static const double _sampleIntervalMs = 125.0; // 8Hz
   static const double _windowMs = 30000.0; // 30 second window
-  
+
+  double get _sampleIntervalMs => 1000.0 / (_lockedOutputRate > 0 ? _lockedOutputRate : 8);
+  int get _maxBufferSize => (_windowMs / _sampleIntervalMs).ceil();
+
   // EMA smoothing factor (0.0 = full smooth, 1.0 = no smooth)
   static const double _emaAlpha = 0.6;
   // Minimum interval between setState calls (ms)
   static const int _minFrameIntervalMs = 100;
-  
+
   @override
   void initState() {
     super.initState();
@@ -54,7 +57,25 @@ class _MonitorScreenState extends State<MonitorScreen> {
 
   void _startMonitoring() {
     final midi = context.read<MidiProvider>();
+    _lastDeviceId = midi.connectedDevice?.id;
+    midi.addListener(_onConnectionChanged);
     _pressureSubscription = midi.pressureStream.listen(_onPressureReceived);
+  }
+
+  void _onConnectionChanged() {
+    if (!mounted) return;
+    final midi = context.read<MidiProvider>();
+    final currentId = midi.connectedDevice?.id;
+    final currentRate = midi.outputRate;
+
+    if (currentId != _lastDeviceId || currentRate != _lockedOutputRate) {
+      // Device changed or output rate changed — clear stale data
+      _dataBuffer.clear();
+      _sampleIndex = 0;
+      _smoothedPressure = 0.0;
+      _lastDeviceId = currentId;
+      _lockedOutputRate = currentRate;
+    }
   }
 
   void _onPressureReceived(double pressure) {
@@ -86,6 +107,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
   @override
   void dispose() {
     _pressureSubscription?.cancel();
+    context.read<MidiProvider>().removeListener(_onConnectionChanged);
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     super.dispose();
   }
