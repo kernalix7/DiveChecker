@@ -5,7 +5,7 @@
 	<key>method</key>
 	<string>app-store</string>
 	<key>teamID</key>
-	<string>$(DEVELOPMENT_TEAM)</string>
+	<string>AWD2F2J9GP</string>
 	<key>destination</key>
 	<string>upload</string>
 	<key>signingStyle</key>
