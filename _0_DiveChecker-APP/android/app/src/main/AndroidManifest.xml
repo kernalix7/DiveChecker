@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     
-    <!-- USB Host permissions (required) -->
-    <uses-feature android:name="android.hardware.usb.host" android:required="true"/>
+    <!-- USB Host permissions (not required to maintain device compatibility) -->
+    <uses-feature android:name="android.hardware.usb.host" android:required="false"/>
     <uses-feature android:name="android.software.midi" android:required="false"/>
     
     <!-- REMOVE unnecessary permissions added by dependencies -->
