@@ -65,6 +65,7 @@ dependencies:
   
   # Cryptography for device authentication
   pointycastle: ^3.9.1  # ECDSA signature verification
+  wakelock_plus: ^1.5.1
 
 # Override buggy Linux plugin with fixed local version
 dependency_overrides:

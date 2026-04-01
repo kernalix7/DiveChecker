@@ -14,6 +14,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../constants/app_constants.dart';
 import '../l10n/app_localizations.dart';
@@ -53,6 +54,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
   @override
   void initState() {
     super.initState();
+    WakelockPlus.enable();
     _startMonitoring();
   }
 
@@ -109,6 +111,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
     _pressureSubscription?.cancel();
     _midiProvider?.removeListener(_onConnectionChanged);
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+    WakelockPlus.disable();
     super.dispose();
   }
 

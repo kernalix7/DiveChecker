@@ -7,6 +7,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../models/chart_point.dart';
 import '../models/pressure_data.dart';
@@ -180,6 +181,8 @@ class MeasurementController extends ChangeNotifier {
     _sumPressure = 0.0;
     _maxPressureValue = 0.0;
 
+    WakelockPlus.enable();
+
     _state = MeasurementState(
       isMeasuring: true,
       isPaused: false,
@@ -232,6 +235,7 @@ class MeasurementController extends ChangeNotifier {
   
   void stopMeasurement() {
     _measurementTimer?.cancel();
+    WakelockPlus.disable();
     _state = _state.copyWith(
       isMeasuring: false,
       isPaused: false,
@@ -312,6 +316,7 @@ class MeasurementController extends ChangeNotifier {
     _pressureSubscription = null;
     _midiProvider.removeListener(_onDeviceChanged);
     _dataList.clear();
+    if (_state.isMeasuring) WakelockPlus.disable();
     super.dispose();
   }
   
