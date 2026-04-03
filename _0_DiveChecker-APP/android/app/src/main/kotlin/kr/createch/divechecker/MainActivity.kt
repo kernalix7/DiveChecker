@@ -1,4 +1,4 @@
-package io.kodenet.divechecker
+package kr.createch.divechecker
 
 import io.flutter.embedding.android.FlutterActivity
 
