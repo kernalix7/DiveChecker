@@ -218,7 +218,7 @@
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                 </div>
                 <h4 data-i18n="support.email-title">이메일</h4>
-                <p>contact@createch.kr</p>
+                <p>cs-divechecker@createch.kr</p>
                 <span class="contact-info-sub" data-i18n="support.email-sub">영업일 기준 1~2일 내 답변</span>
             </div>
             <div class="contact-info-card">
@@ -252,9 +252,9 @@
             매장에 새로운 가치를, 교육생에게 더 나은 피드백을 더하세요.
         </p>
         <div class="dealer-cta">
-            <a href="mailto:info@createch.kr" class="btn btn-dealer">
+            <a href="mailto:cs-divechecker@createch.kr" class="btn btn-dealer">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                <span>info@createch.kr</span>
+                <span>cs-divechecker@createch.kr</span>
             </a>
         </div>
         <p class="dealer-note" data-i18n="dealer.note">딜러 조건, 도매 가격, 교육용 특별 할인 등 자세한 내용은 이메일로 문의해 주세요.</p>
@@ -325,7 +325,7 @@ function handleSubmit(e) {
     var body = '[' + category + '] ' + name + '\n\n' + message;
     if (orderId) body += '\n\n' + lb[0] + ': ' + orderId;
     body += '\n\n' + lb[1] + ': ' + email;
-    var mailtoUrl = 'mailto:contact@createch.kr'
+    var mailtoUrl = 'mailto:cs-divechecker@createch.kr'
         + '?subject=' + encodeURIComponent(subject)
         + '&body=' + encodeURIComponent(body);
     window.location.href = mailtoUrl;

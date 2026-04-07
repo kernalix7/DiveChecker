@@ -1184,9 +1184,9 @@
             매장에 새로운 가치를, 교육생에게 더 나은 피드백을 더하세요.
         </p>
         <div class="dealer-cta">
-            <a href="mailto:info@createch.kr" class="btn btn-dealer">
+            <a href="mailto:cs-divechecker@createch.kr" class="btn btn-dealer">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                <span>info@createch.kr</span>
+                <span>cs-divechecker@createch.kr</span>
             </a>
         </div>
         <p class="dealer-note" data-i18n="dealer.note">딜러 조건, 도매 가격, 교육용 특별 할인 등 자세한 내용은 이메일로 문의해 주세요.</p>
@@ -1271,7 +1271,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const serial = document.getElementById('contact-serial').value.trim();
             const message = document.getElementById('contact-message').value.trim();
 
-            const toEmail = 'contact@createch.kr';
+            const toEmail = 'cs-divechecker@createch.kr';
             const lang = (typeof getLang === 'function') ? getLang() : 'ko';
             const lb = { ko: ['문의 유형','이름','이메일','시리얼 넘버'], en: ['Type','Name','Email','Serial'], ja: ['問い合わせ種類','お名前','メール','シリアル'], zh: ['咨询类型','姓名','邮箱','序列号'], tw: ['諮詢類型','姓名','郵箱','序列號'] }[lang] || ['문의 유형','이름','이메일','시리얼 넘버'];
             const subject = '[DiveChecker] ' + typeName + ' \u2014 ' + name;
