@@ -1,4 +1,4 @@
-// Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
+// Copyright (C) 2025-2026 Createch (legal@createch.kr)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
 import 'dart:math';
@@ -427,7 +427,7 @@ class _ScoreBar extends StatelessWidget {
         SizedBox(
           width: WidgetSizes.containerXxxl,
           child: Text(
-            '${score.toStringAsFixed(0)}',
+            score.toStringAsFixed(0),
             style: const TextStyle(fontSize: FontSizes.body, fontWeight: FontWeight.w600),
             textAlign: TextAlign.right,
           ),
@@ -625,7 +625,7 @@ class _ConsecutiveAnalysisCard extends StatelessWidget {
                       Icon(Icons.local_fire_department, size: IconSizes.xxl, color: streakColor),
                       Spacing.verticalXs,
                       Text(
-                        '$maxStreak',
+                        maxStreak.toString(),
                         style: TextStyle(
                           fontSize: FontSizes.display,
                           fontWeight: FontWeight.bold,

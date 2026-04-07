@@ -154,7 +154,7 @@ flutter test integration_test/
 
 ## 라이선스
 
-Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
+Copyright (C) 2025-2026 Createch (legal@createch.kr)
 
 Apache License 2.0에 따라 라이선스가 부여됩니다.
 

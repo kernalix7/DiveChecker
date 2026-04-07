@@ -1,4 +1,4 @@
-// Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
+// Copyright (C) 2025-2026 Createch (legal@createch.kr)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
 import 'dart:math';
@@ -493,7 +493,7 @@ class _DataQualityCard extends StatelessWidget {
                       _QualityIndicator(
                         icon: Icons.data_array,
                         label: l10n.dataLabel,
-                        value: '$totalCount',
+                        value: totalCount.toString(),
                         color: totalCount >= 500 ? ScoreColors.excellent : ScoreColors.warning,
                       ),
                     ],
@@ -947,7 +947,7 @@ class _PercentileChart extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${minVal.toStringAsFixed(0)}',
+                  minVal.toStringAsFixed(0),
                   style: TextStyle(
                     fontSize: FontSizes.sm,
                     color: theme.colorScheme.outline,
@@ -961,7 +961,7 @@ class _PercentileChart extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${maxVal.toStringAsFixed(0)}',
+                  maxVal.toStringAsFixed(0),
                   style: TextStyle(
                     fontSize: FontSizes.sm,
                     color: theme.colorScheme.outline,

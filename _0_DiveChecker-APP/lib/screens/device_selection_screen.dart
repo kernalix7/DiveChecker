@@ -1,4 +1,4 @@
-// Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
+// Copyright (C) 2025-2026 Createch (legal@createch.kr)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
 /// Device Selection Screen
@@ -262,7 +262,7 @@ class _DeviceSelectionScreenState extends State<DeviceSelectionScreen> {
                 : ListView.separated(
                     padding: const EdgeInsets.symmetric(vertical: Spacing.sm),
                     itemCount: _devices.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1),
+                    separatorBuilder: (_, _) => const Divider(height: 1),
                     itemBuilder: (context, index) {
                       final device = _devices[index];
                       final isConnecting = _connectingDeviceId == device.portName;

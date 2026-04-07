@@ -1,4 +1,4 @@
-// Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
+// Copyright (C) 2025-2026 Createch (legal@createch.kr)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
 library;
@@ -474,7 +474,7 @@ class _DeviceFilterSheet extends StatelessWidget {
                 color: isSelected ? theme.colorScheme.primary : null,
               ),
               title: Text('$name-$shortSerial'),
-              subtitle: Text('${l10n.sessionsCount(count)}'),
+              subtitle: Text(l10n.sessionsCount(count)),
               trailing: isSelected 
                   ? Icon(Icons.check, color: theme.colorScheme.primary) 
                   : null,

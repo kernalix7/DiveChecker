@@ -1,4 +1,4 @@
-// Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
+// Copyright (C) 2025-2026 Createch (legal@createch.kr)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
 import 'package:flutter/material.dart';
@@ -417,7 +417,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 Spacing.verticalLg,
                 Text(
-                  '© 2025-2026 Kim DaeHyun',
+                  '© 2025-2026 크리에이테크 (Createch)',
                   style: TextStyle(
                     fontSize: FontSizes.xs,
                     color: StatusColors.disabled,
@@ -425,7 +425,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 Spacing.verticalXs,
                 Text(
-                  'kernalix7@kodenet.io',
+                  'cs-divechecker@createch.kr',
                   style: TextStyle(
                     fontSize: FontSizes.xs,
                     color: StatusColors.disabled.withValues(alpha: Opacities.veryHigh),
@@ -469,7 +469,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
       final savedPath = await downloadFile(jsonContent, filename);
 
-      if (mounted) {
+      if (context.mounted) {
         if (savedPath != null) {
           context.showSuccess('${l10n.backupSuccess}\n${l10n.sessionsCount(backup.stats.sessionCount)}, ${l10n.dataPointsCount(backup.stats.dataPointCount)}');
         } else {
@@ -477,7 +477,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         }
       }
     } catch (e) {
-      if (mounted) {
+      if (context.mounted) {
         context.showError('${l10n.backupFailed}: $e');
       }
     } finally {
@@ -500,7 +500,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       final backup = backupService.parseBackup(jsonContent);
       
       if (backup == null) {
-        if (mounted) {
+        if (context.mounted) {
           context.showError(l10n.invalidBackupFile);
         }
         return;
@@ -508,8 +508,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
       final validation = backupService.validateBackup(backup);
       
-      if (!mounted) return;
-      
+      if (!context.mounted) return;
+
       final confirm = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
@@ -544,7 +544,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       );
 
-      if (confirm != true || !mounted) return;
+      if (confirm != true || !context.mounted) return;
 
       setState(() {
         _isRestoring = true;
@@ -565,7 +565,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         },
       );
 
-      if (mounted) {
+      if (context.mounted) {
         if (result.success) {
           context.showSuccess('${l10n.restoreSuccess}\n${l10n.sessionsCount(result.sessionsRestored)}');
         } else {
@@ -573,7 +573,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         }
       }
     } catch (e) {
-      if (mounted) {
+      if (context.mounted) {
         context.showError('${l10n.restoreFailed}: $e');
       }
     } finally {

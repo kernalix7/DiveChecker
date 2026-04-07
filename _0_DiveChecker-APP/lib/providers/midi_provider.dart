@@ -1,4 +1,4 @@
-// Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
+// Copyright (C) 2025-2026 Createch (legal@createch.kr)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
 /// MIDI-based communication provider for DiveChecker device.
@@ -65,8 +65,10 @@ class MidiDeviceInfo {
   }
 
   bool get isDiveChecker {
-    return name.toLowerCase().contains('divechecker') ||
-        name.toLowerCase().contains('kodenet');
+    final lower = name.toLowerCase();
+    return lower.contains('divechecker') ||
+        lower.contains('createch') ||
+        lower.contains('kodenet');
   }
   
   /// Strict verification - for MIDI, same as isDiveChecker

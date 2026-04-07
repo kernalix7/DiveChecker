@@ -1,4 +1,4 @@
-// Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
+// Copyright (C) 2025-2026 Createch (legal@createch.kr)
 // Licensed under the Apache License, Version 2.0.
 
 /// Shared ECDSA utility functions for DiveChecker
@@ -15,7 +15,7 @@ final ECDomainParameters ecdsaP256Params = ECCurve_secp256r1();
 
 /// Parse DER-encoded ECDSA signature to ECSignature
 ///
-/// DER format: 30 <total_len> 02 <r_len> <r_bytes> 02 <s_len> <s_bytes>
+/// DER format: `30 [total_len] 02 [r_len] [r_bytes] 02 [s_len] [s_bytes]`
 /// Returns null if the signature is malformed.
 ECSignature? parseDerSignature(Uint8List derSig) {
   try {

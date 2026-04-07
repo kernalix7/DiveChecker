@@ -1,4 +1,4 @@
-// Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
+// Copyright (C) 2025-2026 Createch (legal@createch.kr)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
 library;
@@ -167,7 +167,7 @@ class _MiniScoreBar extends StatelessWidget {
         ),
         Spacing.horizontalXs,
         Text(
-          '${score.toStringAsFixed(0)}',
+          score.toStringAsFixed(0),
           style: TextStyle(
             fontSize: FontSizes.xxs,
             fontWeight: FontWeight.w600,

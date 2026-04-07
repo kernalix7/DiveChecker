@@ -1,9 +1,9 @@
-/// ECDSA Public Key for DiveChecker Device Authentication
-/// 
-/// Algorithm: ECDSA P-256 (secp256r1)
-/// Generated: 2026-01-30 10:03:43
-/// 
-/// This file contains ONLY the public key - safe to include in app.
+// ECDSA Public Key for DiveChecker Device Authentication
+//
+// Algorithm: ECDSA P-256 (secp256r1)
+// Generated: 2026-01-30 10:03:43
+//
+// This file contains ONLY the public key - safe to include in app.
 
 import 'dart:typed_data';
 

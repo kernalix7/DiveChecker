@@ -14,8 +14,8 @@
  *   - Unique serial number from chip ID
  *   - WS2812 RGB LED status indication
  * 
- * @author Kim DaeHyun (kernalix7@kodenet.io)
- * @copyright Copyright (C) 2025-2026 KodeNet
+ * @author Createch (legal@createch.kr)
+ * @copyright Copyright (C) 2025-2026 Createch
  * @license Apache License 2.0
  */
 

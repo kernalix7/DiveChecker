@@ -1,4 +1,4 @@
-// Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
+// Copyright (C) 2025-2026 Createch (legal@createch.kr)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
 library;
@@ -36,7 +36,7 @@ class CustomLicensePage extends StatelessWidget {
                   _InfoCard(
                     icon: Icons.copyright,
                     title: l10n.copyright,
-                    content: '© 2025 Kim DaeHyun (kernalix7@kodenet.io)',
+                    content: '© 2025-2026 크리에이테크 (Createch)',
                     color: ScoreColors.warning,
                   ),
                   Spacing.verticalLg,
@@ -560,7 +560,7 @@ For the complete license text, see: https://www.apache.org/licenses/LICENSE-2.0
                         ),
                         Spacing.verticalXs,
                         Text(
-                          '© 2025 Kim DaeHyun (kernalix7@kodenet.io)',
+                          '© 2025-2026 크리에이테크 (Createch)',
                           style: TextStyle(
                             fontSize: FontSizes.bodySm,
                             color: theme.colorScheme.onSurface.withValues(alpha: Opacities.medium),

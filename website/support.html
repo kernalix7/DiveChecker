@@ -218,7 +218,7 @@
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                 </div>
                 <h4 data-i18n="support.email-title">이메일</h4>
-                <p>megakdh@createch.kr</p>
+                <p>contact@createch.kr</p>
                 <span class="contact-info-sub" data-i18n="support.email-sub">영업일 기준 1~2일 내 답변</span>
             </div>
             <div class="contact-info-card">
@@ -252,9 +252,9 @@
             매장에 새로운 가치를, 교육생에게 더 나은 피드백을 더하세요.
         </p>
         <div class="dealer-cta">
-            <a href="mailto:megakdh@createch.kr" class="btn btn-dealer">
+            <a href="mailto:info@createch.kr" class="btn btn-dealer">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                <span>megakdh@createch.kr</span>
+                <span>info@createch.kr</span>
             </a>
         </div>
         <p class="dealer-note" data-i18n="dealer.note">딜러 조건, 도매 가격, 교육용 특별 할인 등 자세한 내용은 이메일로 문의해 주세요.</p>
@@ -266,8 +266,7 @@
     <div class="footer-inner">
         <div class="footer-top">
             <div class="footer-brand">
-                <span class="logo-text">DIVE<span class="logo-accent">CHECKER</span></span>
-                <p class="footer-tagline" data-i18n="footer.tagline">이퀄라이징을 눈으로 보다</p>
+                <img src="assets/images/logo-divechecker.svg" alt="DiveChecker" class="footer-logo-img">
             </div>
             <div class="footer-links">
                 <div class="footer-col">
@@ -283,18 +282,28 @@
                     <a href="support.html" data-i18n="footer.as">A/S 문의</a>
                 </div>
                 <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="privacy.html" data-i18n="footer.privacy">개인정보처리방침</a>
+                    <a href="disclaimer.html" data-i18n="footer.disclaimer-link">면책 고지</a>
+                    <a href="https://opensource.org/licenses/Apache-2.0" target="_blank" rel="noopener">Apache 2.0 (SW)</a>
+                    <a href="https://ohwr.org/cern_ohl_s_v2.txt" target="_blank" rel="noopener">CERN-OHL-S v2 (HW)</a>
+                </div>
+                <div class="footer-col">
                     <h4>Open Source</h4>
                     <a href="https://github.com/kernalix7/divechecker" target="_blank" rel="noopener">GitHub</a>
-                    <a href="https://opensource.org/licenses/Apache-2.0" target="_blank" rel="noopener">Apache 2.0</a>
-                    <a href="https://ohwr.org/cern_ohl_s_v2.txt" target="_blank" rel="noopener">CERN-OHL-S v2</a>
+                    <a href="https://github.com/kernalix7/divechecker/releases" target="_blank" rel="noopener">Releases</a>
+                    <a href="https://github.com/kernalix7/divechecker/issues" target="_blank" rel="noopener">Bug Report</a>
                 </div>
             </div>
         </div>
         <div class="footer-disclaimer">
-            <p data-i18n="footer.disclaimer">본 제품은 다이빙 이퀄라이징 기술 향상을 위한 교육용 학습기(Learning Device)이며, 의료기기가 아닙니다. 이관 기능 장애, 중이염 등 질환의 진단·예방·치료 목적으로 사용할 수 없습니다. 사용 중 통증이 느껴지면 즉시 사용을 중단하십시오.</p>
+            <p data-i18n="footer.disclaimer">본 제품은 다이빙 이퀄라이징 기술 향상을 위한 교육용 학습기(Learning Device)이며, 의료기기가 아닙니다. 이관 기능 장애, 중이염 등 질환의 진단·예방·치료 목적으로 사용할 수 없습니다. 사용 중 귀 또는 코에 통증이 느껴지면 즉시 사용을 중단하십시오. 본 제품의 오용·부주의 또는 부적절한 사용으로 인해 발생하는 어떠한 부상·손해에 대해서도 제조자는 책임을 지지 않습니다.</p>
+        </div>
+        <div class="footer-trademarks">
+            <p data-i18n="footer.trademarks">DiveChecker 및 DiveChecker 로고는 Createch(크리에이테크)의 상표입니다. Google Play, Android, Flutter는 Google LLC의 상표입니다. Apple, App Store, iOS, iPhone, iPad, macOS는 Apple Inc.의 상표입니다. Windows는 Microsoft Corporation의 등록 상표입니다. Bluetooth는 Bluetooth SIG, Inc.의 등록 상표입니다. USB, USB-C는 USB Implementers Forum의 상표입니다. Linux는 Linus Torvalds의 등록 상표입니다. GitHub는 GitHub, Inc.의 상표입니다.</p>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 DiveChecker. Made with passion for the freediving community.</p>
+            <p>&copy; 2026 DiveChecker by 크리에이테크 (Createch). All rights reserved.</p>
         </div>
     </div>
 </footer>
@@ -316,7 +325,7 @@ function handleSubmit(e) {
     var body = '[' + category + '] ' + name + '\n\n' + message;
     if (orderId) body += '\n\n' + lb[0] + ': ' + orderId;
     body += '\n\n' + lb[1] + ': ' + email;
-    var mailtoUrl = 'mailto:megakdh@createch.kr'
+    var mailtoUrl = 'mailto:contact@createch.kr'
         + '?subject=' + encodeURIComponent(subject)
         + '&body=' + encodeURIComponent(body);
     window.location.href = mailtoUrl;

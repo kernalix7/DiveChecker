@@ -111,7 +111,11 @@
 - 피크 분석기: O(1) 집합 탐색으로 개선
 - USB 열거: 대기 루프 500ms → 10ms
 - SerialProvider 제거; MidiProvider 직접 사용
-- Linux/macOS 바이너리/번들 ID를 `io.kodenet.divechecker`로 통일
+- Linux 앱 ID를 `kr.createch.divechecker`로 변경
+- macOS 번들 ID `io.kodenet.divechecker` 유지
+- 개발사 표기를 KodeNet에서 크리에이테크 (Createch)로 변경
+- USB 제조사명을 `kodenet.io`에서 `createch.kr`로 변경
+- 연락처 이메일을 createch.kr 도메인으로 이관 (legal@, contact@, cs-divechecker@)
 
 ## [3.0.0] — 2026-02-19 (RTM 3.0)
 

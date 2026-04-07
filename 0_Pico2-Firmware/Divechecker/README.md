@@ -172,6 +172,6 @@ Flash (4MB total)
 
 ## License
 
-Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
+Copyright (C) 2025-2026 Createch (legal@createch.kr)
 
 Licensed under Apache License 2.0 (Software) and CERN-OHL-S v2 (Hardware).

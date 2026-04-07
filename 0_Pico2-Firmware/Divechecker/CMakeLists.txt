@@ -54,7 +54,7 @@ pico_enable_stdio_usb(Divechecker 0)
 
 # USB Device configuration
 target_compile_definitions(Divechecker PRIVATE
-    USBD_MANUFACTURER="kodenet.io"
+    USBD_MANUFACTURER="createch.kr"
     USBD_PRODUCT="DiveChecker V1"
     PICO_STDIO_USB_ENABLE_RESET_VIA_BAUD_RATE=0
 )

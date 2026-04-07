@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>면책 고지 — DiveChecker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="pages.css">
+<style>
+.legal-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+}
+.legal-content h2 {
+    font-size: 22px;
+    font-weight: 800;
+    margin-top: 48px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+}
+.legal-content h2:first-of-type { margin-top: 0; }
+.legal-content h3 {
+    font-size: 17px;
+    font-weight: 700;
+    margin-top: 28px;
+    margin-bottom: 10px;
+    color: var(--text);
+}
+.legal-content p {
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+    word-break: keep-all;
+}
+.legal-content strong { color: var(--text); font-weight: 600; }
+.legal-content ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+.legal-content li {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text-dim);
+    padding: 8px 0 8px 20px;
+    position: relative;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.legal-content li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 16px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--red);
+    opacity: 0.5;
+}
+.legal-content li:last-child { border-bottom: none; }
+.legal-callout {
+    background: rgba(232,64,64,0.04);
+    border: 1px solid rgba(232,64,64,0.15);
+    border-radius: var(--radius-sm);
+    padding: 24px 28px;
+    margin: 24px 0;
+}
+.legal-callout p { margin: 0; color: #ff8888; }
+.legal-callout strong { color: #ffaaaa; }
+.legal-info {
+    background: rgba(77,184,255,0.04);
+    border: 1px solid rgba(77,184,255,0.12);
+    border-radius: var(--radius-sm);
+    padding: 24px 28px;
+    margin: 24px 0;
+}
+.legal-info p { margin: 0; color: var(--blue); }
+.legal-info strong { color: #7dd3fc; }
+.legal-effective {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav scrolled" id="nav">
+    <div class="nav-inner">
+        <a href="index.html" class="nav-logo">
+            <span class="logo-text">DIVE<span class="logo-accent">CHECKER</span></span>
+        </a>
+        <div class="nav-links">
+            <a href="index.html#features">Features</a>
+            <a href="index.html#manual" data-i18n="nav.manual">사용 설명서</a>
+            <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+            <a href="support.html" data-i18n="nav.support">지원</a>
+            <a href="index.html#buy" class="nav-cta" data-i18n="nav.buy">구매하기</a>
+        </div>
+        <button class="nav-hamburger" id="hamburger" aria-label="메뉴 열기">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+    <a href="index.html#features">Features</a>
+    <a href="index.html#manual" data-i18n="nav.manual">사용 설명서</a>
+    <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+    <a href="support.html" data-i18n="nav.support">지원</a>
+    <a href="index.html#buy" class="nav-cta" data-i18n="nav.buy">구매하기</a>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+    <div class="hero-bg"><div class="hero-glow"></div></div>
+    <div class="container">
+        <div class="page-hero-content reveal">
+            <span class="section-label">DISCLAIMER</span>
+            <h1 class="page-hero-title" data-i18n="disclaimer.title">면책 고지</h1>
+            <p class="page-hero-desc" data-i18n="disclaimer.sub">DiveChecker DC-EQ01 제품 사용에 관한 법적 고지사항</p>
+        </div>
+    </div>
+</section>
+
+<!-- CONTENT -->
+<section class="section section-dark">
+    <div class="legal-content">
+        <p class="legal-effective" data-i18n="disclaimer.effective">시행일: 2026년 4월 7일</p>
+
+        <!-- 1. 제품 용도 -->
+        <h2 data-i18n="disclaimer.s1">1. 제품의 용도 및 성격</h2>
+        <p data-i18n="disclaimer.s1.p1">DiveChecker DC-EQ01(이하 "본 제품")은 다이빙 이퀄라이징(압력 평형) 기술 향상을 위한 <strong>교육용 학습기(Learning Device)</strong>이며, 교육 및 실습 목적 외의 용도로 사용할 수 없습니다.</p>
+        <div class="legal-callout">
+            <p data-i18n="disclaimer.s1.warn"><strong>본 제품은 의료기기가 아닙니다.</strong> 이관 기능 장애, 중이염, 부비동염 등 어떠한 질환의 진단·예방·치료 목적으로도 사용할 수 없으며, 대한민국 의료기기법 또는 기타 국가의 의료기기 관련 법률에 의해 허가·인증된 제품이 아닙니다.</p>
+        </div>
+
+        <!-- 2. 사용상 주의 -->
+        <h2 data-i18n="disclaimer.s2">2. 사용상 주의사항</h2>
+        <ul>
+            <li data-i18n="disclaimer.s2.l1"><strong>통증 발생 시 즉시 중단</strong> — 사용 중 귀, 코, 두부 또는 기타 신체 부위에 통증이나 불편감이 느껴지면 즉시 사용을 중단하고, 필요 시 의료 전문가와 상담하십시오.</li>
+            <li data-i18n="disclaimer.s2.l2"><strong>과도한 압력 금지</strong> — 이퀄라이징 시 과도한 힘을 가하면 고막 손상, 역압착(reverse squeeze), 부비동 손상 등 비가역적 신체 손상이 발생할 수 있습니다.</li>
+            <li data-i18n="disclaimer.s2.l3"><strong>기존 질환자 주의</strong> — 이관 기능 장애, 만성 중이염, 비중격 만곡증 또는 기타 이비인후과 질환이 있는 경우 사용 전 반드시 담당 의사와 상의하십시오.</li>
+            <li data-i18n="disclaimer.s2.l4"><strong>어린이 사용 금지</strong> — 본 제품은 전문 교육용 기자재로, 13세 미만의 어린이가 사용하기에 적합하지 않습니다.</li>
+            <li data-i18n="disclaimer.s2.l5"><strong>자격 있는 지도자 권장</strong> — 초보자는 자격을 갖춘 프리다이빙 강사의 지도 하에 본 제품을 사용할 것을 강력히 권장합니다.</li>
+        </ul>
+
+        <!-- 3. 취급 주의 -->
+        <h2 data-i18n="disclaimer.s3">3. 제품 취급 주의사항</h2>
+        <ul>
+            <li data-i18n="disclaimer.s3.l1"><strong>방수 아님</strong> — 본 제품은 방수 제품이 아닙니다. 물, 타액, 비강 분비물 등 액체가 센서 유입구에 들어가지 않도록 주의하십시오.</li>
+            <li data-i18n="disclaimer.s3.l2"><strong>충격 방지</strong> — 떨어뜨리거나 강한 충격을 가하면 내부 센서가 손상될 수 있습니다.</li>
+            <li data-i18n="disclaimer.s3.l3"><strong>보관 환경</strong> — 직사광선, 고온(60°C 이상), 다습한 환경을 피하여 보관하십시오.</li>
+            <li data-i18n="disclaimer.s3.l4"><strong>분해 및 개조 금지</strong> — 제품을 분해하거나 개조하면 보증이 무효화되며, 안전상의 문제가 발생할 수 있습니다.</li>
+            <li data-i18n="disclaimer.s3.l5"><strong>데이터 케이블 사용</strong> — 반드시 데이터 전송이 가능한 USB-C 케이블을 사용하십시오. 충전 전용 케이블로는 정상 동작하지 않습니다.</li>
+        </ul>
+
+        <!-- 4. 면책 -->
+        <h2 data-i18n="disclaimer.s4">4. 면책 조항</h2>
+        <p data-i18n="disclaimer.s4.p1">Createch(크리에이테크, 이하 "제조자")는 본 제품의 사용과 관련하여 다음 사항에 대해 책임을 지지 않습니다:</p>
+        <ul>
+            <li data-i18n="disclaimer.s4.l1">본 제품의 <strong>오용, 부주의, 또는 부적절한 사용</strong>으로 인해 발생하는 어떠한 부상, 건강 상의 문제 또는 재산상의 손해</li>
+            <li data-i18n="disclaimer.s4.l2">사용자가 본 면책 고지에 명시된 <strong>주의사항을 준수하지 않아</strong> 발생하는 모든 손해</li>
+            <li data-i18n="disclaimer.s4.l3"><strong>비인가 수리, 개조, 분해</strong>로 인해 발생하는 제품 손상 또는 신체 손해</li>
+            <li data-i18n="disclaimer.s4.l4">본 제품을 <strong>의료적 목적</strong>으로 사용하여 발생하는 모든 결과</li>
+            <li data-i18n="disclaimer.s4.l5">다이빙, 수중 활동 또는 이퀄라이징 훈련 중 발생하는 <strong>사고, 부상 또는 사망</strong></li>
+        </ul>
+        <div class="legal-callout">
+            <p data-i18n="disclaimer.s4.warn">본 제품은 실제 다이빙 환경에서의 안전을 보장하지 않습니다. 본 제품으로 학습한 이퀄라이징 기법은 반드시 <strong>자격을 갖춘 강사의 지도 하에 수중에서 검증</strong>되어야 합니다.</p>
+        </div>
+
+        <!-- 5. 측정 데이터 -->
+        <h2 data-i18n="disclaimer.s5">5. 측정 데이터에 관한 고지</h2>
+        <p data-i18n="disclaimer.s5.p1">본 제품이 제공하는 압력 데이터, 피크 분석, 등급 평가 등의 정보는 <strong>교육적 참고 자료</strong>이며, 의학적 또는 전문적 판단의 근거로 사용할 수 없습니다. 센서 특성, 환경 조건, 사용자의 사용 방법에 따라 측정값에 오차가 발생할 수 있습니다.</p>
+
+        <!-- 6. 제조 품질 -->
+        <h2 data-i18n="disclaimer.s6">6. 제조 품질 안내</h2>
+        <ul>
+            <li data-i18n="disclaimer.s6.l1">제조 과정에서 발생하는 <strong>미세한 스크래치나 표면 질감의 차이</strong>는 제품 불량이 아닌 공정 특성입니다.</li>
+            <li data-i18n="disclaimer.s6.l2">외관에 미세한 표면 차이가 있을 수 있으며, 이는 제품의 기능 및 성능에 영향을 주지 않습니다.</li>
+            <li data-i18n="disclaimer.s6.l3">제조 특성상 개체 간 미세한 외관 차이가 있을 수 있습니다.</li>
+            <li data-i18n="disclaimer.s6.l4">상기 사유로 인한 교환·반품은 불가합니다.</li>
+        </ul>
+
+        <!-- 7. 보증 -->
+        <h2 data-i18n="disclaimer.s7">7. 보증 범위</h2>
+        <p data-i18n="disclaimer.s7.p1">무상 A/S는 구매일로부터 <strong>1개월 이내</strong>, 제품 자체 결함에 한합니다. 구매 영수증 등 구매 증빙을 첨부하여 이메일로 신청해 주십시오.</p>
+
+        <h3 data-i18n="disclaimer.s7.ex-title">보증 제외 사항</h3>
+        <ul>
+            <li data-i18n="disclaimer.s7.ex1">침수 또는 이물질(타액, 비강 분비물 포함) 유입으로 인한 고장</li>
+            <li data-i18n="disclaimer.s7.ex2">사용자 과실에 의한 파손, 변형, 낙하 손상</li>
+            <li data-i18n="disclaimer.s7.ex3">비인가 분해, 개조, 수리로 인한 고장</li>
+            <li data-i18n="disclaimer.s7.ex4">정상적인 마모 및 경년 열화</li>
+            <li data-i18n="disclaimer.s7.ex5">천재지변, 화재 등 외부 요인에 의한 손상</li>
+        </ul>
+
+        <div class="legal-info">
+            <p data-i18n="disclaimer.s7.contact">A/S 문의: <strong>cs-divechecker@createch.kr</strong></p>
+        </div>
+
+        <!-- 8. 규격 -->
+        <h2 data-i18n="disclaimer.s8">8. 규격 및 인증 정보</h2>
+        <p data-i18n="disclaimer.s8.p1">기자재명칭: 디지털 압력 감지 학습기 &middot; 모델명: DC-EQ01 &middot; 기기부호: DCPM &middot; 입력 전원: DC 5V (USB-C) &middot; 인증: KC 적합등록 (등록번호: R-R-DCQ-DC, 등록일: 2026-03-24) &middot; 제조국: 대한민국 &middot; 제조사: 크리에이테크 (Createch)</p>
+
+        <!-- 9. 관할법원 -->
+        <h2 data-i18n="disclaimer.s9">9. 준거법 및 관할</h2>
+        <p data-i18n="disclaimer.s9.p1">본 면책 고지는 대한민국 법률에 따라 해석되며, 본 제품과 관련된 모든 분쟁은 제조자의 소재지를 관할하는 법원을 전속적 관할 법원으로 합니다.</p>
+
+    </div>
+</section>
+
+<!-- FOOTER (minimal) -->
+<footer class="footer">
+    <div class="footer-inner">
+        <div class="footer-bottom">
+            <p>&copy; 2026 DiveChecker by 크리에이테크 (Createch). All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="i18n.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

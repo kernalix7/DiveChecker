@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>개인정보처리방침 — DiveChecker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="pages.css">
+<style>
+.privacy-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+}
+.privacy-content h1 {
+    font-size: 32px;
+    font-weight: 900;
+    margin-bottom: 8px;
+}
+.privacy-content h2 {
+    font-size: 22px;
+    font-weight: 800;
+    margin-top: 40px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+.privacy-content p {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+}
+.privacy-content strong { color: var(--text); font-weight: 600; }
+.privacy-content ul, .privacy-content ol {
+    padding-left: 24px;
+    margin-bottom: 16px;
+}
+.privacy-content li {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+}
+.privacy-content a { color: var(--blue); text-decoration: underline; }
+.privacy-lang-toggle {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+}
+.privacy-lang-btn {
+    padding: 8px 20px;
+    border: 1px solid var(--border);
+    border-radius: 60px;
+    background: none;
+    color: var(--text-muted);
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.privacy-lang-btn.active {
+    background: var(--blue);
+    color: #fff;
+    border-color: var(--blue);
+}
+.privacy-loading {
+    text-align: center;
+    padding: 60px 0;
+    color: var(--text-muted);
+    font-size: 15px;
+}
+.privacy-error {
+    text-align: center;
+    padding: 60px 0;
+    color: var(--red);
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav scrolled" id="nav">
+    <div class="nav-inner">
+        <a href="index.html" class="nav-logo">
+            <span class="logo-text">DIVE<span class="logo-accent">CHECKER</span></span>
+        </a>
+        <div class="nav-links">
+            <a href="index.html#features">Features</a>
+            <a href="index.html#manual" data-i18n="nav.manual">사용 설명서</a>
+            <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+            <a href="support.html" data-i18n="nav.support">지원</a>
+            <a href="index.html#buy" class="nav-cta" data-i18n="nav.buy">구매하기</a>
+        </div>
+        <button class="nav-hamburger" id="hamburger" aria-label="메뉴 열기">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+    <a href="index.html#features">Features</a>
+    <a href="index.html#manual" data-i18n="nav.manual">사용 설명서</a>
+    <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+    <a href="support.html" data-i18n="nav.support">지원</a>
+    <a href="index.html#buy" class="nav-cta" data-i18n="nav.buy">구매하기</a>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+    <div class="hero-bg"><div class="hero-glow"></div></div>
+    <div class="container">
+        <div class="page-hero-content reveal">
+            <span class="section-label">PRIVACY POLICY</span>
+            <h1 class="page-hero-title" data-i18n="footer.privacy">개인정보처리방침</h1>
+        </div>
+    </div>
+</section>
+
+<!-- CONTENT -->
+<section class="section section-dark">
+    <div class="privacy-content">
+        <div class="privacy-lang-toggle">
+            <button class="privacy-lang-btn active" data-privacy-lang="ko">한국어</button>
+            <button class="privacy-lang-btn" data-privacy-lang="en">English</button>
+        </div>
+        <div id="privacyBody">
+            <div class="privacy-loading">불러오는 중...</div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER (minimal) -->
+<footer class="footer">
+    <div class="footer-inner">
+        <div class="footer-bottom">
+            <p>&copy; 2026 DiveChecker by 크리에이테크 (Createch). All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="i18n.js"></script>
+<script src="script.js"></script>
+<script>
+const PRIVACY_URLS = {
+    ko: 'https://raw.githubusercontent.com/kernalix7/DiveChecker/main/docs/PRIVACY_POLICY.ko.md',
+    en: 'https://raw.githubusercontent.com/kernalix7/DiveChecker/main/docs/PRIVACY_POLICY.md'
+};
+
+// Simple markdown to HTML converter (no library needed)
+function md2html(md) {
+    return md
+        // Remove language toggle line at top
+        .replace(/^\[English\].*$/m, '')
+        .replace(/^\[한국어\].*$/m, '')
+        // Headers
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^# (.+)$/gm, '')  // Remove h1 (page already has title)
+        // Bold
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        // Links
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+        // Unordered list
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        // Paragraphs (non-empty lines that aren't already tags)
+        .split('\n\n')
+        .map(block => {
+            block = block.trim();
+            if (!block) return '';
+            if (block.startsWith('<h') || block.startsWith('<ul') || block.startsWith('<ol')) return block;
+            if (block.includes('<li>')) return '<ul>' + block + '</ul>';
+            return '<p>' + block.replace(/\n/g, '<br>') + '</p>';
+        })
+        .join('\n');
+}
+
+async function loadPrivacy(lang) {
+    const body = document.getElementById('privacyBody');
+    body.innerHTML = '<div class="privacy-loading">불러오는 중...</div>';
+
+    try {
+        const res = await fetch(PRIVACY_URLS[lang]);
+        if (!res.ok) throw new Error(res.status);
+        const md = await res.text();
+        body.innerHTML = md2html(md);
+    } catch (e) {
+        body.innerHTML = '<div class="privacy-error">불러오기 실패. <a href="' + PRIVACY_URLS[lang] + '" target="_blank">GitHub에서 직접 확인</a></div>';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadPrivacy('ko');
+
+    document.querySelectorAll('.privacy-lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.privacy-lang-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            loadPrivacy(btn.dataset.privacyLang);
+        });
+    });
+});
+</script>
+</body>
+</html>

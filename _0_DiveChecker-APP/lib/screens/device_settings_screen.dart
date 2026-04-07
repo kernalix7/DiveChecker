@@ -1,4 +1,4 @@
-// Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
+// Copyright (C) 2025-2026 Createch (legal@createch.kr)
 // Licensed under the Apache License, Version 2.0.
 
 /// Device-specific Settings Screen
@@ -502,11 +502,11 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
       ),
     );
 
-    if (confirmed == true && mounted) {
+    if (confirmed == true && context.mounted) {
       setState(() => _isProcessing = true);
       try {
         final result = await provider.softReboot(pinController.text);
-        if (!mounted) return;
+        if (!context.mounted) return;
         if (result == 0) {
           context.showSnackBar(l10n.deviceDisconnected);
         } else if (result == 2) {
@@ -567,11 +567,11 @@ class _DeviceSettingsScreenState extends State<DeviceSettingsScreen> {
       ),
     );
 
-    if (confirmed == true && mounted) {
+    if (confirmed == true && context.mounted) {
       setState(() => _isProcessing = true);
       try {
         final result = await provider.enterBootloader(pinController.text);
-        if (!mounted) return;
+        if (!context.mounted) return;
         if (result == 0) {
           context.showSnackBar(l10n.bootselRebootSent);
         } else {

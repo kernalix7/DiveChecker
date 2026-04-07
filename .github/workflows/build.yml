@@ -9,6 +9,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Least-privilege: jobs must declare their own permissions
+permissions: {}
+
 # 앱 프로젝트 경로
 env:
   APP_DIR: _0_DiveChecker-APP
@@ -117,12 +120,10 @@ jobs:
       
       - name: Check iOS Certificates
         id: check-certs
+        env:
+          HAS_IOS_CERT: ${{ secrets.IOS_CERTIFICATE_P12 != '' }}
         run: |
-          if [ -n "${{ secrets.IOS_CERTIFICATE_P12 }}" ]; then
-            echo "has_certs=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_certs=false" >> $GITHUB_OUTPUT
-          fi
+          echo "has_certs=$HAS_IOS_CERT" >> $GITHUB_OUTPUT
       
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -299,12 +300,10 @@ jobs:
 
       - name: Check macOS Certificates
         id: check-mac-certs
+        env:
+          HAS_MAC_CERT: ${{ secrets.IOS_CERTIFICATE_P12 != '' }}
         run: |
-          if [ -n "${{ secrets.IOS_CERTIFICATE_P12 }}" ]; then
-            echo "has_certs=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_certs=false" >> $GITHUB_OUTPUT
-          fi
+          echo "has_certs=$HAS_MAC_CERT" >> $GITHUB_OUTPUT
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -502,6 +501,20 @@ jobs:
           zip -r ../../DiveChecker-web.zip .
           cd ../..
 
+      - name: Generate SHA-256 checksums
+        run: |
+          sha256sum \
+            artifacts/android-apk/*.apk \
+            artifacts/android-aab/*.aab \
+            DiveChecker-linux-x64.tar.gz \
+            DiveChecker-windows-x64.zip \
+            DiveChecker-macos.zip \
+            DiveChecker-web.zip \
+            2>/dev/null | sed 's|artifacts/[^ ]*/||' > SHA256SUMS.txt
+          # Include iOS IPA if present
+          sha256sum artifacts/ios-ipa/*.ipa 2>/dev/null | sed 's|artifacts/[^ ]*/||' >> SHA256SUMS.txt || true
+          cat SHA256SUMS.txt
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
@@ -514,3 +527,4 @@ jobs:
             DiveChecker-windows-x64.zip
             DiveChecker-macos.zip
             DiveChecker-web.zip
+            SHA256SUMS.txt

@@ -1,4 +1,4 @@
-// Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
+// Copyright (C) 2025-2026 Createch (legal@createch.kr)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
 import 'package:intl/intl.dart';
@@ -17,9 +17,9 @@ String formatDuration(int seconds, [AppLocalizations? l10n]) {
   
   // Fallback when l10n not available
   if (minutes > 0) {
-    return '$minutes분 ${remainingSeconds}초';
+    return '$minutes분 $remainingSeconds초';
   }
-  return '${seconds}초';
+  return '$seconds초';
 }
 
 /// Format date with relative labels (today/yesterday)

@@ -1,4 +1,4 @@
-// Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
+// Copyright (C) 2025-2026 Createch (legal@createch.kr)
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for terms.
 
 import 'dart:math';
@@ -355,7 +355,7 @@ class _SegmentCard extends StatelessWidget {
                   child: MiniStatWidget(
                     label: l10n.avgLabel,
                     value:
-                        '${(segment['avgPressure'] as num).toDouble().toStringAsFixed(1)}',
+                        (segment['avgPressure'] as num).toDouble().toStringAsFixed(1),
                     unit: 'hPa',
                   ),
                 ),
@@ -363,7 +363,7 @@ class _SegmentCard extends StatelessWidget {
                   child: MiniStatWidget(
                     label: l10n.maxLabel,
                     value:
-                        '${(segment['maxPressure'] as num).toDouble().toStringAsFixed(1)}',
+                        (segment['maxPressure'] as num).toDouble().toStringAsFixed(1),
                     unit: 'hPa',
                   ),
                 ),
@@ -378,7 +378,7 @@ class _SegmentCard extends StatelessWidget {
                   child: MiniStatWidget(
                     label: l10n.variabilityLabel,
                     value:
-                        '${(segment['stdDev'] as num).toDouble().toStringAsFixed(1)}',
+                        (segment['stdDev'] as num).toDouble().toStringAsFixed(1),
                     unit: 'σ',
                   ),
                 ),

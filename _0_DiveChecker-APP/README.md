@@ -153,7 +153,7 @@ flutter test
 
 ## License
 
-Copyright (C) 2025-2026 Kim DaeHyun (kernalix7@kodenet.io)
+Copyright (C) 2025-2026 Createch (legal@createch.kr)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

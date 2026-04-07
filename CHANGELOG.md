@@ -111,8 +111,11 @@ and this project aims to follow [Semantic Versioning](https://semver.org/spec/v2
 - Peak analyzer: O(1) set lookup replaces O(n) List.contains
 - USB enumeration: reduced wait loop from 500ms to 10ms intervals
 - SerialProvider removed; all code uses MidiProvider directly
-- Linux binary/app ID unified to `io.kodenet.divechecker`
+- Linux binary/app ID unified to `kr.createch.divechecker`
 - macOS bundle ID unified to `io.kodenet.divechecker`
+- Developer attribution updated from KodeNet to Createch (크리에이테크)
+- USB manufacturer string updated from `kodenet.io` to `createch.kr`
+- Contact emails migrated to createch.kr domain (legal@, contact@, cs-divechecker@)
 
 ## [3.0.0] — 2026-02-19 (RTM 3.0)
 
