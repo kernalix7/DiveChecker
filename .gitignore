@@ -91,7 +91,6 @@ _0_DiveChecker-APP/android/app/*.jks
 Thumbs.db
 
 0_Package
-website/
 
 # ===== AI config (실제 파일은 .priv-storage/, 루트는 심볼릭 링크) =====
 CLAUDE.md

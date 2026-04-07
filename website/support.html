@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>고객 지원 — DiveChecker</title>
+<meta name="description" content="DiveChecker 고객 지원. A/S 문의, 제품 문의, 기술 지원.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="pages.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav scrolled" id="nav">
+    <div class="nav-inner">
+        <a href="index.html" class="nav-logo">
+            <span class="logo-text">DIVE<span class="logo-accent">CHECKER</span></span>
+        </a>
+        <div class="nav-links">
+            <a href="index.html#features">Features</a>
+            <a href="guide.html" data-i18n="nav.guide">사용 가이드</a>
+            <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+            <a href="support.html" class="nav-active" data-i18n="nav.support">지원</a>
+            <a href="index.html#buy" class="nav-cta" data-i18n="nav.buy">구매하기</a>
+        </div>
+        <button class="nav-hamburger" id="hamburger" aria-label="메뉴 열기">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+    <a href="index.html#features">Features</a>
+    <a href="guide.html" data-i18n="nav.guide">사용 가이드</a>
+    <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+    <a href="support.html" data-i18n="nav.support">지원</a>
+    <a href="index.html#buy" class="nav-cta" data-i18n="nav.buy">구매하기</a>
+</div>
+
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+    <div class="hero-bg"><div class="hero-glow"></div></div>
+    <div class="container">
+        <div class="page-hero-content reveal">
+            <span class="section-label">SUPPORT</span>
+            <h1 class="page-hero-title" data-i18n="support.page-title">고객 지원</h1>
+            <p class="page-hero-desc" data-i18n="support.page-desc">도움이 필요하신가요? 아래에서 문의 유형을 선택하세요.</p>
+        </div>
+    </div>
+</section>
+
+
+<!-- SUPPORT OPTIONS -->
+<section class="section section-dark">
+    <div class="container">
+        <div class="support-grid reveal">
+            <div class="support-card">
+                <div class="support-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
+                    </svg>
+                </div>
+                <h3 data-i18n="support.as-title">A/S 수리</h3>
+                <p data-i18n="support.as-desc">제품 고장, 센서 이상, 물리적 손상 등 수리가 필요한 경우</p>
+                <div class="support-detail">
+                    <div class="support-info-row">
+                        <span class="info-label" data-i18n="support.as-warranty">보증 기간</span>
+                        <span class="info-value" data-i18n="support.as-warranty-val">구매일로부터 1개월</span>
+                    </div>
+                    <div class="support-info-row">
+                        <span class="info-label" data-i18n="support.as-time">처리 기간</span>
+                        <span class="info-value" data-i18n="support.as-time-val">접수 후 3~5 영업일</span>
+                    </div>
+                    <div class="support-info-row">
+                        <span class="info-label" data-i18n="support.as-method">방법</span>
+                        <span class="info-value" data-i18n="support.as-method-val">택배 수거 → 수리 → 발송</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="support-card">
+                <div class="support-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5"/>
+                    </svg>
+                </div>
+                <h3 data-i18n="support.usage-title">사용 문의</h3>
+                <p data-i18n="support.usage-desc">앱 사용법, 연결 문제, 캘리브레이션, 측정 관련 질문</p>
+                <div class="support-detail">
+                    <p class="support-hint" data-i18n="support.usage-hint">먼저 확인해 보세요:</p>
+                    <div class="support-quick-links">
+                        <a href="guide.html" data-i18n="nav.guide">사용 가이드</a>
+                        <a href="faq.html">FAQ</a>
+                        <a href="guide.html#troubleshooting" data-i18n="support.troubleshoot">문제 해결</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="support-card">
+                <div class="support-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
+                    </svg>
+                </div>
+                <h3 data-i18n="support.purchase-title">구매 문의</h3>
+                <p data-i18n="support.purchase-desc">가격, 배송, 강사 할인, 딜러 계약, 단체 구매 관련 문의</p>
+                <div class="support-detail">
+                    <div class="support-info-row">
+                        <span class="info-label" data-i18n="support.purchase-dealer">강사 / 딜러</span>
+                        <span class="info-value" data-i18n="support.purchase-dealer-val">이메일 별도 문의</span>
+                    </div>
+                    <div class="support-info-row">
+                        <span class="info-label" data-i18n="support.purchase-store">현장 구매</span>
+                        <span class="info-value" data-i18n="support.purchase-store-val">아이레 다이브 센터</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="support-card">
+                <div class="support-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M16 18l2-2 4 4"/><circle cx="12" cy="11" r="3"/><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12s4.477 10 10 10c1.85 0 3.583-.502 5.07-1.378"/>
+                    </svg>
+                </div>
+                <h3 data-i18n="support.tech-title">기술 / 개발</h3>
+                <p data-i18n="support.tech-desc">펌웨어, 오픈소스, API, 커스텀 개발 관련 문의</p>
+                <div class="support-detail">
+                    <div class="support-quick-links">
+                        <a href="https://github.com/kernalix7/divechecker" target="_blank" rel="noopener">GitHub Repository</a>
+                        <a href="https://github.com/kernalix7/divechecker/issues" target="_blank" rel="noopener">Issue Tracker</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- CONTACT FORM -->
+<section class="section section-gradient" id="contact">
+    <div class="container container-narrow">
+        <div class="section-header reveal">
+            <span class="section-label">CONTACT</span>
+            <h2 class="section-title" data-i18n="support.contact-title">문의하기</h2>
+            <p class="section-sub" data-i18n="support.contact-sub">아래 양식을 작성해 주시면 빠르게 답변 드리겠습니다</p>
+        </div>
+
+        <form class="contact-form reveal" id="contactForm" onsubmit="return handleSubmit(event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name"><span data-i18n="support.form-name">이름</span> <span class="required">*</span></label>
+                    <input type="text" id="name" name="name" required placeholder="홍길동" data-i18n="support.form-name-ph" data-i18n-attr="placeholder">
+                </div>
+                <div class="form-group">
+                    <label for="email"><span data-i18n="support.form-email">이메일</span> <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" required placeholder="example@email.com">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="category"><span data-i18n="support.form-category">문의 유형</span> <span class="required">*</span></label>
+                <select id="category" name="category" required>
+                    <option value="" data-i18n="support.form-category-default">선택하세요</option>
+                    <option value="as" data-i18n="support.form-category-as">A/S 수리</option>
+                    <option value="usage" data-i18n="support.form-category-usage">사용 문의</option>
+                    <option value="purchase" data-i18n="support.form-category-purchase">구매 문의</option>
+                    <option value="instructor" data-i18n="support.form-category-instructor">강사 할인 / 딜러 계약 문의</option>
+                    <option value="tech" data-i18n="support.form-category-tech">기술 / 개발</option>
+                    <option value="other" data-i18n="support.form-category-other">기타</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="subject"><span data-i18n="support.form-subject">제목</span> <span class="required">*</span></label>
+                <input type="text" id="subject" name="subject" required placeholder="문의 제목을 입력하세요" data-i18n="support.form-subject-ph" data-i18n-attr="placeholder">
+            </div>
+
+            <div class="form-group">
+                <label for="message"><span data-i18n="support.form-message">내용</span> <span class="required">*</span></label>
+                <textarea id="message" name="message" rows="6" required placeholder="문의 내용을 자세히 적어주세요. A/S의 경우 증상과 구매일을 포함해 주세요." data-i18n="support.form-message-ph" data-i18n-attr="placeholder"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="orderId"><span data-i18n="support.form-order">주문번호 (선택)</span></label>
+                <input type="text" id="orderId" name="orderId" placeholder="A/S 문의 시 주문번호를 입력하세요" data-i18n="support.form-order-ph" data-i18n-attr="placeholder">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg form-submit">
+                <span data-i18n="support.form-submit">문의 보내기</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            </button>
+        </form>
+
+        <!-- Success message (hidden by default) -->
+        <div class="form-success" id="formSuccess" style="display: none;">
+            <div class="success-icon">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="16 8 10 16 7 13"/></svg>
+            </div>
+            <h3 data-i18n="support.success-title">문의가 접수되었습니다</h3>
+            <p data-i18n="support.success-desc">빠른 시일 내에 답변 드리겠습니다.<br>확인 메일을 보내드렸으니 수신함을 확인해 주세요.</p>
+            <a href="index.html" class="btn btn-ghost" style="margin-top: 24px;">
+                <span data-i18n="support.success-btn">홈으로 돌아가기</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+
+<!-- ADDITIONAL CONTACT INFO -->
+<section class="section section-dark">
+    <div class="container">
+        <div class="contact-info-grid reveal">
+            <div class="contact-info-card">
+                <div class="contact-info-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </div>
+                <h4 data-i18n="support.email-title">이메일</h4>
+                <p>megakdh@createch.kr</p>
+                <span class="contact-info-sub" data-i18n="support.email-sub">영업일 기준 1~2일 내 답변</span>
+            </div>
+            <div class="contact-info-card">
+                <div class="contact-info-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L2 21l1.9-6.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+                </div>
+                <h4 data-i18n="support.kakao-title">카카오톡</h4>
+                <p>@divechecker</p>
+                <span class="contact-info-sub" data-i18n="support.kakao-sub">실시간 채팅 상담</span>
+            </div>
+            <div class="contact-info-card">
+                <div class="contact-info-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+                </div>
+                <h4>GitHub</h4>
+                <p data-i18n="support.github-desc">기술 이슈 & 버그 리포트</p>
+                <span class="contact-info-sub" data-i18n="support.github-sub">오픈소스 커뮤니티</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- DEALER BANNER -->
+<section class="dealer-banner">
+    <div class="dealer-inner">
+        <div class="dealer-badge">DEALER &amp; PARTNERSHIP</div>
+        <h3 class="dealer-title" data-i18n="dealer.title">다이브샵 대표님, 강사님께</h3>
+        <p class="dealer-desc" data-i18n="dealer.desc">
+            다이브체커는 <strong>다이브샵</strong> 및 <strong>다이빙 강사</strong>와의 딜러 계약을 환영합니다.<br>
+            매장에 새로운 가치를, 교육생에게 더 나은 피드백을 더하세요.
+        </p>
+        <div class="dealer-cta">
+            <a href="mailto:megakdh@createch.kr" class="btn btn-dealer">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <span>megakdh@createch.kr</span>
+            </a>
+        </div>
+        <p class="dealer-note" data-i18n="dealer.note">딜러 조건, 도매 가격, 교육용 특별 할인 등 자세한 내용은 이메일로 문의해 주세요.</p>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-inner">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <span class="logo-text">DIVE<span class="logo-accent">CHECKER</span></span>
+                <p class="footer-tagline" data-i18n="footer.tagline">이퀄라이징을 눈으로 보다</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <a href="index.html#features">Features</a>
+                    <a href="index.html#specs">Specifications</a>
+                    <a href="index.html#download">Download</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <a href="guide.html" data-i18n="footer.guide">사용 가이드</a>
+                    <a href="faq.html">FAQ</a>
+                    <a href="support.html" data-i18n="footer.as">A/S 문의</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Open Source</h4>
+                    <a href="https://github.com/kernalix7/divechecker" target="_blank" rel="noopener">GitHub</a>
+                    <a href="https://opensource.org/licenses/Apache-2.0" target="_blank" rel="noopener">Apache 2.0</a>
+                    <a href="https://ohwr.org/cern_ohl_s_v2.txt" target="_blank" rel="noopener">CERN-OHL-S v2</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-disclaimer">
+            <p data-i18n="footer.disclaimer">본 제품은 다이빙 이퀄라이징 기술 향상을 위한 교육용 학습기(Learning Device)이며, 의료기기가 아닙니다. 이관 기능 장애, 중이염 등 질환의 진단·예방·치료 목적으로 사용할 수 없습니다. 사용 중 통증이 느껴지면 즉시 사용을 중단하십시오.</p>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 DiveChecker. Made with passion for the freediving community.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="i18n.js"></script>
+<script src="script.js"></script>
+<script>
+function handleSubmit(e) {
+    e.preventDefault();
+    var name = document.getElementById('name').value;
+    var email = document.getElementById('email').value;
+    var category = document.getElementById('category').value;
+    var subject = document.getElementById('subject').value;
+    var message = document.getElementById('message').value;
+    var orderId = document.getElementById('orderId').value;
+    var lang = (typeof getLang === 'function') ? getLang() : 'ko';
+    var labels = { ko: ['주문번호', '회신 이메일'], en: ['Order ID', 'Reply Email'], ja: ['注文番号', '返信メール'], zh: ['订单号', '回复邮箱'], tw: ['訂單號', '回覆郵箱'] };
+    var lb = labels[lang] || labels.ko;
+    var body = '[' + category + '] ' + name + '\n\n' + message;
+    if (orderId) body += '\n\n' + lb[0] + ': ' + orderId;
+    body += '\n\n' + lb[1] + ': ' + email;
+    var mailtoUrl = 'mailto:megakdh@createch.kr'
+        + '?subject=' + encodeURIComponent(subject)
+        + '&body=' + encodeURIComponent(body);
+    window.location.href = mailtoUrl;
+    return false;
+}
+</script>
+</body>
+</html>

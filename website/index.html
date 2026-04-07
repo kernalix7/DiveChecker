@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n-title="page.title">DiveChecker — 이퀄라이징을 눈으로 보다</title>
+<meta name="description" content="프리다이빙 이퀄라이징 압력을 실시간 그래프로 시각화하는 국내 유일 디바이스. 100Hz 센서, USB 제로 레이턴시.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="pages.css">
+<link rel="stylesheet" href="manual.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- NAV                                     -->
+<!-- ═══════════════════════════════════════ -->
+<nav class="nav" id="nav">
+    <div class="nav-inner">
+        <a href="index.html" class="nav-logo">
+            <span class="logo-text">DIVE<span class="logo-accent">CHECKER</span></span>
+        </a>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#manual" data-i18n="nav.manual">사용 설명서</a>
+            <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+            <a href="support.html" data-i18n="nav.support">지원</a>
+            <a href="#buy" class="nav-cta" data-i18n="nav.buy">구매하기</a>
+        </div>
+        <button class="nav-hamburger" id="hamburger" aria-label="메뉴 열기">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+    <a href="#features">Features</a>
+    <a href="#manual" data-i18n="nav.manual">사용 설명서</a>
+    <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+    <a href="support.html" data-i18n="nav.support">지원</a>
+    <a href="#buy" class="nav-cta" data-i18n="nav.buy">구매하기</a>
+</div>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- HERO                                    -->
+<!-- ═══════════════════════════════════════ -->
+<section class="hero">
+    <div class="hero-bg">
+        <div class="hero-glow"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-particles" id="particles"></div>
+    </div>
+    <div class="hero-content reveal">
+        <div class="hero-badge" data-i18n="hero.badge">Equalizing Learning Device</div>
+        <h1 class="hero-title" data-i18n="hero.title">
+            이퀄라이징을<br>
+            <span class="gradient-text">'눈'으로 보다</span>
+        </h1>
+        <p class="hero-desc" data-i18n="hero.desc">
+            감각이 아닌 <strong>데이터</strong>로 배우는 프리다이빙 균압 훈련.<br>
+            100Hz 실시간 압력 센서 &middot; USB 제로 레이턴시 &middot; 크로스플랫폼
+        </p>
+        <div class="hero-actions">
+            <a href="#buy" class="btn btn-primary">
+                <span data-i18n="hero.cta-buy">지금 구매하기</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <a href="#features" class="btn btn-ghost">
+                <span data-i18n="hero.cta-learn">더 알아보기</span>
+            </a>
+        </div>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <span class="hero-stat-num">100Hz</span>
+                <span class="hero-stat-label" data-i18n="hero.stat-sampling">샘플링</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+                <span class="hero-stat-num">0ms</span>
+                <span class="hero-stat-label" data-i18n="hero.stat-latency">레이턴시</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+                <span class="hero-stat-num">0.01</span>
+                <span class="hero-stat-label" data-i18n="hero.stat-resolution">hPa 분해능</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-product reveal-up">
+        <div class="hero-product-glow"></div>
+        <img src="assets/images/hero-product.jpg" alt="DiveChecker DC-EQ01" class="hero-product-img">
+    </div>
+
+    <div class="hero-scroll-indicator">
+        <div class="scroll-line"></div>
+        <span>SCROLL</span>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- PROBLEM                                 -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-dark" id="problem">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-label label-red">PROBLEM</span>
+            <h2 class="section-title" data-i18n="problem.title">이퀄라이징 실패는<br><span class="text-red">수업 포기</span>로 이어집니다</h2>
+        </div>
+        <div class="problem-grid">
+            <div class="problem-card reveal">
+                <div class="problem-number">01</div>
+                <h3 data-i18n="problem.1.title">수업 포기</h3>
+                <p data-i18n="problem.1.desc">이퀄라이징이 안 돼서 다음 레벨을 포기. 수강료만 날리는 악순환.</p>
+            </div>
+            <div class="problem-card reveal" style="--delay: 0.1s">
+                <div class="problem-number">02</div>
+                <h3 data-i18n="problem.2.title">원인 불명</h3>
+                <p data-i18n="problem.2.desc">뭐가 잘못인지 모른 채 같은 실수 반복. 연습이 아니라 시간 낭비.</p>
+            </div>
+            <div class="problem-card reveal" style="--delay: 0.2s">
+                <div class="problem-number">03</div>
+                <h3 data-i18n="problem.3.title">건강 리스크</h3>
+                <p data-i18n="problem.3.desc">과도한 발살바로 인한 고막 손상, 역압착. 되돌릴 수 없습니다.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SOLUTION INTRO                          -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-gradient">
+    <div class="container">
+        <div class="solution-intro reveal">
+            <span class="section-label">SOLUTION</span>
+            <h2 class="section-title-lg" data-i18n="solution.title">
+                감 대신<br>
+                <span class="gradient-text">그래프</span>로 배우세요
+            </h2>
+            <p class="solution-sub" data-i18n="solution.sub">이퀄라이징 압력을 실시간으로 시각화하는 국내 유일 디바이스</p>
+        </div>
+
+        <div class="app-showcase reveal-up">
+            <div class="app-showcase-glow"></div>
+            <img src="assets/images/app-mockup.png" alt="DiveChecker 앱 실시간 그래프" class="app-showcase-img">
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- FEATURES                                -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-dark" id="features">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-label">FEATURES</span>
+            <h2 class="section-title" data-i18n="features.title">왜 다이브체커인가</h2>
+        </div>
+
+        <!-- Feature 01 -->
+        <div class="feature-row reveal">
+            <div class="feature-text">
+                <span class="feature-num">01</span>
+                <h3 class="feature-title" data-i18n="feat1.title">실시간 압력 시각화</h3>
+                <p class="feature-desc" data-i18n="feat1.desc">
+                    "더 세게" 같은 모호한 피드백은 끝.<br>
+                    내 프렌젤 압력이 정확히 몇 hPa인지 실시간으로 확인합니다.
+                    과도한 압력 시 즉각 시각 경고까지.
+                </p>
+                <div class="feature-tags">
+                    <span class="tag" data-i18n="feat1.tag1">100Hz 샘플링</span>
+                    <span class="tag" data-i18n="feat1.tag2">0.01 hPa 분해능</span>
+                    <span class="tag" data-i18n="feat1.tag3">실시간 그래프</span>
+                </div>
+            </div>
+            <div class="feature-visual">
+                <div class="feature-img-wrap">
+                    <img src="assets/images/feature-usage.jpg" alt="실시간 압력 그래프">
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature 02 -->
+        <div class="feature-row feature-row-reverse reveal">
+            <div class="feature-text">
+                <span class="feature-num">02</span>
+                <h3 class="feature-title" data-i18n="feat2.title">발살바 vs 프렌젤 판별</h3>
+                <p class="feature-desc" data-i18n="feat2.desc">
+                    지금 내가 프렌젤을 하고 있는지, 발살바를 하고 있는지
+                    그래프 패턴이 즉시 알려줍니다.
+                    두 기법의 압력 커브는 완전히 다릅니다.
+                </p>
+                <div class="feature-tags">
+                    <span class="tag" data-i18n="feat2.tag1">패턴 분석</span>
+                    <span class="tag" data-i18n="feat2.tag2">피크 감지</span>
+                    <span class="tag" data-i18n="feat2.tag3">기법 점수화</span>
+                </div>
+            </div>
+            <div class="feature-visual">
+                <div class="feature-img-wrap">
+                    <img src="assets/images/feature-analysis.jpg" alt="발살바 vs 프렌젤 비교">
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature 03 -->
+        <div class="feature-row reveal">
+            <div class="feature-text">
+                <span class="feature-num">03</span>
+                <h3 class="feature-title" data-i18n="feat3.title">고급 기법 지상 훈련</h3>
+                <p class="feature-desc" data-i18n="feat3.desc">
+                    프렌젤 → 마우스필 → 핸즈프리(BTV).<br>
+                    물속에서 실패하기 전에, 지상에서 완벽하게 마스터하세요.
+                    모든 기법의 학습 과정을 다이브체커가 함께합니다.
+                </p>
+                <div class="feature-tags">
+                    <span class="tag" data-i18n="feat3.tag1">마우스필</span>
+                    <span class="tag" data-i18n="feat3.tag2">핸즈프리 BTV</span>
+                    <span class="tag" data-i18n="feat3.tag3">단계별 훈련</span>
+                </div>
+            </div>
+            <div class="feature-visual">
+                <div class="feature-img-wrap">
+                    <img src="assets/images/lifestyle.jpg" alt="고급 기법 훈련">
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature 04 -->
+        <div class="feature-row feature-row-reverse reveal">
+            <div class="feature-text">
+                <span class="feature-num">04</span>
+                <h3 class="feature-title" data-i18n="feat4.title">피크 분석 & 성장 기록</h3>
+                <p class="feature-desc" data-i18n="feat4.desc">
+                    매 세션마다 리듬 점수, 압력 점수, 기법 점수, 피로도 지수를 분석.
+                    S~F 등급으로 객관적인 성장을 추적합니다.
+                </p>
+                <div class="feature-tags">
+                    <span class="tag" data-i18n="feat4.tag1">리듬 점수</span>
+                    <span class="tag" data-i18n="feat4.tag2">피로도 지수</span>
+                    <span class="tag" data-i18n="feat4.tag3">S~F 등급</span>
+                </div>
+            </div>
+            <div class="feature-visual">
+                <div class="feature-img-wrap">
+                    <img src="assets/images/app-mockup.png" alt="피크 분석 결과">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- WHY USB (비교 테이블)                    -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-navy">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-label">WHY USB</span>
+            <h2 class="section-title" data-i18n="usb.title">블루투스 대신 <span class="gradient-text">USB</span>를 선택한 이유</h2>
+            <p class="section-sub" data-i18n="usb.sub">이퀄라이징 훈련에서 0.01초의 지연은 잘못된 피드백입니다</p>
+        </div>
+        <div class="compare-table-wrap reveal">
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="col-bt">Bluetooth</th>
+                        <th class="col-usb" data-i18n="usb.col-usb">USB (다이브체커)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="row-label" data-i18n="usb.row1">전송 지연</td>
+                        <td class="col-bt-body" data-i18n="usb.row1-bt">50~300ms</td>
+                        <td class="col-usb-body highlight" data-i18n="usb.row1-usb">0ms</td>
+                    </tr>
+                    <tr>
+                        <td class="row-label" data-i18n="usb.row2">배터리</td>
+                        <td class="col-bt-body" data-i18n="usb.row2-bt">충전 필요</td>
+                        <td class="col-usb-body highlight" data-i18n="usb.row2-usb">USB 전원 공급</td>
+                    </tr>
+                    <tr>
+                        <td class="row-label" data-i18n="usb.row3">연결 안정성</td>
+                        <td class="col-bt-body" data-i18n="usb.row3-bt">페어링 실패 가능</td>
+                        <td class="col-usb-body highlight" data-i18n="usb.row3-usb">100% 안정 연결</td>
+                    </tr>
+                    <tr>
+                        <td class="row-label" data-i18n="usb.row4">호환성</td>
+                        <td class="col-bt-body" data-i18n="usb.row4-bt">기기별 상이</td>
+                        <td class="col-usb-body highlight" data-i18n="usb.row4-usb">Win / Mac / Android / iOS</td>
+                    </tr>
+                    <tr>
+                        <td class="row-label" data-i18n="usb.row5">데이터 손실</td>
+                        <td class="col-bt-body" data-i18n="usb.row5-bt">끊김 발생</td>
+                        <td class="col-usb-body highlight" data-i18n="usb.row5-usb">단 1초도 놓치지 않음</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- HOW IT WORKS                            -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-dark" id="how-it-works">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-label">HOW TO USE</span>
+            <h2 class="section-title" data-i18n="how.title">3단계로 시작하세요</h2>
+        </div>
+        <div class="steps-grid">
+            <div class="step-card reveal">
+                <div class="step-line"></div>
+                <div class="step-number">1</div>
+                <div class="step-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="7" y="2" width="10" height="20" rx="2"/>
+                        <path d="M12 18h.01"/>
+                        <path d="M9 22h6"/>
+                        <path d="M12 22v-2"/>
+                    </svg>
+                </div>
+                <h3 data-i18n="how.step1.title">USB-C 연결</h3>
+                <p data-i18n="how.step1.desc">케이블 하나로 전원 + 데이터 동시 연결. 복잡한 페어링 없이 꽂기만 하면 끝.</p>
+            </div>
+            <div class="step-card reveal" style="--delay: 0.15s">
+                <div class="step-line"></div>
+                <div class="step-number">2</div>
+                <div class="step-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="5" y="2" width="14" height="20" rx="2"/>
+                        <path d="M12 18h.01"/>
+                    </svg>
+                </div>
+                <h3 data-i18n="how.step2.title">앱 실행</h3>
+                <p data-i18n="how.step2.desc">QR코드로 앱 다운로드, 자동 디바이스 인식. 별도 설정 필요 없음.</p>
+            </div>
+            <div class="step-card reveal" style="--delay: 0.3s">
+                <div class="step-line"></div>
+                <div class="step-number">3</div>
+                <div class="step-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
+                    </svg>
+                </div>
+                <h3 data-i18n="how.step3.title">연습 시작</h3>
+                <p data-i18n="how.step3.desc">코에 대고 이퀄라이징. 실시간 그래프로 즉각 피드백을 받으세요.</p>
+            </div>
+        </div>
+
+        <div class="steps-visual reveal-up">
+            <img src="assets/images/how-to-use.png" alt="사용 방법 3단계">
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- TARGET USERS                            -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-gradient">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-label">FOR YOU</span>
+            <h2 class="section-title" data-i18n="target.title">이런 분들이 사용합니다</h2>
+        </div>
+        <div class="target-grid">
+            <div class="target-card reveal">
+                <div class="target-icon-wrap">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>
+                    </svg>
+                </div>
+                <h3 data-i18n="target.1.title">이퀄라이징이 안 되는 분</h3>
+                <p data-i18n="target.1.desc">내 문제를 눈으로 확인하고 정확히 교정</p>
+            </div>
+            <div class="target-card reveal" style="--delay: 0.1s">
+                <div class="target-icon-wrap">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <polyline points="23,4 23,10 17,10"/><polyline points="1,20 1,14 7,14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+                    </svg>
+                </div>
+                <h3 data-i18n="target.2.title">프렌젤 전환이 어려운 분</h3>
+                <p data-i18n="target.2.desc">발살바 → 프렌젤 전환을 그래프로 확인</p>
+            </div>
+            <div class="target-card reveal" style="--delay: 0.2s">
+                <div class="target-icon-wrap">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>
+                    </svg>
+                </div>
+                <h3 data-i18n="target.3.title">딥 & 머메이드 다이버</h3>
+                <p data-i18n="target.3.desc">마우스필 · BTV 핸즈프리 지상 훈련</p>
+            </div>
+            <div class="target-card reveal" style="--delay: 0.3s">
+                <div class="target-icon-wrap">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+                    </svg>
+                </div>
+                <h3 data-i18n="target.4.title">다이빙 강사</h3>
+                <p data-i18n="target.4.desc">그래프 기반 정확한 피드백 제공</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- TECH FLOW                               -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-dark">
+    <div class="container">
+        <div class="tech-flow reveal">
+            <div class="tech-flow-item">
+                <div class="tech-flow-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                </div>
+                <span class="tech-flow-label">BMP280</span>
+                <span class="tech-flow-detail" data-i18n="tech.sensor">100Hz 센서</span>
+            </div>
+            <div class="tech-flow-arrow">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+            <div class="tech-flow-item">
+                <div class="tech-flow-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg>
+                </div>
+                <span class="tech-flow-label">RP2350</span>
+                <span class="tech-flow-detail" data-i18n="tech.mcu">듀얼코어 MCU</span>
+            </div>
+            <div class="tech-flow-arrow">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+            <div class="tech-flow-item">
+                <div class="tech-flow-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                </div>
+                <span class="tech-flow-label">USB MIDI</span>
+                <span class="tech-flow-detail" data-i18n="tech.midi">제로 레이턴시</span>
+            </div>
+            <div class="tech-flow-arrow">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+            <div class="tech-flow-item">
+                <div class="tech-flow-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+                </div>
+                <span class="tech-flow-label">Flutter App</span>
+                <span class="tech-flow-detail" data-i18n="tech.app">크로스플랫폼</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SPECS                                   -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-dark" id="specs">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-label">SPECIFICATIONS</span>
+            <h2 class="section-title" data-i18n="specs.title">제품 사양</h2>
+        </div>
+
+        <div class="specs-grid">
+            <div class="spec-card reveal">
+                <h3 data-i18n="specs.sensor-title">센서 & 성능</h3>
+                <div class="spec-list">
+                    <div class="spec-item"><span class="spec-key" data-i18n="specs.sensor">센서</span><span class="spec-val">BMP280 (I2C)</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="specs.internal-sampling">내부 샘플링</span><span class="spec-val">100Hz</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="specs.output-freq">출력 주파수</span><span class="spec-val" data-i18n="specs.output-freq-val">4~50Hz (설정 가능)</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="specs.resolution">분해능</span><span class="spec-val">0.01 hPa</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="specs.range">측정 범위</span><span class="spec-val" data-i18n="specs.range-val">-10 ~ +200 hPa (상대압)</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="specs.filter">필터</span><span class="spec-val" data-i18n="specs.filter-val">IIR x2 + 평균화</span></div>
+                </div>
+            </div>
+            <div class="spec-card reveal" style="--delay: 0.1s">
+                <h3 data-i18n="specs.hw-title">하드웨어</h3>
+                <div class="spec-list">
+                    <div class="spec-item"><span class="spec-key" data-i18n="specs.product-name">제품명</span><span class="spec-val" data-i18n="specs.product-name-val">전자식 이퀄라이징 학습기</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="specs.model">모델명</span><span class="spec-val">DC-EQ01</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="specs.mcu">MCU</span><span class="spec-val" data-i18n="specs.mcu-val">RP2350 (Pico2) 듀얼코어</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="specs.interface">인터페이스</span><span class="spec-val">USB-C (MIDI)</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="specs.power">전원</span><span class="spec-val">DC 5V (USB)</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="specs.cert">인증</span><span class="spec-val" data-i18n="specs.cert-val">KC 인증 완료</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="specs.origin">제조국</span><span class="spec-val" data-i18n="specs.origin-val">대한민국</span></div>
+                </div>
+            </div>
+            <div class="spec-card reveal" style="--delay: 0.2s">
+                <h3 data-i18n="specs.sw-title">소프트웨어</h3>
+                <div class="spec-list">
+                    <div class="spec-item"><span class="spec-key" data-i18n="specs.framework">앱 프레임워크</span><span class="spec-val">Flutter</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="specs.platform">플랫폼</span><span class="spec-val" data-i18n="specs.platform-val">5개 OS 지원</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="specs.storage">데이터 저장</span><span class="spec-val">SQLite / IndexedDB</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="specs.analysis">분석</span><span class="spec-val" data-i18n="specs.analysis-val">피크 감지 + 점수화</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="specs.app-ver">앱 버전</span><span class="spec-val">v8.4.0</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="specs.fw-ver">펌웨어 버전</span><span class="spec-val">v6.0.0</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="specs.lang">언어</span><span class="spec-val" data-i18n="specs.lang-val">한국어 / English / 日本語 / 中文</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="specs.update">업데이트</span><span class="spec-val" data-i18n="specs.update-val">UF2 펌웨어 업데이트</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- PACKAGE CONTENTS                        -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-gradient">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-label">PACKAGE</span>
+            <h2 class="section-title" data-i18n="pkg.title">구성품</h2>
+        </div>
+
+        <div class="package-visual reveal-up">
+            <img src="assets/images/package-contents.jpg" alt="구성품">
+        </div>
+
+        <div class="package-list reveal">
+            <div class="package-item">
+                <div class="package-dot"></div>
+                <span data-i18n="pkg.item1">다이브체커 본체 (DC-EQ01)</span>
+            </div>
+            <div class="package-item">
+                <div class="package-dot"></div>
+                <span data-i18n="pkg.item2">USB-C 데이터 케이블</span>
+            </div>
+            <div class="package-item">
+                <div class="package-dot"></div>
+                <span data-i18n="pkg.item3">사용 설명서</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- DOWNLOAD                                -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-dark" id="download">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-label">DOWNLOAD</span>
+            <h2 class="section-title" data-i18n="dl.title">앱 다운로드</h2>
+            <p class="section-sub" data-i18n="dl.platforms">Android &middot; iOS &middot; Windows &middot; macOS &middot; Linux</p>
+        </div>
+        <div class="download-grid reveal">
+            <a href="https://play.google.com/store/apps/details?id=kr.createch.divechecker" target="_blank" rel="noopener" class="download-card">
+                <!-- Android Robot -->
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v7c0 .83.67 1.5 1.5 1.5S5 17.33 5 16.5v-7C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5zm-4.97-5.84l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48A5.84 5.84 0 0012 1c-.96 0-1.86.23-2.66.63L7.85.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.31 1.31A5.983 5.983 0 006 7h12c0-2.21-1.2-4.15-2.97-5.84zM10 5H9V4h1v1zm5 0h-1V4h1v1z"/></svg>
+                <span class="download-label">Android</span>
+                <span class="download-sub">Google Play</span>
+            </a>
+            <a href="https://apps.apple.com/kr/app/divechecker/id6758508799" target="_blank" rel="noopener" class="download-card">
+                <!-- Apple -->
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                <span class="download-label">iOS</span>
+                <span class="download-sub">App Store</span>
+            </a>
+            <a href="javascript:void(0)" class="download-card">
+                <!-- Windows -->
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M3 12V6.5l8-1.1V12H3zm0 .5V18l8 1.1V12.5H3zM12 5.3V12h9V4l-9 1.3zM12 12.5V20.2l9 1.3V12.5h-9z"/></svg>
+                <span class="download-label">Windows</span>
+                <span class="download-sub">Desktop</span>
+            </a>
+            <a href="javascript:void(0)" class="download-card">
+                <!-- macOS / Linux (monitor icon) -->
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                <span class="download-label">macOS / Linux</span>
+                <span class="download-sub">Desktop</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- PRICING / CTA                           -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-cta" id="buy">
+    <div class="container">
+        <div class="cta-content reveal">
+            <span class="section-label">PRICING</span>
+            <div class="cta-price">
+                <span class="cta-price-num">129,000</span>
+                <span class="cta-price-won" data-i18n="price.won">원</span>
+            </div>
+            <p class="cta-sub" data-i18n="price.sub">국내 설계 · 제조로 가격 거품을 걷어냈습니다</p>
+            <div class="cta-badges">
+                <div class="cta-badge" data-i18n="price.badge1">KC 안전 인증</div>
+                <div class="cta-badge" data-i18n="price.badge2">Made in Korea</div>
+                <div class="cta-badge" data-i18n="price.badge3">A/S 지원</div>
+                <div class="cta-badge" data-i18n="price.badge4">친환경 포장</div>
+            </div>
+            <a href="https://smartstore.naver.com/createch/products/13224634919" target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+                <span data-i18n="price.cta">지금 구매하기</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- TRUST                                    -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-dark">
+    <div class="container">
+        <div class="trust-grid reveal">
+            <div class="trust-item-card">
+                <div class="trust-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                </div>
+                <h3 data-i18n="trust.1.title">KC 안전 인증</h3>
+                <p data-i18n="trust.1.desc">국가공인시험기관(KTC) 시험을 거쳐<br>KC 안전 인증을 획득한 제품입니다</p>
+            </div>
+            <div class="trust-item-card">
+                <div class="trust-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M3 10h18M3 7l9-4 9 4M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/></svg>
+                </div>
+                <h3 data-i18n="trust.2.title">Made in Korea</h3>
+                <p data-i18n="trust.2.desc">설계부터 제조까지 100% 국내<br>빠른 A/S와 지속적인 업데이트</p>
+            </div>
+            <div class="trust-item-card">
+                <div class="trust-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M7 10.5c0-1 .5-3 2.5-3s2.5 2 2.5 3c0 2-2.5 2-2.5 4"/><circle cx="9.5" cy="17" r=".5" fill="currentColor"/><path d="M14.5 10.5c0-1 .5-3 2.5-3s2.5 2 2.5 3"/></svg>
+                </div>
+                <h3 data-i18n="trust.3.title">오픈소스</h3>
+                <p data-i18n="trust.3.desc">소프트웨어(Apache 2.0)와<br>하드웨어(CERN-OHL-S v2) 모두 공개</p>
+            </div>
+            <div class="trust-item-card">
+                <div class="trust-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c-4.97 0-9-2.686-9-6v-4"/><path d="M12 22c4.97 0 9-2.686 9-6v-4"/><ellipse cx="12" cy="8" rx="9" ry="4"/><path d="M7 8v4M12 8v4M17 8v4"/></svg>
+                </div>
+                <h3 data-i18n="trust.4.title">친환경 포장</h3>
+                <p data-i18n="trust.4.desc">불필요한 플라스틱 없이<br>환경을 생각한 포장재 사용</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- CLOSING                                 -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section hero closing-section">
+    <div class="hero-bg">
+        <div class="hero-glow"></div>
+    </div>
+    <div class="container">
+        <div class="closing-content reveal">
+            <h2 class="closing-title" data-i18n="closing.title">
+                프렌젤이 안 되는 게 아닙니다.<br>
+                <span class="gradient-text glow-text">확인할 방법</span>이 없었을 뿐.
+            </h2>
+            <p class="closing-sub" data-i18n="closing.sub">다이브체커와 함께, 오늘부터 수심이 달라집니다.</p>
+
+            <div class="closing-brand">
+                DIVE<span class="closing-brand-accent">CHECKER</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- USER MANUAL (QR → #manual)              -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-gradient" id="manual">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-label">USER MANUAL</span>
+            <h2 class="section-title" data-i18n="manual.title">제품 사용 설명서</h2>
+            <p class="section-sub" data-i18n="manual.sub">전자식 이퀄라이징 학습기 DC-EQ01</p>
+        </div>
+    </div>
+</section>
+
+<!-- MANUAL: How to Use -->
+<section class="section section-dark" id="manual-howto">
+    <div class="container container-narrow">
+        <div class="manual-section reveal">
+            <div class="manual-section-badge">01</div>
+            <h2 class="manual-section-title" data-i18n="manual.s02b">사용 방법</h2>
+            <p class="manual-section-desc" data-i18n="manual.s02b.desc">센서를 활용한 이퀄라이징 연습 순서입니다.</p>
+
+            <div class="howto-steps">
+                <div class="howto-step">
+                    <div class="howto-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                    </div>
+                    <div>
+                        <h4 data-i18n="manual.s02b.step1">1. 준비</h4>
+                        <p data-i18n="manual.s02b.step1-desc">기기 상단의 공기 유입구를 한쪽 콧구멍에 밀착하고, 반대쪽 코를 막습니다.</p>
+                    </div>
+                </div>
+                <div class="howto-step">
+                    <div class="howto-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    </div>
+                    <div>
+                        <h4 data-i18n="manual.s02b.step2">2. 실습</h4>
+                        <p data-i18n="manual.s02b.step2-desc">발살바(Valsalva) 또는 프렌젤(Frenzel) 등 이퀄라이징 기법으로 압력을 형성합니다.</p>
+                    </div>
+                </div>
+                <div class="howto-step">
+                    <div class="howto-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </div>
+                    <div>
+                        <h4 data-i18n="manual.s02b.step3">3. 확인</h4>
+                        <p data-i18n="manual.s02b.step3-desc">화면의 실시간 그래프로 압력의 강도와 지속 시간을 관찰합니다.</p>
+                    </div>
+                </div>
+                <div class="howto-step">
+                    <div class="howto-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+                    </div>
+                    <div>
+                        <h4 data-i18n="manual.s02b.step4">4. 반복</h4>
+                        <p data-i18n="manual.s02b.step4-desc">적정 압력 유지와 일정한 파형 형성을 목표로 반복 연습합니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="guide-tip" style="margin-top: 24px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                <p data-i18n="manual.s01.lightning"><strong>Lightning (iPhone 14 이하 / 구형 iPad)</strong> 사용자는 별도의 Lightning to USB-C 변환잭이 필요합니다. <strong>옵션 상품</strong>으로 구매하실 수 있습니다.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MANUAL: App Screens -->
+<section class="section section-gradient">
+    <div class="container container-narrow">
+        <div class="manual-section reveal">
+            <div class="manual-section-badge">02</div>
+            <h2 class="manual-section-title" data-i18n="manual.s03">앱 화면 안내</h2>
+            <p class="manual-section-desc" data-i18n="manual.s03.desc">DiveChecker 앱의 주요 화면과 기능을 알아봅니다.</p>
+
+            <div class="screen-cards">
+                <div class="screen-card">
+                    <div class="screen-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+                    <div class="screen-card-body">
+                        <h4 data-i18n="manual.s03.home">홈</h4>
+                        <p data-i18n="manual.s03.home-desc">디바이스 연결 상태, 실시간 압력값, 캘리브레이션, 정품 인증을 관리합니다.</p>
+                    </div>
+                </div>
+                <div class="screen-card">
+                    <div class="screen-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></div>
+                    <div class="screen-card-body">
+                        <h4 data-i18n="manual.s03.monitor">모니터</h4>
+                        <p data-i18n="manual.s03.monitor-desc">30초 슬라이딩 윈도우로 실시간 압력 스트리밍을 확인합니다. 기록 없이 모니터링만 합니다.</p>
+                    </div>
+                </div>
+                <div class="screen-card">
+                    <div class="screen-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                    <div class="screen-card-body">
+                        <h4 data-i18n="manual.s03.measure">측정</h4>
+                        <p data-i18n="manual.s03.measure-desc">시작/정지/일시정지 컨트롤로 세션을 기록합니다. 최대/평균 압력 통계가 실시간 표시됩니다.</p>
+                    </div>
+                </div>
+                <div class="screen-card">
+                    <div class="screen-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+                    <div class="screen-card-body">
+                        <h4 data-i18n="manual.s03.history">기록</h4>
+                        <p data-i18n="manual.s03.history-desc">저장된 세션 목록을 확인하고, 디바이스별 필터링 및 상세 그래프를 봅니다.</p>
+                    </div>
+                </div>
+                <div class="screen-card">
+                    <div class="screen-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+                    <div class="screen-card-body">
+                        <h4 data-i18n="manual.s03.graph">그래프 상세</h4>
+                        <p data-i18n="manual.s03.graph-desc">핀치 줌/드래그로 세션을 탐색합니다. 특정 시점에 메모를 추가할 수 있습니다.</p>
+                    </div>
+                </div>
+                <div class="screen-card">
+                    <div class="screen-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+                    <div class="screen-card-body">
+                        <h4 data-i18n="manual.s03.peak">피크 분석</h4>
+                        <p data-i18n="manual.s03.peak-desc">리듬, 압력, 기법, 피로도 4가지 지표로 이퀄라이징 품질을 S~F 등급으로 평가합니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MANUAL: Equalization Techniques -->
+<section class="section section-dark">
+    <div class="container container-narrow">
+        <div class="manual-section reveal">
+            <div class="manual-section-badge">03</div>
+            <h2 class="manual-section-title" data-i18n="manual.s04">이퀄라이징 기법 가이드</h2>
+            <p class="manual-section-desc" data-i18n="manual.s04.desc">각 기법의 그래프 패턴을 알면 자신의 이퀄라이징을 정확히 판별할 수 있습니다.</p>
+
+            <div class="tech-cards-grid">
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <div><span class="tech-badge tech-badge-basic" data-i18n="manual.s04.badge-basic">기본</span><h3>Valsalva</h3><span class="tech-card-kr" data-i18n="manual.s04.valsalva-kr">발살바</span></div>
+                        <div class="tech-wave-icon"><svg width="80" height="40" viewBox="0 0 80 40" fill="none"><path d="M0 35 Q20 35 25 20 Q30 5 40 5 Q50 5 55 20 Q60 35 80 35" stroke="rgba(100,220,100,0.5)" stroke-width="2" fill="none"/></svg></div>
+                    </div>
+                    <p class="tech-card-desc" data-i18n="manual.s04.valsalva-desc">코를 막고 복부/흉부 압력으로 공기를 밀어내는 기법</p>
+                    <div class="tech-pattern-box">
+                        <span class="tech-pattern-label" data-i18n="manual.s04.pattern">그래프 패턴</span>
+                        <p data-i18n="manual.s04.valsalva-pattern">천천히 올라가는 <strong>둥근 커브</strong>. 상승/하강이 느리고 피크 폭이 넓습니다.</p>
+                    </div>
+                    <div class="guide-warning" style="margin-bottom:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><p data-i18n="manual.s04.valsalva-warn">과도한 힘은 고막 손상 위험. 과압 경고 시 즉시 중단하세요.</p></div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <div><span class="tech-badge tech-badge-mid" data-i18n="manual.s04.badge-mid">중급</span><h3>Frenzel</h3><span class="tech-card-kr" data-i18n="manual.s04.frenzel-kr">프렌젤</span></div>
+                        <div class="tech-wave-icon"><svg width="80" height="40" viewBox="0 0 80 40" fill="none"><path d="M0 35 L15 35 L18 5 L22 35 L35 35 L38 5 L42 35 L55 35 L58 5 L62 35 L80 35" stroke="rgba(77,184,255,0.5)" stroke-width="2" fill="none"/></svg></div>
+                    </div>
+                    <p class="tech-card-desc" data-i18n="manual.s04.frenzel-desc">혀뿌리를 입천장으로 밀어 올려 공기를 압축하는 기법</p>
+                    <div class="tech-pattern-box">
+                        <span class="tech-pattern-label" data-i18n="manual.s04.pattern">그래프 패턴</span>
+                        <p data-i18n="manual.s04.frenzel-pattern">빠르고 <strong>날카로운 스파이크</strong>. 상승/하강이 빠르고 피크 폭이 좁습니다.</p>
+                    </div>
+                    <div class="guide-tip" style="margin-bottom:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><p data-i18n="manual.s04.frenzel-tip">"K" 또는 "T" 발음 동작으로 연습해 보세요.</p></div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <div><span class="tech-badge tech-badge-adv" data-i18n="manual.s04.badge-adv">고급</span><h3>Mouthfill</h3><span class="tech-card-kr" data-i18n="manual.s04.mouthfill-kr">마우스필</span></div>
+                        <div class="tech-wave-icon"><svg width="80" height="40" viewBox="0 0 80 40" fill="none"><path d="M0 35 L10 35 L13 3 L17 35 L27 35 L30 10 L34 35 L44 35 L47 18 L51 35 L61 35 L64 25 L68 35 L80 35" stroke="rgba(255,140,50,0.5)" stroke-width="2" fill="none"/></svg></div>
+                    </div>
+                    <p class="tech-card-desc" data-i18n="manual.s04.mouthfill-desc">성문을 닫고 입안의 공기만으로 이퀄라이징하는 기법</p>
+                    <div class="tech-pattern-box">
+                        <span class="tech-pattern-label" data-i18n="manual.s04.pattern">그래프 패턴</span>
+                        <p data-i18n="manual.s04.mouthfill-pattern">초기 높은 피크 후 점차 <strong>감소하는 연속 피크</strong>. 입안 공기가 줄어들며 압력이 낮아집니다.</p>
+                    </div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <div><span class="tech-badge tech-badge-adv" data-i18n="manual.s04.badge-adv">고급</span><h3>Hands-free / BTV</h3><span class="tech-card-kr" data-i18n="manual.s04.btv-kr">핸즈프리</span></div>
+                        <div class="tech-wave-icon"><svg width="80" height="40" viewBox="0 0 80 40" fill="none"><path d="M0 30 Q10 28 20 30 Q30 32 35 27 Q40 22 45 27 Q50 32 55 30 Q60 28 70 30 Q75 31 80 30" stroke="rgba(255,140,50,0.5)" stroke-width="2" fill="none"/></svg></div>
+                    </div>
+                    <p class="tech-card-desc" data-i18n="manual.s04.btv-desc">유스타키오관의 자발적 개방. 코를 막지 않고 이퀄라이징합니다.</p>
+                    <div class="tech-pattern-box">
+                        <span class="tech-pattern-label" data-i18n="manual.s04.pattern">그래프 패턴</span>
+                        <p data-i18n="manual.s04.btv-pattern">매우 <strong>미세한 압력 변화</strong>. 피크가 작지만 일정한 패턴을 보입니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MANUAL: Peak Analysis -->
+<section class="section section-gradient">
+    <div class="container container-narrow">
+        <div class="manual-section reveal">
+            <div class="manual-section-badge">04</div>
+            <h2 class="manual-section-title" data-i18n="manual.s05">피크 분석 읽는 법</h2>
+            <p class="manual-section-desc" data-i18n="manual.s05.desc">4가지 지표로 이퀄라이징 품질을 객관적으로 평가합니다.</p>
+
+            <div class="analysis-metrics">
+                <div class="analysis-metric">
+                    <div class="metric-icon-wrap"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+                    <div class="metric-body"><h4 data-i18n="manual.s05.m1">리듬 점수</h4><p data-i18n="manual.s05.m1-desc">피크 간격의 일관성. 변동계수(CV) 기반 — 높을수록 규칙적인 이퀄라이징.</p></div>
+                </div>
+                <div class="analysis-metric">
+                    <div class="metric-icon-wrap"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-4"/></svg></div>
+                    <div class="metric-body"><h4 data-i18n="manual.s05.m2">압력 점수</h4><p data-i18n="manual.s05.m2-desc">피크 강도의 균일성. 매번 일정한 힘으로 이퀄라이징하는지 평가.</p></div>
+                </div>
+                <div class="analysis-metric">
+                    <div class="metric-icon-wrap"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+                    <div class="metric-body"><h4 data-i18n="manual.s05.m3">기법 점수</h4><p data-i18n="manual.s05.m3-desc">상승/하강 시간, 피크 폭 분석. 날카로운 피크 = 프렌젤에 가까움.</p></div>
+                </div>
+                <div class="analysis-metric">
+                    <div class="metric-icon-wrap"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+                    <div class="metric-body"><h4 data-i18n="manual.s05.m4">피로도 지수</h4><p data-i18n="manual.s05.m4-desc">세션 후반부 압력 감소 추세. 높으면 근육 피로가 누적 중.</p></div>
+                </div>
+            </div>
+
+            <div class="grade-showcase">
+                <h4 data-i18n="manual.s05.grade-title">종합 등급</h4>
+                <div class="grade-row">
+                    <div class="grade-pill grade-s"><span>S</span><small data-i18n="manual.s05.grade-s">완벽</small></div>
+                    <div class="grade-pill grade-a"><span>A</span><small data-i18n="manual.s05.grade-a">우수</small></div>
+                    <div class="grade-pill grade-b"><span>B</span><small data-i18n="manual.s05.grade-b">양호</small></div>
+                    <div class="grade-pill grade-c"><span>C</span><small data-i18n="manual.s05.grade-c">보통</small></div>
+                    <div class="grade-pill grade-d"><span>D</span><small data-i18n="manual.s05.grade-d">미흡</small></div>
+                    <div class="grade-pill grade-f"><span>F</span><small data-i18n="manual.s05.grade-f">부족</small></div>
+                </div>
+                <p class="grade-note" data-i18n="manual.s05.grade-note">4가지 지표의 가중 평균으로 산출됩니다. 꾸준한 연습으로 등급을 올려보세요!</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MANUAL: Care & Cleaning -->
+<section class="section section-dark">
+    <div class="container container-narrow">
+        <div class="manual-section reveal">
+            <div class="manual-section-badge">05</div>
+            <h2 class="manual-section-title" data-i18n="manual.care">청소 및 관리</h2>
+            <p class="manual-section-desc" data-i18n="manual.care.desc">센서의 정확도와 위생을 유지하기 위해 정기적으로 청소해 주세요.</p>
+
+            <div class="care-cards">
+                <div class="care-card">
+                    <div class="care-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
+                    <h4 data-i18n="manual.care.clean-title">센서 유입구 청소</h4>
+                    <p data-i18n="manual.care.clean-desc"><strong>얇은 면봉</strong> 또는 옵션으로 제공되는 <strong>전용 청소 도구</strong>를 사용하여 공기 유입구의 이물질을 부드럽게 제거합니다.</p>
+                </div>
+                <div class="care-card">
+                    <div class="care-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></div>
+                    <h4 data-i18n="manual.care.donot-title">주의 사항</h4>
+                    <ul class="care-donot-list">
+                        <li data-i18n="manual.care.donot1">물이나 액체로 직접 세척하지 마세요</li>
+                        <li data-i18n="manual.care.donot2">뾰족한 도구로 센서 홀을 찌르지 마세요</li>
+                        <li data-i18n="manual.care.donot3">에어 스프레이를 직접 분사하지 마세요</li>
+                    </ul>
+                </div>
+                <div class="care-card">
+                    <div class="care-card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12h.01"/></svg></div>
+                    <h4 data-i18n="manual.care.store-title">보관 방법</h4>
+                    <p data-i18n="manual.care.store-desc">사용 후 건조하고 서늘한 곳에 보관해 주세요. 직사광선 및 고온 환경을 피하세요.</p>
+                </div>
+            </div>
+            <div class="guide-tip">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                <p data-i18n="manual.care.option-tip">전용 청소 도구 및 Lightning 변환잭은 <strong>옵션 상품</strong>으로 별도 구매하실 수 있습니다.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MANUAL: Calibration -->
+<section class="section section-gradient">
+    <div class="container container-narrow">
+        <div class="manual-section reveal">
+            <div class="manual-section-badge">06</div>
+            <h2 class="manual-section-title" data-i18n="manual.cal">캘리브레이션</h2>
+            <p class="manual-section-desc" data-i18n="manual.cal.desc">현재 대기압을 0 hPa 기준으로 설정하는 과정입니다. <strong>매 세션 시작 전</strong> 권장합니다.</p>
+
+            <div class="guide-callout">
+                <h4 data-i18n="manual.cal.process">캘리브레이션 과정</h4>
+                <ol class="guide-ol">
+                    <li data-i18n="manual.cal.step1">센서에서 입/코를 떼고 자연 상태로 둡니다</li>
+                    <li data-i18n="manual.cal.step2">앱에서 "캘리브레이션" 버튼을 탭합니다</li>
+                    <li data-i18n="manual.cal.step3">3초간 대기압 샘플을 수집합니다</li>
+                    <li data-i18n="manual.cal.step4">평균값이 자동으로 기준점(baseline)으로 설정됩니다</li>
+                </ol>
+            </div>
+
+            <div class="guide-tip">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                <p data-i18n="manual.cal.tip">고도가 변하거나 장소를 이동한 후에는 반드시 재캘리브레이션하세요. 대기압 변화가 측정값에 영향을 줍니다.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MANUAL: Firmware Update -->
+<section class="section section-dark">
+    <div class="container container-narrow">
+        <div class="manual-section reveal">
+            <div class="manual-section-badge">07</div>
+            <h2 class="manual-section-title" data-i18n="manual.fw">펌웨어 업데이트</h2>
+            <p class="manual-section-desc" data-i18n="manual.fw.desc">앱의 설정 탭에서 펌웨어 버전을 확인하고, 최신 버전으로 업데이트할 수 있습니다.</p>
+
+            <div class="guide-substeps">
+                <div class="substep">
+                    <div class="substep-num">1</div>
+                    <div>
+                        <h4 data-i18n="manual.fw.step1">현재 버전 확인</h4>
+                        <p data-i18n="manual.fw.step1-desc">설정 → 디바이스 설정에서 현재 펌웨어 버전을 확인합니다.</p>
+                    </div>
+                </div>
+                <div class="substep">
+                    <div class="substep-num">2</div>
+                    <div>
+                        <h4 data-i18n="manual.fw.step2">업데이트 시작</h4>
+                        <p data-i18n="manual.fw.step2-desc">"펌웨어 업데이트" 버튼을 탭하면 디바이스가 BOOTSEL 모드로 재부팅됩니다.</p>
+                    </div>
+                </div>
+                <div class="substep">
+                    <div class="substep-num">3</div>
+                    <div>
+                        <h4 data-i18n="manual.fw.step3">UF2 파일 복사</h4>
+                        <p data-i18n="manual.fw.step3-desc">PC에서 USB 드라이브로 인식된 DiveChecker에 .uf2 파일을 드래그 앤 드롭합니다.</p>
+                    </div>
+                </div>
+                <div class="substep">
+                    <div class="substep-num">4</div>
+                    <div>
+                        <h4 data-i18n="manual.fw.step4">자동 재부팅</h4>
+                        <p data-i18n="manual.fw.step4-desc">업로드가 완료되면 자동으로 재부팅되어 새 펌웨어로 동작합니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MANUAL: Troubleshooting -->
+<section class="section section-gradient">
+    <div class="container container-narrow">
+        <div class="manual-section reveal">
+            <div class="manual-section-badge">08</div>
+            <h2 class="manual-section-title" data-i18n="manual.s07">문제 해결</h2>
+
+            <div class="trouble-accordion">
+                <div class="trouble-item">
+                    <button class="trouble-q" aria-expanded="false"><span data-i18n="manual.s07.q1">디바이스가 인식되지 않아요</span><svg class="trouble-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+                    <div class="trouble-a"><ul>
+                        <li data-i18n="manual.s07.q1-a1">충전 전용 케이블이 아닌 <strong>데이터 케이블</strong>인지 확인</li>
+                        <li data-i18n="manual.s07.q1-a2">다른 USB 포트에 연결해 보기</li>
+                        <li data-i18n="manual.s07.q1-a3">케이블을 분리했다가 다시 연결</li>
+                        <li data-i18n="manual.s07.q1-a4">Android: <strong>USB OTG 설정</strong>이 켜져 있는지 확인</li>
+                        <li data-i18n="manual.s07.q1-a5">iOS: USB-C iPhone 15 이상 / USB-C iPad만 지원 (Lightning은 변환잭 필요)</li>
+                    </ul></div>
+                </div>
+                <div class="trouble-item">
+                    <button class="trouble-q" aria-expanded="false"><span data-i18n="manual.s07.q2">그래프가 움직이지 않아요</span><svg class="trouble-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+                    <div class="trouble-a"><ul>
+                        <li data-i18n="manual.s07.q2-a1">캘리브레이션을 다시 진행</li>
+                        <li data-i18n="manual.s07.q2-a2">센서 홀에 이물질이 없는지 확인</li>
+                        <li data-i18n="manual.s07.q2-a3">앱을 종료 후 재실행</li>
+                    </ul></div>
+                </div>
+                <div class="trouble-item">
+                    <button class="trouble-q" aria-expanded="false"><span data-i18n="manual.s07.q3">압력 값이 비정상적이에요</span><svg class="trouble-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+                    <div class="trouble-a"><ul>
+                        <li data-i18n="manual.s07.q3-a1">캘리브레이션을 다시 진행</li>
+                        <li data-i18n="manual.s07.q3-a2">센서에 수분이 들어가지 않았는지 확인</li>
+                        <li data-i18n="manual.s07.q3-a3">급격한 온도 변화 후에는 <strong>10분 안정화</strong> 후 사용</li>
+                    </ul></div>
+                </div>
+                <div class="trouble-item">
+                    <button class="trouble-q" aria-expanded="false"><span data-i18n="manual.s07.q4">LED가 켜지지 않아요</span><svg class="trouble-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button>
+                    <div class="trouble-a"><ul>
+                        <li data-i18n="manual.s07.q4-a1">케이블이 제대로 꽂혀 있는지 확인</li>
+                        <li data-i18n="manual.s07.q4-a2">다른 기기에 연결해서 테스트</li>
+                        <li data-i18n="manual.s07.q4-a3">문제 지속 시 <a href="support.html">고객 지원</a>에 문의</li>
+                    </ul></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MANUAL: Warranty & A/S -->
+<section class="section section-dark">
+    <div class="container container-narrow">
+        <div class="manual-section reveal">
+            <div class="manual-section-badge">09</div>
+            <h2 class="manual-section-title" data-i18n="manual.s08">보증 및 A/S</h2>
+            <div class="warranty-card">
+                <div class="warranty-main">
+                    <div class="warranty-period">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <div>
+                            <h4 data-i18n="manual.s08.period">무상 A/S 기간</h4>
+                            <p class="warranty-duration" data-i18n="manual.s08.duration">구매일로부터 <strong>1개월 이내</strong></p>
+                        </div>
+                    </div>
+                    <p class="warranty-desc" data-i18n="manual.s08.desc">제품 자체 결함에 한하여 무상 A/S가 제공됩니다. 구매 영수증 등 구매 증빙을 첨부하여 이메일로 신청해 주세요.</p>
+                </div>
+                <div class="warranty-exclusions">
+                    <h4 data-i18n="manual.s08.exclude-title">보증 제외 사항</h4>
+                    <ul>
+                        <li data-i18n="manual.s08.ex1">침수 또는 이물질 유입으로 인한 고장</li>
+                        <li data-i18n="manual.s08.ex2">사용자 과실에 의한 파손 및 변형</li>
+                        <li data-i18n="manual.s08.ex3">분해 또는 개조로 인한 고장</li>
+                    </ul>
+                </div>
+                <!-- TODO: 실제 A/S 이메일 주소로 교체 -->
+                <div class="warranty-contact-info">
+                    <span data-i18n="manual.s08.contact">A/S 문의</span>
+                    <a href="mailto:megakdh@createch.kr">megakdh@createch.kr</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MANUAL: Safety & Disclaimer -->
+<section class="section section-gradient">
+    <div class="container container-narrow">
+        <div class="manual-section reveal">
+            <div class="safety-notice">
+                <div class="safety-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                <h3 data-i18n="manual.safety-title">안전 및 주의사항</h3>
+                <div class="safety-grid">
+                    <div class="safety-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg><p data-i18n="manual.safety1"><strong>교육 및 실습 전용</strong> — 이퀄라이징 기술 향상을 위한 학습기이며, 그 외의 목적으로 사용할 수 없습니다.</p></div>
+                    <div class="safety-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg><p data-i18n="manual.safety2"><strong>의료기기 아님</strong> — 이관 기능 장애, 중이염 등 질환의 진단/예방/치료 목적으로 사용할 수 없으며, 의료기기로 허가/인증된 제품이 아닙니다.</p></div>
+                    <div class="safety-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg><p data-i18n="manual.safety3"><strong>통증 발생 시 즉시 중단</strong> — 귀 또는 코에 통증이 느껴지면 즉시 사용을 중단하십시오.</p></div>
+                    <div class="safety-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg><p data-i18n="manual.safety5"><strong>방수 아님</strong> — 물/이물질이 유입되지 않도록 주의. 사용 후 건조하고 서늘한 곳에 보관.</p></div>
+                </div>
+                <div class="mfg-notice">
+                    <h4 data-i18n="manual.mfg-title">제조 품질 안내</h4>
+                    <ul>
+                        <li data-i18n="manual.mfg1">제조 과정에서 발생하는 <strong>미세한 스크래치나 표면 질감의 차이</strong>는 제품 불량이 아닌 공정 특성입니다.</li>
+                        <li data-i18n="manual.mfg2">외관에 미세한 표면 차이가 있을 수 있으며, 이는 제품의 기능 및 성능에 영향을 주지 않습니다.</li>
+                        <li data-i18n="manual.mfg3">상기 사유로 인한 교환/반품은 불가합니다.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MANUAL: Contact Form (mailto) -->
+<section class="section section-dark" id="contact">
+    <div class="container container-narrow">
+        <div class="manual-section reveal">
+            <div class="manual-section-badge">CONTACT</div>
+            <h2 class="manual-section-title" data-i18n="manual.contact-title">문의하기</h2>
+            <p class="manual-section-desc" data-i18n="manual.contact-desc">제품 관련 문의사항이 있으시면 아래 양식을 작성해 주세요.</p>
+
+            <form class="mailto-form" id="mailtoForm">
+                <div class="mailto-form-row">
+                    <div class="mailto-field">
+                        <label for="contact-name" data-i18n="manual.contact.name">이름 <span class="required">*</span></label>
+                        <input type="text" id="contact-name" required placeholder="홍길동">
+                    </div>
+                    <div class="mailto-field">
+                        <label for="contact-email" data-i18n="manual.contact.email">이메일 <span class="required">*</span></label>
+                        <input type="email" id="contact-email" required placeholder="email@example.com">
+                    </div>
+                </div>
+                <div class="mailto-field">
+                    <label for="contact-type" data-i18n="manual.contact.type">문의 유형</label>
+                    <select id="contact-type">
+                        <option value="general" data-i18n="manual.contact.type-general">일반 문의</option>
+                        <option value="as" data-i18n="manual.contact.type-as">A/S 접수</option>
+                        <option value="option" data-i18n="manual.contact.type-option">옵션 상품 구매</option>
+                        <option value="dealer" data-i18n="manual.contact.type-dealer">딜러/대량 구매</option>
+                        <option value="other" data-i18n="manual.contact.type-other">기타</option>
+                    </select>
+                </div>
+                <div class="mailto-field">
+                    <label for="contact-serial" data-i18n="manual.contact.serial">시리얼 넘버 (선택)</label>
+                    <input type="text" id="contact-serial" placeholder="DC-EQ01-XXXXXX">
+                </div>
+                <div class="mailto-field">
+                    <label for="contact-message" data-i18n="manual.contact.message">내용 <span class="required">*</span></label>
+                    <textarea id="contact-message" rows="5" required placeholder="문의 내용을 작성해 주세요."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary mailto-submit">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    <span data-i18n="manual.contact.submit">메일로 문의하기</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- DEALER BANNER                           -->
+<!-- ═══════════════════════════════════════ -->
+<section class="dealer-banner">
+    <div class="dealer-inner">
+        <div class="dealer-badge">DEALER &amp; PARTNERSHIP</div>
+        <h3 class="dealer-title" data-i18n="dealer.title">다이브샵 대표님, 강사님께</h3>
+        <p class="dealer-desc" data-i18n="dealer.desc">
+            다이브체커는 <strong>다이브샵</strong> 및 <strong>다이빙 강사</strong>와의 딜러 계약을 환영합니다.<br>
+            매장에 새로운 가치를, 교육생에게 더 나은 피드백을 더하세요.
+        </p>
+        <div class="dealer-cta">
+            <a href="mailto:megakdh@createch.kr" class="btn btn-dealer">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <span>megakdh@createch.kr</span>
+            </a>
+        </div>
+        <p class="dealer-note" data-i18n="dealer.note">딜러 조건, 도매 가격, 교육용 특별 할인 등 자세한 내용은 이메일로 문의해 주세요.</p>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- FOOTER                                  -->
+<!-- ═══════════════════════════════════════ -->
+<footer class="footer">
+    <div class="footer-inner">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <span class="logo-text">DIVE<span class="logo-accent">CHECKER</span></span>
+                <p class="footer-tagline" data-i18n="footer.tagline">이퀄라이징을 눈으로 보다</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <a href="#features">Features</a>
+                    <a href="#specs">Specifications</a>
+                    <a href="#download">Download</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <a href="#manual" data-i18n="nav.manual">사용 설명서</a>
+                    <a href="faq.html">FAQ</a>
+                    <a href="support.html" data-i18n="footer.as">A/S 문의</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Open Source</h4>
+                    <a href="https://github.com/kernalix7/divechecker" target="_blank" rel="noopener">GitHub</a>
+                    <a href="https://opensource.org/licenses/Apache-2.0" target="_blank" rel="noopener">Apache 2.0</a>
+                    <a href="https://ohwr.org/cern_ohl_s_v2.txt" target="_blank" rel="noopener">CERN-OHL-S v2</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-disclaimer">
+            <p data-i18n="footer.disclaimer">본 제품은 다이빙 이퀄라이징 기술 향상을 위한 교육용 학습기(Learning Device)이며, 의료기기가 아닙니다. 이관 기능 장애, 중이염 등 질환의 진단·예방·치료 목적으로 사용할 수 없습니다. 사용 중 통증이 느껴지면 즉시 사용을 중단하십시오.</p>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 DiveChecker. Made with passion for the freediving community.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="i18n.js"></script>
+<script src="script.js"></script>
+<script>
+/* ── Manual sections (trouble accordion + mailto) ── */
+document.addEventListener('DOMContentLoaded', () => {
+    /* Trouble accordion */
+    document.querySelectorAll('.trouble-q').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const item = btn.closest('.trouble-item');
+            const isOpen = item.classList.contains('open');
+            document.querySelectorAll('.trouble-item.open').forEach(i => i.classList.remove('open'));
+            if (!isOpen) item.classList.add('open');
+            btn.setAttribute('aria-expanded', !isOpen);
+        });
+    });
+
+    /* Mailto form */
+    const mailtoForm = document.getElementById('mailtoForm');
+    if (mailtoForm) {
+        mailtoForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('contact-name').value.trim();
+            const email = document.getElementById('contact-email').value.trim();
+            const type = document.getElementById('contact-type');
+            const typeName = type.options[type.selectedIndex].textContent;
+            const serial = document.getElementById('contact-serial').value.trim();
+            const message = document.getElementById('contact-message').value.trim();
+
+            const toEmail = 'megakdh@createch.kr';
+            const lang = (typeof getLang === 'function') ? getLang() : 'ko';
+            const lb = { ko: ['문의 유형','이름','이메일','시리얼 넘버'], en: ['Type','Name','Email','Serial'], ja: ['問い合わせ種類','お名前','メール','シリアル'], zh: ['咨询类型','姓名','邮箱','序列号'], tw: ['諮詢類型','姓名','郵箱','序列號'] }[lang] || ['문의 유형','이름','이메일','시리얼 넘버'];
+            const subject = '[DiveChecker] ' + typeName + ' \u2014 ' + name;
+
+            let body = lb[0] + ': ' + typeName + '\n';
+            body += lb[1] + ': ' + name + '\n';
+            body += lb[2] + ': ' + email + '\n';
+            if (serial) body += lb[3] + ': ' + serial + '\n';
+            body += '\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\n';
+            body += message;
+            body += '\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n';
+            body += 'Sent from DiveChecker Product Manual';
+
+            window.location.href = 'mailto:' + toEmail + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+        });
+    }
+});
+</script>
+</body>
+</html>
