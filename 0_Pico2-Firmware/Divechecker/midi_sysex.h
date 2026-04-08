@@ -1,10 +1,14 @@
 /**
  * @file midi_sysex.h
  * @brief MIDI SysEx Protocol for DiveChecker
- * 
+ *
  * SysEx format: F0 [manufacturer_id] [device_id] [command] [data...] F7
  * Manufacturer ID: 0x7D (educational/development use)
  * Device ID: 0x01 (DiveChecker)
+ *
+ * @author Createch (legal@createch.kr)
+ * @copyright Copyright (C) 2025-2026 Createch
+ * @license Apache License 2.0
  */
 
 #ifndef MIDI_SYSEX_H

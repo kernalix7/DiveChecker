@@ -1,6 +1,10 @@
 /**
  * @file midi_sysex.c
  * @brief MIDI SysEx Protocol Implementation for DiveChecker
+ *
+ * @author Createch (legal@createch.kr)
+ * @copyright Copyright (C) 2025-2026 Createch
+ * @license Apache License 2.0
  */
 
 #include "midi_sysex.h"

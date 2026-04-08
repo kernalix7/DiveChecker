@@ -1,6 +1,12 @@
 /**
- * mbedtls platform implementation for Pico SDK
+ * @file mbedtls_platform_impl.c
+ * @brief mbedtls platform implementation for Pico SDK
+ *
  * Replaces platform_util.c with Pico-compatible implementations
+ *
+ * @author Createch (legal@createch.kr)
+ * @copyright Copyright (C) 2025-2026 Createch
+ * @license Apache License 2.0
  */
 
 #include "pico/stdlib.h"

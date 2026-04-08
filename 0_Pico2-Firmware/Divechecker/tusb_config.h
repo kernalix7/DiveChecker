@@ -1,8 +1,12 @@
 /**
  * @file tusb_config.h
  * @brief TinyUSB configuration for USB MIDI device
- * 
+ *
  * DiveChecker RP2350 USB MIDI Configuration
+ *
+ * @author Createch (legal@createch.kr)
+ * @copyright Copyright (C) 2025-2026 Createch
+ * @license Apache License 2.0
  */
 
 #ifndef _TUSB_CONFIG_H_

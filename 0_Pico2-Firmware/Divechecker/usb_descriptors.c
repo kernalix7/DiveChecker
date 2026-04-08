@@ -2,6 +2,10 @@
  * @file usb_descriptors.c
  * @brief USB Descriptors for DiveChecker MIDI Device
  *
+ * @author Createch (legal@createch.kr)
+ * @copyright Copyright (C) 2025-2026 Createch
+ * @license Apache License 2.0
+ *
  * Production: MIDI-only device (clean USB, no driver conflicts)
  * Debug:      MIDI + CDC composite (enable with DEBUG_CDC=1)
  */

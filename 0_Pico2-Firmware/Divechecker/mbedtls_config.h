@@ -1,6 +1,12 @@
 /**
- * mbedtls configuration for DiveChecker ECDSA
+ * @file mbedtls_config.h
+ * @brief mbedtls configuration for DiveChecker ECDSA
+ *
  * Minimal config for ECDSA P-256 signing only
+ *
+ * @author Createch (legal@createch.kr)
+ * @copyright Copyright (C) 2025-2026 Createch
+ * @license Apache License 2.0
  */
 
 #ifndef MBEDTLS_CONFIG_H

@@ -1,6 +1,11 @@
 /**
- * OTP Key Management for DiveChecker
- * 
+ * @file otp_keys.h
+ * @brief OTP Key Management for DiveChecker
+ *
+ * @author Createch (legal@createch.kr)
+ * @copyright Copyright (C) 2025-2026 Createch
+ * @license Apache License 2.0
+ *
  * RP2350 OTP Memory Layout for DiveChecker:
  * - OTP is 8KB (8192 bytes) organized as 4096 x 16-bit words
  * - Once written, cannot be changed (One-Time Programmable)
