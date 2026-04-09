@@ -1467,9 +1467,13 @@ static void core1_sensor_task(void) {
     // NOTE: Only ONE FIFO message is sent after the loop completes
     //       to prevent Core 0 from reading a stale failure status
     int retry_delay_ms = 1000;  // Start at 1s
-    while (!g_sensor_ready) {
+    int max_retries = 5;        // Max attempts before giving up (allows USB to start)
+    int retry_count = 0;
+    while (!g_sensor_ready && retry_count < max_retries) {
         g_sensor_ready = bmp280_init();
         if (g_sensor_ready) break;
+        
+        retry_count++;
         
         // Wait with watchdog feeding before retry
         for (int i = 0; i < retry_delay_ms / 100; i++) {
@@ -1477,13 +1481,13 @@ static void core1_sensor_task(void) {
             sleep_ms(100);
         }
         
-        // Exponential backoff: 1s, 2s, 4s, 8s, 16s, 30s max
+        // Exponential backoff: 1s, 2s, 4s, 8s max
         retry_delay_ms *= 2;
-        if (retry_delay_ms > 30000) retry_delay_ms = 30000;
+        if (retry_delay_ms > 8000) retry_delay_ms = 8000;
         
         if (g_sensor_error_count < UINT16_MAX) g_sensor_error_count++;
         #if CFG_TUD_CDC
-        printf("WARN:Sensor init retry (delay=%dms)\n", retry_delay_ms);
+        printf("WARN:Sensor init retry %d/%d (delay=%dms)\n", retry_count, max_retries, retry_delay_ms);
         #endif
     }
     
