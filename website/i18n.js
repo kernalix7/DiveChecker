@@ -661,20 +661,9 @@ const translations = {
 const SUPPORTED_LANGS = ['ko', 'en', 'ja', 'zh', 'tw'];
 const LANG_LABELS = { ko: 'KO', en: 'EN', ja: 'JA', zh: '简', tw: '繁' };
 
-function detectBrowserLang() {
-    const navLangs = (navigator.languages && navigator.languages.length)
-        ? navigator.languages
-        : [navigator.language || ''];
-    for (const raw of navLangs) {
-        const l = String(raw).toLowerCase();
-        if (l.startsWith('ko')) return 'ko';
-        if (l.startsWith('ja')) return 'ja';
-        if (l.startsWith('zh-tw') || l.startsWith('zh-hant') || l.startsWith('zh-hk') || l.startsWith('zh-mo')) return 'tw';
-        if (l.startsWith('zh')) return 'zh';
-        if (l.startsWith('en')) return 'en';
-    }
-    return 'en';
-}
+// Default lang is English (foreign-first audience). Users can switch via the
+// toggle; their choice is persisted in localStorage and honored on return.
+const DEFAULT_LANG = 'en';
 
 function getLang() {
     const params = new URLSearchParams(window.location.search);
@@ -684,7 +673,7 @@ function getLang() {
         const stored = localStorage.getItem('dc-lang');
         if (stored && SUPPORTED_LANGS.includes(stored)) return stored;
     } catch {}
-    return detectBrowserLang();
+    return DEFAULT_LANG;
 }
 
 function setLang(lang) {
