@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -124,11 +124,11 @@
 <section class="section section-dark">
     <div class="privacy-content">
         <div class="privacy-lang-toggle">
-            <button class="privacy-lang-btn active" data-privacy-lang="ko">한국어</button>
             <button class="privacy-lang-btn" data-privacy-lang="en">English</button>
+            <button class="privacy-lang-btn" data-privacy-lang="ko">한국어</button>
         </div>
         <div id="privacyBody">
-            <div class="privacy-loading">불러오는 중...</div>
+            <div class="privacy-loading">Loading...</div>
         </div>
     </div>
 </section>
@@ -137,7 +137,7 @@
 <footer class="footer">
     <div class="footer-inner">
         <div class="footer-bottom">
-            <p>&copy; 2026 DiveChecker by 크리에이테크 (Createch). All rights reserved.</p>
+            <p data-i18n="footer.copyright">&copy; 2026 DiveChecker by Createch. All rights reserved.</p>
         </div>
     </div>
 </footer>
@@ -178,9 +178,33 @@ function md2html(md) {
         .join('\n');
 }
 
+const LOADING_TEXT = { ko: '불러오는 중...', en: 'Loading...', ja: '読み込み中...', zh: '加载中...', tw: '載入中...' };
+const ERROR_TEXT = {
+    ko: ['불러오기 실패. ', 'GitHub에서 직접 확인'],
+    en: ['Failed to load. ', 'View on GitHub'],
+    ja: ['読み込みに失敗しました。', 'GitHubで確認'],
+    zh: ['加载失败。', '在 GitHub 上查看'],
+    tw: ['載入失敗。', '在 GitHub 上查看']
+};
+
+function privacyUiLang() {
+    try {
+        const v = localStorage.getItem('dc-lang');
+        if (v && PRIVACY_URLS[v]) return v;
+    } catch {}
+    return (document.documentElement.lang || 'en').split('-')[0];
+}
+
+function privacyDocLang() {
+    const ui = privacyUiLang();
+    return ui === 'ko' ? 'ko' : 'en';
+}
+
 async function loadPrivacy(lang) {
     const body = document.getElementById('privacyBody');
-    body.innerHTML = '<div class="privacy-loading">불러오는 중...</div>';
+    const ui = privacyUiLang();
+    const loading = LOADING_TEXT[ui] || LOADING_TEXT.en;
+    body.innerHTML = '<div class="privacy-loading">' + loading + '</div>';
 
     try {
         const res = await fetch(PRIVACY_URLS[lang]);
@@ -188,12 +212,17 @@ async function loadPrivacy(lang) {
         const md = await res.text();
         body.innerHTML = md2html(md);
     } catch (e) {
-        body.innerHTML = '<div class="privacy-error">불러오기 실패. <a href="' + PRIVACY_URLS[lang] + '" target="_blank">GitHub에서 직접 확인</a></div>';
+        const [msg, link] = ERROR_TEXT[ui] || ERROR_TEXT.en;
+        body.innerHTML = '<div class="privacy-error">' + msg + '<a href="' + PRIVACY_URLS[lang] + '" target="_blank">' + link + '</a></div>';
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadPrivacy('ko');
+    const initial = privacyDocLang();
+    loadPrivacy(initial);
+    document.querySelectorAll('.privacy-lang-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.privacyLang === initial);
+    });
 
     document.querySelectorAll('.privacy-lang-btn').forEach(btn => {
         btn.addEventListener('click', () => {

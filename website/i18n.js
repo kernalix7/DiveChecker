@@ -248,6 +248,7 @@ const translations = {
     'footer.disclaimer-link': { ko: '면책 고지', en: 'Disclaimer', ja: '免責事項', zh: '免责声明', tw: '免責聲明' },
     'footer.privacy': { ko: '개인정보처리방침', en: 'Privacy Policy', ja: 'プライバシーポリシー', zh: '隐私政策', tw: '隱私政策' },
     'footer.disclaimer': { ko: '본 제품은 다이빙 이퀄라이징 기술 향상을 위한 교육용 학습기(Learning Device)이며, 의료기기가 아닙니다. 이관 기능 장애, 중이염 등 질환의 진단·예방·치료 목적으로 사용할 수 없습니다. 사용 중 귀 또는 코에 통증이 느껴지면 즉시 사용을 중단하십시오. 본 제품의 오용·부주의 또는 부적절한 사용으로 인해 발생하는 어떠한 부상·손해에 대해서도 제조자는 책임을 지지 않습니다.', en: 'This product is an educational learning device for improving diving equalization technique and is not a medical device. It cannot be used for diagnosis, prevention, or treatment of conditions such as Eustachian tube dysfunction or otitis media. If you feel pain in your ears or nose during use, stop immediately. The manufacturer is not liable for any injury or damage resulting from misuse, negligence, or improper use of this product.', ja: '本製品はダイビングイコライジング技術向上のための教育用学習器であり、医療機器ではありません。耳管機能障害、中耳炎等の疾患の診断・予防・治療目的に使用できません。使用中に耳や鼻に痛みを感じた場合は直ちに使用を中止してください。本製品の誤用・不注意または不適切な使用により発生するいかなる傷害・損害についても製造者は責任を負いません。', zh: '本产品是用于提高潜水均压技术的教育用学习设备，非医疗器械。不能用于诊断、预防或治疗咽鼓管功能障碍、中耳炎等疾病。使用中如耳朵或鼻子感到疼痛，请立即停止使用。因误用、疏忽或不当使用本产品而导致的任何伤害或损失，制造商概不负责。', tw: '本產品是用於提高潛水均壓技術的教育用學習設備，非醫療器械。不能用於診斷、預防或治療咽鼓管功能障礙、中耳炎等疾病。使用中如耳朵或鼻子感到疼痛，請立即停止使用。因誤用、疏忽或不當使用本產品而導致的任何傷害或損失，製造商概不負責。' },
+    'footer.copyright': { ko: '© 2026 DiveChecker by 크리에이테크 (Createch). All rights reserved.', en: '© 2026 DiveChecker by Createch. All rights reserved.', ja: '© 2026 DiveChecker by Createch. All rights reserved.', zh: '© 2026 DiveChecker by Createch. All rights reserved.', tw: '© 2026 DiveChecker by Createch. All rights reserved.' },
     'footer.trademarks': { ko: 'DiveChecker 및 DiveChecker 로고는 크리에이테크 (Createch)의 상표입니다. Google Play, Android, Flutter는 Google LLC의 상표입니다. Apple, App Store, iOS, iPhone, iPad, macOS는 Apple Inc.의 상표입니다. Windows는 Microsoft Corporation의 등록 상표입니다. Bluetooth는 Bluetooth SIG, Inc.의 등록 상표입니다. USB, USB-C는 USB Implementers Forum의 상표입니다. Linux는 Linus Torvalds의 등록 상표입니다. GitHub는 GitHub, Inc.의 상표입니다.', en: 'DiveChecker and the DiveChecker logo are trademarks of Createch. Google Play, Android, and Flutter are trademarks of Google LLC. Apple, App Store, iOS, iPhone, iPad, and macOS are trademarks of Apple Inc. Windows is a registered trademark of Microsoft Corporation. Bluetooth is a registered trademark of Bluetooth SIG, Inc. USB and USB-C are trademarks of USB Implementers Forum. Linux is a registered trademark of Linus Torvalds. GitHub is a trademark of GitHub, Inc.', ja: 'DiveCheckerおよびDiveCheckerロゴは、Createchの商標です。Google Play、Android、FlutterはGoogle LLCの商標です。Apple、App Store、iOS、iPhone、iPad、macOSはApple Inc.の商標です。WindowsはMicrosoft Corporationの登録商標です。BluetoothはBluetooth SIG, Inc.の登録商標です。USB、USB-CはUSB Implementers Forumの商標です。LinuxはLinus Torvaldsの登録商標です。GitHubはGitHub, Inc.の商標です。', zh: 'DiveChecker及DiveChecker标志是Createch的商标。Google Play、Android、Flutter是Google LLC的商标。Apple、App Store、iOS、iPhone、iPad、macOS是Apple Inc.的商标。Windows是Microsoft Corporation的注册商标。Bluetooth是Bluetooth SIG, Inc.的注册商标。USB、USB-C是USB Implementers Forum的商标。Linux是Linus Torvalds的注册商标。GitHub是GitHub, Inc.的商标。', tw: 'DiveChecker及DiveChecker標誌是Createch的商標。Google Play、Android、Flutter是Google LLC的商標。Apple、App Store、iOS、iPhone、iPad、macOS是Apple Inc.的商標。Windows是Microsoft Corporation的註冊商標。Bluetooth是Bluetooth SIG, Inc.的註冊商標。USB、USB-C是USB Implementers Forum的商標。Linux是Linus Torvalds的註冊商標。GitHub是GitHub, Inc.的商標。' },
 
     // ═══ GUIDE PAGE ═══
@@ -660,12 +661,30 @@ const translations = {
 const SUPPORTED_LANGS = ['ko', 'en', 'ja', 'zh', 'tw'];
 const LANG_LABELS = { ko: 'KO', en: 'EN', ja: 'JA', zh: '简', tw: '繁' };
 
+function detectBrowserLang() {
+    const navLangs = (navigator.languages && navigator.languages.length)
+        ? navigator.languages
+        : [navigator.language || ''];
+    for (const raw of navLangs) {
+        const l = String(raw).toLowerCase();
+        if (l.startsWith('ko')) return 'ko';
+        if (l.startsWith('ja')) return 'ja';
+        if (l.startsWith('zh-tw') || l.startsWith('zh-hant') || l.startsWith('zh-hk') || l.startsWith('zh-mo')) return 'tw';
+        if (l.startsWith('zh')) return 'zh';
+        if (l.startsWith('en')) return 'en';
+    }
+    return 'en';
+}
+
 function getLang() {
     const params = new URLSearchParams(window.location.search);
     const urlLang = params.get('lang');
     if (SUPPORTED_LANGS.includes(urlLang)) return urlLang;
-    try { return localStorage.getItem('dc-lang') || 'ko'; }
-    catch { return 'ko'; }
+    try {
+        const stored = localStorage.getItem('dc-lang');
+        if (stored && SUPPORTED_LANGS.includes(stored)) return stored;
+    } catch {}
+    return detectBrowserLang();
 }
 
 function setLang(lang) {
@@ -694,7 +713,7 @@ function applyTranslations(lang) {
         const key = el.dataset.i18n;
         const t = translations[key];
         if (!t) return;
-        const text = t[lang] || (lang === 'tw' ? t.zh : null) || t.ko;
+        const text = t[lang] || (lang === 'tw' ? t.zh : null) || t.en || t.ko;
 
         if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
             if (el.placeholder !== undefined && el.dataset.i18nAttr === 'placeholder') {
@@ -755,11 +774,9 @@ document.addEventListener('DOMContentLoaded', () => {
         mobileMenu.insertBefore(createLangToggle(), mobileCta);
     }
 
-    // Apply on load
-    if (lang !== 'ko') {
-        document.documentElement.lang = lang;
-        applyTranslations(lang);
-    }
+    // Apply on load (always, so HTML defaults are replaced with the selected language)
+    document.documentElement.lang = lang;
+    applyTranslations(lang);
     updateToggleUI(lang);
     updateLinks(lang);
 
