@@ -670,14 +670,16 @@ function getLang() {
     const urlLang = params.get('lang');
     if (SUPPORTED_LANGS.includes(urlLang)) return urlLang;
     try {
-        const stored = localStorage.getItem('dc-lang');
+        // One-time cleanup of the previous key (browser-locale era)
+        localStorage.removeItem('dc-lang');
+        const stored = localStorage.getItem('dc-lang-v2');
         if (stored && SUPPORTED_LANGS.includes(stored)) return stored;
     } catch {}
     return DEFAULT_LANG;
 }
 
 function setLang(lang) {
-    try { localStorage.setItem('dc-lang', lang); } catch {}
+    try { localStorage.setItem('dc-lang-v2', lang); } catch {}
     document.documentElement.lang = lang;
     applyTranslations(lang);
     updateToggleUI(lang);
@@ -770,5 +772,5 @@ document.addEventListener('DOMContentLoaded', () => {
     updateLinks(lang);
 
     // Sync URL param to localStorage
-    try { localStorage.setItem('dc-lang', lang); } catch {}
+    try { localStorage.setItem('dc-lang-v2', lang); } catch {}
 });
