@@ -91,10 +91,10 @@
         </a>
         <div class="nav-links">
             <a href="index.html#features">Features</a>
-            <a href="index.html#manual" data-i18n="nav.manual">사용 설명서</a>
+            <a href="index.html#manual" data-i18n="nav.manual">Manual</a>
             <a href="faq.html" data-i18n="nav.faq">FAQ</a>
-            <a href="support.html" data-i18n="nav.support">지원</a>
-            <a href="index.html#buy" class="nav-cta" data-i18n="nav.buy">구매하기</a>
+            <a href="support.html" data-i18n="nav.support">Support</a>
+            <a href="index.html#buy" class="nav-cta" data-i18n="nav.buy">Buy Now</a>
         </div>
         <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
             <span></span><span></span><span></span>
@@ -103,10 +103,10 @@
 </nav>
 <div class="mobile-menu" id="mobileMenu">
     <a href="index.html#features">Features</a>
-    <a href="index.html#manual" data-i18n="nav.manual">사용 설명서</a>
+    <a href="index.html#manual" data-i18n="nav.manual">Manual</a>
     <a href="faq.html" data-i18n="nav.faq">FAQ</a>
-    <a href="support.html" data-i18n="nav.support">지원</a>
-    <a href="index.html#buy" class="nav-cta" data-i18n="nav.buy">구매하기</a>
+    <a href="support.html" data-i18n="nav.support">Support</a>
+    <a href="index.html#buy" class="nav-cta" data-i18n="nav.buy">Buy Now</a>
 </div>
 
 <!-- PAGE HERO -->
@@ -115,7 +115,7 @@
     <div class="container">
         <div class="page-hero-content reveal">
             <span class="section-label">PRIVACY POLICY</span>
-            <h1 class="page-hero-title" data-i18n="footer.privacy">개인정보처리방침</h1>
+            <h1 class="page-hero-title" data-i18n="footer.privacy">Privacy Policy</h1>
         </div>
     </div>
 </section>
@@ -137,7 +137,7 @@
 <footer class="footer">
     <div class="footer-inner">
         <div class="footer-bottom">
-            <p data-i18n="footer.copyright">&copy; 2026 DiveChecker by Createch. All rights reserved.</p>
+            <p data-i18n="footer.copyright">© 2026 DiveChecker by Createch. All rights reserved.</p>
         </div>
     </div>
 </footer>
@@ -189,8 +189,8 @@ const ERROR_TEXT = {
 
 function privacyUiLang() {
     try {
-        const v = localStorage.getItem('dc-lang');
-        if (v && PRIVACY_URLS[v]) return v;
+        const v = localStorage.getItem('dc-lang-v2');
+        if (v) return v;
     } catch {}
     return (document.documentElement.lang || 'en').split('-')[0];
 }
