@@ -20,8 +20,19 @@
             <span class="logo-text">DIVE<span class="logo-accent">CHECKER</span></span>
         </a>
         <div class="nav-links">
-            <a href="index.html#features">Features</a>
-            <a href="index.html#manual" data-i18n="nav.manual">Manual</a>
+            <div class="nav-dropdown">
+                <button class="nav-dropdown-trigger" data-i18n="nav.products" aria-haspopup="true" aria-expanded="false">Products</button>
+                <div class="nav-dropdown-menu">
+                    <a href="index.html" class="nav-dropdown-item">
+                        <span class="nav-dropdown-name" data-i18n="nav.product.divechecker">DiveChecker</span>
+                        <span class="nav-dropdown-sub" data-i18n="nav.product.divechecker-sub">Real-time pressure sensor</span>
+                    </a>
+                    <a href="vent.html" class="nav-dropdown-item">
+                        <span class="nav-dropdown-name" data-i18n="nav.product.vent">DiveChecker Vent</span>
+                        <span class="nav-dropdown-sub" data-i18n="nav.product.vent-sub">Balloon equalization trainer</span>
+                    </a>
+                </div>
+            </div>
             <a href="faq.html" class="nav-active" data-i18n="nav.faq">FAQ</a>
             <a href="support.html" data-i18n="nav.support">Support</a>
             <a href="index.html#buy" class="nav-cta" data-i18n="nav.buy">Buy Now</a>
@@ -32,8 +43,17 @@
     </div>
 </nav>
 <div class="mobile-menu" id="mobileMenu">
-    <a href="index.html#features">Features</a>
-    <a href="index.html#manual" data-i18n="nav.manual">Manual</a>
+    <div class="mobile-products-group">
+        <div class="mobile-products-label" data-i18n="nav.products">Products</div>
+        <a href="index.html" class="mobile-product-item">
+            <span class="nav-dropdown-name" data-i18n="nav.product.divechecker">DiveChecker</span>
+            <span class="nav-dropdown-sub" data-i18n="nav.product.divechecker-sub">Real-time pressure sensor</span>
+        </a>
+        <a href="vent.html" class="mobile-product-item">
+            <span class="nav-dropdown-name" data-i18n="nav.product.vent">DiveChecker Vent</span>
+            <span class="nav-dropdown-sub" data-i18n="nav.product.vent-sub">Balloon equalization trainer</span>
+        </a>
+    </div>
     <a href="faq.html" data-i18n="nav.faq">FAQ</a>
     <a href="support.html" data-i18n="nav.support">Support</a>
     <a href="index.html#buy" class="nav-cta" data-i18n="nav.buy">Buy Now</a>

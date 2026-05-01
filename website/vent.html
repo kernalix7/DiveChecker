@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n-title="vent.page-title">DiveChecker Vent — Balloon Equalization Trainer</title>
+<meta name="description" content="DiveChecker Vent — A pneumatic equalization trainer that blocks Valsalva and forces correct Frenzel/Mouthfill technique through a calibrated balloon. Dry training, anywhere.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="pages.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- NAV                                     -->
+<!-- ═══════════════════════════════════════ -->
+<nav class="nav" id="nav">
+    <div class="nav-inner">
+        <a href="index.html" class="nav-logo">
+            <span class="logo-text">DIVE<span class="logo-accent">CHECKER</span></span>
+        </a>
+        <div class="nav-links">
+            <div class="nav-dropdown">
+                <button class="nav-dropdown-trigger" data-i18n="nav.products" aria-haspopup="true" aria-expanded="false">Products</button>
+                <div class="nav-dropdown-menu">
+                    <a href="index.html" class="nav-dropdown-item">
+                        <span class="nav-dropdown-name" data-i18n="nav.product.divechecker">DiveChecker</span>
+                        <span class="nav-dropdown-sub" data-i18n="nav.product.divechecker-sub">Real-time pressure sensor</span>
+                    </a>
+                    <a href="vent.html" class="nav-dropdown-item active">
+                        <span class="nav-dropdown-name" data-i18n="nav.product.vent">DiveChecker Vent</span>
+                        <span class="nav-dropdown-sub" data-i18n="nav.product.vent-sub">Balloon equalization trainer</span>
+                    </a>
+                </div>
+            </div>
+            <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+            <a href="support.html" data-i18n="nav.support">Support</a>
+            <a href="#buy" class="nav-cta" data-i18n="nav.buy">Buy Now</a>
+        </div>
+        <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-products-group">
+        <div class="mobile-products-label" data-i18n="nav.products">Products</div>
+        <a href="index.html" class="mobile-product-item">
+            <span class="nav-dropdown-name" data-i18n="nav.product.divechecker">DiveChecker</span>
+            <span class="nav-dropdown-sub" data-i18n="nav.product.divechecker-sub">Real-time pressure sensor</span>
+        </a>
+        <a href="vent.html" class="mobile-product-item active">
+            <span class="nav-dropdown-name" data-i18n="nav.product.vent">DiveChecker Vent</span>
+            <span class="nav-dropdown-sub" data-i18n="nav.product.vent-sub">Balloon equalization trainer</span>
+        </a>
+    </div>
+    <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+    <a href="support.html" data-i18n="nav.support">Support</a>
+    <a href="#buy" class="nav-cta" data-i18n="nav.buy">Buy Now</a>
+</div>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- HERO                                    -->
+<!-- ═══════════════════════════════════════ -->
+<section class="hero">
+    <div class="hero-bg">
+        <div class="hero-glow"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-particles" id="particles"></div>
+    </div>
+    <div class="hero-content reveal">
+        <div class="hero-badge" data-i18n="vent.hero.badge">Pneumatic Equalization Trainer</div>
+        <h1 class="hero-title" data-i18n="vent.hero.title">Train your<br><span class="gradient-text">Eustachian tubes</span><br>without water</h1>
+        <p class="hero-desc" data-i18n="vent.hero.desc">A pressure-calibrated <strong>balloon</strong> blocks Valsalva and forces correct Frenzel / Mouthfill.<br>Visual feedback by balloon size &middot; Dry training, anywhere</p>
+        <div class="hero-actions">
+            <a href="#buy" class="btn btn-primary">
+                <span data-i18n="vent.hero.cta-buy">Buy Now</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <a href="#how-it-works" class="btn btn-ghost">
+                <span data-i18n="vent.hero.cta-learn">How It Works</span>
+            </a>
+        </div>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <span class="hero-stat-num" data-i18n="vent.hero.stat1-num">0</span>
+                <span class="hero-stat-label" data-i18n="vent.hero.stat1-label">Water needed</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+                <span class="hero-stat-num" data-i18n="vent.hero.stat2-num">100+</span>
+                <span class="hero-stat-label" data-i18n="vent.hero.stat2-label">Cycles per balloon</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+                <span class="hero-stat-num" data-i18n="vent.hero.stat3-num">3~5</span>
+                <span class="hero-stat-label" data-i18n="vent.hero.stat3-label">Daily sessions</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-product reveal-up">
+        <div class="hero-product-glow"></div>
+        <img src="assets/images/vent-hero.jpg" alt="DiveChecker Vent" class="hero-product-img">
+    </div>
+
+    <div class="hero-scroll-indicator">
+        <div class="scroll-line"></div>
+        <span>SCROLL</span>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- PROBLEM                                 -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-dark" id="problem">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-label label-red">PROBLEM</span>
+            <h2 class="section-title" data-i18n="vent.problem.title">When you can't reach the pool,<br><span class="text-red">failure is found too late</span></h2>
+        </div>
+        <div class="problem-grid">
+            <div class="problem-card reveal">
+                <div class="problem-number">01</div>
+                <h3 data-i18n="vent.problem.1.title">Wrong Valsalva habit</h3>
+                <p data-i18n="vent.problem.1.desc">Pinching your nose and pushing hard does not scale to depth. Frenzel and Mouthfill are different muscle patterns entirely.</p>
+            </div>
+            <div class="problem-card reveal" style="--delay: 0.1s">
+                <div class="problem-number">02</div>
+                <h3 data-i18n="vent.problem.2.title">Nowhere to practice</h3>
+                <p data-i18n="vent.problem.2.desc">Think you need a pool or the ocean to train equalization? 90% of mastery happens on dry land.</p>
+            </div>
+            <div class="problem-card reveal" style="--delay: 0.2s">
+                <div class="problem-number">03</div>
+                <h3 data-i18n="vent.problem.3.title">No feedback</h3>
+                <p data-i18n="vent.problem.3.desc">No objective signal for "did it work?" Pop or no pop, both instructor and student are just guessing.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SOLUTION INTRO                          -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-gradient">
+    <div class="container">
+        <div class="solution-intro reveal">
+            <span class="section-label">SOLUTION</span>
+            <h2 class="section-title-lg" data-i18n="vent.solution.title">The balloon<br>becomes your <span class="gradient-text">teacher</span></h2>
+            <p class="solution-sub" data-i18n="vent.solution.sub">Autoinflation training reimagined with the DiveChecker design language</p>
+        </div>
+
+        <div class="app-showcase reveal-up">
+            <div class="app-showcase-glow"></div>
+            <img src="assets/images/vent-hero.jpg" alt="DiveChecker Vent — front view" class="app-showcase-img">
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- FEATURES                                -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-dark" id="features">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-label">FEATURES</span>
+            <h2 class="section-title" data-i18n="vent.feat.title">Why DiveChecker Vent</h2>
+        </div>
+
+        <!-- Feature 01 -->
+        <div class="feature-row reveal">
+            <div class="feature-text">
+                <span class="feature-num">01</span>
+                <h3 class="feature-title" data-i18n="vent.feat1.title">Back-pressure that blocks Valsalva</h3>
+                <p class="feature-desc" data-i18n="vent.feat1.desc">The balloon is calibrated to expand only above a threshold, so brute-force Valsalva won't inflate it.<br>Only the tongue-and-larynx compression of <strong>Frenzel</strong> can grow it.</p>
+                <div class="feature-tags">
+                    <span class="tag" data-i18n="vent.feat1.tag1">Forced Frenzel</span>
+                    <span class="tag" data-i18n="vent.feat1.tag2">Valsalva block</span>
+                    <span class="tag" data-i18n="vent.feat1.tag3">Muscle re-pattern</span>
+                </div>
+            </div>
+            <div class="feature-visual">
+                <div class="feature-visual-glow"></div>
+                <div class="feature-icon-card">
+                    <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.2">
+                        <circle cx="12" cy="9" r="6"/>
+                        <path d="M12 15v6"/>
+                        <path d="M9 21h6"/>
+                        <path d="M9 9h6M12 6v6" stroke="rgba(232,64,64,0.6)"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature 02 (reverse) -->
+        <div class="feature-row feature-row-reverse reveal">
+            <div class="feature-text">
+                <span class="feature-num">02</span>
+                <h3 class="feature-title" data-i18n="vent.feat2.title">Balloon size = visual feedback</h3>
+                <p class="feature-desc" data-i18n="vent.feat2.desc">No more "did it work?" When the balloon swells to grapefruit size, you succeeded.<br>Student, instructor, and bystander all see the result at the same time.</p>
+                <div class="feature-tags">
+                    <span class="tag" data-i18n="vent.feat2.tag1">Visual feedback</span>
+                    <span class="tag" data-i18n="vent.feat2.tag2">Clear success criterion</span>
+                    <span class="tag" data-i18n="vent.feat2.tag3">Instructor friendly</span>
+                </div>
+            </div>
+            <div class="feature-visual">
+                <div class="feature-visual-glow"></div>
+                <div class="feature-icon-card">
+                    <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.2">
+                        <circle cx="12" cy="10" r="7"/>
+                        <path d="M12 17v3M11 20h2"/>
+                        <circle cx="9" cy="9" r="0.8" fill="var(--blue)"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature 03 -->
+        <div class="feature-row reveal">
+            <div class="feature-text">
+                <span class="feature-num">03</span>
+                <h3 class="feature-title" data-i18n="vent.feat3.title">Dry training, anywhere</h3>
+                <p class="feature-desc" data-i18n="vent.feat3.desc">On a plane, in a hotel, in your car before a dive — five minutes a day without water.<br>Drill every step up to Mouthfill entry on dry land.</p>
+                <div class="feature-tags">
+                    <span class="tag" data-i18n="vent.feat3.tag1">Portable</span>
+                    <span class="tag" data-i18n="vent.feat3.tag2">5-min routine</span>
+                    <span class="tag" data-i18n="vent.feat3.tag3">Daily-ready</span>
+                </div>
+            </div>
+            <div class="feature-visual">
+                <div class="feature-visual-glow"></div>
+                <div class="feature-icon-card">
+                    <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.2">
+                        <path d="M12 2L4 7v6c0 5 3.5 9 8 10 4.5-1 8-5 8-10V7l-8-5z"/>
+                        <path d="M9 12l2 2 4-4"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature 04 (reverse) -->
+        <div class="feature-row feature-row-reverse reveal">
+            <div class="feature-text">
+                <span class="feature-num">04</span>
+                <h3 class="feature-title" data-i18n="vent.feat4.title">Pairs with the sensor — a complete kit</h3>
+                <p class="feature-desc" data-i18n="vent.feat4.desc">Vent teaches the <strong>muscles</strong>, the DiveChecker sensor measures the <strong>pressure curve</strong>.<br>Use both and the loop closes: do → measure → fix.</p>
+                <div class="feature-tags">
+                    <span class="tag" data-i18n="vent.feat4.tag1">Sensor pairing</span>
+                    <span class="tag" data-i18n="vent.feat4.tag2">Closed loop</span>
+                    <span class="tag" data-i18n="vent.feat4.tag3">Kit bundle</span>
+                </div>
+            </div>
+            <div class="feature-visual">
+                <div class="feature-visual-glow"></div>
+                <div class="feature-icon-card">
+                    <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.2">
+                        <path d="M3 12h4l3-9 4 18 3-9h4"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- HOW IT WORKS                            -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-navy" id="how-it-works">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-label" data-i18n="vent.how.label">HOW IT WORKS</span>
+            <h2 class="section-title" data-i18n="vent.how.title">How the balloon opens your tubes</h2>
+            <p class="section-sub" data-i18n="vent.how.sub">Block Valsalva and meter the nasal pressure, and the body naturally switches to Frenzel</p>
+        </div>
+        <div class="steps-grid">
+            <div class="step-card reveal">
+                <div class="step-line"></div>
+                <div class="step-number">1</div>
+                <div class="step-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 4c-2 4-2 8 0 12"/>
+                        <path d="M12 4c2 4 2 8 0 12"/>
+                        <path d="M9 7h6"/>
+                        <path d="M12 16v5"/>
+                    </svg>
+                </div>
+                <h3 data-i18n="vent.how.s1.title">Seal the nose piece on one nostril</h3>
+                <p data-i18n="vent.how.s1.desc">Pinch the opposite nostril shut. Make sure the balloon is firmly seated on the nose piece end of the cap.</p>
+            </div>
+            <div class="step-card reveal" style="--delay: 0.15s">
+                <div class="step-line"></div>
+                <div class="step-number">2</div>
+                <div class="step-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 2a3 3 0 00-3 3v8a3 3 0 006 0V5a3 3 0 00-3-3z"/>
+                        <path d="M19 10v3a7 7 0 01-14 0v-3"/>
+                        <path d="M12 20v3M8 23h8"/>
+                    </svg>
+                </div>
+                <h3 data-i18n="vent.how.s2.title">Mouth closed — generate pressure through the nose</h3>
+                <p data-i18n="vent.how.s2.desc">Valsalva won't inflate it. You need a <strong>Frenzel motion</strong> — tongue pressing the palate and squeezing the throat space.</p>
+            </div>
+            <div class="step-card reveal" style="--delay: 0.3s">
+                <div class="step-line"></div>
+                <div class="step-number">3</div>
+                <div class="step-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="11" r="8"/>
+                        <path d="M12 19v3M9 22h6"/>
+                    </svg>
+                </div>
+                <h3 data-i18n="vent.how.s3.title">Grapefruit size = success</h3>
+                <p data-i18n="vent.how.s3.desc">Hold each inflation 2~3 seconds, alternate nostrils, 5 sets. Daily repetition builds the muscle pattern.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- COMPARISON                              -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-dark">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-label" data-i18n="vent.cmp.label">COMPARISON</span>
+            <h2 class="section-title" data-i18n="vent.cmp.title">Why a <span class="gradient-text">calibrated</span> balloon, not just any balloon</h2>
+            <p class="section-sub" data-i18n="vent.cmp.sub">An uncalibrated balloon inflates with Valsalva too — reinforcing bad habits</p>
+        </div>
+        <div class="compare-table-wrap reveal">
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th class="col-bt" data-i18n="vent.cmp.col-diy">Generic balloon</th>
+                        <th class="col-usb" data-i18n="vent.cmp.col-vent">DiveChecker Vent</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="row-label" data-i18n="vent.cmp.row1">Threshold pressure</td>
+                        <td class="col-bt-body" data-i18n="vent.cmp.row1-diy">Low (Valsalva passes)</td>
+                        <td class="col-usb-body highlight" data-i18n="vent.cmp.row1-vent">Calibrated threshold</td>
+                    </tr>
+                    <tr>
+                        <td class="row-label" data-i18n="vent.cmp.row2">Balloon consistency</td>
+                        <td class="col-bt-body" data-i18n="vent.cmp.row2-diy">Varies by batch</td>
+                        <td class="col-usb-body highlight" data-i18n="vent.cmp.row2-vent">Medical-grade latex</td>
+                    </tr>
+                    <tr>
+                        <td class="row-label" data-i18n="vent.cmp.row3">Nose piece</td>
+                        <td class="col-bt-body" data-i18n="vent.cmp.row3-diy">None (mouthed directly)</td>
+                        <td class="col-usb-body highlight" data-i18n="vent.cmp.row3-vent">Ergonomic silicone</td>
+                    </tr>
+                    <tr>
+                        <td class="row-label" data-i18n="vent.cmp.row4">Reusability</td>
+                        <td class="col-bt-body" data-i18n="vent.cmp.row4-diy">Stretches after one use</td>
+                        <td class="col-usb-body highlight" data-i18n="vent.cmp.row4-vent">Multiple replacement balloons included</td>
+                    </tr>
+                    <tr>
+                        <td class="row-label" data-i18n="vent.cmp.row5">Sensor integration</td>
+                        <td class="col-bt-body" data-i18n="vent.cmp.row5-diy">None</td>
+                        <td class="col-usb-body highlight" data-i18n="vent.cmp.row5-vent">Pairs with DiveChecker</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- BUNDLE CALLOUT                          -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-gradient" id="bundle">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-label" data-i18n="vent.bundle.label">BETTER TOGETHER</span>
+            <h2 class="section-title-lg" data-i18n="vent.bundle.title">Pair with the sensor<br>and the loop closes</h2>
+        </div>
+
+        <div class="bundle-loop reveal">
+            <div class="bundle-step">
+                <div class="bundle-step-num" data-i18n="vent.bundle.do">DO</div>
+                <div class="bundle-step-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 4c-2 4-2 8 0 12"/>
+                        <path d="M12 4c2 4 2 8 0 12"/>
+                        <circle cx="12" cy="20" r="2"/>
+                    </svg>
+                </div>
+                <p data-i18n="vent.bundle.do-desc">Perform Frenzel with Vent</p>
+            </div>
+            <div class="bundle-arrow">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+            <div class="bundle-step">
+                <div class="bundle-step-num" data-i18n="vent.bundle.measure">MEASURE</div>
+                <div class="bundle-step-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M3 12h4l3-9 4 18 3-9h4"/>
+                    </svg>
+                </div>
+                <p data-i18n="vent.bundle.measure-desc">Measure the pressure curve with the DiveChecker sensor</p>
+            </div>
+            <div class="bundle-arrow">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+            <div class="bundle-step">
+                <div class="bundle-step-num" data-i18n="vent.bundle.fix">FIX</div>
+                <div class="bundle-step-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
+                    </svg>
+                </div>
+                <p data-i18n="vent.bundle.fix-desc">Read the app's scores and correct your motion</p>
+            </div>
+        </div>
+
+        <div class="bundle-cta-wrap reveal">
+            <a href="index.html" class="btn btn-ghost">
+                <span data-i18n="vent.bundle.cta">View DiveChecker sensor</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SPECIFICATIONS                          -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-dark" id="specs">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-label" data-i18n="vent.specs.label">SPECIFICATIONS</span>
+            <h2 class="section-title" data-i18n="vent.specs.title">Specifications</h2>
+        </div>
+        <div class="specs-grid">
+            <div class="specs-card reveal">
+                <h3 data-i18n="vent.specs.unit-title">Main Unit (Cap)</h3>
+                <div class="spec-list">
+                    <div class="spec-item"><span class="spec-key" data-i18n="vent.specs.material">Material</span><span class="spec-val" data-i18n="vent.specs.material-val">Food-grade ABS + silicone nose piece</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="vent.specs.size">Dimensions</span><span class="spec-val" data-i18n="vent.specs.size-val">~60 × 60 × 105 mm</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="vent.specs.weight">Weight</span><span class="spec-val" data-i18n="vent.specs.weight-val">~45 g</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="vent.specs.color">Color</span><span class="spec-val" data-i18n="vent.specs.color-val">Matte black</span></div>
+                </div>
+            </div>
+            <div class="specs-card reveal" style="--delay: 0.1s">
+                <h3 data-i18n="vent.specs.balloon-title">Balloon</h3>
+                <div class="spec-list">
+                    <div class="spec-item"><span class="spec-key" data-i18n="vent.specs.balloon-mat">Material</span><span class="spec-val" data-i18n="vent.specs.balloon-mat-val">Medical-grade latex (latex allergy advisory)</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="vent.specs.balloon-pres">Threshold pressure</span><span class="spec-val" data-i18n="vent.specs.balloon-pres-val">~16 kPa (120 mmHg)</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="vent.specs.balloon-life">Cycles per balloon</span><span class="spec-val" data-i18n="vent.specs.balloon-life-val">~100 cycles</span></div>
+                </div>
+            </div>
+            <div class="specs-card reveal" style="--delay: 0.2s">
+                <h3 data-i18n="vent.specs.use-title">Use</h3>
+                <div class="spec-list">
+                    <div class="spec-item"><span class="spec-key" data-i18n="vent.specs.audience">For</span><span class="spec-val" data-i18n="vent.specs.audience-val">12+ / freedivers, scuba divers, frequent flyers</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="vent.specs.daily">Recommended frequency</span><span class="spec-val" data-i18n="vent.specs.daily-val">3~5 sessions/day, 5 reps each side</span></div>
+                    <div class="spec-item"><span class="spec-key" data-i18n="vent.specs.cleaning">Cleaning</span><span class="spec-val" data-i18n="vent.specs.cleaning-val">Wash in lukewarm soapy water, air dry</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- PACKAGE CONTENTS                        -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-gradient">
+    <div class="container">
+        <div class="section-header reveal">
+            <span class="section-label" data-i18n="vent.pkg.label">PACKAGE</span>
+            <h2 class="section-title" data-i18n="vent.pkg.title">Package Contents</h2>
+        </div>
+
+        <div class="package-list reveal">
+            <div class="package-item">
+                <div class="package-dot"></div>
+                <span data-i18n="vent.pkg.item1">DiveChecker Vent unit ×1</span>
+            </div>
+            <div class="package-item">
+                <div class="package-dot"></div>
+                <span data-i18n="vent.pkg.item2">Replacement balloons ×5</span>
+            </div>
+            <div class="package-item">
+                <div class="package-dot"></div>
+                <span data-i18n="vent.pkg.item3">Carry pouch</span>
+            </div>
+            <div class="package-item">
+                <div class="package-dot"></div>
+                <span data-i18n="vent.pkg.item4">User manual</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- PRICING / CTA                           -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-cta" id="buy">
+    <div class="container">
+        <div class="cta-content reveal">
+            <span class="section-label" data-i18n="vent.price.label">PRICING</span>
+            <div class="cta-coming">
+                <span class="cta-coming-text" data-i18n="vent.price.coming">Coming soon — get notified</span>
+            </div>
+            <p class="cta-sub" data-i18n="vent.price.sub">Designed, made, and sold direct from Korea</p>
+            <div class="cta-badges">
+                <div class="cta-badge" data-i18n="vent.price.badge1">Medical-grade latex</div>
+                <div class="cta-badge" data-i18n="vent.price.badge2">Made in Korea</div>
+                <div class="cta-badge" data-i18n="vent.price.badge3">5 replacement balloons</div>
+                <div class="cta-badge" data-i18n="vent.price.badge4">Eco-friendly packaging</div>
+            </div>
+            <a href="mailto:cs-divechecker@createch.kr?subject=DiveChecker%20Vent%20-%20Notify%20me" class="btn btn-primary btn-lg">
+                <span data-i18n="vent.price.cta">Buy Now</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- TRUST                                    -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section section-dark">
+    <div class="container">
+        <div class="trust-grid reveal">
+            <div class="trust-item-card">
+                <div class="trust-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                </div>
+                <h3 data-i18n="trust.1.title">KC Safety Certified</h3>
+                <p data-i18n="trust.1.desc">Tested by KTC (Korea Testing Certification)<br>and KC safety certified</p>
+            </div>
+            <div class="trust-item-card">
+                <div class="trust-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M3 10h18M3 7l9-4 9 4M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/></svg>
+                </div>
+                <h3 data-i18n="trust.2.title">Made in Korea</h3>
+                <p data-i18n="trust.2.desc">100% designed & manufactured in Korea<br>Fast A/S and continuous updates</p>
+            </div>
+            <div class="trust-item-card">
+                <div class="trust-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M7 10.5c0-1 .5-3 2.5-3s2.5 2 2.5 3c0 2-2.5 2-2.5 4"/><circle cx="9.5" cy="17" r=".5" fill="currentColor"/><path d="M14.5 10.5c0-1 .5-3 2.5-3s2.5 2 2.5 3"/></svg>
+                </div>
+                <h3 data-i18n="trust.3.title">Open Source</h3>
+                <p data-i18n="trust.3.desc">Software (Apache 2.0) and<br>Hardware (CERN-OHL-S v2) fully open</p>
+            </div>
+            <div class="trust-item-card">
+                <div class="trust-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c-4.97 0-9-2.686-9-6v-4"/><path d="M12 22c4.97 0 9-2.686 9-6v-4"/><ellipse cx="12" cy="8" rx="9" ry="4"/><path d="M7 8v4M12 8v4M17 8v4"/></svg>
+                </div>
+                <h3 data-i18n="trust.4.title">Eco-Friendly Packaging</h3>
+                <p data-i18n="trust.4.desc">No unnecessary plastic<br>Eco-conscious packaging materials</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- FOOTER                                  -->
+<!-- ═══════════════════════════════════════ -->
+<footer class="footer">
+    <div class="footer-inner">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <img src="assets/images/logo-divechecker.svg" alt="DiveChecker" class="footer-logo-img">
+                <p class="footer-tagline" data-i18n="footer.tagline">See Your Equalization</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h4 data-i18n="nav.products">Products</h4>
+                    <a href="index.html" data-i18n="nav.product.divechecker">DiveChecker</a>
+                    <a href="vent.html" data-i18n="nav.product.vent">DiveChecker Vent</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+                    <a href="support.html" data-i18n="footer.as">A/S Support</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="privacy.html" data-i18n="footer.privacy">Privacy Policy</a>
+                    <a href="disclaimer.html" data-i18n="footer.disclaimer-link">Disclaimer</a>
+                    <a href="https://opensource.org/licenses/Apache-2.0" target="_blank" rel="noopener">Apache 2.0 (SW)</a>
+                    <a href="https://ohwr.org/cern_ohl_s_v2.txt" target="_blank" rel="noopener">CERN-OHL-S v2 (HW)</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Open Source</h4>
+                    <a href="https://github.com/kernalix7/divechecker" target="_blank" rel="noopener">GitHub</a>
+                    <a href="https://github.com/kernalix7/divechecker/releases" target="_blank" rel="noopener">Releases</a>
+                    <a href="https://github.com/kernalix7/divechecker/issues" target="_blank" rel="noopener">Bug Report</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-disclaimer">
+            <p data-i18n="vent.disclaimer">This product is an educational learning device for improving equalization technique and is not a medical device. It cannot be used for diagnosis, prevention, or treatment of conditions such as Eustachian tube dysfunction or otitis media. Do not use if you have a latex allergy. If you feel pain in your ears or nose during use, stop immediately. Children under 12 must be supervised by an adult.</p>
+        </div>
+        <div class="footer-trademarks">
+            <p data-i18n="footer.trademarks">DiveChecker and the DiveChecker logo are trademarks of Createch. Google Play, Android, and Flutter are trademarks of Google LLC. Apple, App Store, iOS, iPhone, iPad, and macOS are trademarks of Apple Inc. Windows is a registered trademark of Microsoft Corporation. Bluetooth is a registered trademark of Bluetooth SIG, Inc. USB and USB-C are trademarks of USB Implementers Forum. Linux is a registered trademark of Linus Torvalds. GitHub is a trademark of GitHub, Inc.</p>
+        </div>
+        <div class="footer-bottom">
+            <p data-i18n="footer.copyright">&copy; 2026 DiveChecker by Createch. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="i18n.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
