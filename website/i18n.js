@@ -17,7 +17,7 @@ const translations = {
     'nav.product.divechecker': { ko: 'DiveChecker', en: 'DiveChecker', ja: 'DiveChecker', zh: 'DiveChecker', tw: 'DiveChecker' },
     'nav.product.divechecker-sub': { ko: '실시간 압력 센서', en: 'Real-time pressure sensor', ja: 'リアルタイム圧力センサー', zh: '实时压力传感器', tw: '即時壓力感測器' },
     'nav.product.vent': { ko: 'DiveChecker Vent', en: 'DiveChecker Vent', ja: 'DiveChecker Vent', zh: 'DiveChecker Vent', tw: 'DiveChecker Vent' },
-    'nav.product.vent-sub': { ko: '벌룬 이관 트레이너', en: 'Balloon equalization trainer', ja: 'バルーン耳管トレーナー', zh: '气球均压训练器', tw: '氣球均壓訓練器' },
+    'nav.product.vent-sub': { ko: '마우스필 지상 트레이너', en: 'Dry-land Mouthfill trainer', ja: 'マウスフィル陸上トレーナー', zh: '干地 Mouthfill 训练器', tw: '陸地 Mouthfill 訓練器' },
 
     // ── HERO ──
     'hero.badge': { ko: 'Equalizing Learning Device', en: 'Equalizing Learning Device', ja: 'Equalizing Learning Device', zh: 'Equalizing Learning Device', tw: 'Equalizing Learning Device' },
@@ -662,13 +662,13 @@ const translations = {
     'manual.contact.submit': { ko: '메일로 문의하기', en: 'Send via Email', ja: 'メールで問い合わせる', zh: '通过邮件咨询', tw: '透過郵件諮詢' },
 
     // ═══ VENT PAGE ═══
-    'vent.page-title': { ko: 'DiveChecker Vent — 풍선 하나로 시작하는 이퀄라이징 훈련', en: 'DiveChecker Vent — Balloon Equalization Trainer', ja: 'DiveChecker Vent — バルーン耳管トレーナー', zh: 'DiveChecker Vent — 气球均压训练器', tw: 'DiveChecker Vent — 氣球均壓訓練器' },
+    'vent.page-title': { ko: 'DiveChecker Vent — 마우스필 지상 트레이너', en: 'DiveChecker Vent — Dry-Land Mouthfill Trainer', ja: 'DiveChecker Vent — マウスフィル陸上トレーナー', zh: 'DiveChecker Vent — 干地 Mouthfill 训练器', tw: 'DiveChecker Vent — 陸地 Mouthfill 訓練器' },
 
     // ── HERO ──
-    'vent.hero.badge': { ko: 'Pneumatic Equalization Trainer', en: 'Pneumatic Equalization Trainer', ja: 'Pneumatic Equalization Trainer', zh: 'Pneumatic Equalization Trainer', tw: 'Pneumatic Equalization Trainer' },
-    'vent.hero.title': { ko: '풀 없이 시작하는<br><span class="gradient-text">이퀄라이징 훈련</span>', en: 'Train your<br><span class="gradient-text">Eustachian tubes</span><br>without water', ja: '水なしで鍛える<br><span class="gradient-text">耳管通気</span>', zh: '无需水<br>训练<span class="gradient-text">咽鼓管通气</span>', tw: '無需水<br>訓練<span class="gradient-text">耳咽管通氣</span>' },
-    'vent.hero.desc': { ko: '압력에 맞춰 부푸는 풍선이 발살바를 막아줘서, 자연스럽게 프렌젤이 몸에 익어요.<br>풍선이 부풀면 그게 곧 성공 &middot; 어디서나 매일 5분', en: 'A pressure-calibrated <strong>balloon</strong> blocks Valsalva and forces correct Frenzel / Mouthfill.<br>Visual feedback by balloon size &middot; Dry training, anywhere', ja: '精密に校正された<strong>逆圧バルーン</strong>がバルサルバを防ぎ、フレンゼル・マウスフィルを強制的に教えます。<br>バルーンの大きさで見える視覚フィードバック &middot; どこでも陸上トレーニング', zh: '精密校准的<strong>反压气球</strong>阻止Valsalva，强制学习Frenzel・Mouthfill。<br>气球大小作为视觉反馈 &middot; 随时随地干训', tw: '精密校準的<strong>反壓氣球</strong>阻止Valsalva，強制學習Frenzel・Mouthfill。<br>氣球大小作為視覺反饋 &middot; 隨時隨地乾訓' },
-    'vent.hero.cta-buy': { ko: '출시 알림 받기', en: 'Buy Now', ja: '今すぐ購入', zh: '立即购买', tw: '立即購買' },
+    'vent.hero.badge': { ko: 'Mouthfill Dry Trainer', en: 'Mouthfill Dry Trainer', ja: 'Mouthfill Dry Trainer', zh: 'Mouthfill Dry Trainer', tw: 'Mouthfill Dry Trainer' },
+    'vent.hero.title': { ko: '마우스필을<br><span class="gradient-text">풀 없이</span> 익히세요', en: 'Master your<br><span class="gradient-text">Mouthfill</span><br>without water', ja: '<span class="gradient-text">マウスフィル</span>を<br>水なしで鍛える', zh: '在岸上掌握<br><span class="gradient-text">Mouthfill</span>', tw: '在岸上掌握<br><span class="gradient-text">Mouthfill</span>' },
+    'vent.hero.desc': { ko: '딥 다이빙 직전에야 처음 마우스필을 시도하시나요? <strong>정밀하게 교정된 풍선</strong>이 깊이의 저항을 대신해줘서, 안전한 지상에서 마우스필을 몸에 익힐 수 있어요.<br>풍선이 부풀면 그게 곧 성공 &middot; 어디서나 매일 5분', en: 'First time trying Mouthfill on a deep dive? A <strong>pressure-calibrated balloon</strong> simulates the resistance you face at depth — practice on dry land before it matters.<br>Visual feedback by balloon size &middot; 5 minutes a day, anywhere', ja: 'ディープダイビング直前で初めてマウスフィルを試しますか？<strong>精密に校正されたバルーン</strong>が深度の抵抗を代わりに再現するので、安全な陸上でマウスフィルを身につけられます。<br>バルーンが膨らめば成功 &middot; どこでも1日5分', zh: '第一次深潜时才尝试Mouthfill？<strong>精密校准的气球</strong>模拟深度的阻力，让您在安全的陆地上掌握Mouthfill。<br>气球膨胀即为成功 &middot; 随时随地每天5分钟', tw: '第一次深潛時才嘗試Mouthfill？<strong>精密校準的氣球</strong>模擬深度的阻力，讓您在安全的陸地上掌握Mouthfill。<br>氣球膨脹即為成功 &middot; 隨時隨地每天5分鐘' },
+    'vent.hero.cta-buy': { ko: '출시 알림 받기', en: 'Get Notified', ja: 'リリース通知を受ける', zh: '获取上市通知', tw: '取得上市通知' },
     'vent.hero.cta-learn': { ko: '어떻게 작동하나요', en: 'How It Works', ja: '仕組みを見る', zh: '工作原理', tw: '工作原理' },
     'vent.hero.stat1-num': { ko: '0', en: '0', ja: '0', zh: '0', tw: '0' },
     'vent.hero.stat1-label': { ko: '필요한 물', en: 'Water needed', ja: '水不要', zh: '需要水', tw: '需要水' },
@@ -678,61 +678,61 @@ const translations = {
     'vent.hero.stat3-label': { ko: '하루 권장', en: 'Daily sessions', ja: '1日の推奨セッション', zh: '每日建议次数', tw: '每日建議次數' },
 
     // ── PROBLEM ──
-    'vent.problem.title': { ko: '풀에 못 가는 사이에도<br><span class="text-red">잘못된 습관은</span> 굳어갑니다', en: 'When you can\'t reach the pool,<br><span class="text-red">failure is found too late</span>', ja: 'プールに行けない時、<br><span class="text-red">失敗は手遅れで気づきます</span>', zh: '无法去泳池时，<br><span class="text-red">失败为时已晚</span>', tw: '無法去泳池時，<br><span class="text-red">失敗為時已晚</span>' },
-    'vent.problem.1.title': { ko: '굳어가는 발살바 습관', en: 'Wrong Valsalva habit', ja: '間違ったバルサルバの習慣', zh: '错误的Valsalva习惯', tw: '錯誤的Valsalva習慣' },
-    'vent.problem.1.desc': { ko: '코 막고 세게 부는 습관이 굳어버리면, 깊이 들어갈수록 통하지 않게 돼요. 프렌젤·마우스필은 완전히 다른 근육 사용법이거든요.', en: 'Pinching your nose and pushing hard does not scale to depth. Frenzel and Mouthfill are different muscle patterns entirely.', ja: '鼻を塞いで強く吹く癖は深いところでは通用しません。フレンゼル・マウスフィルは全く別の筋肉の使い方です。', zh: '捏鼻硬吹的习惯在深处行不通。Frenzel・Mouthfill是完全不同的肌肉用法。', tw: '捏鼻硬吹的習慣在深處行不通。Frenzel・Mouthfill是完全不同的肌肉用法。' },
-    'vent.problem.2.title': { ko: '연습할 곳이 없어요', en: 'Nowhere to practice', ja: '練習する場所がない', zh: '没地方练习', tw: '沒地方練習' },
-    'vent.problem.2.desc': { ko: '풀이나 바다에 가야만 이퀄라이징 연습이 된다고 생각하시나요? 사실 90%는 지상에서 다져야 해요.', en: 'Think you need a pool or the ocean to train equalization? 90% of mastery happens on dry land.', ja: 'プールや海でしかイコライジング練習できないと思っていますか？90%は陸上でマスターすべきです。', zh: '以为只能在泳池或海中练均压？90%的掌握应该在陆地完成。', tw: '以為只能在泳池或海中練均壓？90%的掌握應該在陸地完成。' },
-    'vent.problem.3.title': { ko: '확인할 방법이 없어요', en: 'No feedback', ja: 'フィードバック不足', zh: '没有反馈', tw: '沒有反饋' },
-    'vent.problem.3.desc': { ko: '귀가 펑 하든 안 하든, 결국 강사도 학생도 추측에 의존하게 됩니다. 객관적인 신호가 없거든요.', en: 'No objective signal for "did it work?" Pop or no pop, both instructor and student are just guessing.', ja: '「うまくいった？」を測る客観的な信号がありません。耳がポンと鳴ろうがなかろうが、講師も生徒も推測するだけです。', zh: '没有客观信号判断"成功了吗？"。无论耳朵是否啵的一声，教练和学生都只能猜测。', tw: '沒有客觀訊號判斷「成功了嗎？」。無論耳朵是否啵的一聲，教練和學生都只能猜測。' },
+    'vent.problem.title': { ko: '딥 다이빙 직전에야<br><span class="text-red">마우스필을 처음</span> 시도하시나요?', en: 'Trying <span class="text-red">Mouthfill for the first time</span><br>right before your deep dive?', ja: 'ディープダイビング直前で<br><span class="text-red">マウスフィルを初体験</span>?', zh: '在深潜前才<br>第一次尝试<span class="text-red">Mouthfill</span>?', tw: '在深潛前才<br>第一次嘗試<span class="text-red">Mouthfill</span>?' },
+    'vent.problem.1.title': { ko: '연습할 곳이 마땅치 않아요', en: 'Nowhere to practice it', ja: '練習する場所がない', zh: '没有合适的练习场所', tw: '沒有合適的練習場所' },
+    'vent.problem.1.desc': { ko: '마우스필은 일정 깊이가 돼야 의미 있는 기법이에요. 풀은 깊이가 부족하고, 바다는 안전 부담. 결국 본 다이브에서야 처음 시도하게 됩니다.', en: 'Mouthfill only matters past a certain depth. Pools are too shallow, ocean carries safety risk. So most divers end up trying it first on a real dive.', ja: 'マウスフィルは一定の深度がないと意味のないテクニックです。プールでは深度不足、海では安全負担。結局、本ダイブで初めて試すことになります。', zh: 'Mouthfill必须在一定深度才有意义。泳池深度不够，海里有安全负担。结果许多潜水员到正式深潜时才第一次尝试。', tw: 'Mouthfill必須在一定深度才有意義。泳池深度不夠，海裡有安全負擔。結果許多潛水員到正式深潛時才第一次嘗試。' },
+    'vent.problem.2.title': { ko: '제대로 한 건지 모르겠어요', en: 'No way to know if it worked', ja: 'うまくいったか分からない', zh: '不知道是否做对了', tw: '不知道是否做對了' },
+    'vent.problem.2.desc': { ko: '혀로 짜내는 동작이 실제로 압력을 만들어내고 있는지, 자세는 맞는지 — 객관적으로 확인할 길이 없어요.', en: 'Is your tongue actually generating pressure? Is the posture right? Without objective feedback, you\'re just guessing.', ja: '舌で絞り出す動作が本当に圧力を生み出しているか、姿勢は正しいか — 客観的に確認する術がありません。', zh: '舌头挤压动作是否真的产生压力？姿势是否正确？没有客观反馈，只能靠猜。', tw: '舌頭擠壓動作是否真的產生壓力？姿勢是否正確？沒有客觀反饋，只能靠猜。' },
+    'vent.problem.3.title': { ko: '본 다이브 실패는 위험해요', en: 'A failed dive is dangerous', ja: '本ダイブでの失敗は危険', zh: '在正式潜水中失败很危险', tw: '在正式潛水中失敗很危險' },
+    'vent.problem.3.desc': { ko: '마우스필이 깊은 곳에서 안 되면 즉시 상승해야 합니다. 미리 다지지 못한 연습이 다이브 자체를 위협해요.', en: 'Mouthfill failure at depth means an immediate ascent. Skipped practice puts the entire dive at risk.', ja: 'マウスフィルが深い場所でうまくいかないと即座に浮上が必要です。事前の練習不足がダイブ自体を危険にさらします。', zh: 'Mouthfill在深处失败必须立即上升。练习不足会威胁到整个潜水。', tw: 'Mouthfill在深處失敗必須立即上升。練習不足會威脅到整個潛水。' },
 
     // ── SOLUTION ──
-    'vent.solution.title': { ko: '풍선이 알아서<br><span class="gradient-text">자세를 잡아줍니다</span>', en: 'The balloon<br>becomes your <span class="gradient-text">teacher</span>', ja: 'バルーンが<br><span class="gradient-text">先生</span>になります', zh: '气球<br>成为<span class="gradient-text">老师</span>', tw: '氣球<br>成為<span class="gradient-text">老師</span>' },
-    'vent.solution.sub': { ko: '오토벤트(Otovent)를 다이브체커답게 다시 설계했어요', en: 'Autoinflation training reimagined with the DiveChecker design language', ja: 'Otovent方式の自己通気トレーニングをDiveCheckerのデザイン言語で再構築しました', zh: '将Otovent式自动充气训练以DiveChecker的设计语言重新打造', tw: '將Otovent式自動充氣訓練以DiveChecker的設計語言重新打造' },
+    'vent.solution.title': { ko: '풍선의 압력이<br><span class="gradient-text">깊이의 저항</span>을 대신합니다', en: 'The balloon\'s back-pressure<br><span class="gradient-text">stands in for depth</span>', ja: 'バルーンの圧力が<br><span class="gradient-text">深度の抵抗</span>を代わりに', zh: '气球的压力<br>替代<span class="gradient-text">深度的阻力</span>', tw: '氣球的壓力<br>替代<span class="gradient-text">深度的阻力</span>' },
+    'vent.solution.sub': { ko: '오토벤트(Otovent)를 마우스필 훈련용으로 다시 설계했습니다', en: 'Otovent reimagined for Mouthfill training', ja: 'OtoventをMouthfillトレーニング用に再設計', zh: 'Otovent专为Mouthfill训练重新设计', tw: 'Otovent專為Mouthfill訓練重新設計' },
 
     // ── FEATURES ──
-    'vent.feat.title': { ko: 'Vent를 쓰면 달라집니다', en: 'Why DiveChecker Vent', ja: 'なぜDiveChecker Ventなのか', zh: '为什么选择DiveChecker Vent', tw: '為什麼選擇DiveChecker Vent' },
-    'vent.feat1.title': { ko: '세게 분다고 부풀지 않아요', en: 'Back-pressure that blocks Valsalva', ja: 'バルサルバを遮断する逆圧', zh: '阻断Valsalva的反压', tw: '阻斷Valsalva的反壓' },
-    'vent.feat1.desc': { ko: '풍선은 정해진 압력을 넘어야 부풀도록 설계됐습니다. 발살바로 아무리 세게 불어도 풍선은 그대로예요.<br>혀와 후두로 짜내는 <strong>프렌젤</strong>만 풍선을 키울 수 있어요.', en: 'The balloon is calibrated to expand only above a threshold, so brute-force Valsalva won\'t inflate it.<br>Only the tongue-and-larynx compression of <strong>Frenzel</strong> can grow it.', ja: 'バルーンは一定圧力以上でのみ膨らむよう校正されており、強く吹くバルサルバでは膨らみません。<br>舌と喉頭で絞り出す<strong>フレンゼル</strong>だけがバルーンを膨らませられます。', zh: '气球被校准为仅在阈值以上才膨胀，蛮力Valsalva无法吹起。<br>只有用舌头和喉部挤压的<strong>Frenzel</strong>才能让它变大。', tw: '氣球被校準為僅在閾值以上才膨脹，蠻力Valsalva無法吹起。<br>只有用舌頭和喉部擠壓的<strong>Frenzel</strong>才能讓它變大。' },
-    'vent.feat1.tag1': { ko: '프렌젤만 작동', en: 'Forced Frenzel', ja: '強制フレンゼル', zh: '强制Frenzel', tw: '強制Frenzel' },
-    'vent.feat1.tag2': { ko: '발살바 차단', en: 'Valsalva block', ja: 'バルサルバ遮断', zh: 'Valsalva阻断', tw: 'Valsalva阻斷' },
-    'vent.feat1.tag3': { ko: '습관 교정', en: 'Muscle re-pattern', ja: '筋肉パターン矯正', zh: '肌肉模式矫正', tw: '肌肉模式矯正' },
-    'vent.feat2.title': { ko: '풍선이 부풀면, 그게 성공', en: 'Balloon size = visual feedback', ja: 'バルーンサイズ＝視覚フィードバック', zh: '气球大小＝视觉反馈', tw: '氣球大小＝視覺反饋' },
-    'vent.feat2.desc': { ko: '"제대로 했나?" 같은 의심이 사라집니다. 풍선이 자몽 크기로 부풀면 끝.<br>학생도, 강사도, 옆에서 보는 사람도 같은 결과를 봐요.', en: 'No more "did it work?" When the balloon swells to grapefruit size, you succeeded.<br>Student, instructor, and bystander all see the result at the same time.', ja: '「うまくいった？」が消えます。バルーンがグレープフルーツ大に膨らめば成功。<br>生徒も講師も、横で見ている人も同時に結果を見ます。', zh: '"成功了吗？"消失了。气球膨胀到葡萄柚大小即为成功。<br>学生、教练、旁观者同时看到结果。', tw: '「成功了嗎？」消失了。氣球膨脹到葡萄柚大小即為成功。<br>學生、教練、旁觀者同時看到結果。' },
+    'vent.feat.title': { ko: 'Vent로 마우스필 익히기', en: 'Master Mouthfill with Vent', ja: 'Ventでマウスフィル習得', zh: '用Vent掌握Mouthfill', tw: '用Vent掌握Mouthfill' },
+    'vent.feat1.title': { ko: '풍선이 깊이의 저항을 흉내냅니다', en: 'The balloon mimics depth resistance', ja: 'バルーンが深度の抵抗を再現', zh: '气球模拟深度的阻力', tw: '氣球模擬深度的阻力' },
+    'vent.feat1.desc': { ko: '풍선은 정해진 압력을 넘어야 부풀도록 정밀하게 교정되어 있어요. 그 압력이 곧 일정 수심에서 필요한 마우스필 압력입니다.<br>발살바로는 부풀지 않고, 혀와 후두로 짜내는 <strong>마우스필 압축</strong>이 통해야만 풍선이 커져요.', en: 'The balloon is precisely calibrated to inflate only past a threshold — the same pressure you need to generate at a certain depth.<br>Valsalva won\'t inflate it. Only the <strong>Mouthfill compression</strong> from tongue and larynx will.', ja: 'バルーンは閾値を超えてのみ膨らむよう精密に校正されています。その圧力こそ一定深度で必要なマウスフィル圧です。<br>バルサルバでは膨らまず、舌と喉頭で絞り出す<strong>マウスフィル圧縮</strong>のみがバルーンを膨らませます。', zh: '气球经过精密校准，只有压力超过阈值才膨胀。这正是一定深度所需的Mouthfill压力。<br>Valsalva无法吹起，只有用舌头和喉部挤压的<strong>Mouthfill压缩</strong>才能让它变大。', tw: '氣球經過精密校準，只有壓力超過閾值才膨脹。這正是一定深度所需的Mouthfill壓力。<br>Valsalva無法吹起，只有用舌頭和喉部擠壓的<strong>Mouthfill壓縮</strong>才能讓它變大。' },
+    'vent.feat1.tag1': { ko: '마우스필 압축', en: 'Mouthfill compression', ja: 'マウスフィル圧縮', zh: 'Mouthfill 压缩', tw: 'Mouthfill 壓縮' },
+    'vent.feat1.tag2': { ko: '깊이 저항 시뮬레이션', en: 'Depth simulation', ja: '深度シミュレーション', zh: '深度模拟', tw: '深度模擬' },
+    'vent.feat1.tag3': { ko: '발살바 차단', en: 'Valsalva block', ja: 'バルサルバ遮断', zh: 'Valsalva 阻断', tw: 'Valsalva 阻斷' },
+    'vent.feat2.title': { ko: '풍선이 부풀면, 그게 성공', en: 'When the balloon inflates, you\'ve nailed it', ja: 'バルーンが膨らめば、それが成功', zh: '气球膨胀，就是成功', tw: '氣球膨脹，就是成功' },
+    'vent.feat2.desc': { ko: '"제대로 했나?" 같은 의심이 사라집니다. 풍선이 자몽 크기로 부풀면 마우스필이 제대로 작동했다는 뜻이에요.<br>학생도, 강사도, 옆에서 보는 사람도 같은 결과를 봐요.', en: 'No more "did it work?" Grapefruit-sized balloon means your Mouthfill compression is generating the right pressure.<br>Student, instructor, and bystander all see the same result.', ja: '「うまくいった？」という疑いが消えます。バルーンがグレープフルーツ大に膨らめばマウスフィルが正しく作動した証拠。<br>生徒も講師も、横で見ている人も同じ結果を見ます。', zh: '"做对了吗？"的疑虑消失。气球膨胀到葡萄柚大小就意味着Mouthfill产生了正确压力。<br>学生、教练、旁观者同时看到同样的结果。', tw: '「做對了嗎？」的疑慮消失。氣球膨脹到葡萄柚大小就意味著Mouthfill產生了正確壓力。<br>學生、教練、旁觀者同時看到同樣的結果。' },
     'vent.feat2.tag1': { ko: '눈으로 보는 결과', en: 'Visual feedback', ja: '視覚フィードバック', zh: '视觉反馈', tw: '視覺反饋' },
     'vent.feat2.tag2': { ko: '명확한 성공 기준', en: 'Clear success criterion', ja: '明確な成功基準', zh: '明确的成功标准', tw: '明確的成功標準' },
     'vent.feat2.tag3': { ko: '강사·학생 동시에', en: 'Instructor friendly', ja: '指導向け', zh: '便于教学', tw: '便於教學' },
     'vent.feat3.title': { ko: '어디서나 매일 5분', en: 'Dry training, anywhere', ja: 'どこでも陸上トレーニング', zh: '随时随地干训', tw: '隨時隨地乾訓' },
-    'vent.feat3.desc': { ko: '비행기 안에서도, 출장지 호텔에서도, 다이빙 가는 차 안에서도. 풀이나 바다 없이 매일 5분이면 됩니다.<br>마우스필까지 가는 모든 단계를 지상에서 미리 다지세요.', en: 'On a plane, in a hotel, in your car before a dive — five minutes a day without water.<br>Drill every step up to Mouthfill entry on dry land.', ja: '飛行機内、出張先のホテル、ダイビング前の車内。プールも海もなしで毎日5分。<br>マウスフィル導入までの全ステップを陸上で仕上げます。', zh: '飞机上、出差酒店里、潜水前的车里——每天5分钟，无需水。<br>在陆地上完成到Mouthfill入门的每一步。', tw: '飛機上、出差飯店裡、潛水前的車裡——每天5分鐘，無需水。<br>在陸地上完成到Mouthfill入門的每一步。' },
+    'vent.feat3.desc': { ko: '비행기 안에서도, 출장지 호텔에서도, 다이빙 가는 차 안에서도. 풀이나 바다 없이 매일 5분이면 됩니다.<br>본 다이브 가기 전, 마우스필 자세를 충분히 다질 수 있어요.', en: 'On a plane, in a hotel, in your car before a dive. No pool or ocean — five minutes a day is enough.<br>Drill the Mouthfill posture as much as you need before the actual dive.', ja: '飛行機内、出張先のホテル、ダイビング前の車内。プールも海もなしで毎日5分。<br>本ダイブ前、マウスフィル姿勢を十分に固められます。', zh: '飞机上、出差酒店里、潜水前的车里。无需泳池或海洋——每天5分钟即可。<br>正式深潜前，充分巩固Mouthfill姿势。', tw: '飛機上、出差飯店裡、潛水前的車裡。無需泳池或海洋——每天5分鐘即可。<br>正式深潛前，充分鞏固Mouthfill姿勢。' },
     'vent.feat3.tag1': { ko: '휴대 가능', en: 'Portable', ja: '携帯性', zh: '便携', tw: '便攜' },
     'vent.feat3.tag2': { ko: '5분 루틴', en: '5-min routine', ja: '5分ルーティン', zh: '5分钟惯例', tw: '5分鐘慣例' },
     'vent.feat3.tag3': { ko: '매일 OK', en: 'Daily-ready', ja: '毎日OK', zh: '每天可用', tw: '每天可用' },
     'vent.feat4.title': { ko: '센서와 같이 쓰면 더 좋아요', en: 'Pairs with the sensor — a complete kit', ja: 'センサーと組み合わせる完全キット', zh: '与传感器配对的完整套件', tw: '與感測器配對的完整套件' },
-    'vent.feat4.desc': { ko: 'Vent로는 <strong>몸으로 익히고</strong>, DiveChecker 센서로는 <strong>그래프로 확인</strong>합니다.<br>같이 쓰면 학습이 완성돼요 — 해보고, 측정하고, 고치고.', en: 'Vent teaches the <strong>muscles</strong>, the DiveChecker sensor measures the <strong>pressure curve</strong>.<br>Use both and the loop closes: do → measure → fix.', ja: 'Ventで<strong>筋肉</strong>を教え、DiveCheckerセンサーで<strong>圧力曲線</strong>を測定します。<br>二つを併用すれば学習サイクルが閉じます：実行→測定→修正。', zh: 'Vent教导<strong>肌肉</strong>，DiveChecker传感器测量<strong>压力曲线</strong>。<br>两者配合形成学习闭环：做→测→改。', tw: 'Vent教導<strong>肌肉</strong>，DiveChecker感測器測量<strong>壓力曲線</strong>。<br>兩者配合形成學習閉環：做→測→改。' },
+    'vent.feat4.desc': { ko: 'Vent로는 <strong>마우스필 동작</strong>을 익히고, DiveChecker 센서로는 <strong>압력 곡선</strong>으로 검증합니다.<br>같이 쓰면 학습이 완성돼요 — 해보고, 측정하고, 고치고.', en: 'Vent teaches the <strong>Mouthfill motion</strong>, the DiveChecker sensor verifies it with the <strong>pressure curve</strong>.<br>Together they close the loop: do, measure, fix.', ja: 'Ventで<strong>マウスフィル動作</strong>を身につけ、DiveCheckerセンサーで<strong>圧力曲線</strong>を検証。<br>一緒に使えば学習が完成します — やって、測って、直して。', zh: 'Vent训练<strong>Mouthfill动作</strong>，DiveChecker传感器用<strong>压力曲线</strong>验证。<br>合用闭环学习——做、测、改。', tw: 'Vent訓練<strong>Mouthfill動作</strong>，DiveChecker感測器用<strong>壓力曲線</strong>驗證。<br>合用閉環學習——做、測、改。' },
     'vent.feat4.tag1': { ko: '센서 호환', en: 'Sensor pairing', ja: 'センサー連携', zh: '传感器配合', tw: '感測器配合' },
     'vent.feat4.tag2': { ko: '학습 사이클 완성', en: 'Closed loop', ja: '学習クローズドループ', zh: '学习闭环', tw: '學習閉環' },
     'vent.feat4.tag3': { ko: '함께 사용', en: 'Kit bundle', ja: 'キットバンドル', zh: '套件捆绑', tw: '套件綑綁' },
 
     // ── HOW IT WORKS ──
     'vent.how.label': { ko: 'HOW IT WORKS', en: 'HOW IT WORKS', ja: 'HOW IT WORKS', zh: 'HOW IT WORKS', tw: 'HOW IT WORKS' },
-    'vent.how.title': { ko: '풍선이 가르쳐주는 원리', en: 'How the balloon opens your tubes', ja: 'バルーンが耳管を開く仕組み', zh: '气球如何打开咽鼓管', tw: '氣球如何打開耳咽管' },
-    'vent.how.sub': { ko: '코쪽 압력을 정확하게 제한해주면, 몸은 자연스럽게 프렌젤로 넘어갑니다', en: 'Block Valsalva and meter the nasal pressure, and the body naturally switches to Frenzel', ja: 'バルサルバを遮断し鼻からの圧力を精密に制限すると、身体は自然にフレンゼルへ切り替わります', zh: '阻断Valsalva并精密限制鼻腔压力，身体会自然切换到Frenzel', tw: '阻斷Valsalva並精密限制鼻腔壓力，身體會自然切換到Frenzel' },
+    'vent.how.title': { ko: '풍선이 마우스필을 가르치는 원리', en: 'How the balloon teaches Mouthfill', ja: 'バルーンがマウスフィルを教える仕組み', zh: '气球如何教授Mouthfill', tw: '氣球如何教授Mouthfill' },
+    'vent.how.sub': { ko: '코쪽 출구를 정해진 압력 이상으로만 통과시키면, 마우스필이 정확히 작동했는지 알 수 있어요', en: 'When the only path out is past a calibrated pressure, you know your Mouthfill compression is working precisely', ja: '鼻側の出口を一定圧力以上でのみ通過させると、マウスフィルが正確に作動したかが分かります', zh: '只有压力超过校准值才能通过鼻孔出口，这样就知道Mouthfill是否准确工作', tw: '只有壓力超過校準值才能通過鼻孔出口，這樣就知道Mouthfill是否準確工作' },
     'vent.how.s1.title': { ko: '한쪽 콧구멍에 노즈피스 밀착', en: 'Seal the nose piece on one nostril', ja: 'ノーズピースを片方の鼻孔に密着', zh: '将鼻塞贴紧一侧鼻孔', tw: '將鼻塞貼緊一側鼻孔' },
     'vent.how.s1.desc': { ko: '반대쪽 콧구멍은 손가락으로 막아주세요. 캡 끝에 풍선이 단단히 끼워졌는지도 확인하세요.', en: 'Pinch the opposite nostril shut. Make sure the balloon is firmly seated on the nose piece end of the cap.', ja: '反対側の鼻孔は指で塞ぎます。バルーンが膨らむようキャップ先端のノーズピースに正確に取り付けてください。', zh: '用手指捏住另一侧鼻孔。确保气球紧固在鼻塞末端。', tw: '用手指捏住另一側鼻孔。確保氣球緊固在鼻塞末端。' },
-    'vent.how.s2.title': { ko: '입은 닫고, 코로만 압력', en: 'Mouth closed — generate pressure through the nose', ja: '口は閉じて鼻からのみ圧力生成', zh: '闭口——仅通过鼻子产生压力', tw: '閉口——僅通過鼻子產生壓力' },
-    'vent.how.s2.desc': { ko: '발살바로는 풍선이 부풀지 않아요. 혀를 입천장으로 밀어 인후 공간을 좁히는 <strong>프렌젤</strong>이 필요합니다.', en: 'Valsalva won\'t inflate it. You need a <strong>Frenzel motion</strong> — tongue pressing the palate and squeezing the throat space.', ja: 'バルサルバでは膨らみません。舌を口蓋に押し付け喉の空間を狭める<strong>フレンゼルの動作</strong>が必要です。', zh: 'Valsalva无法吹起。需要<strong>Frenzel动作</strong>——舌头顶住上颚挤压喉部空间。', tw: 'Valsalva無法吹起。需要<strong>Frenzel動作</strong>——舌頭頂住上顎擠壓喉部空間。' },
+    'vent.how.s2.title': { ko: '마우스필 자세로 압력 만들기', en: 'Compress with Mouthfill posture', ja: 'マウスフィル姿勢で圧力生成', zh: '用Mouthfill姿势产生压力', tw: '用Mouthfill姿勢產生壓力' },
+    'vent.how.s2.desc': { ko: '발살바로는 풍선이 부풀지 않습니다. 입에 모은 공기를 혀와 후두로 짜내는 <strong>마우스필 압축 동작</strong>이 필요해요.', en: 'Valsalva won\'t inflate it. You need the <strong>Mouthfill compression</strong> — pushing the air in your mouth through tongue and larynx.', ja: 'バルサルバでは膨らみません。口にためた空気を舌と喉頭で絞り出す<strong>マウスフィル圧縮動作</strong>が必要です。', zh: 'Valsalva无法吹起。需要<strong>Mouthfill压缩动作</strong>——用舌头和喉部挤压口中的空气。', tw: 'Valsalva無法吹起。需要<strong>Mouthfill壓縮動作</strong>——用舌頭和喉部擠壓口中的空氣。' },
     'vent.how.s3.title': { ko: '자몽만큼 부풀면 성공', en: 'Grapefruit size = success', ja: 'バルーンがグレープフルーツ大なら成功', zh: '气球到葡萄柚大小＝成功', tw: '氣球到葡萄柚大小＝成功' },
     'vent.how.s3.desc': { ko: '한 번에 2~3초씩, 양쪽 콧구멍을 번갈아 5세트. 매일 반복하면 근육 패턴이 자리 잡혀요.', en: 'Hold each inflation 2~3 seconds, alternate nostrils, 5 sets. Daily repetition builds the muscle pattern.', ja: '1回2〜3秒、左右の鼻孔を交互に5セット。毎日繰り返すと筋肉パターンが定着します。', zh: '每次保持2~3秒，左右鼻孔交替，5组。每天重复使肌肉模式形成。', tw: '每次保持2~3秒，左右鼻孔交替，5組。每天重複使肌肉模式形成。' },
 
     // ── COMPARISON ──
     'vent.cmp.label': { ko: 'COMPARISON', en: 'COMPARISON', ja: 'COMPARISON', zh: 'COMPARISON', tw: 'COMPARISON' },
     'vent.cmp.title': { ko: '그냥 풍선이랑 뭐가 다른가요', en: 'Why a <span class="gradient-text">calibrated</span> balloon, not just any balloon', ja: 'なぜただの風船ではなく<span class="gradient-text">校正された</span>バルーンか', zh: '为什么是<span class="gradient-text">校准</span>的气球，而非随便一个', tw: '為什麼是<span class="gradient-text">校準</span>的氣球，而非隨便一個' },
-    'vent.cmp.sub': { ko: '교정되지 않은 풍선은 발살바로도 부풀어서, 오히려 잘못된 습관만 굳혀버립니다', en: 'An uncalibrated balloon inflates with Valsalva too — reinforcing bad habits', ja: '校正されていない風船はバルサルバでも膨らみ、悪い習慣を強化します', zh: '未校准的气球Valsalva也能吹起，反而强化坏习惯', tw: '未校準的氣球Valsalva也能吹起，反而強化壞習慣' },
+    'vent.cmp.sub': { ko: '교정되지 않은 풍선은 약한 압력으로도 부풀어서, 마우스필 훈련용으로는 부족합니다', en: 'Uncalibrated balloons inflate with weak pressure — not enough resistance for Mouthfill training', ja: '校正されていないバルーンは弱い圧力でも膨らむので、マウスフィル訓練には不十分です', zh: '未校准的气球弱压也能吹起，对Mouthfill训练来说阻力不够', tw: '未校準的氣球弱壓也能吹起，對Mouthfill訓練來說阻力不夠' },
     'vent.cmp.col-diy': { ko: '일반 풍선', en: 'Generic balloon', ja: '一般的な風船', zh: '普通气球', tw: '普通氣球' },
     'vent.cmp.col-vent': { ko: 'DiveChecker Vent', en: 'DiveChecker Vent', ja: 'DiveChecker Vent', zh: 'DiveChecker Vent', tw: 'DiveChecker Vent' },
     'vent.cmp.row1': { ko: '시작 압력', en: 'Threshold pressure', ja: '始動圧力', zh: '起始压力', tw: '起始壓力' },
-    'vent.cmp.row1-diy': { ko: '낮음 (발살바도 통과)', en: 'Low (Valsalva passes)', ja: '低い（バルサルバも通る）', zh: '低（Valsalva也能过）', tw: '低（Valsalva也能過）' },
-    'vent.cmp.row1-vent': { ko: '정확하게 교정', en: 'Calibrated threshold', ja: '校正された閾値', zh: '校准阈值', tw: '校準閾值' },
+    'vent.cmp.row1-diy': { ko: '낮음 (마우스필 자극 부족)', en: 'Low (insufficient for Mouthfill)', ja: '低い（マウスフィル刺激不足）', zh: '低（Mouthfill刺激不足）', tw: '低（Mouthfill刺激不足）' },
+    'vent.cmp.row1-vent': { ko: '딥 다이빙 수준으로 교정', en: 'Calibrated to deep-dive levels', ja: 'ディープダイビング水準に校正', zh: '按深潜水准校准', tw: '按深潛水準校準' },
     'vent.cmp.row2': { ko: '품질 일관성', en: 'Balloon consistency', ja: 'バルーン一貫性', zh: '气球一致性', tw: '氣球一致性' },
     'vent.cmp.row2-diy': { ko: '제품마다 편차', en: 'Varies by batch', ja: '製品ごとにばらつき', zh: '每批不同', tw: '每批不同' },
     'vent.cmp.row2-vent': { ko: '의료급 라텍스 표준', en: 'Medical-grade latex', ja: '医療グレードラテックス', zh: '医用级乳胶', tw: '醫用級乳膠' },
@@ -748,9 +748,9 @@ const translations = {
 
     // ── BUNDLE CALLOUT ──
     'vent.bundle.label': { ko: 'BETTER TOGETHER', en: 'BETTER TOGETHER', ja: 'BETTER TOGETHER', zh: 'BETTER TOGETHER', tw: 'BETTER TOGETHER' },
-    'vent.bundle.title': { ko: '센서와 같이 쓰면<br>학습이 완성됩니다', en: 'Pair with the sensor<br>and the loop closes', ja: 'センサーと一緒に使えば<br>学習サイクルが閉じます', zh: '与传感器配合<br>形成学习闭环', tw: '與感測器配合<br>形成學習閉環' },
+    'vent.bundle.title': { ko: '센서와 같이 쓰면<br>마우스필 학습이 완성됩니다', en: 'With the sensor,<br>Mouthfill training is complete', ja: 'センサーと一緒に使えば<br>マウスフィル学習が完成', zh: '与传感器一起使用<br>完整的Mouthfill训练', tw: '與感測器一起使用<br>完整的Mouthfill訓練' },
     'vent.bundle.do': { ko: 'DO', en: 'DO', ja: 'DO', zh: 'DO', tw: 'DO' },
-    'vent.bundle.do-desc': { ko: 'Vent로 프렌젤 연습', en: 'Perform Frenzel with Vent', ja: 'Ventでフレンゼル実施', zh: '用Vent执行Frenzel', tw: '用Vent執行Frenzel' },
+    'vent.bundle.do-desc': { ko: 'Vent로 마우스필 동작 연습', en: 'Practice Mouthfill with Vent', ja: 'Ventでマウスフィル動作練習', zh: '用Vent练习Mouthfill动作', tw: '用Vent練習Mouthfill動作' },
     'vent.bundle.measure': { ko: 'MEASURE', en: 'MEASURE', ja: 'MEASURE', zh: 'MEASURE', tw: 'MEASURE' },
     'vent.bundle.measure-desc': { ko: '센서로 압력 곡선 확인', en: 'Measure the pressure curve with the DiveChecker sensor', ja: 'DiveCheckerセンサーで圧力曲線測定', zh: '用DiveChecker传感器测量压力曲线', tw: '用DiveChecker感測器測量壓力曲線' },
     'vent.bundle.fix': { ko: 'FIX', en: 'FIX', ja: 'FIX', zh: 'FIX', tw: 'FIX' },
@@ -801,11 +801,11 @@ const translations = {
     'vent.price.badge2': { ko: 'Made in Korea', en: 'Made in Korea', ja: 'Made in Korea', zh: 'Made in Korea', tw: 'Made in Korea' },
     'vent.price.badge3': { ko: '교체 풍선 5개입', en: '5 replacement balloons', ja: '交換用バルーン5個', zh: '5个备用气球', tw: '5個備用氣球' },
     'vent.price.badge4': { ko: '친환경 패키지', en: 'Eco-friendly packaging', ja: '環境配慮パッケージ', zh: '环保包装', tw: '環保包裝' },
-    'vent.price.cta': { ko: '출시 알림 받기', en: 'Buy Now', ja: '今すぐ購入', zh: '立即购买', tw: '立即購買' },
+    'vent.price.cta': { ko: '출시 알림 받기', en: 'Get Notified', ja: 'リリース通知を受ける', zh: '获取上市通知', tw: '取得上市通知' },
     'vent.price.coming': { ko: '곧 출시 — 알림 신청', en: 'Coming soon — get notified', ja: '近日発売 — お知らせ登録', zh: '即将发售 — 注册通知', tw: '即將發售 — 註冊通知' },
 
     // ── DISCLAIMER ──
-    'vent.disclaimer': { ko: '본 제품은 균압 기술 향상을 위한 교육용 학습기이며, 의료기기가 아닙니다. 이관 기능 장애, 중이염 등 질환의 진단·예방·치료 목적으로는 쓸 수 없습니다. 라텍스 알러지가 있는 분은 사용하지 마세요. 사용 중 귀나 코에 통증이 느껴지면 즉시 멈춰주세요. 12세 미만은 반드시 보호자 감독 하에 사용해야 합니다.', en: 'This product is an educational learning device for improving equalization technique and is not a medical device. It cannot be used for diagnosis, prevention, or treatment of conditions such as Eustachian tube dysfunction or otitis media. Do not use if you have a latex allergy. If you feel pain in your ears or nose during use, stop immediately. Children under 12 must be supervised by an adult.', ja: '本製品は均圧技術向上のための教育用学習器であり、医療機器ではありません。耳管機能障害、中耳炎等の疾患の診断・予防・治療目的に使用できません。ラテックスアレルギーがある場合は使用を禁じます。使用中に耳や鼻に痛みを感じた場合は直ちに使用を中止してください。12歳未満は保護者の監督下で使用してください。', zh: '本产品是用于提高均压技术的教育用学习设备，非医疗器械。不能用于诊断、预防或治疗咽鼓管功能障碍、中耳炎等疾病。乳胶过敏者请勿使用。使用中如耳朵或鼻子感到疼痛，请立即停止使用。12岁以下儿童须在成人监护下使用。', tw: '本產品是用於提高均壓技術的教育用學習設備，非醫療器械。不能用於診斷、預防或治療耳咽管功能障礙、中耳炎等疾病。乳膠過敏者請勿使用。使用中如耳朵或鼻子感到疼痛，請立即停止使用。12歲以下兒童須在成人監護下使用。' },
+    'vent.disclaimer': { ko: '본 제품은 마우스필 등 균압 기술 향상을 위한 교육용 학습기이며, 의료기기가 아닙니다. 이관 기능 장애, 중이염 등 질환의 진단·예방·치료 목적으로는 쓸 수 없습니다. 라텍스 알러지가 있는 분은 사용하지 마세요. 사용 중 귀나 코에 통증이 느껴지면 즉시 멈춰주세요. 12세 미만은 반드시 보호자 감독 하에 사용해야 합니다.', en: 'This product is an educational training device for techniques such as Mouthfill equalization, not a medical device. It cannot be used for diagnosis, prevention, or treatment of conditions like Eustachian tube dysfunction or otitis media. Do not use if you have a latex allergy. Stop immediately if you feel pain in your ears or nose. Children under 12 must be supervised by an adult.', ja: '本製品はマウスフィル等の均圧技術習得を目的とした教育用学習器であり、医療機器ではありません。耳管機能障害、中耳炎等の疾患の診断・予防・治療目的に使用できません。ラテックスアレルギーがある場合は使用を禁じます。使用中に耳や鼻に痛みを感じた場合は直ちに使用を中止してください。12歳未満は保護者の監督下で使用してください。', zh: '本产品是用于Mouthfill等均压技术训练的教育用学习设备，非医疗器械。不得用于诊断、预防或治疗咽鼓管功能障碍、中耳炎等疾病。乳胶过敏者请勿使用。使用中如耳朵或鼻子感到疼痛，请立即停止。12岁以下儿童须在成人监护下使用。', tw: '本產品是用於Mouthfill等均壓技術訓練的教育用學習設備，非醫療器械。不得用於診斷、預防或治療耳咽管功能障礙、中耳炎等疾病。乳膠過敏者請勿使用。使用中如耳朵或鼻子感到疼痛，請立即停止。12歲以下兒童須在成人監護下使用。' },
 };
 
 // ── i18n Engine ──
