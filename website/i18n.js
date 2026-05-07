@@ -194,6 +194,12 @@ const translations = {
     'closing.title': { ko: '프렌젤이 안 되는 게 아닙니다.<br><span class="gradient-text glow-text">확인할 방법</span>이 없었을 뿐.', en: 'It\'s not that you can\'t Frenzel.<br>You just had <span class="gradient-text glow-text">no way to see it</span>.', ja: 'フレンゼルができないのではありません。<br><span class="gradient-text glow-text">確認する方法</span>がなかっただけです。', zh: '不是您做不到Frenzel，<br>只是以前没有<span class="gradient-text glow-text">确认的方法</span>而已。', tw: '不是您做不到Frenzel，<br>只是以前沒有<span class="gradient-text glow-text">確認的方法</span>而已。' },
     'closing.sub': { ko: '다이브체커와 함께, 오늘부터 수심이 달라집니다.', en: 'With DiveChecker, your depth changes starting today.', ja: 'DiveCheckerと共に、今日から深度が変わります。', zh: '与DiveChecker一起，从今天开始改变深度。', tw: '與DiveChecker一起，從今天開始改變深度。' },
 
+    // ── COMPANION (Vent cross-promo on index) ──
+    'companion.label': { ko: 'DEEPER STILL', en: 'DEEPER STILL', ja: 'DEEPER STILL', zh: 'DEEPER STILL', tw: 'DEEPER STILL' },
+    'companion.title': { ko: '더 깊이 가시려면<br><span class="gradient-text">Vent</span>가 있습니다', en: 'For going deeper,<br>there\'s <span class="gradient-text">Vent</span>', ja: 'もっと深く潜るなら<br><span class="gradient-text">Vent</span>', zh: '想潜得更深？<br>还有<span class="gradient-text">Vent</span>', tw: '想潛得更深？<br>還有<span class="gradient-text">Vent</span>' },
+    'companion.desc': { ko: '25m 이후, 폐에서 프렌젤이 더는 안 통하는 깊이부터는 마우스필이 답입니다. DiveChecker Vent는 충전·T-블록·텅피스톤 동작을 지상에서 안전하게 다지는 트레이너예요.', en: 'Past 25m, where Frenzel from the lungs stops working, Mouthfill is your only path. DiveChecker Vent is the dry-land trainer for the charge → T-block → tongue-piston motion.', ja: '25m以降、肺からのフレンゼルが通用しなくなる深度ではマウスフィルが答えです。DiveChecker Ventはチャージ・Tブロック・タングピストンの動作を陸上で安全に固めるトレーナーです。', zh: '过了25m，肺部Frenzel不再有效的深度，Mouthfill是唯一答案。DiveChecker Vent 是在陆地上安全巩固charge → T-block → 舌头活塞动作的训练器。', tw: '過了25m，肺部Frenzel不再有效的深度，Mouthfill是唯一答案。DiveChecker Vent 是在陸地上安全鞏固charge → T-block → 舌頭活塞動作的訓練器。' },
+    'companion.cta': { ko: 'DiveChecker Vent 알아보기', en: 'Learn about DiveChecker Vent', ja: 'DiveChecker Ventを見る', zh: '了解 DiveChecker Vent', tw: '了解 DiveChecker Vent' },
+
     // ── DEALER ──
     'dealer.badge': { ko: 'DEALER & PARTNERSHIP', en: 'DEALER & PARTNERSHIP', ja: 'DEALER & PARTNERSHIP', zh: 'DEALER & PARTNERSHIP', tw: 'DEALER & PARTNERSHIP' },
     'dealer.title': { ko: '다이브샵 대표님, 강사님께', en: 'For Dive Shop Owners & Instructors', ja: 'ダイブショップオーナー・インストラクターの皆様へ', zh: '致潜水店店主、教练', tw: '致潛水店店主、教練' },
