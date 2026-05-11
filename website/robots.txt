@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://divechecker.createch.kr/sitemap.xml

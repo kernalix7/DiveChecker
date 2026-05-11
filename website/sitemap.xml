@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <!-- DiveChecker (sensor) main product -->
+  <url>
+    <loc>https://divechecker.createch.kr/</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://divechecker.createch.kr/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://divechecker.createch.kr/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://divechecker.createch.kr/?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://divechecker.createch.kr/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://divechecker.createch.kr/?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://divechecker.createch.kr/?lang=tw"/>
+  </url>
+
+  <!-- DiveChecker Vent — Mouthfill trainer -->
+  <url>
+    <loc>https://divechecker.createch.kr/vent.html</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://divechecker.createch.kr/vent.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://divechecker.createch.kr/vent.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://divechecker.createch.kr/vent.html?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://divechecker.createch.kr/vent.html?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://divechecker.createch.kr/vent.html?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://divechecker.createch.kr/vent.html?lang=tw"/>
+  </url>
+
+  <!-- FAQ -->
+  <url>
+    <loc>https://divechecker.createch.kr/faq.html</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://divechecker.createch.kr/faq.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://divechecker.createch.kr/faq.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://divechecker.createch.kr/faq.html?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://divechecker.createch.kr/faq.html?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://divechecker.createch.kr/faq.html?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://divechecker.createch.kr/faq.html?lang=tw"/>
+  </url>
+
+  <!-- Support -->
+  <url>
+    <loc>https://divechecker.createch.kr/support.html</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://divechecker.createch.kr/support.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://divechecker.createch.kr/support.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://divechecker.createch.kr/support.html?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://divechecker.createch.kr/support.html?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://divechecker.createch.kr/support.html?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://divechecker.createch.kr/support.html?lang=tw"/>
+  </url>
+
+  <!-- Disclaimer -->
+  <url>
+    <loc>https://divechecker.createch.kr/disclaimer.html</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://divechecker.createch.kr/disclaimer.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://divechecker.createch.kr/disclaimer.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://divechecker.createch.kr/disclaimer.html?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://divechecker.createch.kr/disclaimer.html?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://divechecker.createch.kr/disclaimer.html?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://divechecker.createch.kr/disclaimer.html?lang=tw"/>
+  </url>
+
+  <!-- Privacy -->
+  <url>
+    <loc>https://divechecker.createch.kr/privacy.html</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://divechecker.createch.kr/privacy.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://divechecker.createch.kr/privacy.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://divechecker.createch.kr/privacy.html?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://divechecker.createch.kr/privacy.html?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://divechecker.createch.kr/privacy.html?lang=zh"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://divechecker.createch.kr/privacy.html?lang=tw"/>
+  </url>
+
+</urlset>
