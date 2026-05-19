@@ -1,20 +1,57 @@
 <div align="center">
 
-# 🌊 DiveChecker
+<img src="website/assets/images/logo-divechecker.svg" alt="DiveChecker" width="280">
 
-### Freediving Equalizing Pressure Monitor
+### See your equalization.
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Flutter](https://img.shields.io/badge/Flutter-3.10.4+-02569B?logo=flutter)](https://flutter.dev)
-[![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Linux%20%7C%20Windows%20%7C%20macOS%20%7C%20Web-lightgrey)]()
+<p>Real-time pressure visualization for freediving equalization training — 100Hz BMP280 sensor,<br>
+USB MIDI zero latency, six-platform Flutter app, ECDSA-authenticated RP2350 firmware.<br>
+Two products: <strong>DiveChecker</strong> (sensor) and <strong>DiveChecker Vent</strong> (dry-land Mouthfill trainer).</p>
 
-**Real-time pressure monitoring system for freediving equalization training**
+<pre><code># Get the app
+Android: https://play.google.com/store/apps/details?id=kr.createch.divechecker
+iOS:     https://apps.apple.com/kr/app/divechecker/id6758508799
+Desktop: https://github.com/kernalix7/DiveChecker/releases/latest
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Architecture](#-architecture) • [Hardware](#-hardware) • [Contributing](#-contributing)
+# Buy the device
+https://smartstore.naver.com/createch/products/13224634919</code></pre>
 
-[🇰🇷 한국어](docs/README.ko.md)
+<a href="website/assets/images/hero-product.jpg">
+  <img src="website/assets/images/hero-product.jpg" alt="DiveChecker DC-EQ01 — freediving equalization sensor" width="720">
+</a>
+
+<sub>DiveChecker DC-EQ01 — measures nasal pressure at 100Hz, visualizes Frenzel/Valsalva/Mouthfill curves in real time.</sub>
+
+[![Status](https://img.shields.io/badge/status-shipping-2EA44F?style=for-the-badge)](#status)
+[![Latest](https://img.shields.io/github/v/release/kernalix7/DiveChecker?include_prereleases&style=for-the-badge&label=latest&color=2962FF)](https://github.com/kernalix7/DiveChecker/releases)
+
+[![license](https://img.shields.io/github/license/kernalix7/DiveChecker?style=flat-square&color=blue)](LICENSE)
+[![flutter](https://img.shields.io/badge/flutter-3.10%2B-02569B?style=flat-square&logo=flutter&logoColor=white)](https://flutter.dev)
+[![dart](https://img.shields.io/badge/dart-3.10%2B-0175C2?style=flat-square&logo=dart&logoColor=white)](https://dart.dev)
+[![firmware](https://img.shields.io/badge/firmware-RP2350-FF6B00?style=flat-square&logo=raspberrypi&logoColor=white)](0_Pico2-Firmware/)
+[![hardware](https://img.shields.io/badge/hardware-CERN--OHL--S%20v2-1E4E5F?style=flat-square)](LICENSE)
+[![CI](https://img.shields.io/github/actions/workflow/status/kernalix7/DiveChecker/build.yml?branch=main&style=flat-square&label=CI)](https://github.com/kernalix7/DiveChecker/actions/workflows/build.yml)
+[![pages](https://img.shields.io/github/actions/workflow/status/kernalix7/DiveChecker/pages.yml?branch=main&style=flat-square&label=site)](https://divechecker.createch.kr)
+[![stars](https://img.shields.io/github/stars/kernalix7/DiveChecker?style=flat-square&color=FFD93D&logo=github&logoColor=white)](https://github.com/kernalix7/DiveChecker/stargazers)
+[![downloads](https://img.shields.io/github/downloads/kernalix7/DiveChecker/total?style=flat-square&color=2EA44F)](https://github.com/kernalix7/DiveChecker/releases)
+
+###### Runs on
+
+[![Android](https://img.shields.io/badge/Android-3DDC84?style=flat-square&logo=android&logoColor=white)](https://play.google.com/store/apps/details?id=kr.createch.divechecker)
+[![iOS](https://img.shields.io/badge/iOS-000000?style=flat-square&logo=apple&logoColor=white)](https://apps.apple.com/kr/app/divechecker/id6758508799)
+[![macOS](https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white)](https://apps.apple.com/kr/app/divechecker/id6758508799)
+[![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white)](https://github.com/kernalix7/DiveChecker/releases)
+[![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black)](https://github.com/kernalix7/DiveChecker/releases)
+[![Web](https://img.shields.io/badge/Web-4285F4?style=flat-square&logo=googlechrome&logoColor=white)](https://divechecker.createch.kr)
+
+<sub>**English** &nbsp;·&nbsp; [한국어](docs/README.ko.md) &nbsp;·&nbsp; [Site](https://divechecker.createch.kr) &nbsp;·&nbsp; [Vent (Mouthfill)](https://divechecker.createch.kr/vent.html) &nbsp;·&nbsp; [Features](#-features) &nbsp;·&nbsp; [Quick Start](#-quick-start) &nbsp;·&nbsp; [Architecture](#-architecture)</sub>
 
 </div>
+
+---
+
+> ### Status
+> DiveChecker DC-EQ01 (sensor) is **shipping** (App v8.6.0, Firmware v6.0.0, KC-certified). DiveChecker Vent (Mouthfill dry-land trainer) is **coming soon** — sign up at the [marketing site](https://divechecker.createch.kr/vent.html). Report issues at <https://github.com/kernalix7/DiveChecker/issues>.
 
 ---
 

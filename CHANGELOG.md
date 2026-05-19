@@ -9,6 +9,24 @@ and this project aims to follow [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+<!--
+Template for each new version section — copy this stanza when cutting a release.
+Keep `### Highlights` at the very top: it is the first thing users see on the
+GitHub release page. Release notes scripts (if any) take the section verbatim.
+
+### Highlights
+
+**One-sentence headline.** Optional 1-2 sentence elaboration if needed.
+
+- Most important user-visible change (one line, scannable)
+- Second most important change
+- (3-6 bullets max, no prose blocks)
+
+### Added
+### Changed
+### Fixed
+-->
+
 ## [8.1.0] — 2026-03-19
 
 ### Added

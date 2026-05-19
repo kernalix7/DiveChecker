@@ -4,56 +4,64 @@
 
 ## Supported Versions
 
-| Version | Supported          |
-|---------|--------------------|
-| latest  | :white_check_mark: |
+| Version | Supported |
+|---------|-----------|
+| Latest  | Yes       |
 
 As DiveChecker is in active development, security updates are applied to the latest version on the `main` branch.
 
 ## Reporting a Vulnerability
 
-**Please do NOT report security vulnerabilities through public GitHub issues.**
+Please report security vulnerabilities through GitHub Security Advisories:
 
-Instead, please report them through [GitHub Security Advisories](https://github.com/kernalix7/DiveChecker/security/advisories/new).
+**[Report a vulnerability](https://github.com/kernalix7/DiveChecker/security/advisories/new)**
+
+**Do NOT open a public issue for security vulnerabilities.**
 
 ### What to Include
 
-When reporting a vulnerability, please include:
+- **Description**: A clear description of the vulnerability
+- **Steps to Reproduce**: Detailed steps to reproduce the issue
+- **Impact**: The potential impact of the vulnerability
+- **Affected Components**: App, Firmware, Hardware, or Marketing Site
+- **Environment**:
+  - Operating System and version
+  - App version (Flutter)
+  - Firmware version (RP2350)
+  - Device model (DC-EQ01 / Vent)
+  - Connection type (USB-C / Lightning adapter)
 
-1. **Description** — A clear description of the vulnerability
-2. **Steps to Reproduce** — Detailed steps to reproduce the issue
-3. **Impact** — The potential impact of the vulnerability
-4. **Affected Components** — Which parts of DiveChecker are affected (App, Firmware, Hardware)
-5. **Environment** — OS, Flutter version, firmware version, device model
+## Response Timeline
 
-### Response Timeline
+| Step | Timeframe |
+|------|-----------|
+| Acknowledgment | Within 48 hours |
+| Assessment | Within 7 days |
+| Fix | Within 30 days |
 
-- **Acknowledgment** — Within 48 hours of the report
-- **Initial Assessment** — Within 7 days
-- **Fix & Disclosure** — Coordinated with the reporter; typically within 30 days for critical issues
+## Scope
 
-### Scope
+In-scope:
 
-The following areas are considered in-scope for security reports:
-
-- ECDSA device authentication bypass or key extraction
+- ECDSA P-256 device authentication bypass or key extraction
 - USB MIDI SysEx protocol injection or buffer overflow
 - Firmware memory corruption or code execution
 - Flutter app data leakage (session data, device keys)
 - Cross-platform database (SQLite/IndexedDB) injection
 - OTP key storage vulnerabilities on RP2350
 - Insecure firmware update mechanisms
-- Bluetooth/USB communication interception
+- USB communication interception or replay
+- Marketing site (divechecker.createch.kr): XSS, CSP bypass, supply chain (CDN/dep)
 
-### Out of Scope
+Out of scope:
 
-- Bugs that require physical access to the user's machine
+- Bugs requiring physical access to the user's host machine
 - Social engineering attacks
-- Issues in third-party dependencies (please report these upstream, but let us know)
+- Issues in third-party dependencies (please report upstream, but let us know)
 
 ## Security Best Practices
 
-DiveChecker follows these security practices:
+DiveChecker follows these practices:
 
 - **ECDSA P-256 Device Authentication** — Cryptographic verification of genuine hardware
 - **OTP Key Storage** — Production keys stored in RP2350 one-time programmable memory
@@ -61,11 +69,8 @@ DiveChecker follows these security practices:
 - **Input Validation** — All SysEx commands validated before processing
 - **PIN-Protected Configuration** — Device settings require PIN authentication
 - **No Network Communication** — Pure USB connection, no cloud or internet dependency
+- **Site CSP + canonical URLs** — Marketing site uses canonical hrefs and OG/Twitter meta only
 
 ## Acknowledgments
 
 We appreciate the security research community's efforts in responsibly disclosing vulnerabilities. Contributors who report valid security issues will be acknowledged (with permission) in our release notes.
-
----
-
-*This security policy is subject to change as the project matures.*

@@ -27,10 +27,10 @@ What actually happened.
 ## Environment
 
 - **OS**: [e.g. Ubuntu 24.04, Windows 11, macOS 15, Android 14, iOS 18]
-- **App Version**: [e.g. 7.2.0]
-- **Firmware Version**: [e.g. 6.0.0]
-- **Connection**: [USB-C direct / USB-C hub]
-- **Device**: [DiveChecker V1]
+- **App version**: [e.g. 8.6.0]
+- **Firmware version**: [e.g. 6.0.0]
+- **Connection**: [USB-C direct / USB-C hub / Lightning adapter]
+- **Device**: [DiveChecker DC-EQ01 / DiveChecker Vent]
 
 ## Screenshots
 
