@@ -1,20 +1,57 @@
 <div align="center">
 
-# 🌊 DiveChecker
+<img src="../website/assets/images/logo-divechecker-blue.svg" alt="DiveChecker" width="280">
 
-### 프리다이빙 이퀄라이징 압력 모니터
+### 이퀄라이징을 눈으로 봅니다.
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](../LICENSE)
-[![Flutter](https://img.shields.io/badge/Flutter-3.10.4+-02569B?logo=flutter)](https://flutter.dev)
-[![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Linux%20%7C%20Windows%20%7C%20macOS%20%7C%20Web-lightgrey)]()
+<p>프리다이빙 이퀄라이징 훈련용 실시간 압력 시각화 — 100Hz BMP280 센서,<br>
+USB MIDI 제로 레이턴시, 6개 플랫폼 Flutter 앱, ECDSA 인증 RP2350 펌웨어.<br>
+두 가지 제품: <strong>DiveChecker</strong> (센서) + <strong>DiveChecker Vent</strong> (지상 마우스필 트레이너).</p>
 
-**프리다이빙 이퀄라이징 훈련을 위한 실시간 압력 모니터링 시스템**
+<pre><code># 앱 받기
+Android: https://play.google.com/store/apps/details?id=kr.createch.divechecker
+iOS:     https://apps.apple.com/kr/app/divechecker/id6758508799
+데스크탑: https://github.com/kernalix7/DiveChecker/releases/latest
 
-[기능](#-기능) • [빠른 시작](#-빠른-시작) • [아키텍처](#-아키텍처) • [하드웨어](#-하드웨어) • [기여하기](#-기여하기)
+# 디바이스 구매
+https://smartstore.naver.com/createch/products/13224634919</code></pre>
 
-[🇺🇸 English](../README.md)
+<a href="../website/assets/images/hero-product.jpg">
+  <img src="../website/assets/images/hero-product.jpg" alt="DiveChecker DC-EQ01 — 프리다이빙 이퀄라이징 센서" width="720">
+</a>
+
+<sub>DiveChecker DC-EQ01 — 코쪽 압력을 100Hz로 측정하고 프렌젤·발살바·마우스필 곡선을 실시간으로 시각화합니다.</sub>
+
+[![Status](https://img.shields.io/badge/status-shipping-2EA44F?style=for-the-badge)](#-status)
+[![Latest](https://img.shields.io/github/v/release/kernalix7/DiveChecker?include_prereleases&style=for-the-badge&label=latest&color=2962FF)](https://github.com/kernalix7/DiveChecker/releases)
+
+[![license](https://img.shields.io/github/license/kernalix7/DiveChecker?style=flat-square&color=blue)](../LICENSE)
+[![flutter](https://img.shields.io/badge/flutter-3.10%2B-02569B?style=flat-square&logo=flutter&logoColor=white)](https://flutter.dev)
+[![dart](https://img.shields.io/badge/dart-3.10%2B-0175C2?style=flat-square&logo=dart&logoColor=white)](https://dart.dev)
+[![firmware](https://img.shields.io/badge/firmware-RP2350-FF6B00?style=flat-square&logo=raspberrypi&logoColor=white)](../0_Pico2-Firmware/)
+[![hardware](https://img.shields.io/badge/hardware-CERN--OHL--S%20v2-1E4E5F?style=flat-square)](../LICENSE)
+[![CI](https://img.shields.io/github/actions/workflow/status/kernalix7/DiveChecker/build.yml?branch=main&style=flat-square&label=CI)](https://github.com/kernalix7/DiveChecker/actions/workflows/build.yml)
+[![pages](https://img.shields.io/github/actions/workflow/status/kernalix7/DiveChecker/pages.yml?branch=main&style=flat-square&label=site)](https://divechecker.createch.kr)
+[![stars](https://img.shields.io/github/stars/kernalix7/DiveChecker?style=flat-square&color=FFD93D&logo=github&logoColor=white)](https://github.com/kernalix7/DiveChecker/stargazers)
+[![downloads](https://img.shields.io/github/downloads/kernalix7/DiveChecker/total?style=flat-square&color=2EA44F)](https://github.com/kernalix7/DiveChecker/releases)
+
+###### 동작 플랫폼
+
+[![Android](https://img.shields.io/badge/Android-3DDC84?style=flat-square&logo=android&logoColor=white)](https://play.google.com/store/apps/details?id=kr.createch.divechecker)
+[![iOS](https://img.shields.io/badge/iOS-000000?style=flat-square&logo=apple&logoColor=white)](https://apps.apple.com/kr/app/divechecker/id6758508799)
+[![macOS](https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white)](https://apps.apple.com/kr/app/divechecker/id6758508799)
+[![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white)](https://github.com/kernalix7/DiveChecker/releases)
+[![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black)](https://github.com/kernalix7/DiveChecker/releases)
+[![Web](https://img.shields.io/badge/Web-4285F4?style=flat-square&logo=googlechrome&logoColor=white)](https://divechecker.createch.kr)
+
+<sub>[English](../README.md) &nbsp;·&nbsp; **한국어** &nbsp;·&nbsp; [사이트](https://divechecker.createch.kr) &nbsp;·&nbsp; [Vent (마우스필)](https://divechecker.createch.kr/vent.html) &nbsp;·&nbsp; [기능](#-기능) &nbsp;·&nbsp; [빠른 시작](#-빠른-시작) &nbsp;·&nbsp; [아키텍처](#-아키텍처)</sub>
 
 </div>
+
+---
+
+> ### Status
+> DiveChecker DC-EQ01 (센서)는 **출시 완료** (앱 v8.6.0, 펌웨어 v6.0.0, KC 인증). DiveChecker Vent (마우스필 지상 트레이너)는 **곧 출시** — [마케팅 사이트](https://divechecker.createch.kr/vent.html)에서 출시 알림 신청. 이슈는 <https://github.com/kernalix7/DiveChecker/issues>에 제보.
 
 ---
 
@@ -390,6 +427,20 @@ flutter run
 | **하드웨어** | [CERN-OHL-S v2](https://ohwr.org/cern_ohl_s_v2.txt) | 회로, CAD 설계 |
 
 자세한 내용은 [LICENSE](../LICENSE) 파일을 참조하세요.
+
+---
+
+## 💖 후원
+
+DiveChecker는 [@kernalix7](https://github.com/kernalix7) 1인이 하드웨어 + 앱 + 펌웨어 + 사이트까지 통째로 만들고 유지하는 프로젝트입니다. 훈련(또는 다이브샵, 학생, PB)에 도움이 되셨다면, 작은 후원이 다음 펌웨어 빌드 / 번역 / CAD 개정의 동력이 됩니다.
+
+| 플랫폼 | 링크 |
+|--------|------|
+| ☕ **Ko-fi** | <https://ko-fi.com/kernalix7> |
+| 🧚 **fairy.hada.io** (한국) | <https://fairy.hada.io/@kernalix7> |
+| ❤️ **GitHub Sponsors** | 저장소 상단의 **Sponsor** 버튼 (위 두 곳을 함께 연결) |
+
+설정은 [`.github/FUNDING.yml`](../.github/FUNDING.yml) 참조.
 
 ---
 
