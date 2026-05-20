@@ -440,16 +440,6 @@ flutter run
   </picture>
 </a>
 
-## 📊 기여자 & 활동
-
-[![Contributors](https://contrib.rocks/image?repo=kernalix7/DiveChecker)](https://github.com/kernalix7/DiveChecker/graphs/contributors)
-
-[![commit activity](https://img.shields.io/github/commit-activity/m/kernalix7/DiveChecker?style=flat-square&color=2EA44F)](https://github.com/kernalix7/DiveChecker/pulse)
-[![last commit](https://img.shields.io/github/last-commit/kernalix7/DiveChecker?style=flat-square&color=2962FF)](https://github.com/kernalix7/DiveChecker/commits/main)
-[![issues](https://img.shields.io/github/issues/kernalix7/DiveChecker?style=flat-square&color=orange)](https://github.com/kernalix7/DiveChecker/issues)
-[![PRs](https://img.shields.io/github/issues-pr/kernalix7/DiveChecker?style=flat-square&color=blueviolet)](https://github.com/kernalix7/DiveChecker/pulls)
-[![repo size](https://img.shields.io/github/repo-size/kernalix7/DiveChecker?style=flat-square)](https://github.com/kernalix7/DiveChecker)
-
 ## 💖 후원
 
 DiveChecker는 [@kernalix7](https://github.com/kernalix7) 1인이 하드웨어 + 앱 + 펌웨어 + 사이트까지 통째로 만들고 유지하는 프로젝트입니다. 훈련(또는 다이브샵, 학생, PB)에 도움이 되셨다면, 작은 후원이 다음 펌웨어 빌드 / 번역 / CAD 개정의 동력이 됩니다.

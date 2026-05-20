@@ -455,16 +455,6 @@ See the [LICENSE](LICENSE) file for details.
   </picture>
 </a>
 
-## 📊 Contributors & Activity
-
-[![Contributors](https://contrib.rocks/image?repo=kernalix7/DiveChecker)](https://github.com/kernalix7/DiveChecker/graphs/contributors)
-
-[![commit activity](https://img.shields.io/github/commit-activity/m/kernalix7/DiveChecker?style=flat-square&color=2EA44F)](https://github.com/kernalix7/DiveChecker/pulse)
-[![last commit](https://img.shields.io/github/last-commit/kernalix7/DiveChecker?style=flat-square&color=2962FF)](https://github.com/kernalix7/DiveChecker/commits/main)
-[![issues](https://img.shields.io/github/issues/kernalix7/DiveChecker?style=flat-square&color=orange)](https://github.com/kernalix7/DiveChecker/issues)
-[![PRs](https://img.shields.io/github/issues-pr/kernalix7/DiveChecker?style=flat-square&color=blueviolet)](https://github.com/kernalix7/DiveChecker/pulls)
-[![repo size](https://img.shields.io/github/repo-size/kernalix7/DiveChecker?style=flat-square)](https://github.com/kernalix7/DiveChecker)
-
 ## 💖 Sponsor
 
 DiveChecker is built and maintained by [@kernalix7](https://github.com/kernalix7) as a one-person hardware+app+firmware+site stack. If it helps your training (or your dive shop, your students, your PB), a tip keeps the lights on for the next firmware build, the next translation pass, the next CAD revision.
