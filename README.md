@@ -445,15 +445,35 @@ See the [LICENSE](LICENSE) file for details.
 
 ---
 
+## ⭐ Star History
+
+<a href="https://star-history.com/#kernalix7/DiveChecker&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=kernalix7/DiveChecker&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=kernalix7/DiveChecker&type=Date" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=kernalix7/DiveChecker&type=Date" />
+  </picture>
+</a>
+
+## 📊 Contributors & Activity
+
+[![Contributors](https://contrib.rocks/image?repo=kernalix7/DiveChecker)](https://github.com/kernalix7/DiveChecker/graphs/contributors)
+
+[![commit activity](https://img.shields.io/github/commit-activity/m/kernalix7/DiveChecker?style=flat-square&color=2EA44F)](https://github.com/kernalix7/DiveChecker/pulse)
+[![last commit](https://img.shields.io/github/last-commit/kernalix7/DiveChecker?style=flat-square&color=2962FF)](https://github.com/kernalix7/DiveChecker/commits/main)
+[![issues](https://img.shields.io/github/issues/kernalix7/DiveChecker?style=flat-square&color=orange)](https://github.com/kernalix7/DiveChecker/issues)
+[![PRs](https://img.shields.io/github/issues-pr/kernalix7/DiveChecker?style=flat-square&color=blueviolet)](https://github.com/kernalix7/DiveChecker/pulls)
+[![repo size](https://img.shields.io/github/repo-size/kernalix7/DiveChecker?style=flat-square)](https://github.com/kernalix7/DiveChecker)
+
 ## 💖 Sponsor
 
 DiveChecker is built and maintained by [@kernalix7](https://github.com/kernalix7) as a one-person hardware+app+firmware+site stack. If it helps your training (or your dive shop, your students, your PB), a tip keeps the lights on for the next firmware build, the next translation pass, the next CAD revision.
 
-| Platform | Link |
-|----------|------|
-| ☕ **Ko-fi** | <https://ko-fi.com/kernalix7> |
-| 🧚 **fairy.hada.io** (Korean) | <https://fairy.hada.io/@kernalix7> |
-| ❤️ **GitHub Sponsors** | Use the **Sponsor** button at the top of the repo (wires both of the above) |
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-F16061?logo=ko-fi&logoColor=white&style=for-the-badge)](https://ko-fi.com/kernalix7)
+[![Fairy](https://img.shields.io/badge/🧚_Fairy-EE6E73?style=for-the-badge&logoColor=white)](https://fairy.hada.io/@kernalix7)
+[![Sponsor](https://img.shields.io/badge/GitHub_Sponsor-EA4AAA?logo=githubsponsors&logoColor=white&style=for-the-badge)](https://github.com/sponsors/kernalix7)
+
+Ko-fi handles international cards and PayPal; fairy.hada.io is a Korean tipping platform; the GitHub Sponsor button (repo header) wires both. Bug reports, PRs, and stars on the repo are equally appreciated and free.
 
 See [`.github/FUNDING.yml`](.github/FUNDING.yml) for the configuration.
 

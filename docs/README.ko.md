@@ -430,15 +430,35 @@ flutter run
 
 ---
 
+## ⭐ Star History
+
+<a href="https://star-history.com/#kernalix7/DiveChecker&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=kernalix7/DiveChecker&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=kernalix7/DiveChecker&type=Date" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=kernalix7/DiveChecker&type=Date" />
+  </picture>
+</a>
+
+## 📊 기여자 & 활동
+
+[![Contributors](https://contrib.rocks/image?repo=kernalix7/DiveChecker)](https://github.com/kernalix7/DiveChecker/graphs/contributors)
+
+[![commit activity](https://img.shields.io/github/commit-activity/m/kernalix7/DiveChecker?style=flat-square&color=2EA44F)](https://github.com/kernalix7/DiveChecker/pulse)
+[![last commit](https://img.shields.io/github/last-commit/kernalix7/DiveChecker?style=flat-square&color=2962FF)](https://github.com/kernalix7/DiveChecker/commits/main)
+[![issues](https://img.shields.io/github/issues/kernalix7/DiveChecker?style=flat-square&color=orange)](https://github.com/kernalix7/DiveChecker/issues)
+[![PRs](https://img.shields.io/github/issues-pr/kernalix7/DiveChecker?style=flat-square&color=blueviolet)](https://github.com/kernalix7/DiveChecker/pulls)
+[![repo size](https://img.shields.io/github/repo-size/kernalix7/DiveChecker?style=flat-square)](https://github.com/kernalix7/DiveChecker)
+
 ## 💖 후원
 
 DiveChecker는 [@kernalix7](https://github.com/kernalix7) 1인이 하드웨어 + 앱 + 펌웨어 + 사이트까지 통째로 만들고 유지하는 프로젝트입니다. 훈련(또는 다이브샵, 학생, PB)에 도움이 되셨다면, 작은 후원이 다음 펌웨어 빌드 / 번역 / CAD 개정의 동력이 됩니다.
 
-| 플랫폼 | 링크 |
-|--------|------|
-| ☕ **Ko-fi** | <https://ko-fi.com/kernalix7> |
-| 🧚 **fairy.hada.io** (한국) | <https://fairy.hada.io/@kernalix7> |
-| ❤️ **GitHub Sponsors** | 저장소 상단의 **Sponsor** 버튼 (위 두 곳을 함께 연결) |
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-F16061?logo=ko-fi&logoColor=white&style=for-the-badge)](https://ko-fi.com/kernalix7)
+[![Fairy](https://img.shields.io/badge/🧚_Fairy-EE6E73?style=for-the-badge&logoColor=white)](https://fairy.hada.io/@kernalix7)
+[![Sponsor](https://img.shields.io/badge/GitHub_Sponsor-EA4AAA?logo=githubsponsors&logoColor=white&style=for-the-badge)](https://github.com/sponsors/kernalix7)
+
+Ko-fi는 해외 카드 / PayPal 결제, fairy.hada.io는 한국 후원 플랫폼, GitHub Sponsor 버튼(저장소 상단)은 두 곳을 함께 연결합니다. 버그 제보, PR, 저장소 별표도 모두 동등하게 감사하며 무료입니다.
 
 설정은 [`.github/FUNDING.yml`](../.github/FUNDING.yml) 참조.
 
