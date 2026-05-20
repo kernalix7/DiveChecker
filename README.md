@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="website/assets/images/logo-divechecker.svg" alt="DiveChecker" width="280">
+<img src="website/assets/images/logo-divechecker-blue.svg" alt="DiveChecker" width="280">
 
 ### See your equalization.
 
@@ -442,6 +442,20 @@ This project is dual-licensed:
 | **Hardware** | [CERN-OHL-S v2](https://ohwr.org/cern_ohl_s_v2.txt) | Circuits, CAD designs |
 
 See the [LICENSE](LICENSE) file for details.
+
+---
+
+## 💖 Sponsor
+
+DiveChecker is built and maintained by [@kernalix7](https://github.com/kernalix7) as a one-person hardware+app+firmware+site stack. If it helps your training (or your dive shop, your students, your PB), a tip keeps the lights on for the next firmware build, the next translation pass, the next CAD revision.
+
+| Platform | Link |
+|----------|------|
+| ☕ **Ko-fi** | <https://ko-fi.com/kernalix7> |
+| 🧚 **fairy.hada.io** (Korean) | <https://fairy.hada.io/@kernalix7> |
+| ❤️ **GitHub Sponsors** | Use the **Sponsor** button at the top of the repo (wires both of the above) |
+
+See [`.github/FUNDING.yml`](.github/FUNDING.yml) for the configuration.
 
 ---
 
