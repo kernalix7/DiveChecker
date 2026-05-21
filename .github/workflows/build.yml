@@ -529,10 +529,49 @@ jobs:
           sha256sum artifacts/ios-ipa/*.ipa 2>/dev/null | sed 's|artifacts/[^ ]*/||' >> SHA256SUMS.txt || true
           cat SHA256SUMS.txt
 
+      # Extract the matching CHANGELOG.md section for this tag and feed it
+      # to softprops as the release body. Without this, generate_release_notes
+      # alone produces a "Full Changelog: compare URL" stub because the repo
+      # doesn't use squash-merge PRs as its primary commit pattern.
+      - name: Extract release notes from CHANGELOG
+        id: notes
+        run: |
+          TAG="${GITHUB_REF##*/}"          # refs/tags/vX.Y.Z → vX.Y.Z
+          VER="${TAG#v}"                    # vX.Y.Z → X.Y.Z
+          # Take everything from "## [VER]" up to (but not including) the next "## [" line.
+          awk -v ver="$VER" '
+            $0 ~ "^## \\[" ver "\\]" { found=1; print; next }
+            found && /^## \[/        { exit }
+            found                    { print }
+          ' CHANGELOG.md > RELEASE_BODY.md
+          # Append assets section
+          {
+            echo ""
+            echo "---"
+            echo ""
+            echo "## Downloads"
+            echo ""
+            echo "| Platform | File |"
+            echo "|---|---|"
+            echo "| Android (APK) | \`app-release.apk\` |"
+            echo "| Android (Play / AAB) | \`app-release.aab\` |"
+            echo "| iOS | \`DiveChecker.ipa\` (signed) |"
+            echo "| macOS | \`DiveChecker-macos.zip\` |"
+            echo "| Windows | \`DiveChecker-windows-x64.zip\` |"
+            echo "| Linux | \`DiveChecker-linux-x64.tar.gz\` |"
+            echo "| Web | \`DiveChecker-web.zip\` |"
+            echo ""
+            echo "SHA-256 checksums: see \`SHA256SUMS.txt\`."
+            echo ""
+            echo "**Full Changelog**: https://github.com/${GITHUB_REPOSITORY}/compare/v${VER%.*}...$TAG"
+          } >> RELEASE_BODY.md
+          echo "--- RELEASE_BODY.md preview ---"
+          head -40 RELEASE_BODY.md
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          generate_release_notes: true
+          body_path: RELEASE_BODY.md
           files: |
             artifacts/android-apk/*.apk
             artifacts/android-aab/*.aab
