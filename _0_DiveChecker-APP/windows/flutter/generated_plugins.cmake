@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  flutter_midi_command_windows
   permission_handler_windows
   universal_ble
 )

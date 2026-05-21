@@ -37,8 +37,16 @@ dependencies:
   cupertino_icons: ^1.0.8
   
   # USB MIDI for pressure sensor connection (cross-platform: iOS, Android, Desktop)
-  flutter_midi_command: ^0.5.3
-  
+  flutter_midi_command: ^0.5.4
+  # Explicit Windows federated plugin registration. The endorsement in
+  # flutter_midi_command 0.5.x did not always pull the Windows backend
+  # into windows/flutter/generated_plugins.cmake, leaving the desktop
+  # build with no MIDI implementation — _midiHandler.sendSysEx silently
+  # no-ops, the ECDSA auth challenge gets no response, and the app
+  # reports "정품인증 실패" on Windows only. Pinning the Windows impl
+  # as a direct dep forces registration.
+  flutter_midi_command_windows: ^0.3.0
+
   # Permission handling for Android
   permission_handler: ^11.3.1
   
