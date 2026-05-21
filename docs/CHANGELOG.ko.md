@@ -28,6 +28,19 @@
 ### 수정됨
 -->
 
+## [8.6.1] — 2026-05-21
+
+### Highlights
+
+**Windows 전용 "정품인증 실패" 오류 수정.** Windows 데스크탑 빌드에 MIDI 백엔드가 등록되어 있지 않아 ECDSA challenge nonce가 디바이스에 전달되지 않고 인증이 timeout되던 문제. Linux / macOS / Android / iOS / Web 빌드는 영향 없음.
+
+- `flutter_midi_command_windows`를 직접 의존성으로 추가해 강제 등록.
+- `flutter_midi_command` 0.5.4로 bump (MR #144 Windows 백엔드 업데이트).
+
+### 수정됨
+
+- **Windows: 연결할 때마다 ECDSA 디바이스 인증이 "정품인증 실패"로 끝나던 문제.** `windows/flutter/generated_plugins.cmake`에 `flutter_midi_command_windows`가 누락되어 Windows에서 `_midiHandler.sendSysEx()`가 무동작이었고, auth challenge nonce가 송신되지 않아 디바이스 응답도 없었음. 결국 `_authenticateDevice()`가 3초 timeout에 걸려 `_isAuthenticated = false`로 떨어졌음. Linux는 `flutter_midi_command_linux`를 등록하고 macOS는 `flutter_midi_command`를 import해서 정상이었음. `flutter_midi_command` 0.5.3의 Windows impl federated endorsement가 불안정해서 발생. 수정: `flutter_midi_command_windows: ^0.3.0`을 직접 의존성으로 추가, `flutter_midi_command`를 `^0.5.4`로 bump, Windows plugin 목록에 `flutter_midi_command_windows`를 inject. 업그레이드 후 `flutter clean && flutter pub get && flutter build windows --release` 실행.
+
 ## [8.1.0] — 2026-03-19
 
 ### 추가됨

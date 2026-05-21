@@ -27,6 +27,19 @@ GitHub release page. Release notes scripts (if any) take the section verbatim.
 ### Fixed
 -->
 
+## [8.6.1] — 2026-05-21
+
+### Highlights
+
+**Windows-only "정품인증 실패" auth failure fix.** The Windows desktop build was shipping without a MIDI backend registered, so the ECDSA challenge nonce never reached the device and authentication silently timed out. Linux, macOS, Android, iOS, and Web builds were unaffected.
+
+- Forces `flutter_midi_command_windows` registration via a direct dependency.
+- Bumps `flutter_midi_command` to 0.5.4 (MR #144 Windows backend update).
+
+### Fixed
+
+- **Windows: ECDSA device authentication failed with "정품인증 실패" on every connect.** `windows/flutter/generated_plugins.cmake` did not list `flutter_midi_command_windows`, so `_midiHandler.sendSysEx()` was a no-op on Windows: the auth challenge nonce never went out, the device never responded, and `_authenticateDevice()` hit its 3-second timeout and flipped `_isAuthenticated = false`. Linux registered `flutter_midi_command_linux` and macOS imported `flutter_midi_command` correctly. Federated endorsement of the Windows impl in `flutter_midi_command` 0.5.3 was unreliable. Fix: add `flutter_midi_command_windows: ^0.3.0` as a direct dependency, bump `flutter_midi_command` to `^0.5.4`, and inject `flutter_midi_command_windows` into the Windows plugin list. After upgrade, run `flutter clean && flutter pub get && flutter build windows --release`.
+
 ## [8.1.0] — 2026-03-19
 
 ### Added
